@@ -1,0 +1,8 @@
+
+{
+  "name": "Kartvizid - İş Dünyasının Kartviziti",
+  "description": "İş arayanların profilini kartvizit formatında oluşturduğu ve işverenlerin adayları pasif olarak keşfettiği modern iş bulma platformu.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
