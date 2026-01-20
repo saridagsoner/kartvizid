@@ -1,6 +1,7 @@
-
 import React from 'react';
 import { CV } from '../types';
+import { useAuth } from '../context/AuthContext';
+import { generatePrintableCV } from '../lib/generatePrintableCV';
 
 interface ProfileModalProps {
   cv: CV;
@@ -10,14 +11,43 @@ interface ProfileModalProps {
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus = 'none', onRequestAccess }) => {
-  const hasAccess = requestStatus === 'approved';
-  // Show if public OR if access is approved
+  const { user } = useAuth();
+  const isOwner = user?.id === cv.userId;
+
+  const hasAccess = requestStatus === 'approved' || isOwner;
+  // Show if public OR if access is approved OR is owner
   const showEmail = cv.isEmailPublic || hasAccess;
   const showPhone = cv.isPhonePublic || hasAccess;
 
-  // Show contact button if NOT approved
-  const showRequestButton = !hasAccess;
+  // Show contact button if NOT approved AND NOT owner
+  const showRequestButton = !hasAccess && !isOwner;
   const isPending = requestStatus === 'pending';
+
+  const handleDownload = () => {
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(generatePrintableCV(cv));
+      printWindow.document.close();
+    }
+  };
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `${cv.name} | Kartvizid`,
+          text: `${cv.name} adlı kişinin detaylı CV'sini inceleyin.`,
+          url: window.location.href,
+        });
+      } else {
+        // Fallback for desktop: Copy to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link kopyalandı!');
+      }
+    } catch (err) {
+      console.log('Share canceled or not supported');
+    }
+  };
 
   const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
     <div className="mb-6 mt-10 first:mt-0">
@@ -45,8 +75,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl animate-in fade-in duration-300">
       <div className="bg-white w-full max-w-[800px] h-[90vh] rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
-
-
 
         {/* Header */}
         <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10 shrink-0">
@@ -196,8 +224,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             </div>
           </section>
 
-
-
           {/* Bölüm 6: Referanslar */}
           <section>
             <SectionTitle title="6. REFERANSLAR" />
@@ -208,12 +234,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                     <h4 className="font-bold text-black text-sm">{ref.name}</h4>
                     <p className="text-xs text-gray-500 font-bold mt-1">{ref.role} @ {ref.company}</p>
                     <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
-                      {/* Show reference contact info only if access allowed? Usually references are semi-public or public in CVs. 
-                           User said "ne varsa aynısı". Form has them visible. 
-                           I'll assume visible for now, or maybe check access? 
-                           Usually references on a CV are public to the viewer of the CV.
-                           If strict privacy is needed, we'd reuse the logic, but for now I'll just show them.
-                       */}
                       {ref.email && (
                         <div className="flex items-center gap-2">
                           <span className="text-[10px] text-gray-400 font-bold">✉️</span>
@@ -241,8 +261,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             {(cv.email || cv.phone) ? (
               <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
 
-                {/* Show warning only if access is NOT granted AND at least one field is NOT public (meaning it's hidden) */}
-                {!hasAccess && (!cv.isEmailPublic || !cv.isPhonePublic) && (
+                {/* Warning: If access not granted AND at least one field hidden AND NOT OWNER */}
+                {!hasAccess && !isOwner && (!cv.isEmailPublic || !cv.isPhonePublic) && (
                   <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-4 flex items-start gap-3">
                     <div className="w-5 h-5 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">!</div>
                     <p className="text-xs font-bold text-red-800 leading-relaxed">
@@ -257,8 +277,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                       <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shrink-0">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
                       </div>
-                      {/* Show if Public OR Has Access */}
-                      {(cv.isEmailPublic || hasAccess) ? (
+                      {/* Show if Public OR Has Access OR Is Owner */}
+                      {(cv.isEmailPublic || hasAccess || isOwner) ? (
                         <a href={`mailto:${cv.email}`} className="hover:text-black hover:underline truncate">{cv.email}</a>
                       ) : (
                         <span className="text-gray-400 select-none blur-[4px]">***************@*****.com</span>
@@ -270,8 +290,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                       <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center shrink-0">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.05 12.05 0 0 0 .57 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.05 12.05 0 0 0 2.81.57A2 2 0 0 1 22 16.92z"></path></svg>
                       </div>
-                      {/* Show if Public OR Has Access */}
-                      {(cv.isPhonePublic || hasAccess) ? (
+                      {/* Show if Public OR Has Access OR Is Owner */}
+                      {(cv.isPhonePublic || hasAccess || isOwner) ? (
                         <a href={`tel:${cv.phone}`} className="hover:text-black hover:underline">{cv.phone}</a>
                       ) : (
                         <span className="text-gray-400 select-none blur-[4px]">+90 *** *** ** **</span>
@@ -295,27 +315,47 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             Kapat
           </button>
 
-          {!hasAccess && (
-            <button
-              onClick={onRequestAccess}
-              disabled={isPending}
-              className={`flex-[2] py-5 rounded-full font-black text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] ${isPending
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-black text-white hover:bg-gray-800'
-                }`}
-            >
-              {isPending ? 'İstek Gönderildi' : 'İletişime Geç'}
-            </button>
+          {isOwner ? (
+            <>
+              <button
+                onClick={handleDownload}
+                className="flex-1 bg-black text-white py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-gray-800 transition-all active:scale-95 shadow-xl"
+              >
+                CV'mi İndir
+              </button>
+              <button
+                onClick={handleShare}
+                className="flex-1 bg-green-500 text-white py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-green-600 transition-all active:scale-95 shadow-xl"
+              >
+                CV'mi Paylaş
+              </button>
+            </>
+          ) : (
+            <>
+              {!hasAccess && (
+                <button
+                  onClick={onRequestAccess}
+                  disabled={isPending}
+                  className={`flex-[2] py-5 rounded-full font-black text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] ${isPending
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-black text-white hover:bg-gray-800'
+                    }`}
+                >
+                  {isPending ? 'İstek Gönderildi' : 'İletişime Geç'}
+                </button>
+              )}
+
+              {hasAccess && (
+                <button
+                  disabled
+                  className="flex-[2] bg-green-500 text-white py-5 rounded-full font-black text-base uppercase tracking-widest shadow-xl cursor-default"
+                >
+                  İletişim Bilgileri Açık
+                </button>
+              )}
+            </>
           )}
 
-          {hasAccess && (
-            <button
-              disabled
-              className="flex-[2] bg-green-500 text-white py-5 rounded-full font-black text-base uppercase tracking-widest shadow-xl cursor-default"
-            >
-              İletişim Bilgileri Açık
-            </button>
-          )}
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 
 export interface CV {
   id: string;
+  userId: string;
   name: string;
   profession: string;
   city: string;
@@ -40,6 +41,7 @@ export interface CV {
     email?: string;
   }>;
   workingStatus?: 'active' | 'passive' | 'open'; // active: Çalışıyor, passive: Çalışmıyor, open: İş Arıyor
+  created_at?: string;
 }
 
 export interface FilterState {

@@ -13,19 +13,38 @@ import {
   DRIVER_LICENSES,
   TRAVEL_STATUSES,
   LANGUAGES,
-  LANGUAGE_LEVELS,
-  POPULAR_CITIES
+  LANGUAGE_LEVELS
 } from '../constants';
 import { supabase } from '../lib/supabase';
+
+interface SelectionPillProps {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}
+
+const SelectionPill: React.FC<SelectionPillProps> = ({ label, active, onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`px-5 py-2.5 rounded-full text-[11px] font-bold border transition-all ${active
+      ? 'bg-black border-black text-white shadow-md'
+      : 'bg-white border-gray-200 text-gray-500 hover:border-black'
+      }`}
+  >
+    {label}
+  </button>
+);
 
 
 interface CVFormModalProps {
   onClose: () => void;
   onSubmit: (cv: Partial<CV>) => void;
   initialData?: Partial<CV>;
+  availableCities?: Array<{ label: string }>;
 }
 
-const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialData }) => {
+const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialData, availableCities = [] }) => {
   const [formData, setFormData] = useState<Partial<CV>>({
     name: initialData?.name || '',
     profession: initialData?.profession || '',
@@ -151,18 +170,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
     </div>
   );
 
-  const SelectionPill = ({ label, active, onClick }: { label: string, active: boolean, onClick: () => void }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`px-5 py-2.5 rounded-full text-[11px] font-bold border transition-all ${active
-        ? 'bg-black border-black text-white shadow-md'
-        : 'bg-white border-gray-200 text-gray-500 hover:border-black'
-        }`}
-    >
-      {label}
-    </button>
-  );
+
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl">
@@ -267,7 +275,8 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                       onChange={e => setFormData({ ...formData, city: e.target.value })}
                       className="w-full bg-gray-50 border border-transparent focus:border-black/10 focus:bg-white rounded-full px-6 py-3.5 outline-none text-sm font-bold appearance-none cursor-pointer"
                     >
-                      {POPULAR_CITIES.map(c => <option key={c.label} value={c.label}>{c.label}</option>)}
+                      <option value="">Şehir Seçin</option>
+                      {(availableCities.length > 0 ? availableCities : [{ label: 'İstanbul' }, { label: 'Ankara' }, { label: 'İzmir' }]).map(c => <option key={c.label} value={c.label}>{c.label}</option>)}
                     </select>
                   </div>
                   <div className="space-y-2">

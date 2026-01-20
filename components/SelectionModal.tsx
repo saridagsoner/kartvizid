@@ -12,7 +12,7 @@ interface SelectionModalProps {
 const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect, onClose }) => {
   const [search, setSearch] = useState('');
 
-  const filtered = items.filter(item => 
+  const filtered = (items || []).filter(item =>
     item.label.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -21,7 +21,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
       <div className="bg-white w-full max-w-[500px] rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
         <div className="p-8 border-b border-gray-100 flex justify-between items-center">
           <h2 className="text-xl font-black text-black tracking-tight">{title}</h2>
-          <button 
+          <button
             onClick={onClose}
             className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-xl text-black hover:bg-black hover:text-white transition-all"
           >
@@ -35,8 +35,8 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Listede ara..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}

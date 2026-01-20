@@ -13,6 +13,7 @@ import BusinessCard from './components/BusinessCard';
 import Filters from './components/Filters';
 import ProfileModal from './components/ProfileModal';
 import CVFormModal from './components/CVFormModal';
+import Footer from './components/Footer';
 import SettingsModal from './components/SettingsModal';
 
 const SortDropdown: React.FC<{
@@ -57,7 +58,7 @@ const SortDropdown: React.FC<{
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-[60] animate-in slide-in-from-top-2 duration-200">
+        <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-[60] animate-in slide-in-from-top-2 duration-200 overflow-hidden">
           {options.map((opt) => (
             <button
               key={opt.id}
@@ -65,11 +66,11 @@ const SortDropdown: React.FC<{
                 onChange(opt.id);
                 setIsOpen(false);
               }}
-              className={`w-full text-left px-5 py-3 text-xs font-bold transition-all flex items-center justify-between ${value === opt.id ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-50 hover:text-black'
+              className={`w-full text-left px-5 py-3 text-xs font-bold transition-all flex items-center justify-between ${value === opt.id ? 'bg-gray-50 text-black' : 'text-gray-600 hover:bg-gray-50 hover:text-black'
                 }`}
             >
               {opt.label}
-              {value === opt.id && <span className="text-[10px]">✓</span>}
+              {value === opt.id && <span className="text-[10px] font-black text-black">✓</span>}
             </button>
           ))}
         </div>
@@ -87,8 +88,14 @@ const App: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [cvList, setCvList] = useState<CV[]>([]);
   const [sentRequests, setSentRequests] = useState<ContactRequest[]>([]);
+  const [receivedRequests, setReceivedRequests] = useState<ContactRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('default');
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 20;
+
   const [activeFilters, setActiveFilters] = useState<FilterState>({
     profession: '',
     city: '',
@@ -122,6 +129,7 @@ const App: React.FC = () => {
     fetchCVs();
     if (user) {
       fetchSentRequests();
+      fetchReceivedRequests();
     }
   }, [user]);
 
@@ -137,6 +145,22 @@ const App: React.FC = () => {
       setSentRequests(data || []);
     } catch (error) {
       console.error('Error fetching sent requests:', error);
+    }
+  };
+
+  const fetchReceivedRequests = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('contact_requests')
+        .select('*')
+        .eq('target_user_id', user.id)
+        .eq('status', 'pending');
+
+      if (error) throw error;
+      setReceivedRequests(data || []);
+    } catch (error) {
+      console.error('Error fetching received requests:', error);
     }
   };
 
@@ -208,38 +232,39 @@ const App: React.FC = () => {
         const mappedData: CV[] = (data || []).map((item: any) => ({
           id: item.id,
           userId: item.user_id,
-          name: item.name,
-          profession: item.profession,
-          city: item.city,
-          experienceYears: item.experience_years,
-          language: item.language,
-          languageLevel: item.language_level,
+          name: item.name || '',
+          profession: item.profession || '',
+          city: item.city || '',
+          experienceYears: item.experience_years || 0,
+          language: item.language || '',
+          languageLevel: item.language_level || '',
           photoUrl: item.photo_url || 'https://picsum.photos/seed/user-placeholder/100/100', // Default if empty
-          salaryMin: item.salary_min,
-          salaryMax: item.salary_max,
-          about: item.about,
+          salaryMin: item.salary_min || 0,
+          salaryMax: item.salary_max || 0,
+          about: item.about || '',
           skills: item.skills || [],
-          education: item.education,
-          educationLevel: item.education_level,
-          graduationStatus: item.graduation_status,
-          workType: item.work_type,
-          employmentType: item.employment_type,
-          militaryStatus: item.military_status,
-          maritalStatus: item.marital_status,
-          disabilityStatus: item.disability_status,
-          driverLicense: item.driver_license,
-          travelStatus: item.travel_status,
-          noticePeriod: item.notice_period,
+          education: item.education || '',
+          educationLevel: item.education_level || '',
+          graduationStatus: item.graduation_status || '',
+          workType: item.work_type || '',
+          employmentType: item.employment_type || '',
+          militaryStatus: item.military_status || '',
+          maritalStatus: item.marital_status || '',
+          disabilityStatus: item.disability_status || '',
+          driverLicense: item.driver_license || [],
+          travelStatus: item.travel_status || '',
+          noticePeriod: item.notice_period || '',
           isNew: item.is_new,
           isActive: item.is_active,
-          views: item.views,
+          views: item.views || 0,
           isPlaced: item.is_placed,
-          email: item.email,
-          phone: item.phone,
+          email: item.email || '',
+          phone: item.phone || '',
           isEmailPublic: item.is_email_public,
           isPhonePublic: item.is_phone_public,
-          workingStatus: item.working_status,
-          references: item.references || []
+          workingStatus: item.working_status || 'open',
+          references: item.references || [],
+          created_at: item.created_at
         }));
         setCvList(mappedData);
       }
@@ -329,11 +354,12 @@ const App: React.FC = () => {
   const filteredCVs = useMemo(() => {
     let result = cvList.filter((cv) => {
       // Global Search
+      const searchLower = searchQuery.toLocaleLowerCase('tr');
       const matchesSearch =
-        cv.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cv.profession.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cv.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        cv.skills.some(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
+        cv.name.toLocaleLowerCase('tr').includes(searchLower) ||
+        cv.profession.toLocaleLowerCase('tr').includes(searchLower) ||
+        cv.city.toLocaleLowerCase('tr').includes(searchLower) ||
+        cv.skills.some(s => s.toLocaleLowerCase('tr').includes(searchLower));
 
       const matchesProfession = !activeFilters.profession || cv.profession === activeFilters.profession;
       const matchesCity = !activeFilters.city || cv.city === activeFilters.city;
@@ -377,15 +403,158 @@ const App: React.FC = () => {
     } else if (sortBy === 'newest') {
       result = [...result].sort((a, b) => (a.isNew === b.isNew) ? 0 : a.isNew ? -1 : 1);
     } else if (sortBy === 'placed') {
-      result = [...result].sort((a, b) => (a.isPlaced === b.isPlaced) ? 0 : a.isPlaced ? -1 : 1);
+      // Filter to show ONLY placed items, as requested ("list whatever is suitable")
+      result = result.filter(cv => cv.isPlaced);
     }
 
     return result;
   }, [cvList, searchQuery, activeFilters, sortBy]);
 
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, activeFilters, sortBy]);
+
+  const totalPages = Math.ceil(filteredCVs.length / ITEMS_PER_PAGE);
+  const currentItems = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredCVs.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredCVs, currentPage]);
+
+  const availableProfessions = useMemo(() => {
+    const unique = new Set(cvList.map(cv => cv.profession).filter(Boolean));
+    return Array.from(unique).sort().map(p => ({ label: p }));
+  }, [cvList]);
+
+  const availableCities = useMemo(() => {
+    const unique = new Set(cvList.map(cv => cv.city).filter(Boolean));
+    return Array.from(unique).sort().map(c => ({ label: c }));
+  }, [cvList]);
+
   const handleFilterUpdate = (key: string, value: any) => {
     setActiveFilters(prev => ({ ...prev, [key]: value }));
   };
+
+  const handleRequestResponse = async (requestId: string, action: 'approved' | 'rejected') => {
+    try {
+      const { error } = await supabase
+        .from('contact_requests')
+        .update({ status: action })
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      // Update local state by removing the handled request from the list (so it disappears from notification list)
+      // And update sentRequests if necessary? 
+      // Actually receivedRequests are the ones being approved/rejected.
+      setReceivedRequests(prev => prev.filter(req => req.id !== requestId));
+
+      showToast(action === 'approved' ? 'İstek onaylandı' : 'İstek reddedildi', 'success');
+
+      // Also invalidate visible cache if necessary? No need, local state updated.
+    } catch (error: any) {
+      console.error('Error updating request:', error);
+      showToast('İşlem başarısız: ' + error.message, 'error');
+    }
+  };
+
+  const professionStats = useMemo(() => {
+    const counts: Record<string, number> = {};
+    cvList.forEach(cv => {
+      if (cv.profession) {
+        counts[cv.profession] = (counts[cv.profession] || 0) + 1;
+      }
+    });
+
+    return Object.entries(counts)
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [cvList]);
+
+  const cityStats = useMemo(() => {
+    const counts: Record<string, number> = {};
+    cvList.forEach(cv => {
+      if (cv.city) {
+        counts[cv.city] = (counts[cv.city] || 0) + 1;
+      }
+    });
+
+    return Object.entries(counts)
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [cvList]);
+
+  const weeklyRisingStats = useMemo(() => {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    const recentCVs = cvList.filter(cv => {
+      if (!cv.created_at) return false;
+      return new Date(cv.created_at) > oneWeekAgo;
+    });
+
+    const counts: Record<string, number> = {};
+    recentCVs.forEach(cv => {
+      if (cv.profession) {
+        counts[cv.profession] = (counts[cv.profession] || 0) + 1;
+      }
+    });
+
+    const stats = Object.entries(counts)
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3); // Top 3
+
+    if (stats.length === 0) return [];
+
+    const maxCount = Math.max(...stats.map(s => s.count));
+
+    return stats.map(s => ({
+      label: s.label,
+      growth: Math.round((s.count / maxCount) * 100)
+    }));
+  }, [cvList]);
+
+  // Platform Statistics Calculation
+  const [approvedRequestCount, setApprovedRequestCount] = useState(0);
+
+  const platformStats = useMemo(() => {
+    // 1. Total CVs
+    const totalCVs = cvList.length;
+
+    // 2. Active Job Seekers (workingStatus === 'open')
+    const activeJobSeekers = cvList.filter(cv => cv.workingStatus === 'open').length;
+
+    // 3. New This Week
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const newThisWeek = cvList.filter(cv => cv.created_at && new Date(cv.created_at) > oneWeekAgo).length;
+
+    // 4. Total Views
+    const totalViews = cvList.reduce((acc, cv) => acc + (cv.views || 0), 0);
+
+    return [
+      { label: 'Toplam CV', value: totalCVs.toLocaleString('tr-TR') },
+      { label: 'Aktif İş Arayan', value: activeJobSeekers.toLocaleString('tr-TR') },
+      { label: 'Bu Hafta Yeni', value: `+${newThisWeek}` },
+      { label: 'Toplam Görüntülenme', value: totalViews >= 1000 ? `${(totalViews / 1000).toFixed(1)}k` : totalViews.toString() },
+      { label: 'Başarılı Eşleşme', value: approvedRequestCount.toLocaleString('tr-TR') }
+    ];
+  }, [cvList, approvedRequestCount]);
+
+  useEffect(() => {
+    // Fetch Global Approved Requests for "Başarılı Eşleşme"
+    const fetchApprovedCount = async () => {
+      const { count } = await supabase
+        .from('contact_requests')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'approved');
+
+      if (count !== null) setApprovedRequestCount(count);
+    };
+
+    fetchApprovedCount();
+  }, []); // Run once on mount or consider polling if needed
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F0F2F5]">
@@ -399,20 +568,28 @@ const App: React.FC = () => {
         isAuthModalOpen={isAuthModalOpen}
         onCloseAuth={() => setIsAuthModalOpen(false)}
         authMode={authMode}
+        notificationCount={receivedRequests.length}
+        notifications={receivedRequests}
+        onNotificationAction={handleRequestResponse}
       />
 
       <div className="flex-1 flex justify-center pt-14 px-4 md:px-6">
         <div className="max-w-[1440px] w-full flex gap-6 mt-6 pb-12">
           <aside className="hidden lg:block w-[280px] shrink-0">
-            <SidebarLeft />
+            <SidebarLeft popularProfessions={professionStats} popularCities={cityStats} platformStats={platformStats} />
           </aside>
 
           <section className="flex-1 min-w-0 flex flex-col gap-4">
-            <Filters currentFilters={activeFilters} onChange={handleFilterUpdate} />
+            <Filters
+              currentFilters={activeFilters}
+              onChange={handleFilterUpdate}
+              availableProfessions={availableProfessions}
+              availableCities={availableCities}
+            />
 
             <div className="bg-white rounded-lg border border-gray-200 p-4 mb-2 flex items-center justify-between shadow-sm">
               <h2 className="text-sm font-bold text-gray-800">
-                Cv Listesi <span className="text-gray-400 font-normal ml-1">({filteredCVs.length} sonuç)</span>
+                Kartvizid Listesi <span className="text-gray-400 font-normal ml-1">({filteredCVs.length} sonuç)</span>
               </h2>
               <div className="flex items-center gap-3">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sıralama:</span>
@@ -421,8 +598,8 @@ const App: React.FC = () => {
             </div>
 
             <div className="flex flex-col gap-3">
-              {filteredCVs.length > 0 ? (
-                filteredCVs.map(cv => {
+              {currentItems.length > 0 ? (
+                currentItems.map(cv => {
                   const request = sentRequests.find(r => r.target_user_id === cv.userId);
                   const status = request ? request.status : 'none';
 
@@ -448,13 +625,48 @@ const App: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {/* Pagination Controls */}
+            {filteredCVs.length > ITEMS_PER_PAGE && (
+              <div className="mt-6 flex justify-center items-center gap-4">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentPage === 1
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-white text-black border border-gray-200 hover:bg-black hover:text-white hover:border-black shadow-sm'
+                    }`}
+                >
+                  ← Önceki
+                </button>
+
+                <span className="text-sm font-medium text-gray-500">
+                  Sayfa {currentPage} / {totalPages}
+                </span>
+
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentPage === totalPages
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-white text-black border border-gray-200 hover:bg-black hover:text-white hover:border-black shadow-sm'
+                    }`}
+                >
+                  Sonraki →
+                </button>
+              </div>
+            )}
           </section>
 
           <aside className="hidden md:block w-[280px] shrink-0">
-            <SidebarRight />
+            <SidebarRight weeklyTrends={weeklyRisingStats} />
           </aside>
         </div>
       </div>
+
+      <Footer />
+
+
 
       {selectedCV && (
         <ProfileModal
@@ -464,7 +676,14 @@ const App: React.FC = () => {
           onRequestAccess={() => handleSendRequest(selectedCV.userId)}
         />
       )}
-      {isCVFormOpen && <CVFormModal onClose={() => setIsCVFormOpen(false)} onSubmit={handleCreateCV} initialData={currentUserCV || undefined} />}
+      {isCVFormOpen && (
+        <CVFormModal
+          onClose={() => setIsCVFormOpen(false)}
+          onSubmit={handleCreateCV}
+          initialData={currentUserCV || undefined}
+          availableCities={availableCities}
+        />
+      )}
       {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
     </div>
   );
