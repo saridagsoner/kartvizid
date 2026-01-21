@@ -137,6 +137,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
         }
     };
 
+
+    const isEmployer = user?.user_metadata?.role === 'employer';
+
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
             {/* Fixed Height Layout */}
@@ -153,7 +156,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 Hesabınızı silmek istediğinize emin misiniz?
                             </h3>
                             <p className="text-sm text-gray-500 mb-8 leading-relaxed">
-                                Bu işlem geri alınamaz. CV'niz, profiliniz ve tüm verileriniz kalıcı olarak silinecektir.
+                                {isEmployer
+                                    ? "Bu işlem geri alınamaz. İş veren profiliniz ve tüm verileriniz kalıcı olarak silinecektir."
+                                    : "Bu işlem geri alınamaz. CV'niz, profiliniz ve tüm verileriniz kalıcı olarak silinecektir."
+                                }
                             </p>
                             <div className="flex flex-col gap-3">
                                 <button
@@ -238,7 +244,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                     <div className="bg-red-50 rounded-2xl p-5 border border-red-100">
                                         <div className="mb-4">
                                             <p className="text-sm font-bold text-red-900">Hesabımı Sil</p>
-                                            <p className="text-xs text-red-700 mt-1">CV'niz, başvurularınız ve profiliniz kalıcı olarak silinir.</p>
+                                            <p className="text-xs text-red-700 mt-1">
+                                                {isEmployer
+                                                    ? "İş veren profiliniz ve tüm verileriniz kalıcı olarak silinir."
+                                                    : "CV'niz, başvurularınız ve profiliniz kalıcı olarak silinir."
+                                                }
+                                            </p>
                                         </div>
                                         <p className="text-[10px] text-red-600/70 italic mb-5">
                                             Dikkat: Bu işlem geri alınamaz. Silme işleminden sonra tüm verilerinize erişimi kaybedeceksiniz.

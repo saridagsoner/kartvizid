@@ -2,29 +2,36 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
+
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
     initialMode?: 'signin' | 'signup';
+    initialRole?: 'job_seeker' | 'employer';
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'signin' }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'signin', initialRole = 'job_seeker' }) => {
     const [mode, setMode] = useState<'signin' | 'signup'>(initialMode);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isEmployer, setIsEmployer] = useState(initialRole === 'employer');
 
     useEffect(() => {
-        if (isOpen && mode === 'signin') {
-            const savedEmail = localStorage.getItem('rememberedEmail');
-            if (savedEmail) {
-                setEmail(savedEmail);
-                setRememberMe(true);
+        if (isOpen) {
+            setMode(initialMode);
+            setIsEmployer(initialRole === 'employer');
+            if (mode === 'signin') {
+                const savedEmail = localStorage.getItem('rememberedEmail');
+                if (savedEmail) {
+                    setEmail(savedEmail);
+                    setRememberMe(true);
+                }
             }
         }
-    }, [isOpen, mode]);
+    }, [isOpen, initialMode, initialRole]);
 
     if (!isOpen) return null;
 
@@ -35,11 +42,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
         try {
             if (mode === 'signup') {
-                const { error } = await supabase.auth.signUp({
+                const { error, data } = await supabase.auth.signUp({
                     email,
                     password,
+                    options: {
+                        data: {
+                            role: isEmployer ? 'employer' : 'job_seeker'
+                        }
+                    }
                 });
                 if (error) throw error;
+
+                // If the trigger doesn't handle it, we might want to manually update.
+                // However, doing it here might be racy if the user isn't fully created/confirmed.
+                // For now, we rely on metadata. 
+
                 alert('Kayıt başarılı! Lütfen e-postanızı doğrulayın, ya da otomatik giriş yapıldıysa devam edin.');
                 onClose();
             } else {
@@ -81,10 +98,16 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
                 <div className="text-center mb-8">
                     <h2 className="text-2xl font-black text-gray-900 mb-2">
-                        {mode === 'signin' ? 'Tekrar Hoşgeldin!' : 'Aramıza Katıl'}
+                        {isEmployer
+                            ? (mode === 'signin' ? 'İş Veren Girişi' : 'İş Veren Hesabı Oluştur')
+                            : (mode === 'signin' ? 'Aday Girişi' : 'Aday Hesabı Oluştur')
+                        }
                     </h2>
                     <p className="text-gray-500 font-medium">
-                        {mode === 'signin' ? 'Hesabına giriş yap ve devam et.' : 'Profesyonel ağını genişletmeye başla.'}
+                        {isEmployer
+                            ? 'Firma profilinizi yönetmek için giriş yapın.'
+                            : 'Kariyerinizde yeni bir sayfa açmak için katılın.'
+                        }
                     </p>
                 </div>
 
@@ -130,6 +153,27 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                             />
                             <label htmlFor="rememberMe" className="text-sm font-bold text-gray-600 cursor-pointer select-none">
                                 Beni Hatırla
+                            </label>
+                        </div>
+                    )}
+
+
+                    {/* Show employer checkbox ONLY if no initialRole was passed (generic entry) 
+                        OR if we want to allow switching. But user requested 'accordingly'. 
+                        So if initialRole is set, we hide the checkbox to avoid confusion, 
+                        assuming the button click determines the intent. 
+                    */}
+                    {!initialRole && mode === 'signup' && (
+                        <div className="flex items-center gap-2 px-1">
+                            <input
+                                type="checkbox"
+                                id="isEmployer"
+                                checked={isEmployer}
+                                onChange={(e) => setIsEmployer(e.target.checked)}
+                                className="w-4 h-4 rounded border-gray-300 text-black focus:ring-black focus:ring-offset-0 cursor-pointer accent-black"
+                            />
+                            <label htmlFor="isEmployer" className="text-sm font-bold text-gray-600 cursor-pointer select-none">
+                                İşveren Hesabı Oluştur (Firma Profili)
                             </label>
                         </div>
                     )}

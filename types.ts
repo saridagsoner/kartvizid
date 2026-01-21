@@ -77,15 +77,26 @@ export interface Notification {
   requesterId?: string;
 }
 
+export interface NotificationItem {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  type: 'info' | 'success' | 'warning';
+  is_read: boolean;
+  created_at: string;
+}
+
 export interface ContactRequest {
   id: string;
   requester_id: string;
   target_user_id: string;
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
-  requester_profile?: {
+  requester?: {
     full_name: string;
-    avatar_url: string;
+    avatar_url?: string;
+    role?: string;
   };
 }
 
@@ -103,4 +114,30 @@ export interface PopularItem {
 export interface TrendItem {
   label: string;
   growth: number;
+}
+
+export type UserRole = 'job_seeker' | 'employer';
+
+export interface Company {
+  id: string;
+  userId: string;
+  name: string;
+  description?: string;
+  website?: string;
+  industry?: string;
+  city?: string;
+  logoUrl?: string;
+  createdAt?: string;
+}
+
+export interface PopularCompany extends Company {
+  interaction_count: number;
+}
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  role: UserRole;
+  full_name?: string;
+  avatar_url?: string;
 }

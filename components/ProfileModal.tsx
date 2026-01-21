@@ -8,9 +8,10 @@ interface ProfileModalProps {
   onClose: () => void;
   requestStatus?: 'pending' | 'approved' | 'rejected' | 'none';
   onRequestAccess?: () => void;
+  onJobFound?: () => void;
 }
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus = 'none', onRequestAccess }) => {
+const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus = 'none', onRequestAccess, onJobFound }) => {
   const { user } = useAuth();
   const isOwner = user?.id === cv.userId;
 
@@ -314,6 +315,15 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           >
             Kapat
           </button>
+
+          {isOwner && cv.workingStatus !== 'active' && (
+            <button
+              onClick={onJobFound}
+              className="flex-[2] bg-gradient-to-r from-green-400 to-emerald-600 text-white py-5 rounded-full font-black text-sm uppercase tracking-widest hover:from-green-500 hover:to-emerald-700 transition-all active:scale-95 shadow-lg shadow-green-200"
+            >
+              🎉 İŞİMİ BULDUM
+            </button>
+          )}
 
           {isOwner ? (
             <>

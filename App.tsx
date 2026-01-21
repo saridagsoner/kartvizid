@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { CV, FilterState, ContactRequest } from './types';
+import { CV, FilterState, ContactRequest, Company, NotificationItem } from './types';
 import { supabase } from './lib/supabase';
 import { useAuth } from './context/AuthContext';
 import { useToast } from './context/ToastContext';
@@ -15,6 +15,7 @@ import ProfileModal from './components/ProfileModal';
 import CVFormModal from './components/CVFormModal';
 import Footer from './components/Footer';
 import SettingsModal from './components/SettingsModal';
+import CompanyFormModal from './components/CompanyFormModal';
 
 const SortDropdown: React.FC<{
   value: string;
@@ -79,6 +80,25 @@ const SortDropdown: React.FC<{
   );
 };
 
+const getFriendlyErrorMessage = (error: any): string => {
+  const message = error.message || error.toString();
+
+  if (message.includes('Could not find the table') || message.includes('relation "public.companies" does not exist')) {
+    return 'Sistem hatası: Veritabanı tablosu bulunamadı. Lütfen "companies" tablosunun oluşturulduğundan emin olun (Migration gerekli).';
+  }
+  if (message.includes('duplicate key')) {
+    return 'Bu kayıt zaten mevcut.';
+  }
+  if (message.includes('network') || message.includes('fetch')) {
+    return 'Ağ bağlantısı hatası. Lütfen internet bağlantınızı kontrol edin.';
+  }
+  if (message.includes('JWT') || message.includes('auth')) {
+    return 'Oturum süreniz dolmuş olabilir. Lütfen tekrar giriş yapın.';
+  }
+
+  return 'Bir hata oluştu: ' + message;
+};
+
 const App: React.FC = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
@@ -86,11 +106,19 @@ const App: React.FC = () => {
   const [selectedCV, setSelectedCV] = useState<CV | null>(null);
   const [isCVFormOpen, setIsCVFormOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [cvList, setCvList] = useState<CV[]>([]);
-  const [sentRequests, setSentRequests] = useState<ContactRequest[]>([]);
   const [receivedRequests, setReceivedRequests] = useState<ContactRequest[]>([]);
+  const [generalNotifications, setGeneralNotifications] = useState<NotificationItem[]>([]);
+  const [sentRequests, setSentRequests] = useState<ContactRequest[]>([]);
+  const [cvList, setCvList] = useState<CV[]>([]);
+  const [popularCVs, setPopularCVs] = useState<CV[]>([]);
+  const [jobFinders, setJobFinders] = useState<CV[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('default');
+
+  const [activeCompany, setActiveCompany] = useState<Company | null>(null);
+
+  const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
+  const [popularCompanies, setPopularCompanies] = useState<any[]>([]);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -119,19 +147,47 @@ const App: React.FC = () => {
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [authRole, setAuthRole] = useState<'job_seeker' | 'employer' | undefined>(undefined);
 
-  const handleAuthOpen = (mode: 'signin' | 'signup') => {
+  const handleAuthOpen = (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => {
     setAuthMode(mode);
+    setAuthRole(role);
     setIsAuthModalOpen(true);
   };
 
   useEffect(() => {
     fetchCVs();
+    fetchPopularCVs();
+    fetchJobFinders();
+    fetchPopularCompanies();
     if (user) {
+      if (user.user_metadata?.role === 'employer') {
+        fetchCompany();
+      }
+      fetchSentRequests();
       fetchSentRequests();
       fetchReceivedRequests();
+      fetchGeneralNotifications();
+    } else {
+      setActiveCompany(null);
     }
   }, [user]);
+
+  // Handle Incremented View
+  const handleCVClick = async (cv: CV) => {
+    setSelectedCV(cv);
+
+    // Increment view ONLY if user is NOT the owner
+    // If user is not logged in, we still count views (visitor views)
+    if (!user || user.id !== cv.userId) {
+      try {
+        await supabase.rpc('increment_cv_view', { cv_id: cv.id });
+        // Optionally refresh stats after some time or optimistic update
+      } catch (err) {
+        console.error('Failed to increment view', err);
+      }
+    }
+  };
 
   const fetchSentRequests = async () => {
     if (!user) return;
@@ -148,16 +204,207 @@ const App: React.FC = () => {
     }
   };
 
+  const fetchGeneralNotifications = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setGeneralNotifications(data || []);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
+
+  const markNotificationRead = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('id', id);
+
+      if (error) throw error;
+      fetchGeneralNotifications();
+    } catch (error) {
+      console.error('Error marking notification read:', error);
+    }
+  };
+
+  const fetchPopularCVs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('cvs')
+        .select('*')
+        .order('views', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+
+      const mapped: CV[] = (data || []).map((item: any) => ({
+        id: item.id,
+        userId: item.user_id,
+        name: item.name || '',
+        profession: item.profession || '',
+        city: item.city || '',
+        experienceYears: item.experience_years || 0,
+        language: item.language || '',
+        languageLevel: item.language_level || '',
+        photoUrl: item.photo_url || '',
+        salaryMin: item.salary_min || 0,
+        salaryMax: item.salary_max || 0,
+        about: item.about || '',
+        skills: item.skills || [],
+        education: item.education || '',
+        educationLevel: item.education_level || '',
+        graduationStatus: item.graduation_status || '',
+        workType: item.work_type || '',
+        employmentType: item.employment_type || '',
+        militaryStatus: item.military_status || '',
+        maritalStatus: item.marital_status || '',
+        disabilityStatus: item.disability_status || '',
+        noticePeriod: item.notice_period || '',
+        travelStatus: item.travel_status || '',
+        driverLicense: item.driver_license || [],
+        isNew: item.is_new,
+        views: item.views || 0,
+        email: item.email,
+        phone: item.phone,
+        isEmailPublic: item.is_email_public,
+        isPhonePublic: item.is_phone_public,
+        workingStatus: item.working_status,
+        references: item.references || []
+      }));
+      setPopularCVs(mapped);
+    } catch (err) {
+      console.error('Error fetching popular cvs:', err);
+    }
+  };
+
+  const fetchPopularCompanies = async () => {
+    try {
+      // Calls the RPC function 'get_popular_companies'
+      const { data, error } = await supabase.rpc('get_popular_companies');
+
+      if (error) {
+        console.error('Error fetching popular companies:', error);
+        return;
+      }
+
+      setPopularCompanies(data || []);
+    } catch (err) {
+      console.error('Error fetching popular companies:', err);
+    }
+  };
+
+
+  const fetchJobFinders = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('cvs')
+        .select('*')
+        .eq('working_status', 'active') // active = Working / Found Job
+        .order('updated_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+
+      const mapped: CV[] = (data || []).map((item: any) => ({
+        id: item.id,
+        userId: item.user_id,
+        name: item.name || '',
+        profession: item.profession || '',
+        city: item.city || '',
+        experienceYears: item.experience_years || 0,
+        language: item.language || '',
+        languageLevel: item.language_level || '',
+        photoUrl: item.photo_url || '',
+        salaryMin: item.salary_min || 0,
+        salaryMax: item.salary_max || 0,
+        about: item.about || '',
+        skills: item.skills || [],
+        education: item.education || '',
+        educationLevel: item.education_level || '',
+        graduationStatus: item.graduation_status || '',
+        workType: item.work_type || '',
+        employmentType: item.employment_type || '',
+        militaryStatus: item.military_status || '',
+        maritalStatus: item.marital_status || '',
+        disabilityStatus: item.disability_status || '',
+        noticePeriod: item.notice_period || '',
+        travelStatus: item.travel_status || '',
+        driverLicense: item.driver_license || [],
+        isNew: item.is_new,
+        views: item.views || 0,
+        email: item.email,
+        phone: item.phone,
+        isEmailPublic: item.is_email_public,
+        isPhonePublic: item.is_phone_public,
+        workingStatus: item.working_status,
+        references: item.references || []
+      }));
+      setJobFinders(mapped);
+    } catch (err) {
+      console.error('Error fetching job finders:', err);
+    }
+  };
+
+  const handleJobFound = async () => {
+    if (!currentUserCV) return;
+
+    try {
+      const { error } = await supabase
+        .from('cvs')
+        .update({ working_status: 'active' }) // active = found job
+        .eq('id', currentUserCV.id);
+
+      if (error) throw error;
+
+      showToast('Tebrikler! Yeni işinizde başarılar dileriz. 🎉', 'success');
+
+      // Refresh lists
+      fetchCVs();
+      fetchJobFinders();
+
+      // Update local state and close modal
+      if (selectedCV?.id === currentUserCV.id) {
+        setSelectedCV(prev => prev ? { ...prev, workingStatus: 'active' } : null);
+        setTimeout(() => setSelectedCV(null), 2000); // Close after 2 seconds
+      }
+
+    } catch (err) {
+      console.error('Error updating status:', err);
+      showToast('Bir hata oluştu.', 'error');
+    }
+  };
+
   const fetchReceivedRequests = async () => {
     if (!user) return;
     try {
       const { data, error } = await supabase
         .from('contact_requests')
-        .select('*')
+        .select(`
+          *,
+          requester:profiles!requester_id (
+            full_name,
+            role,
+            avatar_url
+          )
+        `)
         .eq('target_user_id', user.id)
         .eq('status', 'pending');
 
       if (error) throw error;
+
+      // Fetch company names for employer requesters manually if needed, 
+      // or we can rely on profile full_name if they put company name there.
+      // Ideally we would want to join companies too but let's start with profile.
+
+      // Better approach for name: If role is employer, we might want to check companies table.
+      // But for now, let's enable the profile join so "Bir kullanıcı" is replaced.
       setReceivedRequests(data || []);
     } catch (error) {
       console.error('Error fetching received requests:', error);
@@ -210,7 +457,7 @@ const App: React.FC = () => {
       showToast('İletişim isteği gönderildi!', 'success');
     } catch (error: any) {
       console.error('Error sending request:', error);
-      showToast('İstek gönderilirken hata oluştu: ' + error.message, 'error');
+      showToast(getFriendlyErrorMessage(error), 'error');
     }
   };
 
@@ -238,7 +485,7 @@ const App: React.FC = () => {
           experienceYears: item.experience_years || 0,
           language: item.language || '',
           languageLevel: item.language_level || '',
-          photoUrl: item.photo_url || 'https://picsum.photos/seed/user-placeholder/100/100', // Default if empty
+          photoUrl: item.photo_url || '',
           salaryMin: item.salary_min || 0,
           salaryMax: item.salary_max || 0,
           about: item.about || '',
@@ -280,6 +527,85 @@ const App: React.FC = () => {
     return cvList.find((cv: any) => cv.userId === user.id);
   }, [user, cvList]);
 
+  const fetchCompany = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('companies')
+        .select('*')
+        .eq('user_id', user.id)
+        .limit(1);
+
+      if (error) {
+        console.error('Error fetching company:', error);
+      }
+
+      if (data && data.length > 0) {
+        const company = data[0];
+        console.log('Company data fetched:', company);
+        setActiveCompany({
+          id: company.id,
+          userId: company.user_id,
+          name: company.company_name,
+          description: company.description,
+          website: company.website,
+          industry: company.industry,
+          city: company.city,
+          logoUrl: company.logo_url,
+          createdAt: company.created_at
+        });
+      } else {
+        console.log('No company data found for user');
+        setActiveCompany(null);
+      }
+    } catch (error) {
+      console.error('Error fetching company:', error);
+    }
+  };
+
+  const handleCompanySubmit = async (companyData: Partial<Company>) => {
+    if (!user) return;
+
+    try {
+      const dbData = {
+        user_id: user.id,
+        company_name: companyData.name,
+        description: companyData.description,
+        website: companyData.website,
+        industry: companyData.industry,
+        city: companyData.city,
+        logo_url: companyData.logoUrl
+      } as any;
+
+      // Clean up undefined values
+      Object.keys(dbData).forEach(key => dbData[key] === undefined && delete dbData[key]);
+
+      let error;
+      if (activeCompany) {
+        const { error: updateError } = await supabase
+          .from('companies')
+          .update(dbData)
+          .eq('user_id', user.id);
+        error = updateError;
+        if (!error) showToast('İş veren profili güncellendi!', 'success');
+      } else {
+        const { error: insertError } = await supabase
+          .from('companies')
+          .insert([dbData]);
+        error = insertError;
+        if (!error) showToast('İş veren profili oluşturuldu!', 'success');
+      }
+
+      if (error) throw error;
+      setIsCompanyFormOpen(false);
+      fetchCompany();
+
+    } catch (error: any) {
+      console.error('Error saving company:', error);
+      showToast(getFriendlyErrorMessage(error), 'error');
+    }
+  };
+
   const handleCreateCV = async (cvData: Partial<CV>) => {
     if (!user) {
       showToast('CV oluşturmak için giriş yapmalısınız.', 'error');
@@ -310,7 +636,7 @@ const App: React.FC = () => {
         driver_license: cvData.driverLicense,
         travel_status: cvData.travelStatus,
         notice_period: cvData.noticePeriod,
-        photo_url: cvData.photoUrl || 'https://picsum.photos/seed/user-placeholder/100/100',
+        photo_url: cvData.photoUrl || '',
         email: cvData.email,
         phone: cvData.phone,
         is_email_public: cvData.isEmailPublic,
@@ -347,7 +673,7 @@ const App: React.FC = () => {
       fetchCVs();
     } catch (error: any) {
       console.error('Error saving CV:', error);
-      showToast('Hata: ' + error.message, 'error');
+      showToast(getFriendlyErrorMessage(error), 'error');
     }
   };
 
@@ -396,7 +722,11 @@ const App: React.FC = () => {
         matchesGradStatus && matchesMilitary && matchesMarital && matchesDisability &&
         matchesTravel && matchesDriver;
     });
+    // 3. Filter by Working Status (Default: Show only 'open' / Job Seekers)
+    // IMPORTANT: Users with 'active' status (Found Job) should NOT appear in main list
+    result = result.filter(cv => cv.workingStatus === 'open');
 
+    // Sorting Logic
     // Sorting Logic
     if (sortBy === 'popular') {
       result = [...result].sort((a, b) => (b.views || 0) - (a.views || 0));
@@ -454,7 +784,7 @@ const App: React.FC = () => {
       // Also invalidate visible cache if necessary? No need, local state updated.
     } catch (error: any) {
       console.error('Error updating request:', error);
-      showToast('İşlem başarısız: ' + error.message, 'error');
+      showToast(getFriendlyErrorMessage(error), 'error');
     }
   };
 
@@ -561,22 +891,42 @@ const App: React.FC = () => {
       <Navbar
         onSearch={setSearchQuery}
         onCreateCV={() => setIsCVFormOpen(true)}
+        onOpenCompanyProfile={() => {
+          fetchCompany();
+          setIsCompanyFormOpen(true);
+        }}
         onOpenSettings={() => setIsSettingsOpen(true)}
         hasCV={!!currentUserCV}
-        userPhotoUrl={currentUserCV?.photoUrl}
+        userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
         onOpenAuth={handleAuthOpen}
         isAuthModalOpen={isAuthModalOpen}
         onCloseAuth={() => setIsAuthModalOpen(false)}
         authMode={authMode}
-        notificationCount={receivedRequests.length}
-        notifications={receivedRequests}
+        authRole={authRole}
+        notificationCount={receivedRequests.length + generalNotifications.filter(n => !n.is_read).length}
+        notifications={[...receivedRequests, ...generalNotifications].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
         onNotificationAction={handleRequestResponse}
+        onMarkNotificationRead={markNotificationRead}
       />
 
-      <div className="flex-1 flex justify-center pt-14 px-4 md:px-6">
-        <div className="max-w-[1440px] w-full flex gap-6 mt-6 pb-12">
-          <aside className="hidden lg:block w-[280px] shrink-0">
-            <SidebarLeft popularProfessions={professionStats} popularCities={cityStats} platformStats={platformStats} />
+      <div className="flex-1 flex justify-center pt-20 px-4 md:px-6">
+        <div className="max-w-[1440px] w-full flex items-start gap-6 pb-12">
+          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[80px] h-fit pb-4">
+            <SidebarLeft
+              popularProfessions={professionStats}
+              popularCities={cityStats}
+              weeklyTrends={weeklyRisingStats}
+              platformStats={platformStats}
+              jobFinders={jobFinders}
+            />
+          </aside>
+
+          <aside className="hidden xl:block w-[304px] shrink-0 sticky top-[80px] h-fit pb-4 order-last">
+            <SidebarRight
+              popularCVs={popularCVs}
+              popularCompanies={popularCompanies}
+              onCVClick={handleCVClick}
+            />
           </aside>
 
           <section className="flex-1 min-w-0 flex flex-col gap-4">
@@ -607,7 +957,7 @@ const App: React.FC = () => {
                     <BusinessCard
                       key={cv.id}
                       cv={cv}
-                      onClick={() => setSelectedCV(cv)}
+                      onClick={() => handleCVClick(cv)}
                     />
                   );
                 })
@@ -658,9 +1008,7 @@ const App: React.FC = () => {
             )}
           </section>
 
-          <aside className="hidden md:block w-[280px] shrink-0">
-            <SidebarRight weeklyTrends={weeklyRisingStats} />
-          </aside>
+
         </div>
       </div>
 
@@ -674,6 +1022,7 @@ const App: React.FC = () => {
           onClose={() => setSelectedCV(null)}
           requestStatus={sentRequests.find(r => r.target_user_id === selectedCV.userId)?.status || 'none'}
           onRequestAccess={() => handleSendRequest(selectedCV.userId)}
+          onJobFound={handleJobFound}
         />
       )}
       {isCVFormOpen && (
@@ -681,6 +1030,14 @@ const App: React.FC = () => {
           onClose={() => setIsCVFormOpen(false)}
           onSubmit={handleCreateCV}
           initialData={currentUserCV || undefined}
+          availableCities={availableCities}
+        />
+      )}
+      {isCompanyFormOpen && (
+        <CompanyFormModal
+          onClose={() => setIsCompanyFormOpen(false)}
+          onSubmit={handleCompanySubmit}
+          initialData={activeCompany || undefined}
           availableCities={availableCities}
         />
       )}

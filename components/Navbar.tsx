@@ -5,25 +5,31 @@ import UserMenuDropdown from './UserMenuDropdown';
 import { useAuth } from '../context/AuthContext';
 import AuthModal from './AuthModal';
 
+
+import { ContactRequest, NotificationItem } from '../types';
+
 interface NavbarProps {
   onSearch: (query: string) => void;
   onCreateCV: () => void;
+  onOpenCompanyProfile?: () => void;
   onOpenSettings?: () => void;
   hasCV?: boolean;
   userPhotoUrl?: string;
   notificationCount?: number;
-  notifications?: any[]; // Using any to avoid complex type import issues in immediate fixes, though ContactRequest[] is better
+  notifications?: (ContactRequest | NotificationItem)[];
   onNotificationAction?: (requestId: string, action: 'approved' | 'rejected') => void;
+  onMarkNotificationRead?: (id: string) => void;
 }
 
 const Navbar: React.FC<NavbarProps & {
-  onOpenAuth: (mode: 'signin' | 'signup') => void;
+  onOpenAuth: (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => void;
   isAuthModalOpen: boolean;
   onCloseAuth: () => void;
   authMode: 'signin' | 'signup';
+  authRole?: 'job_seeker' | 'employer';
 }> = ({
-  onSearch, onCreateCV, onOpenSettings, hasCV, userPhotoUrl, notificationCount = 0, notifications = [], onNotificationAction,
-  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode
+  onSearch, onCreateCV, onOpenCompanyProfile, onOpenSettings, hasCV, userPhotoUrl, notificationCount = 0, notifications = [], onNotificationAction, onMarkNotificationRead,
+  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole
 }) => {
     const { user, signOut } = useAuth();
     const [query, setQuery] = useState('');
@@ -31,6 +37,7 @@ const Navbar: React.FC<NavbarProps & {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
     // ... existing useState ...
+    const isEmployer = user?.user_metadata?.role === 'employer';
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const val = e.target.value;
@@ -61,7 +68,7 @@ const Navbar: React.FC<NavbarProps & {
                   <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                 </div>
                 <span className="text-[11px] font-semibold text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
-                  Dijital Cv & Doğru Eşleşme
+                  dijital cv & doğru eşleşme
                 </span>
               </div>
             </div>
@@ -103,10 +110,13 @@ const Navbar: React.FC<NavbarProps & {
               {user ? (
                 <>
                   <button
-                    onClick={onCreateCV}
+                    onClick={isEmployer && onOpenCompanyProfile ? onOpenCompanyProfile : onCreateCV}
                     className="hidden sm:block bg-white border border-gray-200 text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-50 transition-all active:scale-95 whitespace-nowrap shadow-sm"
                   >
-                    {hasCV ? "CV'yi Düzelt" : "CV Oluştur"}
+                    {isEmployer
+                      ? "İş Veren Profili"
+                      : (hasCV ? "CV'yi Düzelt" : "CV Oluştur")
+                    }
                   </button>
 
                   <div className="h-6 w-px bg-gray-100 hidden sm:block"></div>
@@ -134,6 +144,7 @@ const Navbar: React.FC<NavbarProps & {
                         onClose={() => setIsNotifOpen(false)}
                         notifications={notifications}
                         onAction={onNotificationAction || (() => { })}
+                        onMarkRead={onMarkNotificationRead}
                       />
                     )}
                   </div>
@@ -147,24 +158,34 @@ const Navbar: React.FC<NavbarProps & {
                       }}
                       className={`w-9 h-9 rounded-full overflow-hidden border transition-all ${isProfileOpen ? 'ring-2 ring-black border-black' : 'border-gray-200 hover:ring-2 hover:ring-gray-100'}`}
                     >
-                      <img src={userPhotoUrl || "https://picsum.photos/seed/user-placeholder/100/100"} alt="Profile" className="w-full h-full object-cover" />
+
+                      {userPhotoUrl ? (
+                        <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                          </svg>
+                        </div>
+                      )}
                     </button>
                     {isProfileOpen && <UserMenuDropdown onClose={() => setIsProfileOpen(false)} onLogout={signOut} onOpenSettings={onOpenSettings} />}
                   </div>
                 </>
               ) : (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <button
-                    onClick={() => onOpenAuth('signin')}
-                    className="text-gray-600 font-bold text-sm px-4 py-2 hover:bg-gray-100 rounded-full transition-colors"
+                    onClick={() => onOpenAuth('signup', 'employer')}
+                    className="text-gray-600 font-bold text-sm px-4 py-2 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap"
                   >
-                    Giriş Yap
+                    İş Veren
                   </button>
                   <button
-                    onClick={() => onOpenAuth('signup')}
-                    className="bg-black text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-800 transition-all active:scale-95 shadow-sm"
+                    onClick={() => onOpenAuth('signup', 'job_seeker')}
+                    className="bg-black text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-800 transition-all active:scale-95 shadow-sm whitespace-nowrap"
                   >
-                    Kayıt Ol
+                    İş Arayan
                   </button>
                 </div>
               )}
@@ -176,6 +197,7 @@ const Navbar: React.FC<NavbarProps & {
           isOpen={isAuthModalOpen}
           onClose={onCloseAuth}
           initialMode={authMode}
+          initialRole={authRole}
         />
       </>
     );
