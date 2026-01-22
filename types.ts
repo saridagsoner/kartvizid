@@ -1,21 +1,61 @@
 
+export interface EducationEntry {
+  id: string;
+  university: string;
+  department: string;
+  level: string;
+  status: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface WorkExperienceEntry {
+  id: string;
+  company: string;
+  role: string;
+  startDate: string;
+  endDate?: string;
+  isCurrent?: boolean;
+  description?: string;
+}
+
+export interface LanguageEntry {
+  id: string;
+  language: string;
+  level: string;
+}
+
+export interface CertificateEntry {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+  url?: string;
+}
+
 export interface CV {
   id: string;
   userId: string;
   name: string;
   profession: string;
   city: string;
+  district?: string;
   experienceYears: number;
-  language: string;
-  languageLevel?: string;
+  language: string; // Legacy / Primary Display
+  languageLevel?: string; // Legacy
+  languageDetails?: LanguageEntry[];
+  certificates?: CertificateEntry[];
   photoUrl: string;
   salaryMin: number;
   salaryMax: number;
+  salaryCurrency?: string;
   about: string;
   skills: string[];
-  education: string;
-  educationLevel?: string;
-  graduationStatus?: string;
+  education: string; // Legacy / Primary Display
+  educationLevel?: string; // Legacy
+  graduationStatus?: string; // Legacy
+  educationDetails?: EducationEntry[];
+  workExperience?: WorkExperienceEntry[];
   workType?: string;
   employmentType?: string;
   militaryStatus?: string;
@@ -40,7 +80,7 @@ export interface CV {
     phone?: string;
     email?: string;
   }>;
-  workingStatus?: 'active' | 'passive' | 'open'; // active: Çalışıyor, passive: Çalışmıyor, open: İş Arıyor
+  workingStatus?: 'active' | 'passive' | 'open';
   created_at?: string;
 }
 
@@ -52,6 +92,7 @@ export interface FilterState {
   languageLevel: string;
   salaryMin: number | '';
   salaryMax: number | '';
+  salaryCurrency?: string;
   skills: string[];
   workType: string;
   employmentType: string;

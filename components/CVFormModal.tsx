@@ -1,6 +1,8 @@
-
 import React, { useState } from 'react';
-import { CV } from '../types';
+import { CV, EducationEntry, WorkExperienceEntry, LanguageEntry, CertificateEntry } from '../types';
+import { TURKEY_LOCATIONS } from '../locations';
+import SearchableSelect from './SearchableSelect';
+import MonthYearPicker from './MonthYearPicker';
 import {
   WORK_TYPES,
   EMPLOYMENT_TYPES,
@@ -48,17 +50,21 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
   const [formData, setFormData] = useState<Partial<CV>>({
     name: initialData?.name || '',
     profession: initialData?.profession || '',
-    city: initialData?.city || 'İstanbul',
+    city: initialData?.city || '',
+    district: initialData?.district || '',
     experienceYears: initialData?.experienceYears || 0,
-    language: initialData?.language || 'İngilizce',
-    languageLevel: initialData?.languageLevel || 'Orta',
+    language: initialData?.language || 'İngilizce', // Legacy fallback
+    languageLevel: initialData?.languageLevel || 'Orta', // Legacy fallback
+    languageDetails: initialData?.languageDetails || [],
     about: initialData?.about || '',
     skills: initialData?.skills || [],
     salaryMin: initialData?.salaryMin || 40000,
     salaryMax: initialData?.salaryMax || 50000,
-    education: initialData?.education || '',
-    educationLevel: initialData?.educationLevel || 'Lisans',
-    graduationStatus: initialData?.graduationStatus || 'Mezun',
+    education: initialData?.education || '', // Legacy fallback
+    educationLevel: initialData?.educationLevel || 'Lisans', // Legacy fallback
+    graduationStatus: initialData?.graduationStatus || 'Mezun', // Legacy fallback
+    educationDetails: initialData?.educationDetails || [],
+    workExperience: initialData?.workExperience || [],
     workType: initialData?.workType || 'Ofis',
     employmentType: initialData?.employmentType || 'Tam Zamanlı',
     militaryStatus: initialData?.militaryStatus || 'Yapıldı',
@@ -120,6 +126,59 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
     }));
   };
 
+  // --- Dynamic List Management ---
+
+  // Work Experience
+  const [workInput, setWorkInput] = useState<Partial<WorkExperienceEntry>>({ company: '', role: '', startDate: '', endDate: '', isCurrent: false, description: '' });
+  const addWork = () => {
+    if (workInput.company && workInput.role) {
+      const newWork = { ...workInput, id: Math.random().toString() } as WorkExperienceEntry;
+      setFormData(prev => ({ ...prev, workExperience: [...(prev.workExperience || []), newWork] }));
+      setWorkInput({ company: '', role: '', startDate: '', endDate: '', isCurrent: false, description: '' });
+    }
+  };
+  const removeWork = (id: string) => {
+    setFormData(prev => ({ ...prev, workExperience: prev.workExperience?.filter(w => w.id !== id) }));
+  };
+
+  // Education
+  const [eduInput, setEduInput] = useState<Partial<EducationEntry>>({ university: '', department: '', level: 'Lisans', status: 'Mezun' });
+  const addEducation = () => {
+    if (eduInput.university && eduInput.department) {
+      const newEdu = { ...eduInput, id: Math.random().toString() } as EducationEntry;
+      setFormData(prev => ({ ...prev, educationDetails: [...(prev.educationDetails || []), newEdu] }));
+      setEduInput({ university: '', department: '', level: 'Lisans', status: 'Mezun' });
+    }
+  };
+  const removeEducation = (id: string) => {
+    setFormData(prev => ({ ...prev, educationDetails: prev.educationDetails?.filter(e => e.id !== id) }));
+  };
+
+  // Language
+  const [langInput, setLangInput] = useState<Partial<LanguageEntry>>({ language: 'İngilizce', level: 'Orta' });
+  const addLang = () => {
+    if (langInput.language) {
+      const newLang = { ...langInput, id: Math.random().toString() } as LanguageEntry;
+      setFormData(prev => ({ ...prev, languageDetails: [...(prev.languageDetails || []), newLang] }));
+    }
+  };
+  const removeLang = (id: string) => {
+    setFormData(prev => ({ ...prev, languageDetails: prev.languageDetails?.filter(l => l.id !== id) }));
+  };
+
+  // Certificates
+  const [certInput, setCertInput] = useState<Partial<CertificateEntry>>({ name: '', issuer: '', date: '' });
+  const addCertificate = () => {
+    if (certInput.name) {
+      const newCert = { ...certInput, id: Math.random().toString() } as CertificateEntry;
+      setFormData(prev => ({ ...prev, certificates: [...(prev.certificates || []), newCert] }));
+      setCertInput({ name: '', issuer: '', date: '' });
+    }
+  };
+  const removeCertificate = (id: string) => {
+    setFormData(prev => ({ ...prev, certificates: prev.certificates?.filter(c => c.id !== id) }));
+  };
+
   const toggleList = (key: keyof CV, value: string) => {
     const currentList = (formData[key] as string[]) || [];
     const newList = currentList.includes(value)
@@ -128,6 +187,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
     setFormData({ ...formData, [key]: newList });
   };
 
+  const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -268,25 +328,39 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Şehir *</label>
-                    <select
-                      value={formData.city}
-                      onChange={e => setFormData({ ...formData, city: e.target.value })}
-                      className="w-full bg-gray-50 border border-transparent focus:border-black/10 focus:bg-white rounded-full px-6 py-3.5 outline-none text-sm font-bold appearance-none cursor-pointer"
-                    >
-                      <option value="">Şehir Seçin</option>
-                      {(availableCities.length > 0 ? availableCities : [{ label: 'İstanbul' }, { label: 'Ankara' }, { label: 'İzmir' }]).map(c => <option key={c.label} value={c.label}>{c.label}</option>)}
-                    </select>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Şehir *</label>
+                        <SearchableSelect
+                          value={formData.city}
+                          onChange={(val) => setFormData({ ...formData, city: val, district: '' })}
+                          options={Object.keys(TURKEY_LOCATIONS).sort()}
+                          placeholder="Şehir Seçiniz"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">İlçe</label>
+                        <SearchableSelect
+                          value={formData.district || ''}
+                          onChange={(val) => setFormData({ ...formData, district: val })}
+                          options={formData.city ? TURKEY_LOCATIONS[formData.city] || [] : []}
+                          placeholder="İlçe"
+                          disabled={!formData.city}
+                        />
+                      </div>
+                    </div>
                   </div>
+
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Tecrübe (Yıl)</label>
                     <input
                       type="number"
-                      value={formData.experienceYears}
-                      onChange={e => setFormData({ ...formData, experienceYears: parseInt(e.target.value) || 0 })}
+                      min="0"
+                      value={formData.experienceYears === 0 ? '' : formData.experienceYears}
+                      onChange={e => setFormData({ ...formData, experienceYears: e.target.value === '' ? 0 : parseInt(e.target.value) })}
                       className="w-full bg-gray-50 border border-transparent focus:border-black/10 focus:bg-white rounded-full px-6 py-3.5 outline-none text-sm font-bold"
-                      placeholder="5"
+                      placeholder="0"
                     />
                   </div>
                 </div>
@@ -379,71 +453,204 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Maaş Beklentisi (Aylık Net ₺)</label>
-                <div className="flex items-center gap-4">
+                <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Maaş Beklentisi (Aylık Net)</label>
+                <div className="flex items-center gap-2 md:gap-4">
                   <div className="flex-1 relative">
-                    <input type="number" value={formData.salaryMin} onChange={e => setFormData({ ...formData, salaryMin: parseInt(e.target.value) })} className="w-full bg-gray-50 rounded-full px-8 py-4 outline-none font-bold text-sm" placeholder="Minimum" />
-                    <span className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400">MIN</span>
+                    <input type="number" value={formData.salaryMin} onChange={e => setFormData({ ...formData, salaryMin: parseInt(e.target.value) })} className="w-full bg-gray-50 rounded-full px-6 md:px-8 py-4 outline-none font-bold text-sm" placeholder="Minimum" />
+                    <span className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400 pointer-events-none">MIN</span>
                   </div>
-                  <div className="w-4 h-0.5 bg-gray-200"></div>
+                  <div className="w-2 md:w-4 h-0.5 bg-gray-200"></div>
                   <div className="flex-1 relative">
-                    <input type="number" value={formData.salaryMax} onChange={e => setFormData({ ...formData, salaryMax: parseInt(e.target.value) })} className="w-full bg-gray-50 rounded-full px-8 py-4 outline-none font-bold text-sm" placeholder="Maximum" />
-                    <span className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400">MAX</span>
+                    <input type="number" value={formData.salaryMax} onChange={e => setFormData({ ...formData, salaryMax: parseInt(e.target.value) })} className="w-full bg-gray-50 rounded-full px-6 md:px-8 py-4 outline-none font-bold text-sm" placeholder="Maximum" />
+                    <span className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-400 pointer-events-none">MAX</span>
+                  </div>
+
+                  {/* Currency Selector */}
+                  <div className="relative">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setIsCurrencyOpen(!isCurrencyOpen); }}
+                      className="h-[52px] w-[70px] bg-gray-50 rounded-full font-bold text-sm text-gray-700 flex items-center justify-center gap-1 hover:bg-gray-100 transition-colors"
+                    >
+                      {formData.salaryCurrency || '₺'}
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform ${isCurrencyOpen ? 'rotate-180' : ''}`}>
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </button>
+
+                    {isCurrencyOpen && (
+                      <div className="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-30 w-[70px]">
+                        {['₺', '$', '€', '£'].map(c => (
+                          <div
+                            key={c}
+                            onClick={() => { setFormData({ ...formData, salaryCurrency: c }); setIsCurrencyOpen(false); }}
+                            className={`px-2 py-3 hover:bg-gray-50 cursor-pointer text-center font-bold text-sm ${formData.salaryCurrency === c ? 'bg-gray-50 text-black' : 'text-gray-500'}`}
+                          >
+                            {c}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
+
           </section>
 
-          {/* Bölüm 3: Eğitim ve Gelişim */}
+
+          {/* Bölüm 2: İş Deneyimi (New) */}
+          <section>
+            <SectionTitle title="2. İŞ DENEYİMİ" subtitle="Geçmiş tecrübeleriniz" />
+            <div className="space-y-6">
+              {/* List */}
+              {formData.workExperience?.map(work => (
+                <div key={work.id} className="bg-gray-50 p-6 rounded-3xl border border-gray-200 relative group">
+                  <button onClick={() => removeWork(work.id)} className="absolute top-4 right-4 text-red-500 hover:bg-red-50 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all font-bold">×</button>
+                  <h4 className="font-bold text-black">{work.role}</h4>
+                  <p className="text-xs font-bold text-gray-500">{work.company}</p>
+                  <p className="text-[10px] text-gray-400 mt-1">{work.startDate} - {work.isCurrent ? 'Devam Ediyor' : work.endDate}</p>
+                </div>
+              ))}
+
+              {/* Add Form */}
+              <div className="bg-white border-2 border-dashed border-gray-200 rounded-[2rem] p-6 space-y-4">
+                <h5 className="text-xs font-black text-black uppercase tracking-widest">Yeni Deneyim Ekle</h5>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input type="text" placeholder="Kurum Adı *" value={workInput.company} onChange={e => setWorkInput({ ...workInput, company: e.target.value })} className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none" />
+                  <input type="text" placeholder="Pozisyon *" value={workInput.role} onChange={e => setWorkInput({ ...workInput, role: e.target.value })} className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none" />
+                  <MonthYearPicker placeholder="Başlangıç" value={workInput.startDate} onChange={val => setWorkInput({ ...workInput, startDate: val })} />
+                  <MonthYearPicker placeholder="Bitiş" disabled={workInput.isCurrent} value={workInput.endDate || ''} onChange={val => setWorkInput({ ...workInput, endDate: val })} />
+                </div>
+                <div className="flex items-center gap-2">
+                  <input type="checkbox" checked={workInput.isCurrent} onChange={e => setWorkInput({ ...workInput, isCurrent: e.target.checked })} className="accent-black w-4 h-4" />
+                  <span className="text-xs font-bold">Şu an burada çalışıyorum</span>
+                </div>
+                <button onClick={addWork} className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-gray-800 text-xs uppercase tracking-widest">+ Ekle</button>
+              </div>
+            </div>
+          </section>
+
+          {/* Bölüm 3: Eğitim ve Yetenekler */}
           <section>
             <SectionTitle title="3. EĞİTİM & YETENEKLER" subtitle="Akademik geçmiş ve uzmanlık alanlarınız" />
 
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Üniversite / Son Mezun Olunan Okul</label>
-                <input
-                  type="text"
-                  value={formData.education}
-                  onChange={e => setFormData({ ...formData, education: e.target.value })}
-                  className="w-full bg-gray-50 rounded-full px-8 py-4 outline-none font-bold text-sm"
-                  placeholder="Örn: Boğaziçi Üniversitesi - İşletme"
-                />
-              </div>
+            <div className="space-y-10">
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-4">
-                  <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Eğitim Seviyesi</label>
-                  <div className="flex flex-wrap gap-2">
-                    {EDUCATION_LEVELS.map(l => <SelectionPill key={l} label={l} active={formData.educationLevel === l} onClick={() => setFormData({ ...formData, educationLevel: l })} />)}
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Mezuniyet Durumu</label>
-                  <div className="flex flex-wrap gap-2">
-                    {GRADUATION_STATUSES.map(s => <SelectionPill key={s} label={s} active={formData.graduationStatus === s} onClick={() => setFormData({ ...formData, graduationStatus: s })} />)}
-                  </div>
-                </div>
-              </div>
-
+              {/* Education List & Add */}
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Yabancı Dil & Seviye</label>
-                <div className="flex flex-col md:flex-row gap-4">
-                  <select
-                    value={formData.language}
-                    onChange={e => setFormData({ ...formData, language: e.target.value })}
-                    className="flex-1 bg-gray-50 rounded-full px-6 py-4 outline-none font-bold text-sm appearance-none"
-                  >
-                    {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
-                  </select>
-                  <div className="flex flex-wrap gap-2">
-                    {LANGUAGE_LEVELS.map(lvl => <SelectionPill key={lvl} label={lvl} active={formData.languageLevel === lvl} onClick={() => setFormData({ ...formData, languageLevel: lvl })} />)}
+                <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Eğitim Bilgileri</label>
+                {formData.educationDetails?.map(edu => (
+                  <div key={edu.id} className="bg-gray-50 p-4 rounded-2xl border border-gray-200 relative group flex justify-between items-center">
+                    <div>
+                      <h4 className="font-bold text-sm text-black">{edu.university}</h4>
+                      <p className="text-xs font-medium text-gray-500">{edu.department} ({edu.level})</p>
+                    </div>
+                    <button onClick={() => removeEducation(edu.id)} className="text-red-500 hover:bg-red-50 p-1.5 rounded-full font-bold">×</button>
                   </div>
+                ))}
+
+                <div className="bg-white border-2 border-dashed border-gray-200 rounded-[2rem] p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" placeholder="Üniversite / Okul" value={eduInput.university} onChange={e => setEduInput({ ...eduInput, university: e.target.value })} className="w-full bg-gray-50 rounded-xl px-4 py-3 outline-none text-sm font-bold" />
+                    <input type="text" placeholder="Bölüm" value={eduInput.department} onChange={e => setEduInput({ ...eduInput, department: e.target.value })} className="w-full bg-gray-50 rounded-xl px-4 py-3 outline-none text-sm font-bold" />
+                  </div>
+                  <div className="flex gap-2 flex-wrap">
+                    {EDUCATION_LEVELS.map(l => <button key={l} onClick={() => setEduInput({ ...eduInput, level: l })} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border ${eduInput.level === l ? 'bg-black text-white' : 'bg-white text-gray-500'}`}>{l}</button>)}
+                  </div>
+                  <button onClick={addEducation} className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-gray-800 text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ Eğitim Ekle</button>
                 </div>
               </div>
 
+              {/* Languages */}
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Uzmanlık Alanları (Enter'a basın)</label>
+                <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1 block mb-2">Yabancı Diller</label>
+
+                {/* Added Languages List */}
+                {formData.languageDetails && formData.languageDetails.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {formData.languageDetails.map(lang => (
+                      <div key={lang.id} className="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-full px-4 py-2">
+                        <span className="text-xs font-bold">{lang.language} - {lang.level}</span>
+                        <button onClick={() => removeLang(lang.id)} className="text-red-500 font-bold hover:bg-red-50 rounded-full px-1">×</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add Language Form */}
+                <div className="bg-white border-2 border-dashed border-gray-200 rounded-[2rem] p-6 space-y-4">
+                  <h5 className="text-xs font-black text-black uppercase tracking-widest">Yeni Dil Ekle</h5>
+                  <div className="flex flex-col gap-4">
+                    <select
+                      value={langInput.language}
+                      onChange={e => setLangInput({ ...langInput, language: e.target.value })}
+                      className="w-full bg-gray-50 rounded-xl px-4 py-3 outline-none font-bold text-sm appearance-none border border-transparent focus:bg-white focus:border-black/10 transition-all"
+                    >
+                      {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+                    </select>
+
+                    <div className="flex flex-wrap gap-2">
+                      {LANGUAGE_LEVELS.map(lvl => (
+                        <button key={lvl} onClick={() => setLangInput({ ...langInput, level: lvl })} className={`px-4 py-2 rounded-full text-[10px] font-bold border transition-all ${langInput.level === lvl ? 'bg-black text-white border-black' : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'}`}>{lvl}</button>
+                      ))}
+                    </div>
+
+                    <button onClick={addLang} className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-gray-800 text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ Dil Ekle</button>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Certificates */}
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1 block mb-2">Sertifikalar & Kurslar</label>
+
+                {/* Added Certificates List */}
+                {formData.certificates && formData.certificates.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {formData.certificates.map(cert => (
+                      <div key={cert.id} className="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-full px-4 py-2">
+                        <span className="text-xs font-bold">{cert.name} {cert.issuer ? `(${cert.issuer})` : ''}</span>
+                        <button onClick={() => removeCertificate(cert.id)} className="text-red-500 font-bold hover:bg-red-50 rounded-full px-1">×</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Add Certificate Form */}
+                <div className="bg-white border-2 border-dashed border-gray-200 rounded-[2rem] p-6 space-y-4">
+                  <h5 className="text-xs font-black text-black uppercase tracking-widest">Yeni Sertifika Ekle</h5>
+                  <div className="flex flex-col gap-4">
+                    <input
+                      type="text"
+                      placeholder="Sertifika / Kurs Adı *"
+                      value={certInput.name}
+                      onChange={e => setCertInput({ ...certInput, name: e.target.value })}
+                      className="w-full bg-gray-50 rounded-xl px-4 py-3 outline-none font-bold text-sm"
+                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        placeholder="Veren Kurum (Opsiyonel)"
+                        value={certInput.issuer}
+                        onChange={e => setCertInput({ ...certInput, issuer: e.target.value })}
+                        className="w-full bg-gray-50 rounded-xl px-4 py-3 outline-none font-bold text-sm"
+                      />
+                      <MonthYearPicker
+                        placeholder="Alınan Tarih"
+                        value={certInput.date || ''}
+                        onChange={val => setCertInput({ ...certInput, date: val })}
+                      />
+                    </div>
+
+                    <button onClick={addCertificate} className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-gray-800 text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ Sertifika Ekle</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Skills */}
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Uzmanlık Alanları (Enter)</label>
                 <input
                   type="text"
                   value={skillInput}
@@ -625,14 +832,25 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
             Vazgeç
           </button>
           <button
-            onClick={() => onSubmit(formData)}
+            onClick={() => {
+              // Sync legacy fields for backward compatibility (Business Card view)
+              const syncedData = {
+                ...formData,
+                education: formData.educationDetails?.[0]?.university || formData.education || '',
+                educationLevel: formData.educationDetails?.[0]?.level || formData.educationLevel || '',
+                graduationStatus: formData.educationDetails?.[0]?.status || formData.graduationStatus || '',
+                language: formData.languageDetails?.[0]?.language || formData.language || '',
+                languageLevel: formData.languageDetails?.[0]?.level || formData.languageLevel || '',
+              };
+              onSubmit(syncedData);
+            }}
             className="flex-[2] bg-black text-white py-5 rounded-full font-black text-base uppercase tracking-widest hover:bg-gray-800 transition-all shadow-xl active:scale-[0.98]"
           >
             Kaydet ve Yayına Al
           </button>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 
