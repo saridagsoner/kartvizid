@@ -516,6 +516,33 @@ const App: React.FC = () => {
     }
   };
 
+  const handleCancelRequest = async (targetUserId: string) => {
+    if (!user) return;
+
+    const requestToRemove = sentRequests.find(r => r.target_user_id === targetUserId && r.status === 'pending');
+    if (!requestToRemove) return;
+
+    // Optimistic update
+    setSentRequests(prev => prev.filter(r => r.id !== requestToRemove.id));
+
+    try {
+      const { error } = await supabase
+        .from('contact_requests')
+        .delete()
+        .eq('id', requestToRemove.id);
+
+      if (error) {
+        setSentRequests(prev => [...prev, requestToRemove]); // Revert
+        throw error;
+      }
+
+      showToast('İletişim isteği geri alındı.', 'info');
+    } catch (error) {
+      console.error('Error cancelling request:', error);
+      showToast('İstek geri alınırken bir hata oluştu.', 'error');
+    }
+  };
+
   const handleRequestAction = async (requestId: string, action: 'approved' | 'rejected') => {
     // Determine the request being acted upon for notification info
     const relatedRequest = receivedRequests.find(r => r.id === requestId);
@@ -1152,6 +1179,7 @@ const App: React.FC = () => {
           onClose={() => setSelectedCV(null)}
           requestStatus={sentRequests.find(r => r.target_user_id === selectedCV.userId)?.status || 'none'}
           onRequestAccess={() => handleSendRequest(selectedCV.userId)}
+          onCancelRequest={() => handleCancelRequest(selectedCV.userId)}
           onJobFound={handleJobFound}
         />
       )}

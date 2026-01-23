@@ -8,10 +8,11 @@ interface ProfileModalProps {
   onClose: () => void;
   requestStatus?: 'pending' | 'approved' | 'rejected' | 'none';
   onRequestAccess?: () => void;
+  onCancelRequest?: () => void;
   onJobFound?: () => void;
 }
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus = 'none', onRequestAccess, onJobFound }) => {
+const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus = 'none', onRequestAccess, onCancelRequest, onJobFound }) => {
   const { user } = useAuth();
   const isOwner = user?.id === cv.userId;
 
@@ -388,14 +389,18 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             <>
               {!hasAccess && (
                 <button
-                  onClick={onRequestAccess}
-                  disabled={isPending}
-                  className={`flex-[2] py-5 rounded-full font-black text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] ${isPending
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  onClick={isPending ? onCancelRequest : onRequestAccess}
+                  className={`flex-[2] py-5 rounded-full font-black text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] group ${isPending
+                    ? 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-600 hover:shadow-none'
                     : 'bg-[#1f6d78] text-white hover:bg-[#155e68]'
                     }`}
                 >
-                  {isPending ? 'İstek Gönderildi' : 'İletişime Geç'}
+                  {isPending ? (
+                    <>
+                      <span className="group-hover:hidden">İstek Gönderildi</span>
+                      <span className="hidden group-hover:inline">İsteği İptal Et</span>
+                    </>
+                  ) : 'İletişime Geç'}
                 </button>
               )}
 
