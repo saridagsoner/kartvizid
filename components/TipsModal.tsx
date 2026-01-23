@@ -110,7 +110,7 @@ const TipsModal: React.FC<TipsModalProps> = ({ onClose }) => {
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-xl text-gray-400 hover:bg-black hover:text-white transition-all shadow-sm active:scale-90"
+                        className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-xl text-gray-400 hover:bg-[#1f6d78] hover:text-white transition-all shadow-sm active:scale-90"
                     >
                         ×
                     </button>
@@ -122,7 +122,7 @@ const TipsModal: React.FC<TipsModalProps> = ({ onClose }) => {
                         {TIPS.map((tip, index) => (
                             <div
                                 key={index}
-                                className="group p-6 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-white hover:border-black/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                                className="group p-6 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-white hover:border-[#1f6d78]/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                             >
                                 <div className="mb-4 text-black group-hover:scale-110 transition-transform duration-300">
                                     {tip.icon}
@@ -138,7 +138,7 @@ const TipsModal: React.FC<TipsModalProps> = ({ onClose }) => {
                     <div className="mt-8 flex flex-col items-center gap-4">
                         <button
                             onClick={onClose}
-                            className="bg-black text-white px-10 py-4 rounded-full text-sm font-bold hover:bg-gray-800 transition-all active:scale-95 shadow-lg shadow-black/20"
+                            className="bg-[#1f6d78] text-white px-10 py-4 rounded-full text-sm font-bold hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20"
                         >
                             Profili Düzenle
                         </button>

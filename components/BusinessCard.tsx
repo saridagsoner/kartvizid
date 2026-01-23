@@ -89,7 +89,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
 
         {/* Action Button */}
         <div className="flex items-center mt-4 sm:mt-0 sm:self-center">
-          <button className="bg-white border border-gray-200 text-black px-8 py-3 rounded-full font-black text-xs hover:bg-gray-50 hover:border-black transition-all active:scale-95 shadow-sm uppercase tracking-widest shrink-0">
+          <button className="bg-white border border-gray-200 text-black px-8 py-3 rounded-full font-black text-xs hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm uppercase tracking-widest shrink-0">
             Görüntüle
           </button>
         </div>

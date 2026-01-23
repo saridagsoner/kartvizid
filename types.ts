@@ -167,6 +167,9 @@ export interface Company {
   website?: string;
   industry?: string;
   city?: string;
+  district?: string;
+  country?: string;
+  address?: string;
   logoUrl?: string;
   createdAt?: string;
 }

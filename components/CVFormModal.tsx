@@ -30,8 +30,8 @@ const SelectionPill: React.FC<SelectionPillProps> = ({ label, active, onClick })
     type="button"
     onClick={onClick}
     className={`px-5 py-2.5 rounded-full text-[11px] font-bold border transition-all ${active
-      ? 'bg-black border-black text-white shadow-md'
-      : 'bg-white border-gray-200 text-gray-500 hover:border-black'
+      ? 'bg-[#1f6d78] border-[#1f6d78] text-white shadow-md'
+      : 'bg-white border-gray-200 text-gray-500 hover:border-[#1f6d78]'
       }`}
   >
     {label}
@@ -225,7 +225,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
 
   const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
     <div className="mb-6 mt-10 first:mt-0">
-      <h3 className="text-sm font-black text-black uppercase tracking-[0.15em] border-l-4 border-black pl-3">{title}</h3>
+      <h3 className="text-sm font-black text-black uppercase tracking-[0.15em] border-l-4 border-[#1f6d78] pl-3">{title}</h3>
       {subtitle && <p className="text-[10px] text-gray-400 font-bold uppercase mt-1 ml-4">{subtitle}</p>}
     </div>
   );
@@ -244,7 +244,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
           </div>
           <button
             onClick={onClose}
-            className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-2xl text-black hover:bg-black hover:text-white transition-all active:scale-90"
+            className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-2xl text-black hover:bg-[#1f6d78] hover:text-white transition-all active:scale-90"
           >
             ×
           </button>
@@ -268,7 +268,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                 />
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-32 h-44 rounded-[2.5rem] border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-black transition-all group overflow-hidden relative shadow-sm"
+                  className="w-32 h-44 rounded-[2.5rem] border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden relative shadow-sm"
                 >
                   {formData.photoUrl ? (
                     <>
@@ -299,7 +299,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                   {/* Loading Overlay */}
                   {uploading && (
                     <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10">
-                      <div className="animate-spin w-6 h-6 border-2 border-black border-t-transparent rounded-full"></div>
+                      <div className="animate-spin w-6 h-6 border-2 border-[#1f6d78] border-t-transparent rounded-full"></div>
                     </div>
                   )}
                 </div>
@@ -312,7 +312,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                       type="text"
                       value={formData.name}
                       onChange={e => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-gray-50 border border-transparent focus:border-black/10 focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold"
+                      className="w-full bg-gray-50 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold"
                       placeholder="Örn: Mehmet Can"
                     />
                   </div>
@@ -322,7 +322,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                       type="text"
                       value={formData.profession}
                       onChange={e => setFormData({ ...formData, profession: e.target.value })}
-                      className="w-full bg-gray-50 border border-transparent focus:border-black/10 focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold"
+                      className="w-full bg-gray-50 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold"
                       placeholder="Örn: Senior React Dev"
                     />
                   </div>
@@ -359,7 +359,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                       min="0"
                       value={formData.experienceYears === 0 ? '' : formData.experienceYears}
                       onChange={e => setFormData({ ...formData, experienceYears: e.target.value === '' ? 0 : parseInt(e.target.value) })}
-                      className="w-full bg-gray-50 border border-transparent focus:border-black/10 focus:bg-white rounded-full px-6 py-3.5 outline-none text-sm font-bold"
+                      className="w-full bg-gray-50 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white rounded-full px-6 py-3.5 outline-none text-sm font-bold"
                       placeholder="0"
                     />
                   </div>
@@ -394,7 +394,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                   <div className="flex justify-between items-center px-1">
                     <label className="text-[10px] font-black text-black uppercase tracking-widest">E-posta Adresi</label>
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => setFormData({ ...formData, isEmailPublic: !formData.isEmailPublic })}>
-                      <div className={`w-4 h-4 rounded-full border transition-all flex items-center justify-center ${formData.isEmailPublic ? 'bg-black border-black' : 'border-gray-300 bg-white'}`}>
+                      <div className={`w-4 h-4 rounded-full border transition-all flex items-center justify-center ${formData.isEmailPublic ? 'bg-[#1f6d78] border-[#1f6d78]' : 'border-gray-300 bg-white'}`}>
                         {formData.isEmailPublic && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
                       </div>
                       <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">{formData.isEmailPublic ? 'Görünür' : 'Gizli'}</span>
@@ -404,7 +404,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                     type="email"
                     value={formData.email || ''}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className={`w-full border focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold ${formData.isEmailPublic ? 'bg-white border-black/10' : 'bg-gray-100 border-transparent text-gray-500'}`}
+                    className={`w-full border focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold ${formData.isEmailPublic ? 'bg-white border-[#1f6d78]/10' : 'bg-gray-100 border-transparent text-gray-500'}`}
                     placeholder="ornek@email.com"
                   />
                 </div>
@@ -413,7 +413,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                   <div className="flex justify-between items-center px-1">
                     <label className="text-[10px] font-black text-black uppercase tracking-widest">Telefon Numarası</label>
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => setFormData({ ...formData, isPhonePublic: !formData.isPhonePublic })}>
-                      <div className={`w-4 h-4 rounded-full border transition-all flex items-center justify-center ${formData.isPhonePublic ? 'bg-black border-black' : 'border-gray-300 bg-white'}`}>
+                      <div className={`w-4 h-4 rounded-full border transition-all flex items-center justify-center ${formData.isPhonePublic ? 'bg-[#1f6d78] border-[#1f6d78]' : 'border-gray-300 bg-white'}`}>
                         {formData.isPhonePublic && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
                       </div>
                       <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">{formData.isPhonePublic ? 'Görünür' : 'Gizli'}</span>
@@ -423,7 +423,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                     type="tel"
                     value={formData.phone || ''}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className={`w-full border focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold ${formData.isPhonePublic ? 'bg-white border-black/10' : 'bg-gray-100 border-transparent text-gray-500'}`}
+                    className={`w-full border focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold ${formData.isPhonePublic ? 'bg-white border-[#1f6d78]/10' : 'bg-gray-100 border-transparent text-gray-500'}`}
                     placeholder="0555 123 45 67"
                   />
                 </div>
@@ -522,10 +522,10 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                   <MonthYearPicker placeholder="Bitiş" disabled={workInput.isCurrent} value={workInput.endDate || ''} onChange={val => setWorkInput({ ...workInput, endDate: val })} />
                 </div>
                 <div className="flex items-center gap-2">
-                  <input type="checkbox" checked={workInput.isCurrent} onChange={e => setWorkInput({ ...workInput, isCurrent: e.target.checked })} className="accent-black w-4 h-4" />
+                  <input type="checkbox" checked={workInput.isCurrent} onChange={e => setWorkInput({ ...workInput, isCurrent: e.target.checked })} className="accent-[#1f6d78] w-4 h-4" />
                   <span className="text-xs font-bold">Şu an burada çalışıyorum</span>
                 </div>
-                <button onClick={addWork} className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-gray-800 text-xs uppercase tracking-widest">+ Ekle</button>
+                <button onClick={addWork} className="w-full bg-[#1f6d78] text-white font-bold py-3 rounded-xl hover:bg-[#155e68] text-xs uppercase tracking-widest">+ Ekle</button>
               </div>
             </div>
           </section>
@@ -555,9 +555,9 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                     <input type="text" placeholder="Bölüm" value={eduInput.department} onChange={e => setEduInput({ ...eduInput, department: e.target.value })} className="w-full bg-gray-50 rounded-xl px-4 py-3 outline-none text-sm font-bold" />
                   </div>
                   <div className="flex gap-2 flex-wrap">
-                    {EDUCATION_LEVELS.map(l => <button key={l} onClick={() => setEduInput({ ...eduInput, level: l })} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border ${eduInput.level === l ? 'bg-black text-white' : 'bg-white text-gray-500'}`}>{l}</button>)}
+                    {EDUCATION_LEVELS.map(l => <button key={l} onClick={() => setEduInput({ ...eduInput, level: l })} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border ${eduInput.level === l ? 'bg-[#1f6d78] text-white' : 'bg-white text-gray-500'}`}>{l}</button>)}
                   </div>
-                  <button onClick={addEducation} className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-gray-800 text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ Eğitim Ekle</button>
+                  <button onClick={addEducation} className="w-full bg-[#1f6d78] text-white font-bold py-3 rounded-xl hover:bg-[#155e68] text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ Eğitim Ekle</button>
                 </div>
               </div>
 
@@ -584,18 +584,18 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                     <select
                       value={langInput.language}
                       onChange={e => setLangInput({ ...langInput, language: e.target.value })}
-                      className="w-full bg-gray-50 rounded-xl px-4 py-3 outline-none font-bold text-sm appearance-none border border-transparent focus:bg-white focus:border-black/10 transition-all"
+                      className="w-full bg-gray-50 rounded-xl px-4 py-3 outline-none font-bold text-sm appearance-none border border-transparent focus:bg-white focus:border-[#1f6d78]/10 transition-all"
                     >
                       {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
                     </select>
 
                     <div className="flex flex-wrap gap-2">
                       {LANGUAGE_LEVELS.map(lvl => (
-                        <button key={lvl} onClick={() => setLangInput({ ...langInput, level: lvl })} className={`px-4 py-2 rounded-full text-[10px] font-bold border transition-all ${langInput.level === lvl ? 'bg-black text-white border-black' : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'}`}>{lvl}</button>
+                        <button key={lvl} onClick={() => setLangInput({ ...langInput, level: lvl })} className={`px-4 py-2 rounded-full text-[10px] font-bold border transition-all ${langInput.level === lvl ? 'bg-[#1f6d78] text-white border-[#1f6d78]' : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'}`}>{lvl}</button>
                       ))}
                     </div>
 
-                    <button onClick={addLang} className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-gray-800 text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ Dil Ekle</button>
+                    <button onClick={addLang} className="w-full bg-[#1f6d78] text-white font-bold py-3 rounded-xl hover:bg-[#155e68] text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ Dil Ekle</button>
                   </div>
                 </div>
 
@@ -643,7 +643,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                       />
                     </div>
 
-                    <button onClick={addCertificate} className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-gray-800 text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ Sertifika Ekle</button>
+                    <button onClick={addCertificate} className="w-full bg-[#1f6d78] text-white font-bold py-3 rounded-xl hover:bg-[#155e68] text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ Sertifika Ekle</button>
                   </div>
                 </div>
               </div>
@@ -656,12 +656,12 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                   value={skillInput}
                   onChange={e => setSkillInput(e.target.value)}
                   onKeyDown={handleSkillAdd}
-                  className="w-full bg-gray-50 border border-transparent focus:border-black/10 focus:bg-white rounded-full px-8 py-4 outline-none transition-all text-sm font-bold shadow-sm"
+                  className="w-full bg-gray-50 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white rounded-full px-8 py-4 outline-none transition-all text-sm font-bold shadow-sm"
                   placeholder="React, Proje Yönetimi, SQL, Figma..."
                 />
                 <div className="flex flex-wrap gap-2 pt-2">
                   {formData.skills?.map((skill, idx) => (
-                    <span key={idx} className="bg-black text-white text-[10px] font-black px-4 py-2 rounded-full flex items-center gap-2 uppercase tracking-wider animate-in zoom-in-50">
+                    <span key={idx} className="bg-[#1f6d78] text-white text-[10px] font-black px-4 py-2 rounded-full flex items-center gap-2 uppercase tracking-wider animate-in zoom-in-50">
                       {skill}
                       <button onClick={() => removeSkill(idx)} className="hover:opacity-50 text-base font-light">×</button>
                     </span>
@@ -730,7 +730,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
               <textarea
                 value={formData.about}
                 onChange={e => setFormData({ ...formData, about: e.target.value })}
-                className="w-full bg-gray-50 rounded-[2rem] px-8 py-6 outline-none h-32 resize-none focus:bg-white focus:border-black/10 border border-transparent transition-all font-medium text-sm leading-relaxed"
+                className="w-full bg-gray-50 rounded-[2rem] px-8 py-6 outline-none h-32 resize-none focus:bg-white focus:border-[#1f6d78]/10 border border-transparent transition-all font-medium text-sm leading-relaxed"
                 placeholder="Deneyimlerinizden ve uzmanlığınızdan bahsederek kendinizi 1-2 cümleyle etkileyici bir şekilde tanıtın..."
               ></textarea>
             </div>
@@ -771,42 +771,42 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                   <input
                     type="text"
                     placeholder="Ad Soyad *"
-                    className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent focus:bg-white focus:border-black/10 transition-all"
+                    className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent focus:bg-white focus:border-[#1f6d78]/10 transition-all"
                     value={refInput.name}
                     onChange={e => setRefInput({ ...refInput, name: e.target.value })}
                   />
                   <input
                     type="text"
                     placeholder="Kurum Adı *"
-                    className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent focus:bg-white focus:border-black/10 transition-all"
+                    className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent focus:bg-white focus:border-[#1f6d78]/10 transition-all"
                     value={refInput.company}
                     onChange={e => setRefInput({ ...refInput, company: e.target.value })}
                   />
                   <input
                     type="text"
                     placeholder="Pozisyon / Unvan"
-                    className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent focus:bg-white focus:border-black/10 transition-all"
+                    className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent focus:bg-white focus:border-[#1f6d78]/10 transition-all"
                     value={refInput.role}
                     onChange={e => setRefInput({ ...refInput, role: e.target.value })}
                   />
                   <input
                     type="tel"
                     placeholder="Telefon (İsteğe bağlı)"
-                    className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent focus:bg-white focus:border-black/10 transition-all"
+                    className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent focus:bg-white focus:border-[#1f6d78]/10 transition-all"
                     value={refInput.phone}
                     onChange={e => setRefInput({ ...refInput, phone: e.target.value })}
                   />
                   <input
                     type="email"
                     placeholder="E-posta (İsteğe bağlı)"
-                    className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent focus:bg-white focus:border-black/10 transition-all"
+                    className="bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent focus:bg-white focus:border-[#1f6d78]/10 transition-all"
                     value={refInput.email}
                     onChange={e => setRefInput({ ...refInput, email: e.target.value })}
                   />
                 </div>
                 <button
                   onClick={handleAddReference}
-                  className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition-all active:scale-[0.98] text-xs uppercase tracking-widest"
+                  className="w-full bg-[#1f6d78] text-white font-bold py-3 rounded-xl hover:bg-[#155e68] transition-all active:scale-[0.98] text-xs uppercase tracking-widest"
                 >
                   + Listeye Ekle
                 </button>
@@ -816,7 +816,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
 
           {/* KVKK Onay */}
           <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 flex items-start gap-4">
-            <input type="checkbox" id="cv-form-terms" className="w-6 h-6 rounded-md accent-black shrink-0 mt-0.5" />
+            <input type="checkbox" id="cv-form-terms" className="w-6 h-6 rounded-md accent-[#1f6d78] shrink-0 mt-0.5" />
             <label htmlFor="cv-form-terms" className="text-[11px] text-gray-500 font-bold leading-relaxed">
               Verdiğim bilgilerin doğruluğunu teyit ediyorum. <span className="text-black underline cursor-pointer">KVKK Aydınlatma Metni</span> uyarınca kişisel verilerimin işlenmesini ve işverenlerin benimle iletişime geçmesi amacıyla paylaşılmasını onaylıyorum.
             </label>
@@ -827,7 +827,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
         <div className="p-8 border-t border-gray-100 bg-white flex gap-5 sticky bottom-0 z-10 shrink-0">
           <button
             onClick={onClose}
-            className="flex-1 bg-white border-2 border-gray-100 text-black py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-gray-50 hover:border-black transition-all active:scale-95 shadow-sm"
+            className="flex-1 bg-white border-2 border-gray-100 text-black py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-gray-50 hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm"
           >
             Vazgeç
           </button>
@@ -844,7 +844,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
               };
               onSubmit(syncedData);
             }}
-            className="flex-[2] bg-black text-white py-5 rounded-full font-black text-base uppercase tracking-widest hover:bg-gray-800 transition-all shadow-xl active:scale-[0.98]"
+            className="flex-[2] bg-[#1f6d78] text-white py-5 rounded-full font-black text-base uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-xl active:scale-[0.98]"
           >
             Kaydet ve Yayına Al
           </button>

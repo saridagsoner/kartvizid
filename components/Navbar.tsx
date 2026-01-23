@@ -61,13 +61,13 @@ const Navbar: React.FC<NavbarProps & {
           <div className="max-w-[1440px] w-full px-4 md:px-6 flex items-center h-full">
 
             {/* Left Section: Logo */}
-            <div className="lg:w-[304px] shrink-0 flex items-center">
+            <div className="lg:w-[290px] shrink-0 flex items-center">
               <div className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
-                <div className="flex items-center text-[#2b2b2b] text-[32px] font-bold tracking-tight rounded-font leading-none">
+                <div className="flex items-center text-[#2b2b2b] text-[36px] font-bold tracking-tight rounded-font leading-none">
                   <span>Kartvizi</span>
                   <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                 </div>
-                <span className="text-[11px] font-semibold text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
+                <span className="text-[12px] font-semibold text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
                   dijital cv & doğru eşleşme
                 </span>
               </div>
@@ -106,7 +106,7 @@ const Navbar: React.FC<NavbarProps & {
             </div>
 
             {/* Right Section: Actions */}
-            <div className="md:w-[304px] shrink-0 flex items-center justify-end gap-2 md:gap-4 ml-0 md:ml-0">
+            <div className="md:w-[330px] shrink-0 flex items-center justify-end gap-2 md:gap-4 ml-0 md:ml-0">
               {user ? (
                 <>
                   <button
@@ -177,13 +177,13 @@ const Navbar: React.FC<NavbarProps & {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => onOpenAuth('signup', 'employer')}
-                    className="text-gray-600 font-bold text-sm px-4 py-2 hover:bg-gray-100 rounded-full transition-colors whitespace-nowrap"
+                    className="bg-white text-[#1f6d78] border border-[#1f6d78] font-bold text-sm px-6 py-2 rounded-full hover:bg-gray-50 transition-colors whitespace-nowrap"
                   >
                     İş Veren
                   </button>
                   <button
                     onClick={() => onOpenAuth('signup', 'job_seeker')}
-                    className="bg-black text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-800 transition-all active:scale-95 shadow-sm whitespace-nowrap"
+                    className="bg-[#1f6d78] text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-[#155e68] transition-all active:scale-95 shadow-sm whitespace-nowrap"
                   >
                     İş Arayan
                   </button>

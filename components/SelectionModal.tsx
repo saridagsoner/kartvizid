@@ -23,7 +23,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
           <h2 className="text-xl font-black text-black tracking-tight">{title}</h2>
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-xl text-black hover:bg-black hover:text-white transition-all"
+            className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-xl text-black hover:bg-[#1f6d78] hover:text-white transition-all"
           >
             ×
           </button>
@@ -40,7 +40,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
               placeholder="Listede ara..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-gray-50 rounded-full py-3.5 pl-12 pr-6 outline-none text-sm font-bold border border-transparent focus:border-black/10 focus:bg-white transition-all"
+              className="w-full bg-gray-50 rounded-full py-3.5 pl-12 pr-6 outline-none text-sm font-bold border border-transparent focus:border-[#1f6d78]/10 focus:bg-white transition-all"
             />
           </div>
         </div>
@@ -55,7 +55,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
                   className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-all text-left group"
                 >
                   <span className="text-sm font-bold text-gray-700 group-hover:text-black transition-colors">{item.label}</span>
-                  <span className="text-[10px] bg-gray-100 px-2 py-1 rounded-full font-black text-gray-400 group-hover:bg-black group-hover:text-white transition-all uppercase tracking-tighter">
+                  <span className="text-[10px] bg-gray-100 px-2 py-1 rounded-full font-black text-gray-400 group-hover:bg-[#1f6d78] group-hover:text-white transition-all uppercase tracking-tighter">
                     {item.count} Aday
                   </span>
                 </button>

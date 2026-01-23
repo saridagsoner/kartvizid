@@ -52,7 +52,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
 
   const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
     <div className="mb-6 mt-10 first:mt-0">
-      <h3 className="text-sm font-black text-black uppercase tracking-[0.15em] border-l-4 border-black pl-3">{title}</h3>
+      <h3 className="text-sm font-black text-black uppercase tracking-[0.15em] border-l-4 border-[#1f6d78] pl-3">{title}</h3>
       {subtitle && <p className="text-[10px] text-gray-400 font-bold uppercase mt-1 ml-4">{subtitle}</p>}
     </div>
   );
@@ -68,7 +68,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   );
 
   const ValuePill = ({ label }: { label: string }) => (
-    <span className="bg-black text-white px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider shadow-sm">
+    <span className="bg-[#1f6d78] text-white px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider shadow-sm">
       {label}
     </span>
   );
@@ -85,7 +85,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           </div>
           <button
             onClick={onClose}
-            className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-2xl text-black hover:bg-black hover:text-white transition-all active:scale-90 shadow-sm"
+            className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-2xl text-black hover:bg-[#1f6d78] hover:text-white transition-all active:scale-90 shadow-sm"
           >
             ×
           </button>
@@ -125,7 +125,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   const currentStatus = cv.workingStatus || 'open';
                   const label = statusMap[currentStatus] || 'İş Arıyor';
                   return (
-                    <span className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-wider ${currentStatus === 'open' ? 'bg-green-500 text-white shadow-lg shadow-green-200' :
+                    <span className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-wider ${currentStatus === 'open' ? 'bg-[#1f6d78] text-white shadow-lg shadow-[#1f6d78]/20' :
                       currentStatus === 'active' ? 'bg-black text-white' : 'bg-gray-200 text-gray-500'
                       }`}>
                       {label}
@@ -200,7 +200,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                           <h4 className="font-bold text-sm text-black">{edu.university}</h4>
                           <p className="text-xs font-medium text-gray-500">{edu.department} ({edu.level})</p>
                         </div>
-                        <span className="bg-black text-white text-[9px] font-bold px-3 py-1.5 rounded-full">{edu.status}</span>
+                        <span className="bg-[#1f6d78] text-white text-[9px] font-bold px-3 py-1.5 rounded-full">{edu.status}</span>
                       </div>
                     ))}
                   </div>
@@ -360,17 +360,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
 
         {/* Footer Actions */}
         <div className="p-8 border-t border-gray-100 bg-white flex gap-5 sticky bottom-0 z-10 shrink-0">
-          <button
-            onClick={onClose}
-            className="flex-1 bg-white border-2 border-gray-100 text-black py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-gray-50 hover:border-black transition-all active:scale-95 shadow-sm"
-          >
-            Kapat
-          </button>
-
           {isOwner && cv.workingStatus !== 'active' && (
             <button
               onClick={onJobFound}
-              className="flex-[2] bg-gradient-to-r from-green-400 to-emerald-600 text-white py-5 rounded-full font-black text-sm uppercase tracking-widest hover:from-green-500 hover:to-emerald-700 transition-all active:scale-95 shadow-lg shadow-green-200"
+              className="flex-[2] bg-[#1f6d78] text-white py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20"
             >
               🎉 İŞİMİ BULDUM
             </button>
@@ -380,13 +373,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             <>
               <button
                 onClick={handleDownload}
-                className="flex-1 bg-black text-white py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-gray-800 transition-all active:scale-95 shadow-xl"
+                className="flex-1 bg-white border border-[#1f6d78] text-[#1f6d78] py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-xl"
               >
                 CV'mi İndir
               </button>
               <button
                 onClick={handleShare}
-                className="flex-1 bg-green-500 text-white py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-green-600 transition-all active:scale-95 shadow-xl"
+                className="flex-1 bg-white border border-[#1f6d78] text-[#1f6d78] py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-xl"
               >
                 CV'mi Paylaş
               </button>
@@ -399,7 +392,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   disabled={isPending}
                   className={`flex-[2] py-5 rounded-full font-black text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] ${isPending
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-black text-white hover:bg-gray-800'
+                    : 'bg-[#1f6d78] text-white hover:bg-[#155e68]'
                     }`}
                 >
                   {isPending ? 'İstek Gönderildi' : 'İletişime Geç'}
@@ -409,7 +402,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
               {hasAccess && (
                 <button
                   disabled
-                  className="flex-[2] bg-green-500 text-white py-5 rounded-full font-black text-base uppercase tracking-widest shadow-xl cursor-default"
+                  className="flex-[2] bg-[#1f6d78] text-white py-5 rounded-full font-black text-base uppercase tracking-widest shadow-xl cursor-default"
                 >
                   İletişim Bilgileri Açık
                 </button>

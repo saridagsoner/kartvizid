@@ -141,12 +141,12 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
 
       <button
         onClick={() => setActiveModal('advanced')}
-        className={`bg-white border px-5 py-2.5 rounded-full font-bold text-xs transition-all flex items-center gap-2 shadow-sm shrink-0 hover:border-black active:scale-95 ${activeFiltersCount > 0 ? 'border-black bg-gray-50' : 'border-gray-200 text-black'
+        className={`bg-white border px-5 py-2.5 rounded-full font-bold text-xs transition-all flex items-center gap-2 shadow-sm shrink-0 hover:border-[#1f6d78] active:scale-95 ${activeFiltersCount > 0 ? 'border-[#1f6d78] bg-gray-50' : 'border-gray-200 text-black'
           }`}
       >
         <span>Gelişmiş Filtreler</span>
         {activeFiltersCount > 0 && (
-          <span className="w-4 h-4 bg-black text-white text-[9px] rounded-full flex items-center justify-center font-black">
+          <span className="w-4 h-4 bg-[#1f6d78] text-white text-[9px] rounded-full flex items-center justify-center font-black">
             {activeFiltersCount}
           </span>
         )}

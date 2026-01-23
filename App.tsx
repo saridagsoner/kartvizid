@@ -12,6 +12,7 @@ import SidebarRight from './components/SidebarRight';
 import BusinessCard from './components/BusinessCard';
 import Filters from './components/Filters';
 import ProfileModal from './components/ProfileModal';
+import CompanyProfileModal from './components/CompanyProfileModal';
 import CVFormModal from './components/CVFormModal';
 import Footer from './components/Footer';
 import SettingsModal from './components/SettingsModal';
@@ -26,9 +27,8 @@ const SortDropdown: React.FC<{
 
   const options = [
     { id: 'default', label: 'Varsayılan' },
-    { id: 'popular', label: "Popüler Cv'ler" },
-    { id: 'newest', label: 'Son Oluşturulanlar' },
-    { id: 'placed', label: 'İş Bulanlar' }
+    { id: 'newest', label: 'En Yeniler' },
+    { id: 'oldest', label: 'En Eskiler' }
   ];
 
   const activeLabel = options.find(o => o.id === value)?.label || 'Varsayılan';
@@ -47,7 +47,7 @@ const SortDropdown: React.FC<{
     <div className="relative" ref={containerRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-3 bg-white border ${isOpen ? 'border-black shadow-md' : 'border-gray-200'} rounded-full px-5 py-2 text-xs font-bold text-gray-800 transition-all hover:border-black active:scale-95`}
+        className={`flex items-center gap-3 bg-white border ${isOpen ? 'border-[#1f6d78] shadow-md' : 'border-gray-200'} rounded-full px-5 py-2 text-xs font-bold text-gray-800 transition-all hover:border-[#1f6d78] active:scale-95`}
       >
         <span>{activeLabel}</span>
         <svg
@@ -67,7 +67,7 @@ const SortDropdown: React.FC<{
                 onChange(opt.id);
                 setIsOpen(false);
               }}
-              className={`w-full text-left px-5 py-3 text-xs font-bold transition-all flex items-center justify-between ${value === opt.id ? 'bg-gray-50 text-black' : 'text-gray-600 hover:bg-gray-50 hover:text-black'
+              className={`w-full text-left px-5 py-3 text-xs font-bold transition-all flex items-center justify-between ${value === opt.id ? 'bg-[#1f6d78]/5 text-[#1f6d78]' : 'text-gray-600 hover:bg-gray-50 hover:text-[#1f6d78]'
                 }`}
             >
               {opt.label}
@@ -123,6 +123,8 @@ const App: React.FC = () => {
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 20;
+
+  const [selectedCompanyProfile, setSelectedCompanyProfile] = useState<Company | null>(null);
 
   const [activeFilters, setActiveFilters] = useState<FilterState>({
     profession: '',
@@ -286,15 +288,34 @@ const App: React.FC = () => {
 
   const fetchPopularCompanies = async () => {
     try {
-      // Calls the RPC function 'get_popular_companies'
-      const { data, error } = await supabase.rpc('get_popular_companies');
+      // Direct query to companies table as fallback/primary
+      const { data, error } = await supabase
+        .from('companies')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
 
       if (error) {
         console.error('Error fetching popular companies:', error);
         return;
       }
 
-      setPopularCompanies(data || []);
+      // Map to ensure properties are consistent
+      const mapped = (data || []).map((c: any) => ({
+        id: c.id,
+        name: c.company_name,
+        logoUrl: c.logo_url,
+        userId: c.user_id,
+        description: c.description,
+        city: c.city,
+        district: c.district,
+        country: c.country,
+        address: c.address,
+        industry: c.industry,
+        website: c.website
+      }));
+
+      setPopularCompanies(mapped);
     } catch (err) {
       console.error('Error fetching popular companies:', err);
     }
@@ -381,10 +402,12 @@ const App: React.FC = () => {
     }
   };
 
+
   const fetchReceivedRequests = async () => {
     if (!user) return;
     try {
-      const { data, error } = await supabase
+      // 1. Fetch pending requests
+      const { data: requestsData, error: requestsError } = await supabase
         .from('contact_requests')
         .select(`
           *,
@@ -397,17 +420,27 @@ const App: React.FC = () => {
         .eq('target_user_id', user.id)
         .eq('status', 'pending');
 
-      if (error) throw error;
+      if (requestsError) throw requestsError;
 
-      // Fetch company names for employer requesters manually if needed, 
-      // or we can rely on profile full_name if they put company name there.
-      // Ideally we would want to join companies too but let's start with profile.
+      setReceivedRequests(requestsData || []);
 
-      // Better approach for name: If role is employer, we might want to check companies table.
-      // But for now, let's enable the profile join so "Bir kullanıcı" is replaced.
-      setReceivedRequests(data || []);
+      // 2. Fetch general notifications
+      const { data: notifData, error: notifError } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (notifError) {
+        console.log('Notifications table might not exist yet:', notifError.message);
+        // Do not throw here to allow app to function without notifications table
+      } else {
+        setGeneralNotifications(notifData || []);
+      }
+
     } catch (error) {
-      console.error('Error fetching received requests:', error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -415,6 +448,13 @@ const App: React.FC = () => {
     if (!user) {
       handleAuthOpen('signup');
       showToast('İletişim isteği göndermek için lütfen önce kayıt olun veya giriş yapın.', 'info');
+      return;
+    }
+
+    // Check if user is employer and has no company profile
+    if (user.user_metadata?.role === 'employer' && !activeCompany) {
+      showToast('İletişime geçmek için lütfen önce iş veren profilinizi oluşturun.', 'warning');
+      setIsCompanyFormOpen(true);
       return;
     }
 
@@ -436,6 +476,7 @@ const App: React.FC = () => {
     setSentRequests(prev => [...prev, newRequest]);
 
     try {
+      // 1. Create Contact Request
       const { data, error } = await supabase
         .from('contact_requests')
         .insert([{
@@ -447,17 +488,90 @@ const App: React.FC = () => {
         .single();
 
       if (error) {
-        // Revert on error
         setSentRequests(prev => prev.filter(r => r.id !== tempId));
         throw error;
       }
 
-      // Update with real data
       setSentRequests(prev => prev.map(r => r.id === tempId ? data : r));
+
+      // 2. Create Notification for Target User
+      // Determine the name to show (Company Name if employer, else Full Name)
+      let senderName = user.user_metadata?.full_name || 'Bir Kullanıcı';
+      if (user.user_metadata?.role === 'employer' && activeCompany) {
+        senderName = activeCompany.name;
+      }
+
+      await supabase.from('notifications').insert([{
+        user_id: targetUserId,
+        title: 'Yeni İletişim İsteği',
+        message: `${senderName} sizinle iletişime geçmek istiyor.`,
+        type: 'info',
+        related_id: data.id // Link to request
+      }]);
+
       showToast('İletişim isteği gönderildi!', 'success');
     } catch (error: any) {
       console.error('Error sending request:', error);
       showToast(getFriendlyErrorMessage(error), 'error');
+    }
+  };
+
+  const handleRequestAction = async (requestId: string, action: 'approved' | 'rejected') => {
+    // Determine the request being acted upon for notification info
+    const relatedRequest = receivedRequests.find(r => r.id === requestId);
+
+    // Optimistic update
+    setReceivedRequests(prev => prev.filter(r => r.id !== requestId));
+
+    try {
+      const { error } = await supabase
+        .from('contact_requests')
+        .update({ status: action })
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      showToast(`İstek ${action === 'approved' ? 'onaylandı' : 'reddedildi'}.`, 'success');
+
+      // Notify the requester
+      if (relatedRequest && relatedRequest.requester_id) {
+        // Identify self (the approver)
+        let approverName = user?.user_metadata?.full_name || 'Bir Kullanıcı';
+        if (user?.user_metadata?.role === 'employer' && activeCompany) {
+          approverName = activeCompany.name;
+        } else if (currentUserCV) {
+          approverName = currentUserCV.name;
+        }
+
+        const msg = action === 'approved'
+          ? `${approverName} iletişim isteğinizi onayladı. Artık iletişim bilgilerini görebilirsiniz.`
+          : `${approverName} iletişim isteğinizi reddetti.`;
+
+        const type = action === 'approved' ? 'success' : 'warning';
+
+        await supabase.from('notifications').insert([{
+          user_id: relatedRequest.requester_id,
+          title: `İstek ${action === 'approved' ? 'Onaylandı' : 'Reddedildi'}`,
+          message: msg,
+          type: type,
+          related_id: requestId
+        }]);
+      }
+
+    } catch (error) {
+      console.error('Error updating status:', error);
+      showToast('Bir hata oluştu.', 'error');
+      // Revert optimism (complicated, skipping for now as fetchReceivedRequests will fix it on reload)
+      fetchReceivedRequests();
+    }
+  };
+
+  const handleMarkNotificationRead = async (id: string) => {
+    try {
+      setGeneralNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+      await supabase.from('notifications').update({ is_read: true }).eq('id', id);
+    } catch (e) {
+      console.error('Error marking read', e);
     }
   };
 
@@ -551,6 +665,9 @@ const App: React.FC = () => {
           website: company.website,
           industry: company.industry,
           city: company.city,
+          district: company.district,
+          country: company.country,
+          address: company.address,
           logoUrl: company.logo_url,
           createdAt: company.created_at
         });
@@ -574,6 +691,9 @@ const App: React.FC = () => {
         website: companyData.website,
         industry: companyData.industry,
         city: companyData.city,
+        district: companyData.district,
+        country: companyData.country,
+        address: companyData.address,
         logo_url: companyData.logoUrl
       } as any;
 
@@ -735,13 +855,11 @@ const App: React.FC = () => {
 
     // Sorting Logic
     // Sorting Logic
-    if (sortBy === 'popular') {
-      result = [...result].sort((a, b) => (b.views || 0) - (a.views || 0));
-    } else if (sortBy === 'newest') {
-      result = [...result].sort((a, b) => (a.isNew === b.isNew) ? 0 : a.isNew ? -1 : 1);
-    } else if (sortBy === 'placed') {
-      // Filter to show ONLY placed items, as requested ("list whatever is suitable")
-      result = result.filter(cv => cv.isPlaced);
+    // Sorting Logic
+    if (sortBy === 'newest') {
+      result = [...result].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    } else if (sortBy === 'oldest') {
+      result = [...result].sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
     }
 
     return result;
@@ -905,16 +1023,20 @@ const App: React.FC = () => {
         onOpenSettings={() => setIsSettingsOpen(true)}
         hasCV={!!currentUserCV}
         userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
-        onOpenAuth={handleAuthOpen}
+
+        // Notifications Props
+        notificationCount={receivedRequests.length + generalNotifications.filter(n => !n.is_read).length}
+        notifications={[...receivedRequests, ...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+        onNotificationAction={handleRequestAction}
+        onMarkNotificationRead={handleMarkNotificationRead}
+
+        onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
         isAuthModalOpen={isAuthModalOpen}
         onCloseAuth={() => setIsAuthModalOpen(false)}
         authMode={authMode}
         authRole={authRole}
-        notificationCount={receivedRequests.length + generalNotifications.filter(n => !n.is_read).length}
-        notifications={[...receivedRequests, ...generalNotifications].sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-        onNotificationAction={handleRequestResponse}
-        onMarkNotificationRead={markNotificationRead}
       />
+
 
       <div className="flex-1 flex justify-center pt-20 px-4 md:px-6">
         <div className="max-w-[1440px] w-full flex items-start gap-6 pb-12">
@@ -933,6 +1055,7 @@ const App: React.FC = () => {
               popularCVs={popularCVs}
               popularCompanies={popularCompanies}
               onCVClick={handleCVClick}
+              onCompanyClick={(company) => setSelectedCompanyProfile(company)}
             />
           </aside>
 
@@ -944,8 +1067,8 @@ const App: React.FC = () => {
               availableCities={availableCities}
             />
 
-            <div className="bg-white rounded-lg border border-gray-200 p-4 mb-2 flex items-center justify-between shadow-sm">
-              <h2 className="text-sm font-bold text-gray-800">
+            <div className="bg-white rounded-2xl border border-gray-200 px-6 py-3 mb-2 flex items-center justify-between shadow-sm">
+              <h2 className="text-sm font-bold text-[#1f6d78]">
                 Kartvizid Listesi <span className="text-gray-400 font-normal ml-1">({filteredCVs.length} sonuç)</span>
               </h2>
               <div className="flex items-center gap-3">
@@ -1006,7 +1129,7 @@ const App: React.FC = () => {
                   disabled={currentPage === totalPages}
                   className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentPage === totalPages
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-white text-black border border-gray-200 hover:bg-black hover:text-white hover:border-black shadow-sm'
+                    : 'bg-white text-black border border-gray-200 hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] shadow-sm'
                     }`}
                 >
                   Sonraki →
@@ -1046,6 +1169,12 @@ const App: React.FC = () => {
           onSubmit={handleCompanySubmit}
           initialData={activeCompany || undefined}
           availableCities={availableCities}
+        />
+      )}
+      {selectedCompanyProfile && (
+        <CompanyProfileModal
+          company={selectedCompanyProfile}
+          onClose={() => setSelectedCompanyProfile(null)}
         />
       )}
       {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}

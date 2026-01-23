@@ -34,8 +34,8 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
             {/* Trigger Button */}
             <div
                 onClick={() => !disabled && setIsOpen(!isOpen)}
-                className={`w-full bg-gray-50 border border-transparent rounded-full px-6 py-3.5 text-sm font-bold flex items-center justify-between cursor-pointer transition-all ${isOpen ? 'bg-white border-black/10 ring-2 ring-black/5' : ''
-                    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:border-black/10'}`}
+                className={`w-full bg-gray-50 border border-transparent rounded-full px-6 py-3.5 text-sm font-bold flex items-center justify-between cursor-pointer transition-all ${isOpen ? 'bg-white border-[#1f6d78]/10 ring-2 ring-[#1f6d78]/5' : ''
+                    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:border-[#1f6d78]/10'}`}
             >
                 <span className={value ? 'text-black' : 'text-gray-400'}>
                     {value || placeholder}
@@ -67,7 +67,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Ara..."
-                                className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-sm font-bold outline-none focus:border-black transition-colors"
+                                className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-sm font-bold outline-none focus:border-[#1f6d78] transition-colors"
                                 onClick={(e) => e.stopPropagation()}
                             />
                             <svg
@@ -98,7 +98,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
                                         setIsOpen(false);
                                         setSearch('');
                                     }}
-                                    className={`px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-colors ${value === option ? 'bg-black text-white' : 'text-gray-700 hover:bg-gray-50'
+                                    className={`px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-colors ${value === option ? 'bg-[#1f6d78] text-white' : 'text-gray-700 hover:bg-gray-50'
                                         }`}
                                 >
                                     {option}

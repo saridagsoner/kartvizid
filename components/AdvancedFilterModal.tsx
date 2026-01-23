@@ -64,9 +64,9 @@ const ModalDropdown: React.FC<{
           placeholder={isOpen ? "Aramaya başlayın..." : placeholder}
           onFocus={() => setIsOpen(true)}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={`w-full bg-white hover:bg-gray-50 rounded-full px-8 py-5 outline-none font-bold text-sm transition-all border border-gray-200 focus:border-black focus:ring-4 focus:ring-black/5 placeholder:text-gray-400 ${value && !isOpen ? 'text-black' : 'text-gray-700'}`}
+          className={`w-full bg-white hover:bg-gray-50 rounded-full px-8 py-5 outline-none font-bold text-sm transition-all border border-gray-200 focus:border-[#1f6d78] focus:ring-4 focus:ring-[#1f6d78]/5 placeholder:text-gray-400 ${value && !isOpen ? 'text-black' : 'text-gray-700'}`}
         />
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-black transition-colors">
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-[#1f6d78] transition-colors">
           <svg
             className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
             width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
@@ -82,7 +82,7 @@ const ModalDropdown: React.FC<{
             {!searchTerm && (
               <button
                 onClick={() => { onSelect(''); setIsOpen(false); setSearchTerm(''); }}
-                className="w-full text-left px-8 py-4 text-sm font-bold text-gray-400 hover:bg-gray-50 hover:text-black transition-all"
+                className="w-full text-left px-8 py-4 text-sm font-bold text-gray-400 hover:bg-gray-50 hover:text-[#1f6d78] transition-all"
               >
                 Tümü (Sıfırla)
               </button>
@@ -97,7 +97,7 @@ const ModalDropdown: React.FC<{
                     setIsOpen(false);
                     setSearchTerm('');
                   }}
-                  className={`w-full text-left px-8 py-4 text-sm font-bold transition-all ${value === item.label ? 'bg-black text-white' : 'text-gray-700 hover:bg-gray-50 hover:text-black'
+                  className={`w-full text-left px-8 py-4 text-sm font-bold transition-all ${value === item.label ? 'bg-[#1f6d78] text-white' : 'text-gray-700 hover:bg-gray-50 hover:text-[#1f6d78]'
                     }`}
                 >
                   {item.label}
@@ -178,8 +178,8 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
     <button
       onClick={onClick}
       className={`px-6 py-3.5 rounded-full text-xs font-bold border transition-all duration-300 ${active
-        ? 'bg-black border-black text-white shadow-lg scale-105'
-        : 'bg-white border-gray-200 text-gray-600 hover:border-black hover:bg-gray-50'
+        ? 'bg-[#1f6d78] border-[#1f6d78] text-white shadow-lg scale-105'
+        : 'bg-white border-gray-200 text-gray-600 hover:border-[#1f6d78] hover:bg-gray-50'
         }`}
     >
       {label}
@@ -198,7 +198,7 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
           </div>
           <button
             onClick={onClose}
-            className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-2xl text-black hover:bg-black hover:text-white transition-all shadow-sm active:scale-90"
+            className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-2xl text-black hover:bg-[#1f6d78] hover:text-white transition-all shadow-sm active:scale-90"
           >
             ×
           </button>
@@ -268,7 +268,7 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
                     placeholder="En Az"
                     value={filters.salaryMin}
                     onChange={e => handleSalaryChange('salaryMin', e.target.value)}
-                    className="w-full bg-white hover:bg-gray-50 rounded-full px-6 py-3.5 outline-none font-bold text-xs focus:border-black focus:ring-4 focus:ring-black/5 transition-all border border-gray-200 shadow-sm placeholder:text-gray-400"
+                    className="w-full bg-white hover:bg-gray-50 rounded-full px-6 py-3.5 outline-none font-bold text-xs focus:border-[#1f6d78] focus:ring-4 focus:ring-[#1f6d78]/5 transition-all border border-gray-200 shadow-sm placeholder:text-gray-400"
                   />
                   <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[10px]">₺</span>
                 </div>
@@ -280,7 +280,7 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
                     placeholder="En Çok"
                     value={filters.salaryMax}
                     onChange={e => handleSalaryChange('salaryMax', e.target.value)}
-                    className="w-full bg-white hover:bg-gray-50 rounded-full px-6 py-3.5 outline-none font-bold text-xs focus:border-black focus:ring-4 focus:ring-black/5 transition-all border border-gray-200 shadow-sm placeholder:text-gray-400"
+                    className="w-full bg-white hover:bg-gray-50 rounded-full px-6 py-3.5 outline-none font-bold text-xs focus:border-[#1f6d78] focus:ring-4 focus:ring-[#1f6d78]/5 transition-all border border-gray-200 shadow-sm placeholder:text-gray-400"
                   />
                   <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[10px]">₺</span>
                 </div>
@@ -315,7 +315,7 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
                 key={skill}
                 onClick={() => toggleSkill(skill)}
                 className={`px-5 py-2.5 rounded-full text-[11px] font-bold border transition-all ${filters.skills.includes(skill)
-                  ? 'bg-black border-black text-white shadow-md'
+                  ? 'bg-[#1f6d78] border-[#1f6d78] text-white shadow-md'
                   : 'bg-white border-gray-100 text-gray-400 hover:border-gray-300'
                   }`}
               >
@@ -329,13 +329,13 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
         <div className="p-8 border-t border-gray-100 bg-white flex gap-6">
           <button
             onClick={clearFilters}
-            className="flex-1 max-w-[200px] bg-white border border-gray-200 text-gray-400 py-5 rounded-full font-bold text-xs uppercase tracking-tight hover:text-black hover:border-black transition-all active:scale-95 shadow-sm"
+            className="flex-1 max-w-[200px] bg-white border border-gray-200 text-gray-400 py-5 rounded-full font-bold text-xs uppercase tracking-tight hover:text-[#1f6d78] hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm"
           >
             Sıfırla
           </button>
           <button
             onClick={() => onApply(filters)}
-            className="flex-[2] bg-black text-white py-5 rounded-full font-bold text-base uppercase tracking-tight hover:bg-gray-800 transition-all shadow-xl active:scale-[0.98]"
+            className="flex-[2] bg-[#1f6d78] text-white py-5 rounded-full font-bold text-base uppercase tracking-tight hover:bg-[#155e68] transition-all shadow-xl active:scale-[0.98]"
           >
             Filtreleri Uygula
           </button>
