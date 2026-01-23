@@ -170,6 +170,48 @@ const App: React.FC = () => {
       fetchSentRequests();
       fetchReceivedRequests();
       fetchGeneralNotifications();
+
+      // Realtime Subscriptions
+      const notificationsChannel = supabase
+        .channel('realtime-notifications')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` },
+          () => {
+            fetchGeneralNotifications();
+          }
+        )
+        .subscribe();
+
+      const requestsChannel = supabase
+        .channel('realtime-requests')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'contact_requests', filter: `target_user_id=eq.${user.id}` },
+          () => {
+            fetchReceivedRequests();
+          }
+        )
+        .subscribe();
+
+      // Also subscribe to SENT requests updates (e.g. when approved/rejected by other party)
+      const sentRequestsChannel = supabase
+        .channel('realtime-sent-requests')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'contact_requests', filter: `requester_id=eq.${user.id}` },
+          () => {
+            fetchSentRequests();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(notificationsChannel);
+        supabase.removeChannel(requestsChannel);
+        supabase.removeChannel(sentRequestsChannel);
+      };
+
     } else {
       setActiveCompany(null);
     }
