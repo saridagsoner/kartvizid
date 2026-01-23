@@ -14,7 +14,7 @@ const Footer = () => {
                                 <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                             </div>
                             <span className="text-[11px] font-semibold text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
-                                Dijital Cv & Doğru Eşleşme
+                                dijital cv & doğru eşleşme
                             </span>
                         </div>
                         <p className="text-gray-500 text-sm leading-relaxed">
@@ -74,7 +74,7 @@ const Footer = () => {
 
                 <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-gray-400 text-xs font-medium">
-                        © 2024 Kartvizid Elektronik İletişim ve Yayıncılık Hizmetleri A.Ş. Tüm hakları saklıdır.
+                        © 2026 Kartvizid. Tüm hakları saklıdır.
                     </p>
                 </div>
             </div>
