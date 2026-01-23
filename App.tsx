@@ -477,13 +477,14 @@ const App: React.FC = () => {
 
     try {
       // 1. Create Contact Request
+      // Using upsert with ignoreDuplicates: false (default), but specifying onConflict to update existing
       const { data, error } = await supabase
         .from('contact_requests')
         .upsert([{
           requester_id: user.id,
           target_user_id: targetUserId,
           status: 'pending'
-        }])
+        }], { onConflict: 'requester_id, target_user_id' })
         .select()
         .single();
 
@@ -495,7 +496,6 @@ const App: React.FC = () => {
       setSentRequests(prev => prev.map(r => r.id === tempId ? data : r));
 
       // 2. Create Notification for Target User
-      // Determine the name to show (Company Name if employer, else Full Name)
       let senderName = user.user_metadata?.full_name || 'Bir Kullanıcı';
       if (user.user_metadata?.role === 'employer' && activeCompany) {
         senderName = activeCompany.name;
@@ -519,20 +519,29 @@ const App: React.FC = () => {
   const handleCancelRequest = async (targetUserId: string) => {
     if (!user) return;
 
+    // Find local request to remove optimistically
     const requestToRemove = sentRequests.find(r => r.target_user_id === targetUserId && r.status === 'pending');
-    if (!requestToRemove) return;
 
     // Optimistic update
-    setSentRequests(prev => prev.filter(r => r.id !== requestToRemove.id));
+    if (requestToRemove) {
+      setSentRequests(prev => prev.filter(r => r.id !== requestToRemove.id));
+    } else {
+      // Even if local state is missing, try to delete from DB to sync
+    }
 
     try {
+      // Delete using composite key to be safe regardless of ID state
       const { error } = await supabase
         .from('contact_requests')
         .delete()
-        .eq('id', requestToRemove.id);
+        .match({
+          requester_id: user.id,
+          target_user_id: targetUserId,
+          status: 'pending' // Only delete if pending
+        });
 
       if (error) {
-        setSentRequests(prev => [...prev, requestToRemove]); // Revert
+        if (requestToRemove) setSentRequests(prev => [...prev, requestToRemove]); // Revert
         throw error;
       }
 
