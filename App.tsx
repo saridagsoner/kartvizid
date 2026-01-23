@@ -479,7 +479,7 @@ const App: React.FC = () => {
       // 1. Create Contact Request
       const { data, error } = await supabase
         .from('contact_requests')
-        .insert([{
+        .upsert([{
           requester_id: user.id,
           target_user_id: targetUserId,
           status: 'pending'
@@ -505,7 +505,7 @@ const App: React.FC = () => {
         user_id: targetUserId,
         title: 'Yeni İletişim İsteği',
         message: `${senderName} sizinle iletişime geçmek istiyor.`,
-        type: 'info',
+        type: 'contact_request',
         related_id: data.id // Link to request
       }]);
 
@@ -579,10 +579,15 @@ const App: React.FC = () => {
         await supabase.from('notifications').insert([{
           user_id: relatedRequest.requester_id,
           title: `İstek ${action === 'approved' ? 'Onaylandı' : 'Reddedildi'}`,
-          message: msg,
           type: type,
           related_id: requestId
         }]);
+
+        // Also mark the original 'contact_request' notification as read/handled for the approver
+        await supabase.from('notifications')
+          .update({ is_read: true })
+          .eq('related_id', requestId)
+          .eq('user_id', user.id);
       }
 
     } catch (error) {

@@ -89,13 +89,38 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
                     )}
                     <div className="flex gap-5">
                       <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl shrink-0 shadow-sm ${item.type === 'success' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'}`}>
-                        {item.type === 'success' ? '🎉' : '📢'}
+                        {item.type === 'success' ? '🎉' : (item.type === 'contact_request' ? '👋' : '📢')}
                       </div>
                       <div className="flex-1">
                         <p className="text-sm text-black font-black mb-1">{item.title}</p>
                         <p className="text-sm text-gray-600 leading-relaxed font-medium">
                           {item.message}
                         </p>
+
+                        {/* Actions for Contact Request Notifications */}
+                        {item.type === 'contact_request' && item.related_id && (
+                          <div className="flex gap-3 mt-4">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onAction(item.related_id!, 'approved');
+                              }}
+                              className="bg-white border border-gray-200 text-black px-5 py-2 rounded-full text-xs font-bold hover:bg-gray-50 transition-all"
+                            >
+                              Onayla
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onAction(item.related_id!, 'rejected');
+                              }}
+                              className="bg-gray-100 text-black px-5 py-2 rounded-full text-xs font-bold hover:bg-gray-200 transition-all"
+                            >
+                              Reddet
+                            </button>
+                          </div>
+                        )}
+
                         <p className="text-[10px] text-gray-400 mt-2 font-bold uppercase tracking-wider">
                           {new Date(item.created_at).toLocaleDateString('tr-TR')}
                         </p>
