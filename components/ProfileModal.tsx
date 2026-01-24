@@ -52,24 +52,24 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   };
 
   const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
-    <div className="mb-6 mt-10 first:mt-0">
-      <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-[0.15em] border-l-4 border-[#1f6d78] pl-3">{title}</h3>
-      {subtitle && <p className="text-[10px] text-gray-400 font-bold uppercase mt-1 ml-4">{subtitle}</p>}
+    <div className="mb-4 sm:mb-6 mt-6 sm:mt-10 first:mt-0">
+      <h3 className="text-xs sm:text-sm font-black text-black dark:text-white uppercase tracking-[0.15em] border-l-4 border-[#1f6d78] pl-3">{title}</h3>
+      {subtitle && <p className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase mt-1 ml-4">{subtitle}</p>}
     </div>
   );
 
   const InfoTag = ({ label, value, icon }: { label: string, value: string | number | undefined, icon?: string }) => (
     <div className="flex flex-col gap-1.5">
-      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</span>
-      <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full px-5 py-3 flex items-center gap-3">
-        {icon && <span className="text-sm">{icon}</span>}
-        <span className="text-sm font-bold text-black dark:text-gray-100">{value || '-'}</span>
+      <span className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</span>
+      <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full px-3 py-2 sm:px-5 sm:py-3 flex items-center gap-2 sm:gap-3">
+        {icon && <span className="text-xs sm:text-sm">{icon}</span>}
+        <span className="text-xs sm:text-sm font-bold text-black dark:text-gray-100">{value || '-'}</span>
       </div>
     </div>
   );
 
   const ValuePill = ({ label }: { label: string }) => (
-    <span className="bg-[#1f6d78] text-white px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider shadow-sm">
+    <span className="bg-[#1f6d78] text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider shadow-sm">
       {label}
     </span>
   );
@@ -78,28 +78,28 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
     <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl animate-in fade-in duration-300">
       <div className="bg-white dark:bg-gray-900 w-full max-w-[800px] h-[90vh] rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
         {/* Header */}
-        <div className="p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
+        <div className="p-5 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
           <div>
-            <h2 className="text-2xl font-black text-black dark:text-white tracking-tighter">Dijital Kartvizid Profili</h2>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Adayın profesyonel ve kişisel tüm detayları</p>
+            <h2 className="text-lg sm:text-2xl font-black text-black dark:text-white tracking-tighter">Dijital Kartvizid Profili</h2>
+            <p className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Adayın profesyonel ve kişisel tüm detayları</p>
           </div>
           <button
             onClick={onClose}
-            className="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-2xl text-black dark:text-white hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-90 shadow-sm"
+            className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-lg sm:text-2xl text-black dark:text-white hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-90 shadow-sm"
           >
             ×
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-10 custom-scrollbar space-y-12 bg-white dark:bg-gray-900">
+        <div className="flex-1 overflow-y-auto p-5 sm:p-10 custom-scrollbar space-y-8 sm:space-y-12 bg-white dark:bg-gray-900">
 
           {/* Bölüm 1: Temel Bilgiler */}
           <section>
             <SectionTitle title="1. TEMEL BİLGİLER" />
-            <div className="flex flex-col md:flex-row gap-10 items-center md:items-start">
+            <div className="flex flex-col md:flex-row gap-6 sm:gap-10 items-center md:items-start">
               <div className="shrink-0">
-                <div className="w-32 h-44 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 overflow-hidden shadow-xl bg-gray-50 dark:bg-gray-800">
+                <div className="w-24 h-32 sm:w-32 sm:h-44 rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 dark:border-gray-700 overflow-hidden shadow-xl bg-gray-50 dark:bg-gray-800">
                   <img src={cv.photoUrl} alt={cv.name} className="w-full h-full object-cover" />
                 </div>
               </div>
@@ -359,11 +359,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
         </div>
 
         {/* Footer Actions */}
-        <div className="p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-5 sticky bottom-0 z-10 shrink-0">
+        <div className="p-5 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-3 sm:gap-5 sticky bottom-0 z-10 shrink-0">
           {isOwner && cv.workingStatus !== 'active' && (
             <button
               onClick={onJobFound}
-              className="flex-[2] bg-[#1f6d78] text-white py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20"
+              className="flex-[2] bg-[#1f6d78] text-white py-3 sm:py-5 rounded-full font-black text-xs sm:text-sm uppercase tracking-widest hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20"
             >
               🎉 İŞİMİ BULDUM
             </button>
@@ -373,13 +373,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             <>
               <button
                 onClick={handleDownload}
-                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-xl"
+                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-3 sm:py-5 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-xl"
               >
                 CV'mi İndir
               </button>
               <button
                 onClick={handleShare}
-                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-5 rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-xl"
+                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-3 sm:py-5 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-xl"
               >
                 CV'mi Paylaş
               </button>
@@ -389,7 +389,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
               {!hasAccess && (
                 <button
                   onClick={isPending ? onCancelRequest : onRequestAccess}
-                  className={`flex-[2] py-5 rounded-full font-black text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] group ${isPending
+                  className={`flex-[2] py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] group ${isPending
                     ? 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-600 hover:shadow-none'
                     : 'bg-[#1f6d78] text-white hover:bg-[#155e68]'
                     }`}
@@ -406,7 +406,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
               {hasAccess && (
                 <button
                   disabled
-                  className="flex-[2] bg-[#1f6d78] text-white py-5 rounded-full font-black text-base uppercase tracking-widest shadow-xl cursor-default"
+                  className="flex-[2] bg-[#1f6d78] text-white py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest shadow-xl cursor-default"
                 >
                   İletişim Bilgileri Açık
                 </button>

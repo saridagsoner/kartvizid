@@ -2,22 +2,22 @@ import React from 'react';
 
 const Footer = () => {
     return (
-        <footer className="bg-[#F0F2F5] dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 pt-16 pb-8 mt-auto border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
-            <div className="max-w-[1440px] mx-auto px-4 md:px-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <footer className="bg-[#F0F2F5] dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 pt-8 pb-6 sm:pt-16 sm:pb-8 mt-auto border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
+            <div className="max-w-[1440px] mx-auto px-5 sm:px-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 sm:gap-12 mb-8 sm:mb-16">
 
                     {/* Brand Column */}
-                    <div className="space-y-6">
+                    <div className="space-y-4 sm:space-y-6 col-span-2 lg:col-span-1">
                         <div className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
-                            <div className="flex items-center text-[#2b2b2b] dark:text-white text-[32px] font-bold tracking-tight rounded-font leading-none">
+                            <div className="flex items-center text-[#2b2b2b] dark:text-white text-2xl sm:text-[32px] font-bold tracking-tight rounded-font leading-none">
                                 <span>Kartvizi</span>
                                 <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                             </div>
-                            <span className="text-[11px] font-semibold text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
+                            <span className="text-[10px] sm:text-[11px] font-semibold text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
                                 dijital cv & doğru eşleşme
                             </span>
                         </div>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                        <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed max-w-sm">
                             Türkiye'nin yeni nesil dijital CV ve iş eşleşme platformu.
                             Kariyer yolculuğunuzda size en uygun fırsatları sunmak için buradayız.
                         </p>
@@ -31,8 +31,8 @@ const Footer = () => {
 
                     {/* Quick Links */}
                     <div>
-                        <h3 className="text-lg font-bold mb-6 text-black dark:text-white">Site Kullanımı</h3>
-                        <ul className="space-y-3 text-sm text-gray-500">
+                        <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">Site Kullanımı</h3>
+                        <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-500">
                             <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Genel Koşullar</a></li>
                             <li><a href="#" className="hover:text-black transition-colors">Güvenlik İpuçları</a></li>
                             <li><a href="#" className="hover:text-black transition-colors">Sıkça Sorulan Sorular</a></li>
@@ -43,8 +43,8 @@ const Footer = () => {
 
                     {/* Legal */}
                     <div>
-                        <h3 className="text-lg font-bold mb-6 text-black dark:text-white">Veri Politikamız</h3>
-                        <ul className="space-y-3 text-sm text-gray-500">
+                        <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">Veri Politikamız</h3>
+                        <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-500">
                             <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Aydınlatma Metni</a></li>
                             <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Çerez Politikası</a></li>
                             <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">KVKK Aydınlatma</a></li>
@@ -54,10 +54,10 @@ const Footer = () => {
                     </div>
 
                     {/* App Download */}
-                    <div>
-                        <h3 className="text-lg font-bold mb-6 text-black dark:text-white">Mobil Uygulama</h3>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">İş fırsatlarını cebinizden takip edin.</p>
-                        <div className="flex flex-col gap-3">
+                    <div className="col-span-2 lg:col-span-1 mt-4 lg:mt-0">
+                        <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">Mobil Uygulama</h3>
+                        <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mb-4 sm:mb-6">İş fırsatlarını cebinizden takip edin.</p>
+                        <div className="flex flex-row sm:flex-col gap-3">
                             <AppButton
                                 store="App Store"
                                 subtitle="'dan İndirin"
@@ -72,8 +72,8 @@ const Footer = () => {
                     </div>
                 </div>
 
-                <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-400 text-xs font-medium">
+                <div className="border-t border-gray-200 pt-6 sm:pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-gray-400 text-[10px] sm:text-xs font-medium text-center sm:text-left">
                         © 2026 Kartvizid. Tüm hakları saklıdır.
                     </p>
                 </div>
@@ -83,21 +83,21 @@ const Footer = () => {
 };
 
 const SocialIcon = ({ path }: { path: string }) => (
-    <a href="#" className="w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] transition-all shadow-sm">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] transition-all shadow-sm">
+        <svg className="w-4 h-4 sm:w-[18px] sm:h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d={path} />
         </svg>
     </a>
 );
 
 const AppButton = ({ store, subtitle, icon }: { store: string, subtitle: string, icon: React.ReactNode }) => (
-    <button className="bg-[#1f6d78] border border-[#1f6d78] rounded-xl px-4 py-2.5 flex items-center gap-3 hover:bg-[#155e68] hover:border-[#155e68] transition-all group w-fit min-w-[160px] shadow-sm">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-gray-300 group-hover:text-white transition-colors">
+    <button className="flex-1 sm:flex-none bg-[#1f6d78] border border-[#1f6d78] rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 flex items-center justify-center sm:justify-start gap-2 sm:gap-3 hover:bg-[#155e68] hover:border-[#155e68] transition-all group w-full sm:w-fit sm:min-w-[160px] shadow-sm">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-gray-300 group-hover:text-white transition-colors sm:w-6 sm:h-6">
             {icon}
         </svg>
         <div className="text-left">
-            <p className="text-[9px] text-gray-400 uppercase leading-tight">{subtitle}</p>
-            <p className="text-sm font-bold text-white leading-tight">{store}</p>
+            <p className="text-[8px] sm:text-[9px] text-gray-400 uppercase leading-tight">{subtitle}</p>
+            <p className="text-xs sm:text-sm font-bold text-white leading-tight">{store}</p>
         </div>
     </button>
 );

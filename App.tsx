@@ -17,68 +17,10 @@ import CVFormModal from './components/CVFormModal';
 import Footer from './components/Footer';
 import SettingsModal from './components/SettingsModal';
 import CompanyFormModal from './components/CompanyFormModal';
+import SortDropdown from './components/SortDropdown';
+import MobileBottomNav from './components/MobileBottomNav';
 
-const SortDropdown: React.FC<{
-  value: string;
-  onChange: (val: string) => void;
-}> = ({ value, onChange }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const options = [
-    { id: 'default', label: 'Varsayılan' },
-    { id: 'newest', label: 'En Yeniler' },
-    { id: 'oldest', label: 'En Eskiler' }
-  ];
-
-  const activeLabel = options.find(o => o.id === value)?.label || 'Varsayılan';
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  return (
-    <div className="relative" ref={containerRef}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-3 bg-white dark:bg-gray-800 border ${isOpen ? 'border-[#1f6d78] shadow-md' : 'border-gray-200 dark:border-gray-700'} rounded-full px-5 py-2 text-xs font-bold text-gray-800 dark:text-white transition-all hover:border-[#1f6d78] dark:hover:border-[#1f6d78] active:scale-95`}
-      >
-        <span>{activeLabel}</span>
-        <svg
-          className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-          width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
-        >
-          <polyline points="6 9 12 15 18 9"></polyline>
-        </svg>
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 py-2 z-[60] animate-in slide-in-from-top-2 duration-200 overflow-hidden">
-          {options.map((opt) => (
-            <button
-              key={opt.id}
-              onClick={() => {
-                onChange(opt.id);
-                setIsOpen(false);
-              }}
-              className={`w-full text-left px-5 py-3 text-xs font-bold transition-all flex items-center justify-between ${value === opt.id ? 'bg-[#1f6d78]/5 text-[#1f6d78] dark:text-[#2dd4bf]' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-[#1f6d78] dark:hover:text-[#2dd4bf]'
-                }`}
-            >
-              {opt.label}
-              {value === opt.id && <span className="text-[10px] font-black text-black dark:text-white">✓</span>}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
+// SortDropdown moved to components/SortDropdown.tsx
 
 const getFriendlyErrorMessage = (error: any): string => {
   const message = error.message || error.toString();
@@ -1116,13 +1058,19 @@ const App: React.FC = () => {
               onChange={handleFilterUpdate}
               availableProfessions={availableProfessions}
               availableCities={availableCities}
+              mobileSort={
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest whitespace-nowrap">SIRALAMA:</span>
+                  <SortDropdown value={sortBy} onChange={setSortBy} />
+                </div>
+              }
             />
 
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 px-6 py-3 mb-2 flex items-center justify-between shadow-sm transition-colors duration-300">
-              <h2 className="text-sm font-bold text-[#1f6d78] dark:text-white">
+            <div className="hidden sm:flex bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 px-4 py-2 sm:px-6 sm:py-3 mb-2 flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 shadow-sm transition-colors duration-300">
+              <h2 className="text-xs sm:text-sm font-bold text-[#1f6d78] dark:text-white">
                 Kartvizid Listesi <span className="text-gray-400 dark:text-gray-500 font-normal ml-1">({filteredCVs.length} sonuç)</span>
               </h2>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 self-end sm:self-auto">
                 <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Sıralama:</span>
                 <SortDropdown value={sortBy} onChange={setSortBy} />
               </div>
@@ -1230,6 +1178,31 @@ const App: React.FC = () => {
         />
       )}
       {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
+
+      {/* Mobile Bottom Navigation - Only for logged in users */}
+      {user && (
+        <MobileBottomNav
+          user={user}
+          onSearch={(val) => {
+            setSearchQuery(val);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onCreateCV={() => setIsCVFormOpen(true)}
+          onOpenCompanyProfile={() => setIsCompanyFormOpen(true)}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          hasCV={!!currentUserCV}
+          userPhotoUrl={user.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
+          notificationCount={generalNotifications.filter(n => !n.is_read).length}
+          notifications={generalNotifications}
+          onNotificationAction={handleRequestAction}
+          onMarkNotificationRead={markNotificationRead}
+          onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
+          signOut={async () => {
+            await supabase.auth.signOut();
+            // window.location.reload(); 
+          }}
+        />
+      )}
     </div>
   );
 };

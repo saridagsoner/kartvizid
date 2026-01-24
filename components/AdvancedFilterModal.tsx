@@ -64,7 +64,7 @@ const ModalDropdown: React.FC<{
           placeholder={isOpen ? "Aramaya başlayın..." : placeholder}
           onFocus={() => setIsOpen(true)}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={`w-full bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-full px-8 py-5 outline-none font-bold text-sm transition-all border border-gray-200 dark:border-gray-700 focus:border-[#1f6d78] focus:ring-4 focus:ring-[#1f6d78]/5 placeholder:text-gray-400 ${value && !isOpen ? 'text-black dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}
+          className={`w-full bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-full px-6 py-3 sm:px-8 sm:py-5 outline-none font-bold text-xs sm:text-sm transition-all border border-gray-200 dark:border-gray-700 focus:border-[#1f6d78] focus:ring-4 focus:ring-[#1f6d78]/5 placeholder:text-gray-400 ${value && !isOpen ? 'text-black dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}
         />
         <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-[#1f6d78] transition-colors">
           <svg
@@ -169,15 +169,15 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
 
   const FilterSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="space-y-4">
-      <label className="block text-[13px] font-bold text-black dark:text-gray-300 uppercase tracking-tight ml-1 mb-4">{title}</label>
-      <div className="flex flex-wrap gap-2.5">{children}</div>
+      <label className="block text-[11px] sm:text-[13px] font-bold text-black dark:text-gray-300 uppercase tracking-tight ml-1 mb-2 sm:mb-4">{title}</label>
+      <div className="flex flex-wrap gap-2 sm:gap-2.5">{children}</div>
     </div>
   );
 
   const SelectionPill: React.FC<{ label: string; active: boolean; onClick: () => void }> = ({ label, active, onClick }) => (
     <button
       onClick={onClick}
-      className={`px-6 py-3.5 rounded-full text-xs font-bold border transition-all duration-300 ${active
+      className={`px-4 py-2.5 sm:px-6 sm:py-3.5 rounded-full text-[10px] sm:text-xs font-bold border transition-all duration-300 ${active
         ? 'bg-[#1f6d78] border-[#1f6d78] text-white shadow-lg scale-105'
         : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-[#1f6d78] dark:hover:border-[#1f6d78] hover:bg-gray-50 dark:hover:bg-gray-700'
         }`}
@@ -191,24 +191,24 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
       <div className="bg-white dark:bg-gray-900 w-full max-w-[900px] max-h-[90vh] rounded-[3rem] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
 
         {/* Header */}
-        <div className="p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10">
+        <div className="p-5 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10">
           <div>
-            <h2 className="text-2xl font-bold text-black dark:text-white tracking-tight">Gelişmiş Filtreler</h2>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight mt-1">Nokta atışı adayları keşfedin ve ekibinize katın</p>
+            <h2 className="text-lg sm:text-2xl font-bold text-black dark:text-white tracking-tight">Gelişmiş Filtreler</h2>
+            <p className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-tight mt-0.5 sm:mt-1">Nokta atışı adayları keşfedin ve ekibinize katın</p>
           </div>
           <button
             onClick={onClose}
-            className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-2xl text-black dark:text-white hover:bg-[#1f6d78] hover:text-white transition-all shadow-sm active:scale-90"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xl sm:text-2xl text-black dark:text-white hover:bg-[#1f6d78] hover:text-white transition-all shadow-sm active:scale-90"
           >
             ×
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-10 space-y-12 custom-scrollbar bg-white dark:bg-gray-900">
+        <div className="flex-1 overflow-y-auto p-5 sm:p-10 space-y-8 sm:space-y-12 custom-scrollbar bg-white dark:bg-gray-900">
 
           {/* Section: Main Info with Searchable Dropdowns */}
-          <div className="flex flex-col md:flex-row gap-8">
+          <div className="flex flex-col md:flex-row gap-6 sm:gap-8">
             <ModalDropdown
               label="POZİSYON / MESLEK"
               value={filters.profession}
@@ -326,16 +326,16 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
         </div>
 
         {/* Footer */}
-        <div className="p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-6">
+        <div className="p-5 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-4 sm:gap-6">
           <button
             onClick={clearFilters}
-            className="flex-1 max-w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-400 py-5 rounded-full font-bold text-xs uppercase tracking-tight hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] hover:border-[#1f6d78] dark:hover:border-[#2dd4bf] transition-all active:scale-95 shadow-sm"
+            className="flex-1 max-w-[140px] sm:max-w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-400 py-3 sm:py-5 rounded-full font-bold text-[10px] sm:text-xs uppercase tracking-tight hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] hover:border-[#1f6d78] dark:hover:border-[#2dd4bf] transition-all active:scale-95 shadow-sm"
           >
             Sıfırla
           </button>
           <button
             onClick={() => onApply(filters)}
-            className="flex-[2] bg-[#1f6d78] text-white py-5 rounded-full font-bold text-base uppercase tracking-tight hover:bg-[#155e68] transition-all shadow-xl active:scale-[0.98]"
+            className="flex-[2] bg-[#1f6d78] text-white py-3 sm:py-5 rounded-full font-bold text-xs sm:text-base uppercase tracking-tight hover:bg-[#155e68] transition-all shadow-xl active:scale-[0.98]"
           >
             Filtreleri Uygula
           </button>

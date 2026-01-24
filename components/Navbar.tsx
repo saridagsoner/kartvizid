@@ -59,24 +59,24 @@ const Navbar: React.FC<NavbarProps & {
     return (
       <>
         <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 z-50 flex items-center justify-center transition-colors duration-300">
-          <div className="max-w-[1440px] w-full px-4 md:px-6 flex items-center h-full">
+          <div className="max-w-[1440px] w-full px-4 md:px-6 flex items-center justify-between h-full gap-2 md:gap-0">
 
             {/* Left Section: Logo */}
             <div className="lg:w-[290px] shrink-0 flex items-center">
               <div className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
-                <div className="flex items-center text-[#2b2b2b] dark:text-white text-[36px] font-bold tracking-tight rounded-font leading-none">
+                <div className="flex items-center text-[#2b2b2b] dark:text-white text-[28px] md:text-[36px] font-bold tracking-tight rounded-font leading-none">
                   <span>Kartvizi</span>
                   <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                 </div>
-                <span className="text-[12px] font-semibold text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
+                <span className="block text-[10px] sm:text-[12px] font-semibold text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
                   dijital cv & doğru eşleşme
                 </span>
               </div>
             </div>
 
             {/* Center Section: Search Bar */}
-            <div className="flex-1 relative group px-0 lg:px-0">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+            <div className="flex-1 relative group px-2 lg:px-0 hidden md:block">
+              <div className="absolute left-6 lg:left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                 <svg
                   width="18"
                   height="18"
@@ -107,19 +107,35 @@ const Navbar: React.FC<NavbarProps & {
             </div>
 
             {/* Right Section: Actions */}
-            <div className="md:w-[330px] shrink-0 flex items-center justify-end gap-2 md:gap-4 ml-0 md:ml-0">
+            <div className="hidden sm:flex md:w-[330px] shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto lg:ml-0">
               {user ? (
                 <>
-                  <ThemeToggle />
 
+
+                  {/* Desktop Button */}
                   <button
                     onClick={isEmployer && onOpenCompanyProfile ? onOpenCompanyProfile : onCreateCV}
-                    className="hidden sm:block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-black dark:text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95 whitespace-nowrap shadow-sm"
+                    className="hidden sm:block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-black dark:text-white px-3 md:px-6 py-2 rounded-full font-bold text-xs md:text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95 whitespace-nowrap shadow-sm"
                   >
                     {isEmployer
                       ? "İş Veren Profili"
                       : (hasCV ? "CV'yi Düzelt" : "CV Oluştur")
                     }
+                  </button>
+
+                  {/* Mobile Icon Button */}
+                  <button
+                    onClick={isEmployer && onOpenCompanyProfile ? onOpenCompanyProfile : onCreateCV}
+                    className="sm:hidden w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95 shadow-sm"
+                    title={isEmployer ? "İş Veren Profili" : (hasCV ? "CV'yi Düzelt" : "CV Oluştur")}
+                  >
+                    {isEmployer ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    ) : hasCV ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                    )}
                   </button>
 
                   <div className="h-6 w-px bg-gray-100 dark:bg-gray-700 hidden sm:block"></div>
@@ -181,13 +197,13 @@ const Navbar: React.FC<NavbarProps & {
                   <ThemeToggle />
                   <button
                     onClick={() => onOpenAuth('signup', 'employer')}
-                    className="bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold text-sm px-6 py-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
+                    className="bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold text-xs md:text-sm px-3 md:px-6 py-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
                   >
                     İş Veren
                   </button>
                   <button
                     onClick={() => onOpenAuth('signup', 'job_seeker')}
-                    className="bg-[#1f6d78] text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-[#155e68] transition-all active:scale-95 shadow-sm whitespace-nowrap"
+                    className="bg-[#1f6d78] text-white px-3 md:px-6 py-2 rounded-full font-bold text-xs md:text-sm hover:bg-[#155e68] transition-all active:scale-95 shadow-sm whitespace-nowrap"
                   >
                     İş Arayan
                   </button>
