@@ -22,6 +22,7 @@ interface MobileBottomNavProps {
 
 const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     user,
+    onSearch,
     onCreateCV,
     onOpenCompanyProfile,
     onOpenSettings,
@@ -34,8 +35,9 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     onOpenAuth,
     signOut
 }) => {
-    const [activeTab, setActiveTab] = useState<'home' | 'notifications' | 'profile' | null>(null);
+    const [activeTab, setActiveTab] = useState<'home' | 'notifications' | 'profile' | 'search' | null>(null);
     const isEmployer = user?.user_metadata?.role === 'employer';
+    const [query, setQuery] = useState('');
 
     // Close sheets when clicking outside or navigating
     useEffect(() => {
@@ -46,7 +48,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const toggleTab = (tab: 'notifications' | 'profile') => {
+    const toggleTab = (tab: 'notifications' | 'profile' | 'search') => {
         if (activeTab === tab) {
             setActiveTab(null);
         } else {
@@ -112,12 +114,12 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         </button>
                     </div>
 
-                    {/* Messages (Placeholder for now, maybe Search?) - Replacing with just a Spacer or Search */}
+                    {/* Search Button */}
                     <button
-                        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} // Search logic often at top
-                        className="flex flex-col items-center justify-center w-16 h-full space-y-1 text-gray-400"
+                        onClick={() => toggleTab('search')}
+                        className={`flex flex-col items-center justify-center w-16 h-full space-y-1 ${activeTab === 'search' ? 'text-[#1f6d78]' : 'text-gray-400'}`}
                     >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={activeTab === 'search' ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
@@ -145,8 +147,51 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 </div>
             </div>
 
+            {/* Search Overlay - Shows at Top (Covering Header) */}
+            {activeTab === 'search' && (
+                <div className="fixed top-0 left-0 right-0 p-4 pt-4 sm:pt-4 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 z-[110] sm:hidden animate-in slide-in-from-top-2 duration-200 shadow-xl h-20 flex items-center">
+                    <div className="relative w-full flex items-center gap-2">
+                        <div className="relative flex-1">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </div>
+                            <input
+                                type="text"
+                                value={query}
+                                autoFocus
+                                onChange={(e) => {
+                                    setQuery(e.target.value);
+                                    if (onSearch) onSearch(e.target.value);
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.currentTarget.blur();
+                                        if (onSearch) onSearch(query);
+                                    }
+                                }}
+                                placeholder="Meslek, isim veya şehir ara..."
+                                className="w-full bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border border-transparent focus:border-black/10 rounded-full pl-10 pr-4 py-3 text-sm font-medium outline-none transition-all shadow-sm"
+                            />
+                        </div>
+                        <button
+                            onClick={() => {
+                                setActiveTab(null);
+                                setQuery('');
+                                onSearch('');
+                            }}
+                            className="text-sm font-semibold text-gray-500 hover:text-black dark:hover:text-white px-2"
+                        >
+                            İptal
+                        </button>
+                    </div>
+                </div>
+            )}
+
             {/* Bottom Sheets Overlay Background*/}
-            {(activeTab === 'notifications' || activeTab === 'profile') && (
+            {(activeTab === 'notifications' || activeTab === 'profile' || activeTab === 'search') && (
                 <div
                     className="fixed inset-0 bg-black/20 z-[90] sm:hidden animate-in fade-in duration-200"
                     onClick={() => setActiveTab(null)}

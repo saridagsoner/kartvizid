@@ -4,7 +4,7 @@ import NotificationDropdown from './NotificationDropdown';
 import UserMenuDropdown from './UserMenuDropdown';
 import { useAuth } from '../context/AuthContext';
 import AuthModal from './AuthModal';
-import ThemeToggle from './ThemeToggle';
+
 
 
 import { ContactRequest, NotificationItem } from '../types';
@@ -107,7 +107,7 @@ const Navbar: React.FC<NavbarProps & {
             </div>
 
             {/* Right Section: Actions */}
-            <div className="hidden sm:flex md:w-[330px] shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto lg:ml-0">
+            <div className={`${user ? 'hidden sm:flex' : 'flex'} md:w-[330px] shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto lg:ml-0`}>
               {user ? (
                 <>
 
@@ -194,7 +194,6 @@ const Navbar: React.FC<NavbarProps & {
                 </>
               ) : (
                 <div className="flex items-center gap-3">
-                  <ThemeToggle />
                   <button
                     onClick={() => onOpenAuth('signup', 'employer')}
                     className="bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold text-xs md:text-sm px-3 md:px-6 py-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
