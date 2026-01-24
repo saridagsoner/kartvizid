@@ -4,6 +4,7 @@ import NotificationDropdown from './NotificationDropdown';
 import UserMenuDropdown from './UserMenuDropdown';
 import { useAuth } from '../context/AuthContext';
 import AuthModal from './AuthModal';
+import ThemeToggle from './ThemeToggle';
 
 
 import { ContactRequest, NotificationItem } from '../types';
@@ -57,13 +58,13 @@ const Navbar: React.FC<NavbarProps & {
 
     return (
       <>
-        <nav className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 z-50 flex items-center justify-center">
+        <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 z-50 flex items-center justify-center transition-colors duration-300">
           <div className="max-w-[1440px] w-full px-4 md:px-6 flex items-center h-full">
 
             {/* Left Section: Logo */}
             <div className="lg:w-[290px] shrink-0 flex items-center">
               <div className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
-                <div className="flex items-center text-[#2b2b2b] text-[36px] font-bold tracking-tight rounded-font leading-none">
+                <div className="flex items-center text-[#2b2b2b] dark:text-white text-[36px] font-bold tracking-tight rounded-font leading-none">
                   <span>Kartvizi</span>
                   <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                 </div>
@@ -81,11 +82,11 @@ const Navbar: React.FC<NavbarProps & {
                   height="18"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="black"
+                  stroke="currentColor"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="opacity-100 transition-opacity"
+                  className="opacity-100 transition-opacity text-gray-500 dark:text-gray-400"
                 >
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -101,7 +102,7 @@ const Navbar: React.FC<NavbarProps & {
                     e.currentTarget.blur();
                   }
                 }}
-                className="w-full bg-[#F0F2F5] hover:bg-[#E8EAED] focus:bg-white focus:ring-1 focus:ring-black transition-all outline-none rounded-full px-12 py-2.5 text-sm text-gray-800 border border-transparent focus:border-black/10 shadow-sm"
+                className="w-full bg-[#F0F2F5] dark:bg-gray-700 hover:bg-[#E8EAED] dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-black dark:focus:ring-gray-500 transition-all outline-none rounded-full px-12 py-2.5 text-sm text-gray-800 dark:text-gray-100 border border-transparent focus:border-black/10 shadow-sm placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
 
@@ -109,9 +110,11 @@ const Navbar: React.FC<NavbarProps & {
             <div className="md:w-[330px] shrink-0 flex items-center justify-end gap-2 md:gap-4 ml-0 md:ml-0">
               {user ? (
                 <>
+                  <ThemeToggle />
+
                   <button
                     onClick={isEmployer && onOpenCompanyProfile ? onOpenCompanyProfile : onCreateCV}
-                    className="hidden sm:block bg-white border border-gray-200 text-black px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-50 transition-all active:scale-95 whitespace-nowrap shadow-sm"
+                    className="hidden sm:block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-black dark:text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95 whitespace-nowrap shadow-sm"
                   >
                     {isEmployer
                       ? "İş Veren Profili"
@@ -119,7 +122,7 @@ const Navbar: React.FC<NavbarProps & {
                     }
                   </button>
 
-                  <div className="h-6 w-px bg-gray-100 hidden sm:block"></div>
+                  <div className="h-6 w-px bg-gray-100 dark:bg-gray-700 hidden sm:block"></div>
 
                   <div className="relative">
                     <button
@@ -127,9 +130,9 @@ const Navbar: React.FC<NavbarProps & {
                         setIsNotifOpen(!isNotifOpen);
                         setIsProfileOpen(false);
                       }}
-                      className="w-10 h-10 text-gray-600 rounded-full flex items-center justify-center text-lg hover:bg-gray-100 transition-colors relative group"
+                      className="w-10 h-10 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center text-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group"
                     >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                         <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                       </svg>
@@ -162,7 +165,7 @@ const Navbar: React.FC<NavbarProps & {
                       {userPhotoUrl ? (
                         <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                        <div className="w-full h-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center">
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
@@ -175,9 +178,10 @@ const Navbar: React.FC<NavbarProps & {
                 </>
               ) : (
                 <div className="flex items-center gap-3">
+                  <ThemeToggle />
                   <button
                     onClick={() => onOpenAuth('signup', 'employer')}
-                    className="bg-white text-[#1f6d78] border border-[#1f6d78] font-bold text-sm px-6 py-2 rounded-full hover:bg-gray-50 transition-colors whitespace-nowrap"
+                    className="bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold text-sm px-6 py-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
                   >
                     İş Veren
                   </button>

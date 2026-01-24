@@ -10,13 +10,13 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Common background style for all slides
-    const commonBg = "bg-white border border-gray-200";
+    const commonBg = "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700";
 
     const slides = [
         {
             id: 'premium',
             content: (
-                <div className={`h-full flex flex-col items-center justify-center text-center text-gray-800 p-6 relative overflow-hidden ${commonBg}`}>
+                <div className={`h-full flex flex-col items-center justify-center text-center text-gray-800 dark:text-gray-200 p-6 relative overflow-hidden ${commonBg}`}>
                     {/* Background Watermark */}
                     <div className="absolute -right-6 -bottom-6 opacity-[0.04] transform rotate-12 pointer-events-none text-[#1f6d78]">
                         <svg width="180" height="180" viewBox="0 0 24 24" fill="currentColor">
@@ -31,7 +31,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
                             <path d="M2 9h20"></path>
                         </svg>
                     </div>
-                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900">Premium Ayrıcalığı</h3>
+                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900 dark:text-white">Premium Ayrıcalığı</h3>
                     <p className="text-xs font-bold text-gray-500 leading-relaxed max-w-[200px]">
                         Öne çıkın, fark edilin. <br />Kariyerinizde hız limitlerini kaldırın.
                     </p>
@@ -41,7 +41,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
         {
             id: 'employer',
             content: (
-                <div className={`h-full flex flex-col items-center justify-center text-center text-gray-800 p-6 relative overflow-hidden ${commonBg}`}>
+                <div className={`h-full flex flex-col items-center justify-center text-center text-gray-800 dark:text-gray-200 p-6 relative overflow-hidden ${commonBg}`}>
                     {/* Background Watermark */}
                     <div className="absolute -left-4 -bottom-4 opacity-[0.04] transform -rotate-12 pointer-events-none">
                         <svg width="160" height="160" viewBox="0 0 24 24" fill="currentColor">
@@ -57,7 +57,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
                     </div>
-                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900">Nokta Atışı Yetenek</h3>
+                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900 dark:text-white">Nokta Atışı Yetenek</h3>
                     <p className="text-xs font-bold text-gray-500 leading-relaxed max-w-[200px]">
                         İlanla vakit kaybetmeyin. <br />Aradığınız profesyoneli doğrudan bulun.
                     </p>
@@ -67,7 +67,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
         {
             id: 'seeker',
             content: (
-                <div className={`h-full flex flex-col items-center justify-center text-center text-gray-800 p-6 relative overflow-hidden ${commonBg}`}>
+                <div className={`h-full flex flex-col items-center justify-center text-center text-gray-800 dark:text-gray-200 p-6 relative overflow-hidden ${commonBg}`}>
                     {/* Background Watermark */}
                     <div className="absolute right-0 top-10 opacity-[0.03] pointer-events-none">
                         <svg width="150" height="150" viewBox="0 0 24 24" fill="currentColor">
@@ -82,7 +82,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
                     </div>
-                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900">İş Seni Bulsun</h3>
+                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900 dark:text-white">İş Seni Bulsun</h3>
                     <p className="text-xs font-bold text-gray-500 leading-relaxed max-w-[200px]">
                         Sen arama, onlar seni keşfetsin. <br />Profilin senin yerine çalışsın.
                     </p>
@@ -93,7 +93,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
             id: 'tips',
             content: (
                 <div
-                    className={`h-full flex flex-col items-center justify-center text-center text-gray-800 p-6 relative overflow-hidden cursor-pointer group ${commonBg}`}
+                    className={`h-full flex flex-col items-center justify-center text-center text-gray-800 dark:text-gray-200 p-6 relative overflow-hidden cursor-pointer group ${commonBg}`}
                     onClick={onOpenTips}
                 >
                     {/* Background Watermark */}
@@ -109,7 +109,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
                         </svg>
                     </div>
                     <div className="relative z-10">
-                        <h3 className="font-black text-lg mb-2 tracking-tight flex items-center justify-center gap-2 text-gray-900">
+                        <h3 className="font-black text-lg mb-2 tracking-tight flex items-center justify-center gap-2 text-gray-900 dark:text-white">
                             Profesyonel İpuçları
                         </h3>
                         <p className="text-xs font-bold text-gray-500 leading-relaxed max-w-[200px]">
@@ -150,7 +150,7 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
 
     return (
         <div
-            className="w-full h-[260px] rounded-2xl overflow-hidden relative shadow-sm group select-none bg-white"
+            className="w-full h-[260px] rounded-2xl overflow-hidden relative shadow-sm group select-none bg-white dark:bg-gray-800"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >

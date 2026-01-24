@@ -47,7 +47,7 @@ const SortDropdown: React.FC<{
     <div className="relative" ref={containerRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-3 bg-white border ${isOpen ? 'border-[#1f6d78] shadow-md' : 'border-gray-200'} rounded-full px-5 py-2 text-xs font-bold text-gray-800 transition-all hover:border-[#1f6d78] active:scale-95`}
+        className={`flex items-center gap-3 bg-white dark:bg-gray-800 border ${isOpen ? 'border-[#1f6d78] shadow-md' : 'border-gray-200 dark:border-gray-700'} rounded-full px-5 py-2 text-xs font-bold text-gray-800 dark:text-white transition-all hover:border-[#1f6d78] dark:hover:border-[#1f6d78] active:scale-95`}
       >
         <span>{activeLabel}</span>
         <svg
@@ -59,7 +59,7 @@ const SortDropdown: React.FC<{
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-[60] animate-in slide-in-from-top-2 duration-200 overflow-hidden">
+        <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 py-2 z-[60] animate-in slide-in-from-top-2 duration-200 overflow-hidden">
           {options.map((opt) => (
             <button
               key={opt.id}
@@ -67,11 +67,11 @@ const SortDropdown: React.FC<{
                 onChange(opt.id);
                 setIsOpen(false);
               }}
-              className={`w-full text-left px-5 py-3 text-xs font-bold transition-all flex items-center justify-between ${value === opt.id ? 'bg-[#1f6d78]/5 text-[#1f6d78]' : 'text-gray-600 hover:bg-gray-50 hover:text-[#1f6d78]'
+              className={`w-full text-left px-5 py-3 text-xs font-bold transition-all flex items-center justify-between ${value === opt.id ? 'bg-[#1f6d78]/5 text-[#1f6d78] dark:text-[#2dd4bf]' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-[#1f6d78] dark:hover:text-[#2dd4bf]'
                 }`}
             >
               {opt.label}
-              {value === opt.id && <span className="text-[10px] font-black text-black">✓</span>}
+              {value === opt.id && <span className="text-[10px] font-black text-black dark:text-white">✓</span>}
             </button>
           ))}
         </div>
@@ -1063,7 +1063,7 @@ const App: React.FC = () => {
   }, []); // Run once on mount or consider polling if needed
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F0F2F5]">
+    <div className="min-h-screen flex flex-col bg-[#F0F2F5] dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
       <Navbar
         onSearch={setSearchQuery}
         onCreateCV={() => setIsCVFormOpen(true)}
@@ -1118,12 +1118,12 @@ const App: React.FC = () => {
               availableCities={availableCities}
             />
 
-            <div className="bg-white rounded-2xl border border-gray-200 px-6 py-3 mb-2 flex items-center justify-between shadow-sm">
-              <h2 className="text-sm font-bold text-[#1f6d78]">
-                Kartvizid Listesi <span className="text-gray-400 font-normal ml-1">({filteredCVs.length} sonuç)</span>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 px-6 py-3 mb-2 flex items-center justify-between shadow-sm transition-colors duration-300">
+              <h2 className="text-sm font-bold text-[#1f6d78] dark:text-white">
+                Kartvizid Listesi <span className="text-gray-400 dark:text-gray-500 font-normal ml-1">({filteredCVs.length} sonuç)</span>
               </h2>
               <div className="flex items-center gap-3">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sıralama:</span>
+                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Sıralama:</span>
                 <SortDropdown value={sortBy} onChange={setSortBy} />
               </div>
             </div>
@@ -1143,8 +1143,8 @@ const App: React.FC = () => {
                   );
                 })
               ) : (
-                <div className="bg-white rounded-lg p-16 text-center border border-gray-200 shadow-sm">
-                  <p className="text-gray-800 font-bold">Sonuç bulunamadı.</p>
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-16 text-center border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
+                  <p className="text-gray-800 dark:text-white font-bold">Sonuç bulunamadı.</p>
                   <button onClick={() => {
                     setSortBy('default');
                     setActiveFilters({

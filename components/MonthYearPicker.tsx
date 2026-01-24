@@ -77,10 +77,10 @@ const MonthYearPicker: React.FC<MonthYearPickerProps> = ({ value, onChange, plac
         <div className="relative w-full" ref={containerRef}>
             <div
                 onClick={() => !disabled && setIsOpen(!isOpen)}
-                className={`w-full bg-gray-50 border border-transparent rounded-xl px-4 py-3 text-sm font-bold flex items-center justify-between cursor-pointer transition-all outline-none ${isOpen ? 'bg-white border-[#1f6d78]/10 ring-2 ring-[#1f6d78]/5' : ''
-                    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:border-[#1f6d78]/10'}`}
+                className={`w-full bg-gray-50 dark:bg-gray-800 border border-transparent rounded-xl px-4 py-3 text-sm font-bold flex items-center justify-between cursor-pointer transition-all outline-none ${isOpen ? 'bg-white dark:bg-gray-700 border-[#1f6d78]/10 ring-2 ring-[#1f6d78]/5' : ''
+                    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white dark:hover:bg-gray-700 hover:border-[#1f6d78]/10'}`}
             >
-                <span className={value ? 'text-black' : 'text-gray-400'}>
+                <span className={value ? 'text-black dark:text-white' : 'text-gray-400'}>
                     {getDisplayValue()}
                 </span>
                 <svg
@@ -102,16 +102,16 @@ const MonthYearPicker: React.FC<MonthYearPickerProps> = ({ value, onChange, plac
             </div>
 
             {isOpen && (
-                <div className="absolute z-50 top-[110%] left-0 w-[280px] bg-white rounded-2xl shadow-xl border border-gray-100 p-4 animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute z-50 top-[110%] left-0 w-[280px] bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-4 animate-in fade-in zoom-in-95 duration-200">
                     {/* Header: Year Selector */}
-                    <div className="mb-4 bg-gray-50 rounded-lg p-1 flex justify-center">
+                    <div className="mb-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-1 flex justify-center">
                         <select
                             value={selectedYear}
                             onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                            className="bg-transparent font-bold text-center outline-none py-1 cursor-pointer w-full"
+                            className="bg-transparent font-bold text-center outline-none py-1 cursor-pointer w-full dark:text-white"
                         >
                             {generateYears().map(y => (
-                                <option key={y} value={y}>{y}</option>
+                                <option key={y} value={y} className="dark:bg-gray-800">{y}</option>
                             ))}
                         </select>
                     </div>
@@ -124,7 +124,7 @@ const MonthYearPicker: React.FC<MonthYearPickerProps> = ({ value, onChange, plac
                                 onClick={() => handleSelect(m.value, selectedYear)}
                                 className={`p-2 rounded-lg text-xs font-bold transition-all ${selectedMonth === m.value && value.startsWith(selectedYear.toString())
                                     ? 'bg-[#1f6d78] text-white shadow-lg shadow-[#1f6d78]/20'
-                                    : 'hover:bg-gray-100 text-gray-600'
+                                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'
                                     }`}
                             >
                                 {m.label}
@@ -132,10 +132,10 @@ const MonthYearPicker: React.FC<MonthYearPickerProps> = ({ value, onChange, plac
                         ))}
                     </div>
 
-                    <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between">
+                    <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
                         <button
                             onClick={() => { onChange(''); setIsOpen(false); }}
-                            className="text-[10px] font-bold text-red-500 hover:bg-red-50 px-2 py-1 rounded"
+                            className="text-[10px] font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-1 rounded"
                         >
                             Temizle
                         </button>
@@ -146,7 +146,7 @@ const MonthYearPicker: React.FC<MonthYearPickerProps> = ({ value, onChange, plac
                                 const y = now.getFullYear();
                                 handleSelect(m, y);
                             }}
-                            className="text-[10px] font-bold text-blue-500 hover:bg-blue-50 px-2 py-1 rounded"
+                            className="text-[10px] font-bold text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 px-2 py-1 rounded"
                         >
                             Bu ay
                         </button>

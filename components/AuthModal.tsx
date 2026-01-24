@@ -83,12 +83,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl relative overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-3xl w-full max-w-md p-8 shadow-2xl relative overflow-hidden">
 
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -97,13 +97,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 </button>
 
                 <div className="text-center mb-8">
-                    <h2 className="text-2xl font-black text-gray-900 mb-2">
+                    <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">
                         {isEmployer
                             ? (mode === 'signin' ? 'İş Veren Girişi' : 'İş Veren Hesabı Oluştur')
                             : (mode === 'signin' ? 'Aday Girişi' : 'Aday Hesabı Oluştur')
                         }
                     </h2>
-                    <p className="text-gray-500 font-medium">
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">
                         {isEmployer
                             ? 'Firma profilinizi yönetmek için giriş yapın.'
                             : 'Kariyerinizde yeni bir sayfa açmak için katılın.'
@@ -119,25 +119,25 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                     )}
 
                     <div className="space-y-1">
-                        <label className="text-xs font-bold text-gray-700 uppercase tracking-wider ml-1">E-posta</label>
+                        <label className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">E-posta</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-[#1f6d78]/5 focus:border-[#1f6d78] transition-all placeholder:text-gray-400"
+                            className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-[#1f6d78]/5 focus:border-[#1f6d78] transition-all placeholder:text-gray-400"
                             placeholder="ornek@email.com"
                         />
                     </div>
 
                     <div className="space-y-1">
-                        <label className="text-xs font-bold text-gray-700 uppercase tracking-wider ml-1">Şifre</label>
+                        <label className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">Şifre</label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-800 font-medium focus:outline-none focus:ring-2 focus:ring-[#1f6d78]/5 focus:border-[#1f6d78] transition-all placeholder:text-gray-400"
+                            className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-gray-800 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-[#1f6d78]/5 focus:border-[#1f6d78] transition-all placeholder:text-gray-400"
                             placeholder="••••••••"
                         />
                     </div>
@@ -151,7 +151,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                 onChange={(e) => setRememberMe(e.target.checked)}
                                 className="w-4 h-4 rounded border-gray-300 text-[#1f6d78] focus:ring-[#1f6d78] focus:ring-offset-0 cursor-pointer accent-[#1f6d78]"
                             />
-                            <label htmlFor="rememberMe" className="text-sm font-bold text-gray-600 cursor-pointer select-none">
+                            <label htmlFor="rememberMe" className="text-sm font-bold text-gray-600 dark:text-gray-400 cursor-pointer select-none">
                                 Beni Hatırla
                             </label>
                         </div>
@@ -172,7 +172,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                 onChange={(e) => setIsEmployer(e.target.checked)}
                                 className="w-4 h-4 rounded border-gray-300 text-[#1f6d78] focus:ring-[#1f6d78] focus:ring-offset-0 cursor-pointer accent-[#1f6d78]"
                             />
-                            <label htmlFor="isEmployer" className="text-sm font-bold text-gray-600 cursor-pointer select-none">
+                            <label htmlFor="isEmployer" className="text-sm font-bold text-gray-600 dark:text-gray-400 cursor-pointer select-none">
                                 İşveren Hesabı Oluştur (Firma Profili)
                             </label>
                         </div>
@@ -188,14 +188,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 </form>
 
                 <div className="mt-6 text-center">
-                    <p className="text-sm text-gray-500 font-medium">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                         {mode === 'signin' ? 'Hesabın yok mu?' : 'Zaten hesabın var mı?'}
                         <button
                             onClick={() => {
                                 setMode(mode === 'signin' ? 'signup' : 'signin');
                                 setError(null);
                             }}
-                            className="ml-2 text-black font-bold hover:underline"
+                            className="ml-2 text-black dark:text-white font-bold hover:underline"
                         >
                             {mode === 'signin' ? 'Kayıt Ol' : 'Giriş Yap'}
                         </button>

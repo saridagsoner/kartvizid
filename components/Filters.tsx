@@ -36,7 +36,7 @@ const CustomDropdown: React.FC<{
     <div className="flex-1 min-w-[130px] relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full bg-white border ${isOpen || value ? 'border-black shadow-md' : 'border-gray-100 shadow-sm'} rounded-full px-5 py-2.5 text-xs font-bold text-gray-800 outline-none cursor-pointer hover:border-black transition-all flex items-center justify-between group`}
+        className={`w-full bg-white dark:bg-gray-800 border ${isOpen || value ? 'border-black dark:border-white shadow-md' : 'border-gray-100 dark:border-gray-700 shadow-sm'} rounded-full px-5 py-2.5 text-xs font-bold text-gray-800 dark:text-white outline-none cursor-pointer hover:border-black dark:hover:border-white transition-all flex items-center justify-between group`}
       >
         <span className="truncate pr-2">{value || label}</span>
         <svg
@@ -48,7 +48,7 @@ const CustomDropdown: React.FC<{
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-[100] animate-in slide-in-from-top-2 duration-200 overflow-hidden">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 py-2 z-[100] animate-in slide-in-from-top-2 duration-200 overflow-hidden">
           <div className="max-h-[220px] overflow-y-auto custom-scrollbar">
             {/* Add Reset Option if value is selected */}
             {value && (
@@ -57,7 +57,7 @@ const CustomDropdown: React.FC<{
                   onSelect('');
                   setIsOpen(false);
                 }}
-                className="w-full text-left px-5 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 transition-all border-b border-gray-50 mb-1"
+                className="w-full text-left px-5 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all border-b border-gray-50 dark:border-gray-700 mb-1"
               >
                 × Sıfırla
               </button>
@@ -69,7 +69,7 @@ const CustomDropdown: React.FC<{
                   onSelect(item.label);
                   setIsOpen(false);
                 }}
-                className={`w-full text-left px-5 py-2.5 text-xs font-bold transition-all ${value === item.label ? 'text-black bg-gray-50' : 'text-gray-600 hover:bg-gray-50 hover:text-black'
+                className={`w-full text-left px-5 py-2.5 text-xs font-bold transition-all ${value === item.label ? 'text-black dark:text-white bg-gray-50 dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white'
                   }`}
               >
                 {item.label}
@@ -81,7 +81,7 @@ const CustomDropdown: React.FC<{
               setIsOpen(false);
               onMore();
             }}
-            className="w-full text-center py-2.5 text-[10px] font-black text-gray-400 hover:text-black uppercase tracking-widest border-t border-gray-50 mt-1 transition-colors"
+            className="w-full text-center py-2.5 text-[10px] font-black text-gray-400 hover:text-black dark:hover:text-white uppercase tracking-widest border-t border-gray-50 dark:border-gray-700 mt-1 transition-colors"
           >
             Daha Fazla Göster
           </button>
@@ -114,7 +114,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
   }).length;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-3 shadow-sm flex flex-wrap gap-3 items-center">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 shadow-sm flex flex-wrap gap-3 items-center transition-all duration-300">
       <CustomDropdown
         label="Tüm Kategoriler"
         value={currentFilters.profession}
@@ -141,7 +141,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
 
       <button
         onClick={() => setActiveModal('advanced')}
-        className={`bg-white border px-5 py-2.5 rounded-full font-bold text-xs transition-all flex items-center gap-2 shadow-sm shrink-0 hover:border-[#1f6d78] active:scale-95 ${activeFiltersCount > 0 ? 'border-[#1f6d78] bg-gray-50' : 'border-gray-200 text-black'
+        className={`bg-white dark:bg-gray-800 border px-5 py-2.5 rounded-full font-bold text-xs transition-all flex items-center gap-2 shadow-sm shrink-0 hover:border-[#1f6d78] active:scale-95 ${activeFiltersCount > 0 ? 'border-[#1f6d78] bg-gray-50 dark:bg-gray-700 text-black dark:text-white' : 'border-gray-200 dark:border-gray-700 text-black dark:text-white'
           }`}
       >
         <span>Gelişmiş Filtreler</span>

@@ -34,10 +34,10 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
             {/* Trigger Button */}
             <div
                 onClick={() => !disabled && setIsOpen(!isOpen)}
-                className={`w-full bg-gray-50 border border-transparent rounded-full px-6 py-3.5 text-sm font-bold flex items-center justify-between cursor-pointer transition-all ${isOpen ? 'bg-white border-[#1f6d78]/10 ring-2 ring-[#1f6d78]/5' : ''
-                    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:border-[#1f6d78]/10'}`}
+                className={`w-full bg-gray-50 dark:bg-gray-800 border border-transparent rounded-full px-6 py-3.5 text-sm font-bold flex items-center justify-between cursor-pointer transition-all ${isOpen ? 'bg-white dark:bg-gray-700 border-[#1f6d78]/10 ring-2 ring-[#1f6d78]/5' : ''
+                    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white dark:hover:bg-gray-700 hover:border-[#1f6d78]/10'}`}
             >
-                <span className={value ? 'text-black' : 'text-gray-400'}>
+                <span className={value ? 'text-black dark:text-gray-100' : 'text-gray-400'}>
                     {value || placeholder}
                 </span>
                 <svg
@@ -57,9 +57,9 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
 
             {/* Dropdown Menu */}
             {isOpen && (
-                <div className="absolute z-50 top-[110%] left-0 w-full bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute z-50 top-[110%] left-0 w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                     {/* Search Input */}
-                    <div className="p-3 border-b border-gray-100 bg-gray-50/50">
+                    <div className="p-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
                         <div className="relative">
                             <input
                                 type="text"
@@ -67,7 +67,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Ara..."
-                                className="w-full bg-white border border-gray-200 rounded-xl pl-9 pr-4 py-2.5 text-sm font-bold outline-none focus:border-[#1f6d78] transition-colors"
+                                className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-9 pr-4 py-2.5 text-sm font-bold outline-none focus:border-[#1f6d78] transition-colors dark:text-white"
                                 onClick={(e) => e.stopPropagation()}
                             />
                             <svg
@@ -98,7 +98,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
                                         setIsOpen(false);
                                         setSearch('');
                                     }}
-                                    className={`px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-colors ${value === option ? 'bg-[#1f6d78] text-white' : 'text-gray-700 hover:bg-gray-50'
+                                    className={`px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-colors ${value === option ? 'bg-[#1f6d78] text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
                                         }`}
                                 >
                                     {option}

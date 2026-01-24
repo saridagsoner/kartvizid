@@ -2,14 +2,14 @@ import React from 'react';
 
 const Footer = () => {
     return (
-        <footer className="bg-[#F0F2F5] text-gray-800 pt-16 pb-8 mt-auto border-t border-gray-200">
+        <footer className="bg-[#F0F2F5] dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 pt-16 pb-8 mt-auto border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
             <div className="max-w-[1440px] mx-auto px-4 md:px-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
 
                     {/* Brand Column */}
                     <div className="space-y-6">
                         <div className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
-                            <div className="flex items-center text-[#2b2b2b] text-[32px] font-bold tracking-tight rounded-font leading-none">
+                            <div className="flex items-center text-[#2b2b2b] dark:text-white text-[32px] font-bold tracking-tight rounded-font leading-none">
                                 <span>Kartvizi</span>
                                 <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                             </div>
@@ -17,7 +17,7 @@ const Footer = () => {
                                 dijital cv & doğru eşleşme
                             </span>
                         </div>
-                        <p className="text-gray-500 text-sm leading-relaxed">
+                        <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
                             Türkiye'nin yeni nesil dijital CV ve iş eşleşme platformu.
                             Kariyer yolculuğunuzda size en uygun fırsatları sunmak için buradayız.
                         </p>
@@ -31,9 +31,9 @@ const Footer = () => {
 
                     {/* Quick Links */}
                     <div>
-                        <h3 className="text-lg font-bold mb-6 text-black">Site Kullanımı</h3>
+                        <h3 className="text-lg font-bold mb-6 text-black dark:text-white">Site Kullanımı</h3>
                         <ul className="space-y-3 text-sm text-gray-500">
-                            <li><a href="#" className="hover:text-black transition-colors">Genel Koşullar</a></li>
+                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Genel Koşullar</a></li>
                             <li><a href="#" className="hover:text-black transition-colors">Güvenlik İpuçları</a></li>
                             <li><a href="#" className="hover:text-black transition-colors">Sıkça Sorulan Sorular</a></li>
                             <li><a href="#" className="hover:text-black transition-colors">Yardım Merkezi</a></li>
@@ -43,20 +43,20 @@ const Footer = () => {
 
                     {/* Legal */}
                     <div>
-                        <h3 className="text-lg font-bold mb-6 text-black">Veri Politikamız</h3>
+                        <h3 className="text-lg font-bold mb-6 text-black dark:text-white">Veri Politikamız</h3>
                         <ul className="space-y-3 text-sm text-gray-500">
-                            <li><a href="#" className="hover:text-black transition-colors">Aydınlatma Metni</a></li>
-                            <li><a href="#" className="hover:text-black transition-colors">Çerez Politikası</a></li>
-                            <li><a href="#" className="hover:text-black transition-colors">KVKK Aydınlatma</a></li>
-                            <li><a href="#" className="hover:text-black transition-colors">Üyelik Sözleşmesi</a></li>
-                            <li><a href="#" className="hover:text-black transition-colors">Veri Sahibi Başvuru Formu</a></li>
+                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Aydınlatma Metni</a></li>
+                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Çerez Politikası</a></li>
+                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">KVKK Aydınlatma</a></li>
+                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Üyelik Sözleşmesi</a></li>
+                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Veri Sahibi Başvuru Formu</a></li>
                         </ul>
                     </div>
 
                     {/* App Download */}
                     <div>
-                        <h3 className="text-lg font-bold mb-6 text-black">Mobil Uygulama</h3>
-                        <p className="text-gray-500 text-sm mb-6">İş fırsatlarını cebinizden takip edin.</p>
+                        <h3 className="text-lg font-bold mb-6 text-black dark:text-white">Mobil Uygulama</h3>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">İş fırsatlarını cebinizden takip edin.</p>
                         <div className="flex flex-col gap-3">
                             <AppButton
                                 store="App Store"
@@ -83,7 +83,7 @@ const Footer = () => {
 };
 
 const SocialIcon = ({ path }: { path: string }) => (
-    <a href="#" className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] transition-all shadow-sm">
+    <a href="#" className="w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] transition-all shadow-sm">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d={path} />
         </svg>

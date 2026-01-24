@@ -102,24 +102,24 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
 
     return (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl">
-            <div className="bg-white w-full max-w-[800px] h-[90vh] rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
+            <div className="bg-white dark:bg-gray-900 w-full max-w-[800px] h-[90vh] rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
 
                 {/* Header */}
-                <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10 shrink-0">
+                <div className="p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
                     <div>
-                        <h2 className="text-2xl font-black text-black tracking-tighter">İş Veren Profilinizi Oluşturun</h2>
+                        <h2 className="text-2xl font-black text-black dark:text-white tracking-tighter">İş Veren Profilinizi Oluşturun</h2>
                         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Adayların sizi tanıması için kurumsal bilgilerinizi girin</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-2xl text-black hover:bg-[#1f6d78] hover:text-white transition-all active:scale-90"
+                        className="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-2xl text-black dark:text-white hover:bg-[#1f6d78] hover:text-white transition-all active:scale-90"
                     >
                         ×
                     </button>
                 </div>
 
                 {/* Form Body */}
-                <div className="flex-1 overflow-y-auto p-10 custom-scrollbar space-y-12 bg-white">
+                <div className="flex-1 overflow-y-auto p-10 custom-scrollbar space-y-12 bg-white dark:bg-gray-900">
 
                     {/* Bölüm 1: Temel Bilgiler */}
                     <section>
@@ -136,7 +136,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                 />
                                 <div
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="w-32 h-32 rounded-[2.5rem] border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden relative shadow-sm"
+                                    className="w-32 h-32 rounded-[2.5rem] border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden relative shadow-sm"
                                 >
                                     {formData.logoUrl ? (
                                         <>
@@ -177,36 +177,36 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                             <div className="flex-1 space-y-6">
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
-                                        <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">İş Veren / Kurum Adı *</label>
+                                        <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">İş Veren / Kurum Adı *</label>
                                         <span className="text-[10px] font-bold text-[#1f6d78] bg-[#1f6d78]/5 px-2 py-0.5 rounded-full">Zorunlu</span>
                                     </div>
                                     <input
                                         type="text"
                                         value={formData.name}
                                         onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full bg-gray-50 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold"
+                                        className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
                                         placeholder="Örn: Acme A.Ş."
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Sektör *</label>
+                                        <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Sektör *</label>
                                         <input
                                             type="text"
                                             value={formData.industry}
                                             onChange={e => setFormData({ ...formData, industry: e.target.value })}
-                                            className="w-full bg-gray-50 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold"
+                                            className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
                                             placeholder="Örn: Teknoloji"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Web Sitesi</label>
+                                        <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Web Sitesi</label>
                                         <input
                                             type="url"
                                             value={formData.website}
                                             onChange={e => setFormData({ ...formData, website: e.target.value })}
-                                            className="w-full bg-gray-50 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold"
+                                            className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
                                             placeholder="https://..."
                                         />
                                     </div>
@@ -218,7 +218,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                             <div className="space-y-2">
                                 <div className="flex justify-between">
-                                    <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Şehir *</label>
+                                    <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Şehir *</label>
                                 </div>
                                 <SearchableSelect
                                     value={formData.city || ''}
@@ -228,7 +228,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">İlçe *</label>
+                                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">İlçe *</label>
                                 <SearchableSelect
                                     value={formData.district || ''}
                                     onChange={(val) => setFormData({ ...formData, district: val })}
@@ -239,23 +239,23 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                             </div>
                             <div className="space-y-2">
                                 <div className="flex justify-between">
-                                    <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Ülke</label>
+                                    <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Ülke</label>
                                 </div>
                                 <input
                                     type="text"
                                     value={formData.country}
                                     onChange={e => setFormData({ ...formData, country: e.target.value })}
-                                    className="w-full bg-gray-50 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold"
+                                    className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
                                     placeholder="Türkiye"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">Adres Detayı</label>
+                                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Adres Detayı</label>
                                 <input
                                     type="text"
                                     value={formData.address}
                                     onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                    className="w-full bg-gray-50 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold"
+                                    className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
                                     placeholder="Mahalle, Cadde, Sokak No..."
                                 />
                             </div>
@@ -266,11 +266,11 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                     <section>
                         <SectionTitle title="2. İŞ VEREN HAKKINDA" subtitle="Kültürünüzü ve vizyonunuzu anlatın" />
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-black uppercase tracking-widest ml-1">HAKKINDA *</label>
+                            <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">HAKKINDA *</label>
                             <textarea
                                 value={formData.description}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full bg-gray-50 rounded-[2rem] px-8 py-6 outline-none h-32 resize-none focus:bg-white focus:border-[#1f6d78]/10 border border-transparent transition-all font-medium text-sm leading-relaxed"
+                                className="w-full bg-gray-50 dark:bg-gray-800 rounded-[2rem] px-8 py-6 outline-none h-32 resize-none focus:bg-white dark:focus:bg-gray-700 focus:border-[#1f6d78]/10 border border-transparent transition-all font-medium text-sm leading-relaxed text-gray-800 dark:text-gray-100"
                                 placeholder="Kendinizden ve şirketinizden bahsedin..."
                             ></textarea>
                             <p className="text-[10px] text-gray-400 font-bold ml-4">Bu bilgiler adayların şirketinizi tanıması için önemlidir.</p>
@@ -279,10 +279,10 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-8 border-t border-gray-100 bg-white flex gap-5 sticky bottom-0 z-10 shrink-0">
+                <div className="p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-5 sticky bottom-0 z-10 shrink-0">
                     <button
                         onClick={onClose}
-                        className="flex-1 bg-white border-2 border-gray-100 text-black py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-gray-50 hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm"
+                        className="flex-1 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-black dark:text-white py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm"
                     >
                         Vazgeç
                     </button>

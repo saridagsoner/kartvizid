@@ -10,13 +10,16 @@ if (!rootElement) {
 
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <AuthProvider>
       <ToastProvider>
-        <App />
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
       </ToastProvider>
     </AuthProvider>
   </React.StrictMode>
