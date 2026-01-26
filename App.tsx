@@ -19,6 +19,7 @@ import SettingsModal from './components/SettingsModal';
 import CompanyFormModal from './components/CompanyFormModal';
 import SortDropdown from './components/SortDropdown';
 import MobileBottomNav from './components/MobileBottomNav';
+import NotificationsModal from './components/NotificationsModal';
 
 // SortDropdown moved to components/SortDropdown.tsx
 
@@ -92,6 +93,7 @@ const App: React.FC = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [authRole, setAuthRole] = useState<'job_seeker' | 'employer' | undefined>(undefined);
+  const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
 
   const handleAuthOpen = (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => {
     setAuthMode(mode);
@@ -111,7 +113,9 @@ const App: React.FC = () => {
       fetchSentRequests();
       fetchSentRequests();
       fetchReceivedRequests();
+      fetchReceivedRequests();
       fetchGeneralNotifications();
+      fixOldNotifications(); // Auto-fix legacy notifications
 
       // Realtime Subscriptions
       const notificationsChannel = supabase
@@ -193,16 +197,127 @@ const App: React.FC = () => {
   const fetchGeneralNotifications = async () => {
     if (!user) return;
     try {
-      const { data, error } = await supabase
+      // 1. Fetch raw notifications
+      const { data: notificationsData, error: notifError } = await supabase
         .from('notifications')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setGeneralNotifications(data || []);
+      if (notifError) throw notifError;
+
+      if (!notificationsData || notificationsData.length === 0) {
+        setGeneralNotifications([]);
+        return;
+      }
+
+      // 2. Extract unique sender IDs that aren't null
+      const senderIds = Array.from(new Set(
+        notificationsData
+          .map(n => n.sender_id)
+          .filter(id => id) // remove nulls/undefined
+      ));
+
+      // 3. Fetch profiles manually if we have senders
+      let profilesMap: Record<string, any> = {};
+
+      if (senderIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, role')
+          .in('id', senderIds);
+
+        if (profilesData) {
+          profilesData.forEach(p => {
+            profilesMap[p.id] = p;
+          });
+        }
+      }
+
+      // 4. Merge data manually
+      const mergedNotifications = notificationsData.map(n => ({
+        ...n,
+        sender: n.sender_id ? profilesMap[n.sender_id] : undefined
+      }));
+
+      setGeneralNotifications(mergedNotifications);
     } catch (error) {
       console.error('Error fetching notifications:', error);
+    }
+  };
+
+  // Helper to backfill sender_id for old notifications
+  const fixOldNotifications = async () => {
+    if (!user) return;
+    try {
+      // Find notifications with missing sender_id but having related_id
+      const { data: badNotifs } = await supabase
+        .from('notifications')
+        .select('id, related_id, type')
+        .is('sender_id', null)
+        .not('related_id', 'is', null)
+        .eq('user_id', user.id);
+
+      if (!badNotifs || badNotifs.length === 0) return;
+
+      console.log('Backfilling sender_id for old notifications...', badNotifs.length);
+
+      for (const notif of badNotifs) {
+        // Fetch related request to find who the other party was
+        const { data: request } = await supabase
+          .from('contact_requests')
+          .select('requester_id, target_user_id')
+          .eq('id', notif.related_id)
+          .maybeSingle();
+
+        if (request) {
+          let senderId = null;
+
+          // Logic: The "other" person is the sender
+          if (user.id === request.target_user_id) {
+            senderId = request.requester_id; // Incoming request
+          } else if (user.id === request.requester_id) {
+            senderId = request.target_user_id; // Response to my request
+          }
+
+          if (senderId) {
+            await supabase
+              .from('notifications')
+              .update({ sender_id: senderId })
+              .eq('id', notif.id);
+          }
+        }
+      }
+
+      // Refresh after fixing
+      if (badNotifs.length > 0) {
+        fetchGeneralNotifications();
+      }
+    } catch (err) {
+      console.error('Auto-fix notifications error:', err);
+    }
+  };
+
+  const markAllNotificationsRead = async () => {
+    if (!user) return;
+    try {
+      // Use RPC for efficiency
+      const { error } = await supabase.rpc('mark_all_notifications_read');
+
+      if (error) {
+        console.error('RPC failed, falling back to manual update', error);
+        // Fallback: update all unread manually
+        await supabase
+          .from('notifications')
+          .update({ is_read: true })
+          .eq('user_id', user.id)
+          .eq('is_read', false);
+      }
+
+      // Update local state immediately
+      setGeneralNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+    } catch (error) {
+      console.error('Error marking all read:', error);
     }
   };
 
@@ -427,6 +542,113 @@ const App: React.FC = () => {
       console.error('Error fetching data:', error);
     }
   };
+
+  const handleOpenProfile = async (userId: string, role?: string) => {
+    try {
+      let found = false;
+
+      // Helper to open company
+      const openCompany = async () => {
+        const { data, error } = await supabase
+          .from('companies')
+          .select('*')
+          .eq('user_id', userId)
+          .single();
+
+        if (!error && data) {
+          const company: Company = {
+            id: data.id,
+            userId: data.user_id,
+            name: data.company_name,
+            description: data.description,
+            website: data.website,
+            industry: data.industry,
+            city: data.city,
+            district: data.district,
+            country: data.country,
+            address: data.address,
+            logoUrl: data.logo_url,
+            createdAt: data.created_at
+          };
+          setSelectedCompanyProfile(company);
+          return true;
+        }
+        return false;
+      };
+
+      // Helper to open CV
+      const openCV = async () => {
+        const { data, error } = await supabase
+          .from('cvs')
+          .select('*')
+          .eq('user_id', userId)
+          .single();
+
+        if (!error && data) {
+          const cv: CV = {
+            id: data.id,
+            userId: data.user_id,
+            name: data.name || '',
+            profession: data.profession || '',
+            city: data.city || '',
+            district: data.district,
+            experienceYears: data.experience_years || 0,
+            language: data.language || '',
+            languageLevel: data.language_level,
+            photoUrl: data.photo_url || '',
+            salaryMin: data.salary_min || 0,
+            salaryMax: data.salary_max || 0,
+            about: data.about || '',
+            skills: data.skills || [],
+            education: data.education || '',
+            educationLevel: data.education_level || '',
+            graduationStatus: data.graduation_status || '',
+            workType: data.work_type || '',
+            employmentType: data.employment_type || '',
+            militaryStatus: data.military_status || '',
+            maritalStatus: data.marital_status || '',
+            disabilityStatus: data.disability_status || '',
+            noticePeriod: data.notice_period || '',
+            travelStatus: data.travel_status || '',
+            driverLicense: data.driver_license || [],
+            isNew: data.is_new,
+            views: data.views || 0,
+            email: data.email,
+            phone: data.phone,
+            isEmailPublic: data.is_email_public,
+            isPhonePublic: data.is_phone_public,
+            workingStatus: data.working_status,
+            references: data.references || []
+          };
+          setSelectedCV(cv);
+          return true;
+        }
+        return false;
+      };
+
+      // Smart Logic: Try based on role, then fallback
+      if (role === 'employer') {
+        found = await openCompany();
+        if (!found) found = await openCV(); // Fallback
+      } else if (role === 'job_seeker') {
+        found = await openCV();
+        if (!found) found = await openCompany(); // Fallback
+      } else {
+        // No role known, try both
+        found = await openCV();
+        if (!found) found = await openCompany();
+      }
+
+      if (!found) {
+        showToast('Kullanıcı profili bulunamadı.', 'error');
+      }
+
+    } catch (err) {
+      console.error('Error opening profile:', err);
+      showToast('Bir hata oluştu.', 'error');
+    }
+  };
+
 
   const handleSendRequest = async (targetUserId: string) => {
     if (!user) {
@@ -1006,6 +1228,9 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F0F2F5] dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+
+
+      // ... inside render
       <Navbar
         onSearch={setSearchQuery}
         onCreateCV={() => setIsCVFormOpen(true)}
@@ -1021,7 +1246,11 @@ const App: React.FC = () => {
         notificationCount={receivedRequests.length + generalNotifications.filter(n => !n.is_read).length}
         notifications={[...receivedRequests, ...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
         onNotificationAction={handleRequestAction}
-        onMarkNotificationRead={handleMarkNotificationRead}
+        onMarkNotificationRead={markNotificationRead}
+        onMarkAllRead={markAllNotificationsRead}
+
+        onOpenProfile={handleOpenProfile}
+        onViewAll={() => setIsNotificationsModalOpen(true)}
 
         onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
         isAuthModalOpen={isAuthModalOpen}
@@ -1029,6 +1258,19 @@ const App: React.FC = () => {
         authMode={authMode}
         authRole={authRole}
       />
+
+      {/* ... previous modals ... */}
+
+      {isNotificationsModalOpen && (
+        <NotificationsModal
+          onClose={() => setIsNotificationsModalOpen(false)}
+          notifications={[...receivedRequests, ...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+          onAction={handleRequestAction}
+          onMarkRead={markNotificationRead}
+          onMarkAllRead={markAllNotificationsRead}
+          onOpenProfile={handleOpenProfile}
+        />
+      )}
 
 
       <div className="flex-1 flex justify-center pt-20 px-4 md:px-6">
@@ -1196,6 +1438,8 @@ const App: React.FC = () => {
           notifications={generalNotifications}
           onNotificationAction={handleRequestAction}
           onMarkNotificationRead={markNotificationRead}
+          onMarkAllRead={markAllNotificationsRead}
+          onOpenProfile={handleOpenProfile}
           onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
           signOut={async () => {
             await supabase.auth.signOut();

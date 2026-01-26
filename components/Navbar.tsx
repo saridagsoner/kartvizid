@@ -20,6 +20,8 @@ interface NavbarProps {
   notifications?: (ContactRequest | NotificationItem)[];
   onNotificationAction?: (requestId: string, action: 'approved' | 'rejected') => void;
   onMarkNotificationRead?: (id: string) => void;
+  onMarkAllRead?: () => void;
+  onOpenProfile?: (userId: string, role?: string) => void;
 }
 
 const Navbar: React.FC<NavbarProps & {
@@ -30,7 +32,7 @@ const Navbar: React.FC<NavbarProps & {
   authRole?: 'job_seeker' | 'employer';
 }> = ({
   onSearch, onCreateCV, onOpenCompanyProfile, onOpenSettings, hasCV, userPhotoUrl, notificationCount = 0, notifications = [], onNotificationAction, onMarkNotificationRead,
-  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole
+  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole, onMarkAllRead, onOpenProfile
 }) => {
     const { user, signOut } = useAuth();
     const [query, setQuery] = useState('');
@@ -164,6 +166,8 @@ const Navbar: React.FC<NavbarProps & {
                         notifications={notifications}
                         onAction={onNotificationAction || (() => { })}
                         onMarkRead={onMarkNotificationRead}
+                        onMarkAllRead={onMarkAllRead}
+                        onOpenProfile={onOpenProfile}
                       />
                     )}
                   </div>

@@ -16,6 +16,8 @@ interface MobileBottomNavProps {
     notifications?: (ContactRequest | NotificationItem)[];
     onNotificationAction?: (requestId: string, action: 'approved' | 'rejected') => void;
     onMarkNotificationRead?: (id: string) => void;
+    onMarkAllRead?: () => void;
+    onOpenProfile?: (userId: string, role?: string) => void;
     onOpenAuth: (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => void;
     signOut: () => void;
 }
@@ -32,6 +34,8 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     notifications = [],
     onNotificationAction,
     onMarkNotificationRead,
+    onMarkAllRead,
+    onOpenProfile,
     onOpenAuth,
     signOut
 }) => {
@@ -206,6 +210,8 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         notifications={notifications}
                         onAction={onNotificationAction || (() => { })}
                         onMarkRead={onMarkNotificationRead}
+                        onMarkAllRead={onMarkAllRead}
+                        onOpenProfile={onOpenProfile}
                         // We will need to update NotificationDropdown to accept a 'mobile' prop to style it as a sheet/block
                         // For now, let's wrap it in a container that constraints its width/height
                         mobile={true}

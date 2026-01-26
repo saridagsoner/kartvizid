@@ -126,6 +126,13 @@ export interface NotificationItem {
   type: 'info' | 'success' | 'warning';
   is_read: boolean;
   created_at: string;
+  sender_id?: string;
+  sender?: {
+    full_name: string;
+    avatar_url?: string;
+    role?: string;
+  };
+  related_id?: string;
 }
 
 export interface ContactRequest {
