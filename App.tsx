@@ -755,25 +755,55 @@ const App: React.FC = () => {
     try {
       // Identify self (the approver)
       let approverName = user?.user_metadata?.full_name || 'Bir Kullanıcı';
+
+      // Better name resolution
       if (user?.user_metadata?.role === 'employer' && activeCompany) {
         approverName = activeCompany.name;
-      } else if (currentUserCV) {
+      } else if (currentUserCV && currentUserCV.name) {
         approverName = currentUserCV.name;
+      } else if (user?.email) {
+        // Fallback to email username if nothing else
+        approverName = user.email.split('@')[0];
       }
 
-      const { error } = await supabase.rpc('respond_to_request_secure', {
+      // Try RPC first
+      const { error: rpcError } = await supabase.rpc('respond_to_request_secure', {
         p_request_id: requestId,
         p_action: action,
         p_responder_name: approverName
       });
 
-      if (error) throw error;
+      if (rpcError) {
+        console.warn('RPC failed, trying direct update...', rpcError);
+        // Fallback: Direct Update (if RLS allows)
+        const { error: directError } = await supabase
+          .from('contact_requests')
+          .update({ status: action, updated_at: new Date().toISOString() })
+          .eq('id', requestId);
+
+        if (directError) throw directError;
+
+        // Manually create notification for the requester
+        if (relatedRequest) {
+          await supabase.from('notifications').insert({
+            user_id: relatedRequest.requester_id, // Notify the person who ASKED
+            type: action === 'approved' ? 'success' : 'info',
+            title: action === 'approved' ? 'İletişim İsteği Onaylandı' : 'İstek Sonuçlandı',
+            message: `${approverName} iletişime geçme isteğinizi ${action === 'approved' ? 'onayladı' : 'reddetti'}.`,
+            related_id: requestId,
+            sender_id: user?.id
+          });
+        }
+      }
 
       showToast(`İstek ${action === 'approved' ? 'onaylandı' : 'reddedildi'}.`, 'success');
 
+      // Refresh data
+      fetchReceivedRequests();
+
     } catch (error) {
       console.error('Error updating status:', error);
-      showToast('Bir hata oluştu.', 'error');
+      showToast('Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
       // Revert optimism
       fetchReceivedRequests();
     }
