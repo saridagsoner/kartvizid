@@ -4,9 +4,15 @@ import { Company } from '../types';
 interface CompanyProfileModalProps {
     company: Company;
     onClose: () => void;
+    requestStatus?: string;
+    requestId?: string;
+    onAction?: (requestId: string, action: 'approved' | 'rejected') => void;
+    onRevoke?: (requestId: string) => void;
 }
 
-const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onClose }) => {
+const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onClose, requestStatus, requestId, onAction, onRevoke }) => {
+
+    console.log('CompanyProfileModal Rendered:', { companyId: company.id, userId: company.userId, requestStatus, requestId });
 
     const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
         <div className="mb-6 mt-10 first:mt-0">
@@ -45,6 +51,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
 
                 {/* Modal Body */}
                 <div className="flex-1 overflow-y-auto p-10 custom-scrollbar space-y-12 bg-white">
+
 
                     {/* Bölüm 1: Kurumsal Kimlik */}
                     <section>
@@ -106,6 +113,75 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                     </section>
 
                 </div>
+
+                {/* Footer Actions */}
+                {(requestStatus === 'pending' || requestStatus === 'approved' || requestStatus === 'rejected') && (
+                    <div className="p-6 border-t border-gray-100 bg-gray-50 shrink-0 flex justify-end gap-3 z-20">
+                        {requestStatus === 'pending' && onAction && requestId && (
+                            <>
+                                <button
+                                    onClick={() => onAction(requestId, 'approved')}
+                                    className="bg-black text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl active:scale-95"
+                                >
+                                    İsteği Onayla
+                                </button>
+                                <button
+                                    onClick={() => onAction(requestId, 'rejected')}
+                                    className="bg-white text-black border border-gray-200 px-8 py-3 rounded-full font-bold text-sm hover:bg-gray-100 transition-all active:scale-95"
+                                >
+                                    Reddet
+                                </button>
+                            </>
+                        )}
+                        {requestStatus === 'approved' && onRevoke && requestId && (
+                            <div className="w-full flex flex-col items-center text-center gap-4 py-2">
+                                <div className="flex flex-col items-center gap-1">
+                                    <span className="text-green-600 font-bold text-sm flex items-center gap-2">
+                                        ✅ İletişim isteği onaylandı.
+                                    </span>
+                                    <span className="text-gray-400 text-[10px] font-medium">
+                                        Bu işveren iletişim bilgilerinizi görüntüleyebilir.
+                                    </span>
+                                </div>
+
+                                <button
+                                    onClick={() => onRevoke(requestId)}
+                                    className="bg-white border text-red-600 border-red-100 px-8 py-3 rounded-full font-bold text-xs hover:bg-red-50 hover:border-red-200 transition-all shadow-sm active:scale-95 min-w-[200px] flex items-center justify-center gap-2"
+                                >
+                                    🚫 İLETİŞİM BİLGİLERİNİ GİZLE
+                                </button>
+                            </div>
+                        )}
+                        {requestStatus === 'rejected' && (
+                            <div className="w-full flex flex-col items-center text-center gap-4 py-2">
+                                <div className="flex flex-col items-center gap-1">
+                                    <span className="text-[#1f6d78] font-bold text-sm flex items-center gap-2">
+                                        ⚠️ <span className="underline decoration-gray-300 underline-offset-4">{company.name}</span> tarafından gönderilen iletişim isteğini reddettiniz.
+                                    </span>
+                                    <span className="text-gray-400 text-[10px] font-medium">
+                                        Fikrinizi değiştirdiyseniz isteği tekrar onaylayabilirsiniz.
+                                    </span>
+                                </div>
+
+                                {onAction && requestId && (
+                                    <button
+                                        onClick={() => onAction(requestId, 'approved')}
+                                        className="bg-[#1f6d78] text-white px-12 py-3.5 rounded-full font-black text-sm hover:bg-[#16555e] transition-all shadow-lg hover:shadow-[#1f6d78]/30 active:scale-95 w-full sm:w-auto min-w-[200px]"
+                                    >
+                                        İSTEĞİ ONAYLA
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                        {/* Close Button mobile friendly */}
+                        <button
+                            onClick={onClose}
+                            className="sm:hidden text-gray-500 font-bold text-xs px-4"
+                        >
+                            KAPAT
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

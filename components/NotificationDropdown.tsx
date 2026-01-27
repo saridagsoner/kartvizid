@@ -14,29 +14,10 @@ interface NotificationDropdownProps {
 
 const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, notifications, onAction, onMarkRead, onMarkAllRead, mobile }) => {
   const { user } = useAuth();
-  const [requestStatuses, setRequestStatuses] = useState<Record<string, string>>({});
+  /* Removed redundant useState/useEffect for requestStatuses */
 
-  useEffect(() => {
-    const requestIds = notifications
-      .filter(item => !(item as ContactRequest).status && (item as NotificationItem).type === 'contact_request' && (item as NotificationItem).related_id)
-      .map(item => (item as NotificationItem).related_id as string);
-
-    const uniqueIds = Array.from(new Set(requestIds));
-    if (uniqueIds.length === 0) return;
-
-    const fetchStatuses = async () => {
-      const { data } = await supabase.from('contact_requests').select('id, status').in('id', uniqueIds);
-      if (data) {
-        const statuses: Record<string, string> = {};
-        data.forEach(req => { statuses[req.id] = req.status; });
-        setRequestStatuses(statuses);
-      }
-    };
-    fetchStatuses();
-  }, [notifications]);
-
-  const handleProfileClick = (id: string, role?: string) => {
-    const event = new CustomEvent('open-profile', { detail: { id, role } });
+  const handleProfileClick = (id: string, role?: string, requestId?: string) => {
+    const event = new CustomEvent('open-profile', { detail: { id, role, requestId } });
     window.dispatchEvent(event);
     onClose();
   };
@@ -47,67 +28,42 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
 
   // Helper to resolve display name and avatar
   const getSenderDetails = (item: NotificationItem | ContactRequest) => {
-    // If it's a raw contact request (from pending list)
-    // If it's a raw contact request (from pending list)
-    if (isContactRequest(item)) {
-      const requester = (item as any).requester;
+    const extractProfile = (user: any) => {
+      // Debug Log
+      console.log('Extracting Profile for:', user?.full_name, user);
+      if (!user) return { name: 'Bir kullanıcı', avatar: null, role: null };
 
-      if (!requester) return { name: 'Bir kullanıcı', avatar: null, role: null };
-
-      // 1. Try Company details (for ContactRequest)
-      if (requester.role === 'employer' && requester.companies && requester.companies.length > 0) {
+      // 1. Check for Company (Priority) - Regardless of role
+      if (user.companies && user.companies.length > 0) {
         return {
-          name: requester.companies[0].company_name || requester.full_name,
-          avatar: requester.companies[0].logo_url || requester.avatar_url,
+          name: user.companies[0].company_name || user.full_name,
+          avatar: user.companies[0].logo_url || user.avatar_url,
           role: 'employer'
         };
       }
 
-      // 2. Try CV details (for ContactRequest)
-      if (requester.role === 'job_seeker' && requester.cvs && requester.cvs.length > 0) {
+      // 2. Check for CV - Regardless of role
+      if (user.cvs && user.cvs.length > 0) {
         return {
-          name: requester.cvs[0].name || requester.full_name,
-          avatar: requester.cvs[0].photo_url || requester.avatar_url,
+          name: user.cvs[0].name || user.full_name,
+          avatar: user.cvs[0].photo_url || user.avatar_url,
           role: 'job_seeker'
         };
       }
 
-      // Fallback
+      // 3. Fallback
       return {
-        name: requester.full_name || 'İletişim İsteği',
-        avatar: requester.avatar_url,
-        role: requester.role
+        name: user.full_name || 'İletişim İsteği',
+        avatar: user.avatar_url,
+        role: user.role
       };
-    }
-
-    // If it's a notification
-    const sender = item.sender as any;
-    if (!sender) return { name: 'Bir kullanıcı', avatar: null, role: null };
-
-    // 1. Try Company details
-    if (sender.role === 'employer' && sender.companies && sender.companies.length > 0) {
-      return {
-        name: sender.companies[0].company_name || sender.full_name,
-        avatar: sender.companies[0].logo_url || sender.avatar_url,
-        role: 'employer'
-      };
-    }
-
-    // 2. Try CV details
-    if (sender.role === 'job_seeker' && sender.cvs && sender.cvs.length > 0) {
-      return {
-        name: sender.cvs[0].name || sender.full_name,
-        avatar: sender.cvs[0].photo_url || sender.avatar_url,
-        role: 'job_seeker'
-      };
-    }
-
-    // 3. Fallback to Profile
-    return {
-      name: sender.full_name || 'İletişim İsteği',
-      avatar: sender.avatar_url,
-      role: sender.role
     };
+
+    if (isContactRequest(item)) {
+      return extractProfile((item as any).requester);
+    } else {
+      return extractProfile((item as any).sender);
+    }
   };
 
   return (
@@ -118,17 +74,20 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
         {/* Header */}
         <div className="px-5 py-4 border-b border-gray-50 flex justify-between items-center bg-white">
           <h3 className="font-bold text-gray-900 text-sm">Bildirimler</h3>
-          <button onClick={onMarkAllRead} className="text-gray-500 text-xs font-medium hover:text-black transition-colors">
-            Hepsini Oku
+          <button onClick={onMarkAllRead} className="text-gray-500 text-[10px] font-bold hover:text-red-500 transition-colors uppercase tracking-wider">
+            BİLDİRİMLERİ TEMİZLE
           </button>
         </div>
 
         {/* Content */}
-        <div className="max-h-[400px] overflow-y-auto custom-scrollbar bg-gray-50/50">
+        <div className="max-h-[290px] overflow-y-auto custom-scrollbar bg-gray-50/50">
           {notifications.length === 0 ? (
-            <div className="py-12 text-center">
-              <span className="text-3xl block mb-2">🔕</span>
-              <p className="text-gray-400 text-xs">Henüz bir bildiriminiz yok.</p>
+            <div className="py-12 text-center flex flex-col items-center justify-center">
+              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 border border-gray-100">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+              </div>
+              <p className="text-gray-900 font-medium text-sm">Bildiriminiz Yok</p>
+              <p className="text-gray-400 text-xs mt-1">Yeni bir şey olduğunda burada görünecek.</p>
             </div>
           ) : (
             notifications.map((item) => {
@@ -137,16 +96,19 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
               const timeStr = dateObj.getHours() + ':' + dateObj.getMinutes().toString().padStart(2, '0');
               const dateStr = dateObj.toLocaleDateString('tr-TR');
 
-              const isResolved = !isContactRequest(item) && item.related_id && requestStatuses[item.related_id];
+              // Status resolution using pre-fetched requestStatus or item.status for direct requests
+              const status = isContactRequest(item) ? item.status : (item as NotificationItem).requestStatus;
+              const isResolved = status === 'approved' || status === 'rejected';
 
               return (
                 <div
                   key={item.id}
                   onClick={() => {
-                    if (!isContactRequest(item)) {
-                      if (onMarkRead) onMarkRead(item.id);
-                      if (item.sender_id) handleProfileClick(item.sender_id, details.role);
-                    }
+                    const profileId = isContactRequest(item) ? item.requester_id : item.sender_id;
+                    const relatedId = isContactRequest(item) ? item.id : (item as NotificationItem).related_id;
+
+                    if (!isContactRequest(item) && onMarkRead) onMarkRead(item.id);
+                    if (profileId) handleProfileClick(profileId, details.role, relatedId);
                   }}
                   className={`px-5 py-4 border-b border-gray-50 cursor-pointer transition-all hover:bg-white
                     ${!isContactRequest(item) && !item.is_read ? 'bg-blue-50/40' : 'bg-transparent'}
@@ -191,8 +153,8 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
                         <div className="mt-3">
                           {isResolved ? (
                             <div className={`text-[10px] font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5 
-                                ${requestStatuses[(item as any).related_id] === 'approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                              {requestStatuses[(item as any).related_id] === 'approved' ? '✓ İstek Onaylandı' : '✕ İstek Reddedildi'}
+                                ${status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                              {status === 'approved' ? '✓ İstek Onaylandı' : '✕ İstek Reddedildi'}
                             </div>
                           ) : (
                             /* Pending Actions */

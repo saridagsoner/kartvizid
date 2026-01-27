@@ -123,7 +123,7 @@ export interface NotificationItem {
   user_id: string;
   title: string;
   message: string;
-  type: 'info' | 'success' | 'warning';
+  type: 'info' | 'success' | 'warning' | 'contact_request' | 'contact_request_received';
   is_read: boolean;
   created_at: string;
   sender_id?: string;
@@ -131,8 +131,11 @@ export interface NotificationItem {
     full_name: string;
     avatar_url?: string;
     role?: string;
+    companies?: any[];
+    cvs?: any[];
   };
   related_id?: string;
+  requestStatus?: string;  // Pre-fetched status from App.tsx
 }
 
 export interface ContactRequest {

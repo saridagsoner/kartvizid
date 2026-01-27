@@ -94,6 +94,8 @@ const App: React.FC = () => {
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [authRole, setAuthRole] = useState<'job_seeker' | 'employer' | undefined>(undefined);
   const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
+  const [activeModalRequest, setActiveModalRequest] = useState<ContactRequest | null>(null);
+  const [activeModalRequestId, setActiveModalRequestId] = useState<string | null>(null);
 
   const handleAuthOpen = (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => {
     setAuthMode(mode);
@@ -136,6 +138,7 @@ const App: React.FC = () => {
           { event: '*', schema: 'public', table: 'contact_requests', filter: `target_user_id=eq.${user.id}` },
           () => {
             fetchReceivedRequests();
+            fetchGeneralNotifications(); // Trigger this to update statuses in notifications list
           }
         )
         .subscribe();
@@ -168,8 +171,10 @@ const App: React.FC = () => {
     const handleOpenProfileEvent = (e: Event) => {
       const customEvent = e as CustomEvent;
       if (customEvent.detail) {
-        const { id, role } = customEvent.detail;
-        handleOpenProfile(id, role);
+        const { id, role, requestId } = customEvent.detail;
+        handleOpenProfile(id, role, requestId);
+
+
       }
     };
 
@@ -178,6 +183,40 @@ const App: React.FC = () => {
       window.removeEventListener('open-profile', handleOpenProfileEvent);
     };
   }, []);
+
+  // Ensure request status is available for the modal
+  useEffect(() => {
+    let isMounted = true;
+    setActiveModalRequest(null); // Reset when profile changes
+
+    if (selectedCompanyProfile && user) {
+      const checkRequest = async () => {
+        // Fetch logic: Use explicit request ID if provided (from notification), otherwise fallback to User relationship
+        let query = supabase.from('contact_requests').select('*');
+
+        if (activeModalRequestId) {
+          query = query.eq('id', activeModalRequestId);
+        } else {
+          // Fallback: Check if Company sent request to User
+          query = query
+            .eq('requester_id', selectedCompanyProfile.userId)
+            .eq('target_user_id', user.id);
+        }
+
+        const { data } = await query
+          .in('status', ['pending', 'approved', 'rejected'])
+          .maybeSingle();
+
+        if (isMounted) {
+          if (data && activeModalRequestId) setActiveModalRequestId(data.id); // Ensure ID consistency
+          if (data) setActiveModalRequest(data as any);
+          else setActiveModalRequest(null);
+        }
+      };
+      checkRequest();
+    }
+    return () => { isMounted = false; };
+  }, [selectedCompanyProfile, user, activeModalRequestId]);
 
   // Handle Incremented View
   const handleCVClick = async (cv: CV) => {
@@ -213,13 +252,25 @@ const App: React.FC = () => {
   const fetchGeneralNotifications = async () => {
     if (!user) return;
     try {
-      // 1. Fetch raw notifications
+      // 1. Fetch notifications with sender profile using JOIN (Fast & Atomic)
       const { data: notificationsData, error: notifError } = await supabase
         .from('notifications')
-        .select('*')
+        .select(`
+          *,
+          sender:profiles!sender_id (
+            id,
+            full_name,
+            role,
+            avatar_url,
+            companies ( company_name, logo_url ),
+            cvs ( name, photo_url )
+          )
+        `)
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(50);
 
+      // Removed debug log
       if (notifError) throw notifError;
 
       if (!notificationsData || notificationsData.length === 0) {
@@ -227,33 +278,62 @@ const App: React.FC = () => {
         return;
       }
 
-      // 2. Extract unique sender IDs that aren't null
-      const senderIds = Array.from(new Set(
-        notificationsData
-          .map(n => n.sender_id)
-          .filter(id => id) // remove nulls/undefined
-      ));
+      // 2. Fetch status for related contact requests to avoid stale notifications
+      const requestIds = notificationsData
+        .filter(n => n.type === 'contact_request_received' && n.related_id)
+        .map(n => n.related_id);
 
-      // 3. Fetch profiles manually if we have senders
-      let profilesMap: Record<string, any> = {};
+      let requestStatusMap: Record<string, string> = {};
+      if (requestIds.length > 0) {
+        const { data: reqs } = await supabase
+          .from('contact_requests')
+          .select('id, status')
+          .in('id', requestIds);
 
-      if (senderIds.length > 0) {
-        const { data: profilesData } = await supabase
-          .from('profiles')
-          .select('id, full_name, avatar_url, role')
-          .in('id', senderIds);
-
-        if (profilesData) {
-          profilesData.forEach(p => {
-            profilesMap[p.id] = p;
-          });
+        if (reqs) {
+          reqs.forEach(r => requestStatusMap[r.id] = r.status);
         }
       }
 
-      // 4. Merge data manually
+      // 3. Map final data (Sender is already populated by JOIN)
+      // MANUAL MERGE FIX: Fetch companies and cvs directly to ensure images loading
+      const senderIds = notificationsData
+        .map(n => n.sender_id)
+        .filter(id => id ? true : false);
+
+      const uniqueSenderIds = Array.from(new Set(senderIds));
+
+      if (uniqueSenderIds.length > 0) {
+        // Fetch Companies
+        const { data: companies } = await supabase
+          .from('companies')
+          .select('user_id, company_name, logo_url')
+          .in('user_id', uniqueSenderIds);
+
+        // Fetch CVs
+        const { data: cvs } = await supabase
+          .from('cvs')
+          .select('user_id, name, photo_url')
+          .in('user_id', uniqueSenderIds); // Ensure strict check
+
+        // Merge manually
+        notificationsData.forEach(n => {
+          if (!n.sender && n.sender_id) {
+            n.sender = { id: n.sender_id };
+          }
+          if (n.sender) {
+            const co = companies?.find(c => c.user_id === n.sender_id);
+            const cv = cvs?.find(c => c.user_id === n.sender_id);
+
+            if (co) n.sender.companies = [co];
+            if (cv) n.sender.cvs = [cv];
+          }
+        });
+      }
+
       const mergedNotifications = notificationsData.map(n => ({
         ...n,
-        sender: n.sender_id ? profilesMap[n.sender_id] : undefined
+        requestStatus: n.related_id ? requestStatusMap[n.related_id] : undefined
       }));
 
       setGeneralNotifications(mergedNotifications);
@@ -317,23 +397,20 @@ const App: React.FC = () => {
   const markAllNotificationsRead = async () => {
     if (!user) return;
     try {
-      // Use RPC for efficiency
-      const { error } = await supabase.rpc('mark_all_notifications_read');
+      // Clear Notifications: Delete all from DB
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('user_id', user.id);
 
-      if (error) {
-        console.error('RPC failed, falling back to manual update', error);
-        // Fallback: update all unread manually
-        await supabase
-          .from('notifications')
-          .update({ is_read: true })
-          .eq('user_id', user.id)
-          .eq('is_read', false);
-      }
+      if (error) throw error;
 
-      // Update local state immediately
-      setGeneralNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
-    } catch (error) {
-      console.error('Error marking all read:', error);
+      // Optimistic update: Clear list except pending requests (which are properly separated now)
+      setGeneralNotifications([]);
+      showToast('Bildirimler temizlendi.', 'success');
+    } catch (error: any) {
+      console.error('Error clearing notifications:', error);
+      showToast('Bildirimler silinemedi: ' + error.message, 'error');
     }
   };
 
@@ -537,8 +614,6 @@ const App: React.FC = () => {
               ),
               cvs (
                 name,
-                photo_url
-              )
             )
           `)
         .eq('target_user_id', user.id)
@@ -546,46 +621,48 @@ const App: React.FC = () => {
 
       if (requestsError) throw requestsError;
 
-      setReceivedRequests(requestsData || []);
+      // MANUAL MERGE FIX: Fetch companies and cvs directly for requests too
+      if (requestsData && requestsData.length > 0) {
+        const requesterIds = requestsData
+          .map(r => r.requester_id)
+          .filter(id => id ? true : false);
 
-      // 2. Fetch general notifications
-      // 2. Fetch general notifications with RICH SENDER DATA
-      const { data: notifData, error: notifError } = await supabase
-        .from('notifications')
-        .select(`
-          *,
-          sender:profiles!sender_id (
-            id,
-            full_name,
-            role,
-            avatar_url,
-            companies (
-              company_name,
-              logo_url
-            ),
-            cvs (
-              name,
-              photo_url
-            )
-          )
-        `)
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(20);
+        const uniqueRequesterIds = Array.from(new Set(requesterIds));
 
-      if (notifError) {
-        console.log('Notifications table might not exist yet:', notifError.message);
-        // Do not throw here to allow app to function without notifications table
-      } else {
-        setGeneralNotifications(notifData || []);
+        if (uniqueRequesterIds.length > 0) {
+          const { data: companies } = await supabase
+            .from('companies')
+            .select('user_id, company_name, logo_url')
+            .in('user_id', uniqueRequesterIds);
+
+          const { data: cvs } = await supabase
+            .from('cvs')
+            .select('user_id, name, photo_url')
+            .in('user_id', uniqueRequesterIds);
+
+          requestsData.forEach(r => {
+            if (!r.requester && r.requester_id) {
+              r.requester = { id: r.requester_id };
+            }
+            if (r.requester) {
+              const co = companies?.find(c => c.user_id === r.requester_id);
+              const cv = cvs?.find(c => c.user_id === r.requester_id);
+
+              if (co) r.requester.companies = [co];
+              if (cv) r.requester.cvs = [cv];
+            }
+          });
+        }
       }
+
+      setReceivedRequests(requestsData || []);
 
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
-  const handleOpenProfile = async (userId: string, role?: string) => {
+  const handleOpenProfile = async (userId: string, role?: string, requestId?: string) => {
     try {
       let found = false;
 
@@ -613,6 +690,7 @@ const App: React.FC = () => {
             createdAt: data.created_at
           };
           setSelectedCompanyProfile(company);
+          if (requestId) setActiveModalRequestId(requestId);
           return true;
         }
         return false;
@@ -855,7 +933,7 @@ const App: React.FC = () => {
       console.error('Error updating status:', error);
       // Show specific error message for debugging
       const errorMessage = error?.message || 'Bir hata oluştu.';
-      showToast(`Hata: ${errorMessage}`, 'error');
+      showToast(`Hata: ${errorMessage} `, 'error');
       // Revert optimism if failed
       fetchReceivedRequests();
     }
@@ -1288,8 +1366,8 @@ const App: React.FC = () => {
     return [
       { label: 'Toplam CV', value: totalCVs.toLocaleString('tr-TR') },
       { label: 'Aktif İş Arayan', value: activeJobSeekers.toLocaleString('tr-TR') },
-      { label: 'Bu Hafta Yeni', value: `+${newThisWeek}` },
-      { label: 'Toplam Görüntülenme', value: totalViews >= 1000 ? `${(totalViews / 1000).toFixed(1)}k` : totalViews.toString() },
+      { label: 'Bu Hafta Yeni', value: `+ ${newThisWeek} ` },
+      { label: 'Toplam Görüntülenme', value: totalViews >= 1000 ? `${(totalViews / 1000).toFixed(1)} k` : totalViews.toString() },
       { label: 'Başarılı Eşleşme', value: approvedRequestCount.toLocaleString('tr-TR') }
     ];
   }, [cvList, approvedRequestCount]);
@@ -1325,8 +1403,11 @@ const App: React.FC = () => {
         userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
 
         // Notifications Props
-        notificationCount={receivedRequests.length + generalNotifications.filter(n => !n.is_read).length}
-        notifications={[...receivedRequests, ...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+        notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
+        notifications={[
+          ...receivedRequests,
+          ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
+        ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
         onNotificationAction={handleRequestAction}
         onMarkNotificationRead={markNotificationRead}
         onMarkAllRead={markAllNotificationsRead}
@@ -1346,7 +1427,10 @@ const App: React.FC = () => {
       {isNotificationsModalOpen && (
         <NotificationsModal
           onClose={() => setIsNotificationsModalOpen(false)}
-          notifications={[...receivedRequests, ...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+          notifications={[
+            ...receivedRequests,
+            ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
+          ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
           onAction={handleRequestAction}
           onMarkRead={markNotificationRead}
           onMarkAllRead={markAllNotificationsRead}
@@ -1435,10 +1519,10 @@ const App: React.FC = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentPage === 1
+                  className={`px - 4 py - 2 rounded - full text - sm font - bold transition - all ${currentPage === 1
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-white text-black border border-gray-200 hover:bg-black hover:text-white hover:border-black shadow-sm'
-                    }`}
+                    } `}
                 >
                   ← Önceki
                 </button>
@@ -1450,10 +1534,10 @@ const App: React.FC = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentPage === totalPages
+                  className={`px - 4 py - 2 rounded - full text - sm font - bold transition - all ${currentPage === totalPages
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-white text-black border border-gray-200 hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] shadow-sm'
-                    }`}
+                    } `}
                 >
                   Sonraki →
                 </button>
@@ -1498,7 +1582,19 @@ const App: React.FC = () => {
       {selectedCompanyProfile && (
         <CompanyProfileModal
           company={selectedCompanyProfile}
-          onClose={() => setSelectedCompanyProfile(null)}
+          onClose={() => { setSelectedCompanyProfile(null); setActiveModalRequestId(null); }}
+          requestStatus={activeModalRequest?.status}
+          requestId={activeModalRequest?.id}
+          onAction={async (id, action) => {
+            await handleRequestAction(id, action);
+            // Update local modal state immediately
+            setActiveModalRequest(prev => prev ? { ...prev, status: action } : null);
+          }}
+          onRevoke={async (id) => {
+            await handleRequestAction(id, 'rejected');
+            // Update local modal state immediately
+            setActiveModalRequest(prev => prev ? { ...prev, status: 'rejected' } : null);
+          }}
         />
       )}
       {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
