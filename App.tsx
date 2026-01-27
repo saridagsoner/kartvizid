@@ -163,6 +163,22 @@ const App: React.FC = () => {
     }
   }, [user]);
 
+  // Listen for custom "open-profile" event (triggered by NotificationDropdown)
+  useEffect(() => {
+    const handleOpenProfileEvent = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail) {
+        const { id, role } = customEvent.detail;
+        handleOpenProfile(id, role);
+      }
+    };
+
+    window.addEventListener('open-profile', handleOpenProfileEvent);
+    return () => {
+      window.removeEventListener('open-profile', handleOpenProfileEvent);
+    };
+  }, []);
+
   // Handle Incremented View
   const handleCVClick = async (cv: CV) => {
     setSelectedCV(cv);
@@ -509,13 +525,22 @@ const App: React.FC = () => {
       const { data: requestsData, error: requestsError } = await supabase
         .from('contact_requests')
         .select(`
-          *,
-          requester:profiles!requester_id (
-            full_name,
-            role,
-            avatar_url
-          )
-        `)
+            *,
+            requester:profiles!requester_id (
+              id,
+              full_name,
+              role,
+              avatar_url,
+              companies (
+                company_name,
+                logo_url
+              ),
+              cvs (
+                name,
+                photo_url
+              )
+            )
+          `)
         .eq('target_user_id', user.id)
         .eq('status', 'pending');
 
@@ -524,9 +549,26 @@ const App: React.FC = () => {
       setReceivedRequests(requestsData || []);
 
       // 2. Fetch general notifications
+      // 2. Fetch general notifications with RICH SENDER DATA
       const { data: notifData, error: notifError } = await supabase
         .from('notifications')
-        .select('*')
+        .select(`
+          *,
+          sender:profiles!sender_id (
+            id,
+            full_name,
+            role,
+            avatar_url,
+            companies (
+              company_name,
+              logo_url
+            ),
+            cvs (
+              name,
+              photo_url
+            )
+          )
+        `)
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(20);
@@ -746,23 +788,40 @@ const App: React.FC = () => {
   };
 
   const handleRequestAction = async (requestId: string, action: 'approved' | 'rejected') => {
-    // Determine the request being acted upon for notification info
-    const relatedRequest = receivedRequests.find(r => r.id === requestId);
+    // 1. Determine request details (check local state first, then DB)
+    let relatedRequest = receivedRequests.find(r => r.id === requestId);
+
+    // IMPORTANT: If acting from "All Notifications" modal, local 'receivedRequests' might be empty or stale.
+    // So we MUST fetch it if missing to ensure we know who to notify.
+    if (!relatedRequest) {
+      try {
+        const { data: fetchedReq } = await supabase
+          .from('contact_requests')
+          .select('*')
+          .eq('id', requestId)
+          .single();
+        if (fetchedReq) relatedRequest = fetchedReq;
+      } catch (e) {
+        console.error('Error fetching request details for action:', e);
+      }
+    }
 
     // Optimistic update
     setReceivedRequests(prev => prev.filter(r => r.id !== requestId));
+    setGeneralNotifications(prev => prev.filter(n => n.related_id !== requestId)); // Also clear related notification if any
 
     try {
       // Identify self (the approver)
-      let approverName = user?.user_metadata?.full_name || 'Bir Kullanıcı';
+      let approverName = 'Bir Kullanıcı';
 
-      // Better name resolution
-      if (user?.user_metadata?.role === 'employer' && activeCompany) {
+      // Determine correct name
+      if (activeCompany?.name) {
         approverName = activeCompany.name;
-      } else if (currentUserCV && currentUserCV.name) {
+      } else if (currentUserCV?.name) {
         approverName = currentUserCV.name;
+      } else if (user?.user_metadata?.full_name) {
+        approverName = user.user_metadata.full_name;
       } else if (user?.email) {
-        // Fallback to email username if nothing else
         approverName = user.email.split('@')[0];
       }
 
@@ -775,36 +834,29 @@ const App: React.FC = () => {
 
       if (rpcError) {
         console.warn('RPC failed, trying direct update...', rpcError);
+
         // Fallback: Direct Update (if RLS allows)
+        // Fallback: Direct Update (if RLS allows)
+        // Database Trigger 'on_contact_request_events' will handle the notification automatically.
         const { error: directError } = await supabase
           .from('contact_requests')
           .update({ status: action, updated_at: new Date().toISOString() })
           .eq('id', requestId);
 
         if (directError) throw directError;
-
-        // Manually create notification for the requester
-        if (relatedRequest) {
-          await supabase.from('notifications').insert({
-            user_id: relatedRequest.requester_id, // Notify the person who ASKED
-            type: action === 'approved' ? 'success' : 'info',
-            title: action === 'approved' ? 'İletişim İsteği Onaylandı' : 'İstek Sonuçlandı',
-            message: `${approverName} iletişime geçme isteğinizi ${action === 'approved' ? 'onayladı' : 'reddetti'}.`,
-            related_id: requestId,
-            sender_id: user?.id
-          });
-        }
       }
 
       showToast(`İstek ${action === 'approved' ? 'onaylandı' : 'reddedildi'}.`, 'success');
 
-      // Refresh data
+      // Refresh data to ensure sync
       fetchReceivedRequests();
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating status:', error);
-      showToast('Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
-      // Revert optimism
+      // Show specific error message for debugging
+      const errorMessage = error?.message || 'Bir hata oluştu.';
+      showToast(`Hata: ${errorMessage}`, 'error');
+      // Revert optimism if failed
       fetchReceivedRequests();
     }
   };

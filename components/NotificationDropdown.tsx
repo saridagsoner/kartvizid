@@ -1,7 +1,7 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { ContactRequest, NotificationItem } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface NotificationDropdownProps {
   onClose: () => void;
@@ -14,212 +14,219 @@ interface NotificationDropdownProps {
 
 const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, notifications, onAction, onMarkRead, onMarkAllRead, mobile }) => {
   const { user } = useAuth();
+  const [requestStatuses, setRequestStatuses] = useState<Record<string, string>>({});
 
-  // Handlers for navigation
+  useEffect(() => {
+    const requestIds = notifications
+      .filter(item => !(item as ContactRequest).status && (item as NotificationItem).type === 'contact_request' && (item as NotificationItem).related_id)
+      .map(item => (item as NotificationItem).related_id as string);
+
+    const uniqueIds = Array.from(new Set(requestIds));
+    if (uniqueIds.length === 0) return;
+
+    const fetchStatuses = async () => {
+      const { data } = await supabase.from('contact_requests').select('id, status').in('id', uniqueIds);
+      if (data) {
+        const statuses: Record<string, string> = {};
+        data.forEach(req => { statuses[req.id] = req.status; });
+        setRequestStatuses(statuses);
+      }
+    };
+    fetchStatuses();
+  }, [notifications]);
+
   const handleProfileClick = (id: string, role?: string) => {
-    // We need to implement navigation logic here or pass a handler
-    // Since App.tsx manages navigation state (modal open/close), we ideally need callbacks.
-    // For now, let's assume we can emit an event or used existing props if available? 
-    // Actually, NotificationDropdown doesn't have openProfile props. 
-    // Limitation: we might need to dispatch a custom event or rely on App.tsx to handle it if we passed a handler.
-    // Let's look at what we have. We don't have navigate props.
-    // For now we will rely on a window event or just log it, 
-    // BUT the user explicitely asked for this.
-    // I should add `onOpenProfile` prop to NotificationDropdown.
-
-    // Changing approach: I will dispatch a custom event that App.tsx can listen to, OR better, 
-    // Since I can edit App.tsx, I should pass `onOpenProfile` and `onOpenCompany` to Navbar and then here.
-    // But modifying the whole chain is expensive.
-    // Let's use `window.dispatchEvent` simply for now or minimal prop drilling.
     const event = new CustomEvent('open-profile', { detail: { id, role } });
     window.dispatchEvent(event);
     onClose();
   };
 
-  // Helper type guard
   const isContactRequest = (item: ContactRequest | NotificationItem): item is ContactRequest => {
     return (item as ContactRequest).status !== undefined;
   };
 
+  // Helper to resolve display name and avatar
+  const getSenderDetails = (item: NotificationItem | ContactRequest) => {
+    // If it's a raw contact request (from pending list)
+    // If it's a raw contact request (from pending list)
+    if (isContactRequest(item)) {
+      const requester = (item as any).requester;
+
+      if (!requester) return { name: 'Bir kullanıcı', avatar: null, role: null };
+
+      // 1. Try Company details (for ContactRequest)
+      if (requester.role === 'employer' && requester.companies && requester.companies.length > 0) {
+        return {
+          name: requester.companies[0].company_name || requester.full_name,
+          avatar: requester.companies[0].logo_url || requester.avatar_url,
+          role: 'employer'
+        };
+      }
+
+      // 2. Try CV details (for ContactRequest)
+      if (requester.role === 'job_seeker' && requester.cvs && requester.cvs.length > 0) {
+        return {
+          name: requester.cvs[0].name || requester.full_name,
+          avatar: requester.cvs[0].photo_url || requester.avatar_url,
+          role: 'job_seeker'
+        };
+      }
+
+      // Fallback
+      return {
+        name: requester.full_name || 'İletişim İsteği',
+        avatar: requester.avatar_url,
+        role: requester.role
+      };
+    }
+
+    // If it's a notification
+    const sender = item.sender as any;
+    if (!sender) return { name: 'Bir kullanıcı', avatar: null, role: null };
+
+    // 1. Try Company details
+    if (sender.role === 'employer' && sender.companies && sender.companies.length > 0) {
+      return {
+        name: sender.companies[0].company_name || sender.full_name,
+        avatar: sender.companies[0].logo_url || sender.avatar_url,
+        role: 'employer'
+      };
+    }
+
+    // 2. Try CV details
+    if (sender.role === 'job_seeker' && sender.cvs && sender.cvs.length > 0) {
+      return {
+        name: sender.cvs[0].name || sender.full_name,
+        avatar: sender.cvs[0].photo_url || sender.avatar_url,
+        role: 'job_seeker'
+      };
+    }
+
+    // 3. Fallback to Profile
+    return {
+      name: sender.full_name || 'İletişim İsteği',
+      avatar: sender.avatar_url,
+      role: sender.role
+    };
+  };
+
   return (
     <>
-      {!mobile && (
-        <div
-          className="fixed inset-0 z-[55]"
-          onClick={onClose}
-        />
-      )}
-      <div className={`${mobile ? 'w-full bg-white rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden' : 'absolute -right-16 sm:right-0 top-14 w-[300px] sm:w-[400px] bg-white rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl border border-gray-100 z-[60] overflow-hidden animate-in slide-in-from-top-4 duration-300'}`}>
-        <div className="p-4 sm:p-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0">
-          <h3 className="font-black text-black text-sm sm:text-lg tracking-tight">Bildirimler</h3>
-          <button
-            onClick={onMarkAllRead}
-            className="text-black text-[10px] sm:text-xs font-bold hover:underline underline-offset-4"
-          >
+      {!mobile && <div className="fixed inset-0 z-[55]" onClick={onClose} />}
+      <div className={`${mobile ? 'w-full bg-white rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden' : 'absolute -right-4 sm:right-0 top-14 w-[320px] sm:w-[380px] bg-white rounded-2xl shadow-xl border border-gray-100 z-[60] overflow-hidden animate-in slide-in-from-top-2 duration-200'}`}>
+
+        {/* Header */}
+        <div className="px-5 py-4 border-b border-gray-50 flex justify-between items-center bg-white">
+          <h3 className="font-bold text-gray-900 text-sm">Bildirimler</h3>
+          <button onClick={onMarkAllRead} className="text-gray-500 text-xs font-medium hover:text-black transition-colors">
             Hepsini Oku
           </button>
         </div>
 
-        <div className="max-h-[450px] overflow-y-auto custom-scrollbar">
+        {/* Content */}
+        <div className="max-h-[400px] overflow-y-auto custom-scrollbar bg-gray-50/50">
           {notifications.length === 0 ? (
-            <div className="p-8 text-center text-gray-500 text-sm">Bildiriminiz yok.</div>
+            <div className="py-12 text-center">
+              <span className="text-3xl block mb-2">🔕</span>
+              <p className="text-gray-400 text-xs">Henüz bir bildiriminiz yok.</p>
+            </div>
           ) : (
             notifications.map((item) => {
-              if (isContactRequest(item)) {
-                // RENDER CONTACT REQUEST
-                return (
-                  <div
-                    key={item.id}
-                    className="p-4 sm:p-6 border-b border-gray-50 hover:bg-[#F0F2F5] cursor-pointer transition-colors bg-[#F9FAFB]"
-                  >
-                    <div className="flex gap-3 sm:gap-5">
-                      <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-sm sm:text-xl shrink-0 shadow-sm bg-black text-white">
-                        👋
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start mb-1">
-                          <p className="text-xs sm:text-sm text-black font-black">İletişim İsteği</p>
-                          <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-black rounded-full"></span>
-                        </div>
-                        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-medium">
-                          {(item as any).requester?.full_name || 'Bir kullanıcı'} iletişim bilgilerinizi görüntülemek istiyor.
-                        </p>
+              const details = getSenderDetails(item);
+              const dateObj = new Date(item.created_at);
+              const timeStr = dateObj.getHours() + ':' + dateObj.getMinutes().toString().padStart(2, '0');
+              const dateStr = dateObj.toLocaleDateString('tr-TR');
 
-                        <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4">
-                          <button
-                            onClick={() => onAction(item.id, 'approved')}
-                            className="bg-white border border-gray-200 text-black px-3 py-1.5 sm:px-5 sm:py-2 rounded-full text-[10px] sm:text-xs font-bold hover:bg-gray-50 transition-all"
-                          >
-                            Onayla
-                          </button>
-                          <button
-                            onClick={() => onAction(item.id, 'rejected')}
-                            className="bg-gray-100 text-black px-3 py-1.5 sm:px-5 sm:py-2 rounded-full text-[10px] sm:text-xs font-bold hover:bg-gray-200 transition-all"
-                          >
-                            Reddet
-                          </button>
-                        </div>
+              const isResolved = !isContactRequest(item) && item.related_id && requestStatuses[item.related_id];
 
-                        <p className="text-[9px] sm:text-[10px] text-gray-400 mt-2 sm:mt-3 font-bold uppercase tracking-wider">
-                          {new Date(item.created_at).toLocaleDateString('tr-TR')}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              } else {
-                // RENDER GENERAL NOTIFICATION
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => {
-                      // Mark as read
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => {
+                    if (!isContactRequest(item)) {
                       if (onMarkRead) onMarkRead(item.id);
-
-                      // Open profile if sender exists
-                      if (item.sender_id) {
-                        handleProfileClick(item.sender_id, item.sender?.role);
-                      }
-                    }}
-                    className={`p-4 sm:p-6 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors relative ${!item.is_read ? 'bg-blue-50/30' : 'bg-white'}`}
-                  >
-                    {!item.is_read && (
-                      <span className="absolute top-4 right-4 sm:top-6 sm:right-6 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-red-500 rounded-full"></span>
-                    )}
-                    <div className="flex gap-3 sm:gap-5">
-                      {/* Avatar or Icon */}
-                      <div
-                        onClick={(e) => {
-                          if (item.sender_id || item.sender) {
-                            e.stopPropagation();
-                            handleProfileClick(item.sender_id || item.related_id!, item.sender?.role);
-                          }
-                        }}
-                        className={`w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-sm sm:text-xl shrink-0 shadow-sm overflow-hidden border border-gray-100 ${item.sender?.avatar_url ? 'bg-white' : 'bg-green-100 text-green-600'}`}
-                      >
-                        {item.sender?.avatar_url ? (
-                          <img src={item.sender.avatar_url} alt="" className="w-full h-full object-cover" />
+                      if (item.sender_id) handleProfileClick(item.sender_id, details.role);
+                    }
+                  }}
+                  className={`px-5 py-4 border-b border-gray-50 cursor-pointer transition-all hover:bg-white
+                    ${!isContactRequest(item) && !item.is_read ? 'bg-blue-50/40' : 'bg-transparent'}
+                  `}
+                >
+                  <div className="flex gap-4">
+                    {/* Avatar */}
+                    <div className="relative shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border border-gray-100 shadow-sm flex items-center justify-center">
+                        {details.avatar ? (
+                          <img src={details.avatar} alt="" className="w-full h-full object-cover" />
                         ) : (
-                          // Determine content based on whether we have sender info
-                          item.sender ? (
-                            <span className="font-bold text-sm sm:text-base">
-                              {item.sender.full_name?.charAt(0).toUpperCase() || '?'}
-                            </span>
-                          ) : (
-                            item.type === 'success' ? '🎉' : (item.type === 'contact_request' ? '👋' : '📢')
+                          <span className="font-bold text-gray-500 text-xs">{details.name.charAt(0).toUpperCase()}</span>
+                        )}
+                      </div>
+                      {/* Status Icon Badge */}
+                      {(!isContactRequest(item) && !item.is_read) && (
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 border-2 border-white rounded-full"></div>
+                      )}
+                    </div>
+
+                    {/* Body */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start">
+                        <h4 className="text-sm font-bold text-gray-900 truncate pr-2">{details.name}</h4>
+                        <span className="text-[10px] text-gray-400 whitespace-nowrap">{timeStr}</span>
+                      </div>
+
+                      <p className="text-xs text-gray-600 mt-0.5 leading-relaxed line-clamp-2">
+                        {isContactRequest(item)
+                          ? "İletişim bilgilerinizi görüntülemek istiyor."
+                          : (
+                            item.title === 'İletişim İsteği Onaylandı' ? 'İletişim isteğinizi onayladı.' :
+                              item.title === 'İstek Sonuçlandı' ? 'İletişim isteğinizi reddetti.' :
+                                item.message.replace(details.name, '').trim()
                           )
-                        )}
-                      </div>
+                        }
+                      </p>
 
-                      <div className="flex-1">
-                        <p className="text-xs sm:text-sm text-gray-800 leading-relaxed">
-                          <span
-                            className="font-bold text-black border-b border-transparent hover:border-black cursor-pointer transition-colors"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (item.sender_id) handleProfileClick(item.sender_id, item.sender?.role);
-                            }}
-                          >
-                            {item.sender?.full_name || 'Bir kullanıcı'}
-                          </span>
-                          {' '}
-                          {item.title === 'İletişim İsteği Onaylandı' ? 'iletişime geçme isteğinizi onayladı.' : (item.title === 'İstek Sonuçlandı' ? 'iletişime geçme isteğinizi reddetti.' : item.message.replace(item.sender?.full_name || '', ''))}
-                        </p>
-
-                        {/* Subtext based on type */}
-                        {(item.title === 'İletişim İsteği Onaylandı' || item.type === 'success') && (
-                          <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1 font-medium leading-snug">
-                            Artık kişinin iletişim bilgilerini görüntüleyip iş görüşmesi gerçekleştirebilirsiniz.
-                          </p>
-                        )}
-                        {(item.title === 'İstek Sonuçlandı' && item.type !== 'success') && (
-                          <p className="text-[10px] sm:text-[11px] text-gray-400 mt-1 font-medium leading-snug">
-                            Maalesef iletişim isteğiniz kabul edilmedi. Diğer adayları değerlendirebilirsiniz.
-                          </p>
-                        )}
-
-                        {/* Actions for Contact Request Notifications */}
-                        {item.type === 'contact_request' && item.related_id && (
-                          <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onAction(item.related_id!, 'approved');
-                              }}
-                              className="bg-white border border-gray-200 text-black px-3 py-1.5 sm:px-5 sm:py-2 rounded-full text-[10px] sm:text-xs font-bold hover:bg-gray-50 transition-all"
-                            >
-                              Onayla
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onAction(item.related_id!, 'rejected');
-                              }}
-                              className="bg-gray-100 text-black px-3 py-1.5 sm:px-5 sm:py-2 rounded-full text-[10px] sm:text-xs font-bold hover:bg-gray-200 transition-all"
-                            >
-                              Reddet
-                            </button>
-                          </div>
-                        )}
-
-                        <p className="text-[9px] text-gray-400 mt-2 font-bold uppercase tracking-wider">
-                          {new Date(item.created_at).toLocaleDateString('tr-TR')}
-                        </p>
-                      </div>
+                      {/* Actions Area */}
+                      {(isContactRequest(item) || (item as NotificationItem).type === 'contact_request') && (
+                        <div className="mt-3">
+                          {isResolved ? (
+                            <div className={`text-[10px] font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5 
+                                ${requestStatuses[(item as any).related_id] === 'approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                              {requestStatuses[(item as any).related_id] === 'approved' ? '✓ İstek Onaylandı' : '✕ İstek Reddedildi'}
+                            </div>
+                          ) : (
+                            /* Pending Actions */
+                            !isResolved && (
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); onAction(isContactRequest(item) ? item.id : (item as any).related_id, 'approved'); }}
+                                  className="flex-1 bg-black text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-gray-800 transition-colors"
+                                >
+                                  Onayla
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); onAction(isContactRequest(item) ? item.id : (item as any).related_id, 'rejected'); }}
+                                  className="flex-1 bg-gray-100 text-black text-[10px] font-bold py-1.5 rounded-lg hover:bg-gray-200 transition-colors"
+                                >
+                                  Reddet
+                                </button>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
-                );
-              }
+                </div>
+              );
             })
           )}
         </div>
 
-        <div className="p-3 sm:p-4 text-center bg-gray-50 border-t border-gray-100">
-          <button
-            onClick={onMarkAllRead}
-            className="w-full bg-white border border-gray-200 text-black py-2 sm:py-3 rounded-full font-black text-[10px] sm:text-xs hover:bg-gray-50 uppercase tracking-widest transition-all"
-          >
-            Tüm Bildirimleri Gör
+        {/* Footer */}
+        <div className="p-3 bg-gray-50 border-t border-gray-100 text-center">
+          <button onClick={onClose} className="text-black text-[10px] font-black uppercase tracking-widest hover:text-gray-600">
+            Kapat
           </button>
         </div>
       </div>

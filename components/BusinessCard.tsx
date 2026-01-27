@@ -16,11 +16,17 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
         {/* Photo Section - Mobile: Small Frame, Desktop: Larger Rectangle */}
         <div className="relative shrink-0">
           <div className="w-12 h-12 sm:w-24 sm:h-28 rounded-lg sm:rounded-[1.75rem] border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm group bg-gray-50 dark:bg-gray-700">
-            <img
-              src={cv.photoUrl}
-              alt={cv.name}
-              className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
-            />
+            {cv.photoUrl ? (
+              <img
+                src={cv.photoUrl}
+                alt={cv.name}
+                className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-2xl">
+                👤
+              </div>
+            )}
           </div>
         </div>
 
