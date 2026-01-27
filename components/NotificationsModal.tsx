@@ -36,9 +36,9 @@ const NotificationsModal: React.FC<NotificationsModalProps> = ({
                     <div className="flex items-center gap-4">
                         <button
                             onClick={onMarkAllRead}
-                            className="text-[#1f6d78] dark:text-[#2dd4bf] text-xs font-bold hover:underline underline-offset-4"
+                            className="text-gray-500 text-[10px] font-bold hover:text-red-500 transition-colors uppercase tracking-wider"
                         >
-                            Hepsini Oku
+                            BİLDİRİMLERİ TEMİZLE
                         </button>
                         <button
                             onClick={onClose}

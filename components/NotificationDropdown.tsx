@@ -10,18 +10,20 @@ interface NotificationDropdownProps {
   onMarkRead?: (notificationId: string) => void;
   onMarkAllRead?: () => void;
   mobile?: boolean;
+  onOpenProfile?: (userId: string, role?: string) => void;
+  embedded?: boolean;
 }
 
-const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, notifications, onAction, onMarkRead, onMarkAllRead, mobile }) => {
+const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, notifications, onAction, onMarkRead, onMarkAllRead, mobile, embedded }) => {
   const { user } = useAuth();
-  /* Removed redundant useState/useEffect for requestStatuses */
 
   const handleProfileClick = (id: string, role?: string, requestId?: string) => {
     const event = new CustomEvent('open-profile', { detail: { id, role, requestId } });
     window.dispatchEvent(event);
-    onClose();
+    if (!embedded) onClose();
   };
 
+  // ... helpers ...
   const isContactRequest = (item: ContactRequest | NotificationItem): item is ContactRequest => {
     return (item as ContactRequest).status !== undefined;
   };
@@ -29,11 +31,9 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
   // Helper to resolve display name and avatar
   const getSenderDetails = (item: NotificationItem | ContactRequest) => {
     const extractProfile = (user: any) => {
-      // Debug Log
-      console.log('Extracting Profile for:', user?.full_name, user);
       if (!user) return { name: 'Bir kullanıcı', avatar: null, role: null };
 
-      // 1. Check for Company (Priority) - Regardless of role
+      // 1. Check for Company (Priority)
       if (user.companies && user.companies.length > 0) {
         return {
           name: user.companies[0].company_name || user.full_name,
@@ -42,7 +42,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
         };
       }
 
-      // 2. Check for CV - Regardless of role
+      // 2. Check for CV
       if (user.cvs && user.cvs.length > 0) {
         return {
           name: user.cvs[0].name || user.full_name,
@@ -68,21 +68,23 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
 
   return (
     <>
-      {!mobile && <div className="fixed inset-0 z-[55]" onClick={onClose} />}
-      <div className={`${mobile ? 'w-full bg-white rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden' : 'absolute -right-4 sm:right-0 top-14 w-[320px] sm:w-[380px] bg-white rounded-2xl shadow-xl border border-gray-100 z-[60] overflow-hidden animate-in slide-in-from-top-2 duration-200'}`}>
+      {!mobile && !embedded && <div className="fixed inset-0 z-[55]" onClick={onClose} />}
+      <div className={`${embedded ? 'w-full h-full bg-transparent' : mobile ? 'w-full bg-white rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden' : 'absolute -right-4 sm:right-0 top-14 w-[320px] sm:w-[380px] bg-white rounded-2xl shadow-xl border border-gray-100 z-[60] overflow-hidden animate-in slide-in-from-top-2 duration-200'}`}>
 
-        {/* Header */}
-        <div className="px-5 py-4 border-b border-gray-50 flex justify-between items-center bg-white">
-          <h3 className="font-bold text-gray-900 text-sm">Bildirimler</h3>
-          <button onClick={onMarkAllRead} className="text-gray-500 text-[10px] font-bold hover:text-red-500 transition-colors uppercase tracking-wider">
-            BİLDİRİMLERİ TEMİZLE
-          </button>
-        </div>
+        {/* Header - Hidden if embedded */}
+        {!embedded && (
+          <div className="px-5 py-4 border-b border-gray-50 flex justify-between items-center bg-white">
+            <h3 className="font-bold text-gray-900 text-sm">Bildirimler</h3>
+            <button onClick={onMarkAllRead} className="text-gray-500 text-[10px] font-bold hover:text-red-500 transition-colors uppercase tracking-wider">
+              BİLDİRİMLERİ TEMİZLE
+            </button>
+          </div>
+        )}
 
         {/* Content */}
-        <div className="max-h-[290px] overflow-y-auto custom-scrollbar bg-gray-50/50">
+        <div className={`${embedded ? '' : 'max-h-[290px]'} overflow-y-auto custom-scrollbar bg-gray-50/50`}>
           {notifications.length === 0 ? (
-            <div className="py-12 text-center flex flex-col items-center justify-center">
+            <div className={`text-center flex flex-col items-center justify-center ${embedded ? 'py-20' : 'py-12'}`}>
               <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 border border-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
               </div>
@@ -96,7 +98,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
               const timeStr = dateObj.getHours() + ':' + dateObj.getMinutes().toString().padStart(2, '0');
               const dateStr = dateObj.toLocaleDateString('tr-TR');
 
-              // Status resolution using pre-fetched requestStatus or item.status for direct requests
+              // Status resolution
               const status = isContactRequest(item) ? item.status : (item as NotificationItem).requestStatus;
               const isResolved = status === 'approved' || status === 'rejected';
 
@@ -185,12 +187,14 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
           )}
         </div>
 
-        {/* Footer */}
-        <div className="p-3 bg-gray-50 border-t border-gray-100 text-center">
-          <button onClick={onClose} className="text-black text-[10px] font-black uppercase tracking-widest hover:text-gray-600">
-            Kapat
-          </button>
-        </div>
+        {/* Footer - Hidden if embedded */}
+        {!embedded && (
+          <div className="p-3 bg-gray-50 border-t border-gray-100 text-center">
+            <button onClick={onClose} className="text-black text-[10px] font-black uppercase tracking-widest hover:text-gray-600">
+              Kapat
+            </button>
+          </div>
+        )}
       </div>
     </>
   );
