@@ -3,6 +3,7 @@ import { ContactRequest, NotificationItem } from '../types';
 import NotificationDropdown from './NotificationDropdown';
 import UserMenuDropdown from './UserMenuDropdown';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 interface MobileBottomNavProps {
     user: any;
@@ -42,6 +43,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     const [activeTab, setActiveTab] = useState<'home' | 'notifications' | 'profile' | 'search' | null>(null);
     const isEmployer = user?.user_metadata?.role === 'employer';
     const [query, setQuery] = useState('');
+    const { t } = useLanguage();
 
     // Close sheets when clicking outside or navigating
     useEffect(() => {
@@ -176,8 +178,8 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                         if (onSearch) onSearch(query);
                                     }
                                 }}
-                                placeholder="Meslek, isim veya şehir ara..."
-                                className="w-full bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border border-transparent focus:border-black/10 rounded-full pl-10 pr-4 py-3 text-sm font-medium outline-none transition-all shadow-sm"
+                                placeholder={t('nav.search_placeholder')}
+                                className="w-full bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border border-transparent focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] rounded-full pl-10 pr-4 py-3 text-sm font-medium outline-none transition-all shadow-sm"
                             />
                         </div>
                         <button
@@ -188,7 +190,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                             }}
                             className="text-sm font-semibold text-gray-500 hover:text-black dark:hover:text-white px-2"
                         >
-                            İptal
+                            {t('mobile.cancel')}
                         </button>
                     </div>
                 </div>

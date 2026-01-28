@@ -4,6 +4,7 @@ import { EXPERIENCE_LEVELS } from '../constants';
 import SelectionModal from './SelectionModal';
 import AdvancedFilterModal from './AdvancedFilterModal';
 import { FilterState } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface FiltersProps {
   currentFilters: FilterState;
@@ -20,6 +21,7 @@ const CustomDropdown: React.FC<{
   onSelect: (val: string) => void;
   onMore: () => void;
 }> = ({ label, value, items, onSelect, onMore }) => {
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +62,7 @@ const CustomDropdown: React.FC<{
                 }}
                 className="w-full text-left px-5 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all border-b border-gray-50 dark:border-gray-700 mb-1"
               >
-                × Sıfırla
+                × {t('filters.reset')}
               </button>
             )}
             {(items || []).slice(0, 5).map((item, idx) => (
@@ -84,7 +86,7 @@ const CustomDropdown: React.FC<{
             }}
             className="w-full text-center py-2.5 text-[10px] font-black text-gray-400 hover:text-black dark:hover:text-white uppercase tracking-widest border-t border-gray-50 dark:border-gray-700 mt-1 transition-colors"
           >
-            Daha Fazla Göster
+            {t('filters.show_more')}
           </button>
         </div>
       )}
@@ -93,6 +95,7 @@ const CustomDropdown: React.FC<{
 };
 
 const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availableProfessions, availableCities, mobileSort }) => {
+  const { t } = useLanguage();
   const [activeModal, setActiveModal] = useState<'professions' | 'cities' | 'experience' | 'advanced' | null>(null);
 
   const handleSelect = (key: string, val: string) => {
@@ -118,7 +121,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
     <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 shadow-sm flex flex-wrap gap-3 items-center transition-all duration-300">
       <div className="hidden sm:block flex-1 min-w-[130px]">
         <CustomDropdown
-          label="Tüm Kategoriler"
+          label={t('filters.categories')}
           value={currentFilters.profession}
           items={availableProfessions}
           onSelect={(val) => handleSelect('profession', val)}
@@ -128,7 +131,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
 
       <div className="hidden sm:block flex-1 min-w-[130px]">
         <CustomDropdown
-          label="Şehir Seçin"
+          label={t('filters.city')}
           value={currentFilters.city}
           items={availableCities}
           onSelect={(val) => handleSelect('city', val)}
@@ -138,7 +141,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
 
       <div className="hidden sm:block flex-1 min-w-[130px]">
         <CustomDropdown
-          label="Deneyim Seviyesi"
+          label={t('filters.experience')}
           value={currentFilters.experience}
           items={EXPERIENCE_LEVELS}
           onSelect={(val) => handleSelect('experience', val)}
@@ -152,7 +155,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
         className={`hidden sm:flex bg-white dark:bg-gray-800 border px-5 py-2.5 rounded-full font-bold text-xs transition-all items-center gap-2 shadow-sm shrink-0 hover:border-[#1f6d78] active:scale-95 ${activeFiltersCount > 0 ? 'border-[#1f6d78] bg-gray-50 dark:bg-gray-700 text-black dark:text-white' : 'border-gray-200 dark:border-gray-700 text-black dark:text-white'
           }`}
       >
-        <span>Gelişmiş Filtreler</span>
+        <span>{t('filters.advanced')}</span>
         {activeFiltersCount > 0 && (
           <span className="w-4 h-4 bg-[#1f6d78] text-white text-[9px] rounded-full flex items-center justify-center font-black">
             {activeFiltersCount}
@@ -167,7 +170,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
           className={`flex-1 bg-white dark:bg-gray-800 border px-4 py-2 rounded-full font-bold text-[10px] transition-all flex items-center justify-center gap-2 shadow-sm hover:border-[#1f6d78] active:scale-95 ${activeFiltersCount > 0 ? 'border-[#1f6d78] bg-gray-50 dark:bg-gray-700 text-black dark:text-white' : 'border-gray-200 dark:border-gray-700 text-black dark:text-white'
             }`}
         >
-          <span>Gelişmiş Filtreler</span>
+          <span>{t('filters.advanced')}</span>
           {activeFiltersCount > 0 && (
             <span className="w-4 h-4 bg-[#1f6d78] text-white text-[9px] rounded-full flex items-center justify-center font-black">
               {activeFiltersCount}

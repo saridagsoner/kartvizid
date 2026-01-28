@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import { CV } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { generatePrintableCV } from '../lib/generatePrintableCV';
@@ -13,6 +14,7 @@ interface ProfileModalProps {
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus = 'none', onRequestAccess, onCancelRequest, onJobFound }) => {
+  const { t } = useLanguage();
   const { user } = useAuth();
   const isOwner = user?.id === cv.userId;
 
@@ -51,6 +53,57 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
     }
   };
 
+  // Helper helper to translate values
+  const resolveValue = (value: string | undefined): string => {
+    if (!value) return '-';
+
+    // Value Mappings
+    const mapping: Record<string, string> = {
+      // Work Model
+      'Ofis': 'work.office',
+      'Uzaktan': 'work.remote',
+      'Hibrit': 'work.hybrid',
+      // Employment Type
+      'Tam Zamanlı': 'emp.full_time',
+      'Yarı Zamanlı': 'emp.part_time',
+      'Proje Bazlı': 'emp.project',
+      // Military
+      'Yapıldı': 'military.done',
+      'Muaf': 'military.exempt',
+      'Tecilli': 'military.postponed',
+      // Marital
+      'Bekar': 'marital.single',
+      'Evli': 'marital.married',
+      // Education
+      'Mezun': 'grad.graduated',
+      'Öğrenci': 'grad.student',
+      // Other
+      'Yok': 'common.none',
+      'Sorun Yok': 'common.no_problem',
+      'Hemen': 'common.immediately',
+      // Travel Status (Specific)
+      'Seyahat Engeli Yok': 'travel.no_barrier',
+      'Seyahat Edebilir': 'travel.yes',
+      'Seyahat Edemez': 'travel.no',
+      // Languages
+      'İngilizce': 'lang.english',
+      'Almanca': 'lang.german',
+      'Fransızca': 'lang.french',
+      'İspanyolca': 'lang.spanish',
+      'Türkçe': 'lang.turkish',
+      'Rusça': 'lang.russian',
+      'Arapça': 'lang.arabic',
+      // Levels
+      'Başlangıç': 'level.beginner',
+      'Orta': 'level.intermediate',
+      'İleri': 'level.advanced',
+      'Anadil': 'level.native'
+    };
+
+    if (mapping[value]) return t(mapping[value]);
+    return value;
+  };
+
   const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
     <div className="mb-4 sm:mb-6 mt-6 sm:mt-10 first:mt-0">
       <h3 className="text-xs sm:text-sm font-black text-black dark:text-white uppercase tracking-[0.15em] border-l-4 border-[#1f6d78] pl-3">{title}</h3>
@@ -63,14 +116,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       <span className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</span>
       <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full px-3 py-2 sm:px-5 sm:py-3 flex items-center gap-2 sm:gap-3">
         {icon && <span className="text-xs sm:text-sm">{icon}</span>}
-        <span className="text-xs sm:text-sm font-bold text-black dark:text-gray-100">{value || '-'}</span>
+        <span className="text-xs sm:text-sm font-bold text-black dark:text-gray-100">
+          {typeof value === 'string' ? resolveValue(value) : (value || '-')}
+        </span>
       </div>
     </div>
   );
 
   const ValuePill = ({ label }: { label: string }) => (
     <span className="bg-[#1f6d78] text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider shadow-sm">
-      {label}
+      {resolveValue(label)}
     </span>
   );
 
@@ -80,8 +135,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
         {/* Header */}
         <div className="p-5 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
           <div>
-            <h2 className="text-lg sm:text-2xl font-black text-black dark:text-white tracking-tighter">Dijital Kartvizid Profili</h2>
-            <p className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Adayın profesyonel ve kişisel tüm detayları</p>
+            <h2 className="text-lg sm:text-2xl font-black text-black dark:text-white tracking-tighter">{t('profile.cv_title')}</h2>
+            <p className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">{t('profile.cv_subtitle')}</p>
           </div>
           <button
             onClick={onClose}
@@ -96,7 +151,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
 
           {/* Bölüm 1: Temel Bilgiler */}
           <section>
-            <SectionTitle title="1. TEMEL BİLGİLER" />
+            <SectionTitle title={t('profile.basic_info')} />
             <div className="flex flex-col md:flex-row gap-6 sm:gap-10 items-center md:items-start">
               <div className="shrink-0">
                 <div className="w-24 h-32 sm:w-32 sm:h-44 rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 dark:border-gray-700 overflow-hidden shadow-xl bg-gray-50 dark:bg-gray-800">
@@ -105,25 +160,25 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
               </div>
               <div className="flex-1 w-full space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InfoTag label="Ad Soyad" value={cv.name} />
-                  <InfoTag label="Meslek / Ünvan" value={cv.profession} />
+                  <InfoTag label={t('form.fullname')} value={cv.name} />
+                  <InfoTag label={t('form.profession')} value={cv.profession} />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InfoTag label="Şehir / İlçe" value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} icon="📍" />
-                  <InfoTag label="Tecrübe" value={`${cv.experienceYears} Yıl`} icon="💼" />
+                  <InfoTag label={t('form.city')} value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} icon="📍" />
+                  <InfoTag label={t('form.experience')} value={`${cv.experienceYears} ${t('card.years_exp')}`} icon="💼" />
                 </div>
               </div>
             </div>
 
 
             <div className="mt-8 bg-gray-50 dark:bg-gray-800 rounded-[2rem] p-6 border border-gray-100 dark:border-gray-700 flex items-center justify-between">
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Çalışma Durumu</span>
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">{t('form.work_status')}</span>
               <div className="flex gap-2">
                 {/* Working Status Display */}
                 {(() => {
-                  const statusMap: Record<string, string> = { active: 'Çalışıyor', passive: 'Çalışmıyor', open: 'İş Arıyor' };
+                  const statusMap: Record<string, string> = { active: t('form.working'), passive: t('form.not_working'), open: t('form.job_seeking') };
                   const currentStatus = cv.workingStatus || 'open';
-                  const label = statusMap[currentStatus] || 'İş Arıyor';
+                  const label = statusMap[currentStatus] || t('form.job_seeking');
                   return (
                     <span className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-wider ${currentStatus === 'open' ? 'bg-[#1f6d78] text-white shadow-lg shadow-[#1f6d78]/20' :
                       currentStatus === 'active' ? 'bg-black text-white' : 'bg-gray-200 text-gray-500'
@@ -139,23 +194,23 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
 
           {/* Bölüm 2: İş Tercihleri */}
           <section>
-            <SectionTitle title="2. İŞ TERCİHLERİ" />
+            <SectionTitle title={t('profile.work_pref')} />
             <div className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Çalışma Modeli & Şekli</label>
+                  <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.work_model')} & {t('form.employment_type')}</label>
                   <div className="flex flex-wrap gap-2">
                     <ValuePill label={cv.workType || 'Ofis'} />
                     <ValuePill label={cv.employmentType || 'Tam Zamanlı'} />
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Maaş Beklentisi</label>
+                  <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.salary_exp')}</label>
                   <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full px-6 py-3 flex items-center justify-between">
                     <span className="text-sm font-black text-black dark:text-gray-100">
                       {cv.salaryMin.toLocaleString('tr-TR')}₺ - {cv.salaryMax.toLocaleString('tr-TR')}₺
                     </span>
-                    <span className="text-[10px] font-black text-gray-400 uppercase">Aylık Net</span>
+                    <span className="text-[10px] font-black text-gray-400 uppercase">{t('form.monthly_net') || 'Aylık Net'}</span>
                   </div>
                 </div>
               </div>
@@ -164,7 +219,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
 
           {/* Bölüm 2.5: İş Deneyimi (New) */}
           <section>
-            <SectionTitle title="3. İŞ DENEYİMİ" />
+            <SectionTitle title={t('profile.work_exp')} />
             {cv.workExperience && cv.workExperience.length > 0 ? (
               <div className="space-y-4">
                 {cv.workExperience.map((work) => (
@@ -174,33 +229,33 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                       <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">{work.company}</p>
                     </div>
                     <div className="bg-white dark:bg-gray-700 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-600 text-[10px] font-black uppercase text-gray-400 dark:text-gray-300 whitespace-nowrap">
-                      {work.startDate} - {work.isCurrent ? 'Devam Ediyor' : work.endDate}
+                      {work.startDate} - {work.isCurrent ? t('common.ongoing') : work.endDate}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm font-bold text-gray-400 italic">İş deneyimi eklenmemiş.</p>
+              <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_exp')}</p>
             )}
           </section>
 
           {/* Bölüm 3: Eğitim ve Yetenekler */}
           <section>
-            <SectionTitle title="4. EĞİTİM & YETENEKLER" />
+            <SectionTitle title={t('profile.edu_skills')} />
             <div className="space-y-8">
 
               {/* Education List */}
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Eğitim Bilgileri</label>
+                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.education_info')}</label>
                 {cv.educationDetails && cv.educationDetails.length > 0 ? (
                   <div className="grid grid-cols-1 gap-4">
                     {cv.educationDetails.map((edu) => (
                       <div key={edu.id} className="bg-gray-50 dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 flex items-center justify-between">
                         <div>
                           <h4 className="font-bold text-sm text-black dark:text-gray-100">{edu.university}</h4>
-                          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{edu.department} ({edu.level})</p>
+                          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{edu.department} ({resolveValue(edu.level)})</p>
                         </div>
-                        <span className="bg-[#1f6d78] text-white text-[9px] font-bold px-3 py-1.5 rounded-full">{edu.status}</span>
+                        <span className="bg-[#1f6d78] text-white text-[9px] font-bold px-3 py-1.5 rounded-full">{resolveValue(edu.status)}</span>
                       </div>
                     ))}
                   </div>
@@ -208,61 +263,81 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   // Fallback to legacy
                   <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
                     <h4 className="font-bold text-sm text-black">{cv.education}</h4>
-                    <p className="text-xs font-medium text-gray-500">{cv.educationLevel} - {cv.graduationStatus}</p>
+                    <p className="text-xs font-medium text-gray-500">{resolveValue(cv.educationLevel)} - {resolveValue(cv.graduationStatus)}</p>
                   </div>
                 )}
               </div>
 
               {/* Languages List */}
               <div className="space-y-3">
-                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Yabancı Diller</label>
+                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.languages')}</label>
                 <div className="flex flex-wrap gap-2">
                   {cv.languageDetails && cv.languageDetails.length > 0 ? (
                     cv.languageDetails.map(lang => (
                       <div key={lang.id} className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-5 py-2.5 flex items-center gap-2">
-                        <span className="text-xs font-bold text-black dark:text-gray-100">{lang.language}</span>
+                        <span className="text-xs font-bold text-black dark:text-gray-100">{resolveValue(lang.language)}</span>
                         <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                        <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">{lang.level}</span>
+                        <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">{resolveValue(lang.level)}</span>
                       </div>
                     ))
                   ) : (
                     <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-5 py-2.5 flex items-center gap-2">
-                      <span className="text-xs font-bold text-black dark:text-gray-100">{cv.language}</span>
+                      <span className="text-xs font-bold text-black dark:text-gray-100">{resolveValue(cv.language)}</span>
                       <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                      <span className="text-[10px] font-bold text-gray-500 uppercase">{cv.languageLevel}</span>
+                      <span className="text-[10px] font-bold text-gray-500 uppercase">{resolveValue(cv.languageLevel)}</span>
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Uzmanlık Alanları</label>
-                <div className="flex flex-wrap gap-2">
-                  {cv.skills.map((skill, idx) => (
-                    <span key={idx} className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-black dark:text-gray-100 text-[11px] font-bold px-5 py-2.5 rounded-full uppercase tracking-tight">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
+                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.skills')}</label>
+                {cv.skills && cv.skills.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {cv.skills.map((skill, idx) => (
+                      <span key={idx} className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-black dark:text-gray-100 text-[11px] font-bold px-5 py-2.5 rounded-full uppercase tracking-tight">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_skills') || 'Yetenek bilgisi girilmemiştir.'}</p>
+                )}
+              </div>
+
+              {/* Certificates - NEW SECTION */}
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.certificates')}</label>
+                {cv.certificates && cv.certificates.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {cv.certificates.map((cert) => (
+                      <span key={cert.id} className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-black dark:text-gray-100 text-[11px] font-bold px-5 py-2.5 rounded-full uppercase tracking-tight">
+                        {cert.name} {cert.issuer && <span className="text-gray-400 font-medium ml-1">({cert.issuer})</span>}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_cert') || 'Sertifika bilgisi girilmemiştir.'}</p>
+                )}
               </div>
             </div>
           </section>
 
           {/* Bölüm 4: Kişisel Detaylar */}
           <section>
-            <SectionTitle title="5. KİŞİSEL DETAYLAR" />
+            <SectionTitle title={t('profile.personal')} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <InfoTag label="Askerlik" value={cv.militaryStatus || 'Yapıldı'} />
-              <InfoTag label="Medeni Durum" value={cv.maritalStatus || 'Bekar'} />
-              <InfoTag label="Seyahat" value={cv.travelStatus || 'Sorun Yok'} />
-              <InfoTag label="Engellilik" value={cv.disabilityStatus || 'Yok'} />
-              <InfoTag label="İşe Başlama" value={cv.noticePeriod || 'Hemen'} />
+              <InfoTag label={t('form.military')} value={resolveValue(cv.militaryStatus)} />
+              <InfoTag label={t('form.marital')} value={resolveValue(cv.maritalStatus)} />
+              <InfoTag label={t('form.travel')} value={resolveValue(cv.travelStatus)} />
+              <InfoTag label={t('form.disability')} value={resolveValue(cv.disabilityStatus)} />
+              <InfoTag label={t('form.start_date')} value={resolveValue(cv.noticePeriod)} />
               <div className="flex flex-col gap-1.5">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Sürücü Belgesi</span>
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('form.driving_license')}</span>
                 <div className="flex flex-wrap gap-1.5">
                   {cv.driverLicense && cv.driverLicense.length > 0 ? (
                     cv.driverLicense.map(l => <span key={l} className="w-8 h-8 rounded-lg bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-[10px] font-black">{l}</span>)
-                  ) : <span className="text-sm font-bold text-gray-300 italic">Yok</span>}
+                  ) : <span className="text-sm font-bold text-gray-400 italic bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 border rounded-full px-4 py-2 w-full">{t('common.none')}</span>}
                 </div>
               </div>
             </div>
@@ -270,15 +345,15 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
 
           {/* Bölüm 5: Hakkında */}
           <section>
-            <SectionTitle title="6. HAKKINDA" />
+            <SectionTitle title={t('profile.about')} />
             <div className="p-8 bg-gray-50 dark:bg-gray-800 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 italic text-gray-700 dark:text-gray-300 leading-relaxed text-sm font-medium">
-              "{cv.about || 'Aday kendini tanıtacak bir yazı eklememiş.'}"
+              "{cv.about || t('errors.no_about')}"
             </div>
           </section>
 
           {/* Bölüm 6: Referanslar */}
           <section>
-            <SectionTitle title="7. REFERANSLAR" />
+            <SectionTitle title={t('profile.references')} />
             {cv.references && cv.references.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {cv.references.map((ref) => (
@@ -303,13 +378,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 ))}
               </div>
             ) : (
-              <p className="text-sm font-bold text-gray-400 italic">Referans eklenmemiş.</p>
+              <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_ref')}</p>
             )}
           </section>
 
           {/* Bölüm 7: İletişim Bilgileri */}
           <section>
-            <SectionTitle title="8. İLETİŞİM BİLGİLERİ" />
+            <SectionTitle title={t('profile.contact')} />
             {(cv.email || cv.phone) ? (
               <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700">
 
@@ -318,7 +393,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-4 flex items-start gap-3">
                     <div className="w-5 h-5 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">!</div>
                     <p className="text-xs font-bold text-red-800 leading-relaxed">
-                      İletişime geç isteğiniz onaylanmadan kişinin {(!cv.isEmailPublic && !cv.isPhonePublic) ? 'iletişim bilgilerini' : 'diğer iletişim bilgilerini'} göremezsiniz.
+                      {t('profile.warning_hidden')}
                     </p>
                   </div>
                 )}
@@ -353,7 +428,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 </div>
               </div>
             ) : (
-              <p className="text-sm font-bold text-gray-400 italic">İletişim bilgisi girilmemiş.</p>
+              <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_contact')}</p>
             )}
           </section>
         </div>
@@ -365,7 +440,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
               onClick={onJobFound}
               className="flex-[2] bg-[#1f6d78] text-white py-3 sm:py-5 rounded-full font-black text-xs sm:text-sm uppercase tracking-widest hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20"
             >
-              🎉 İŞİMİ BULDUM
+              {t('profile.job_found')}
             </button>
           )}
 
@@ -375,13 +450,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 onClick={handleDownload}
                 className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-3 sm:py-5 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-xl"
               >
-                CV'mi İndir
+                {t('profile.download_cv')}
               </button>
               <button
                 onClick={handleShare}
                 className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-3 sm:py-5 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-xl"
               >
-                CV'mi Paylaş
+                {t('profile.share_cv')}
               </button>
             </>
           ) : (
@@ -396,10 +471,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 >
                   {isPending ? (
                     <>
-                      <span className="group-hover:hidden">İstek Gönderildi</span>
-                      <span className="hidden group-hover:inline">İsteği İptal Et</span>
+                      <span className="group-hover:hidden">{t('profile.request_sent')}</span>
+                      <span className="hidden group-hover:inline">{t('profile.cancel_request')}</span>
                     </>
-                  ) : 'İletişime Geç'}
+                  ) : t('profile.contact_request')}
                 </button>
               )}
 
@@ -408,7 +483,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   disabled
                   className="flex-[2] bg-[#1f6d78] text-white py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest shadow-xl cursor-default"
                 >
-                  İletişim Bilgileri Açık
+                  {t('profile.contact_open')}
                 </button>
               )}
             </>

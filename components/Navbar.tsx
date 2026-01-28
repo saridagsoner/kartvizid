@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import NotificationDropdown from './NotificationDropdown';
 import UserMenuDropdown from './UserMenuDropdown';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import AuthModal from './AuthModal';
 
 
@@ -35,6 +36,7 @@ const Navbar: React.FC<NavbarProps & {
   onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole, onMarkAllRead, onOpenProfile
 }) => {
     const { user, signOut } = useAuth();
+    const { t } = useLanguage();
     const [query, setQuery] = useState('');
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -98,13 +100,13 @@ const Navbar: React.FC<NavbarProps & {
                 type="text"
                 value={query}
                 onChange={handleSearchChange}
-                placeholder="Meslek, isim veya şehir ara..."
+                placeholder={t('nav.search_placeholder')}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     e.currentTarget.blur();
                   }
                 }}
-                className="w-full bg-[#F0F2F5] dark:bg-gray-700 hover:bg-[#E8EAED] dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-black dark:focus:ring-gray-500 transition-all outline-none rounded-full px-12 py-2.5 text-sm text-gray-800 dark:text-gray-100 border border-transparent focus:border-black/10 shadow-sm placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full bg-[#F0F2F5] dark:bg-gray-700 hover:bg-[#E8EAED] dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all outline-none rounded-full px-12 py-2.5 text-sm text-gray-800 dark:text-gray-100 border border-transparent focus:border-[#1f6d78]/20 shadow-sm placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
 
@@ -120,8 +122,8 @@ const Navbar: React.FC<NavbarProps & {
                     className="hidden sm:block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-black dark:text-white px-3 md:px-6 py-2 rounded-full font-bold text-xs md:text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95 whitespace-nowrap shadow-sm"
                   >
                     {isEmployer
-                      ? "İş Veren Profili"
-                      : (hasCV ? "CV'yi Düzelt" : "CV Oluştur")
+                      ? t('nav.employer_profile')
+                      : (hasCV ? t('nav.fix_cv') : t('nav.create_cv'))
                     }
                   </button>
 
@@ -129,7 +131,7 @@ const Navbar: React.FC<NavbarProps & {
                   <button
                     onClick={isEmployer && onOpenCompanyProfile ? onOpenCompanyProfile : onCreateCV}
                     className="sm:hidden w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95 shadow-sm"
-                    title={isEmployer ? "İş Veren Profili" : (hasCV ? "CV'yi Düzelt" : "CV Oluştur")}
+                    title={isEmployer ? t('nav.employer_profile') : (hasCV ? t('nav.fix_cv') : t('nav.create_cv'))}
                   >
                     {isEmployer ? (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
@@ -202,13 +204,13 @@ const Navbar: React.FC<NavbarProps & {
                     onClick={() => onOpenAuth('signup', 'employer')}
                     className="bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold text-xs md:text-sm px-3 md:px-6 py-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
                   >
-                    İş Veren
+                    {t('nav.employer')}
                   </button>
                   <button
                     onClick={() => onOpenAuth('signup', 'job_seeker')}
                     className="bg-[#1f6d78] text-white px-3 md:px-6 py-2 rounded-full font-bold text-xs md:text-sm hover:bg-[#155e68] transition-all active:scale-95 shadow-sm whitespace-nowrap"
                   >
-                    İş Arayan
+                    {t('nav.job_seeker')}
                   </button>
                 </div>
               )}

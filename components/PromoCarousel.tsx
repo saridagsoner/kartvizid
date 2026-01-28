@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface PromoCarouselProps {
     onOpenTips: () => void;
 }
 
 const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
+    const { t } = useLanguage();
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -31,9 +33,9 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
                             <path d="M2 9h20"></path>
                         </svg>
                     </div>
-                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900 dark:text-white">Premium Ayrıcalığı</h3>
+                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900 dark:text-white">{t('promo.premium_title')}</h3>
                     <p className="text-xs font-bold text-gray-500 leading-relaxed max-w-[200px]">
-                        Öne çıkın, fark edilin. <br />Kariyerinizde hız limitlerini kaldırın.
+                        {t('promo.premium_desc')}
                     </p>
                 </div>
             )
@@ -57,9 +59,9 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
                     </div>
-                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900 dark:text-white">Nokta Atışı Yetenek</h3>
+                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900 dark:text-white">{t('promo.employer_title')}</h3>
                     <p className="text-xs font-bold text-gray-500 leading-relaxed max-w-[200px]">
-                        İlanla vakit kaybetmeyin. <br />Aradığınız profesyoneli doğrudan bulun.
+                        {t('promo.employer_desc')}
                     </p>
                 </div>
             )
@@ -82,9 +84,9 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
                     </div>
-                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900 dark:text-white">İş Seni Bulsun</h3>
+                    <h3 className="font-black text-lg mb-2 tracking-tight text-gray-900 dark:text-white">{t('promo.seeker_title')}</h3>
                     <p className="text-xs font-bold text-gray-500 leading-relaxed max-w-[200px]">
-                        Sen arama, onlar seni keşfetsin. <br />Profilin senin yerine çalışsın.
+                        {t('promo.seeker_desc')}
                     </p>
                 </div>
             )
@@ -110,10 +112,10 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips }) => {
                     </div>
                     <div className="relative z-10">
                         <h3 className="font-black text-lg mb-2 tracking-tight flex items-center justify-center gap-2 text-gray-900 dark:text-white">
-                            Profesyonel İpuçları
+                            {t('promo.tips_title')}
                         </h3>
                         <p className="text-xs font-bold text-gray-500 leading-relaxed max-w-[200px]">
-                            Kusursuz bir ilk izlenim için <br />uzman tavsiyelerini keşfet.
+                            {t('promo.tips_desc')}
                         </p>
                     </div>
                 </div>

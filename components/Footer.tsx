@@ -1,6 +1,8 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 const Footer = () => {
+    const { t } = useLanguage();
     return (
         <footer className="bg-[#F0F2F5] dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 pt-8 pb-6 sm:pt-16 sm:pb-8 mt-auto border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
             <div className="max-w-[1440px] mx-auto px-5 sm:px-6">
@@ -18,8 +20,7 @@ const Footer = () => {
                             </span>
                         </div>
                         <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed max-w-sm">
-                            Türkiye'nin yeni nesil dijital CV ve iş eşleşme platformu.
-                            Kariyer yolculuğunuzda size en uygun fırsatları sunmak için buradayız.
+                            {t('footer.brand_desc')}
                         </p>
                         <div className="flex gap-4 pt-2">
                             <SocialIcon path="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
@@ -31,32 +32,32 @@ const Footer = () => {
 
                     {/* Quick Links */}
                     <div>
-                        <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">Site Kullanımı</h3>
+                        <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">{t('footer.usage')}</h3>
                         <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-500">
-                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Genel Koşullar</a></li>
-                            <li><a href="#" className="hover:text-black transition-colors">Güvenlik İpuçları</a></li>
-                            <li><a href="#" className="hover:text-black transition-colors">Sıkça Sorulan Sorular</a></li>
-                            <li><a href="#" className="hover:text-black transition-colors">Yardım Merkezi</a></li>
-                            <li><a href="#" className="hover:text-black transition-colors">Hizmetlerimiz</a></li>
+                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.general_terms')}</a></li>
+                            <li><a href="#" className="hover:text-black transition-colors">{t('footer.security')}</a></li>
+                            <li><a href="#" className="hover:text-black transition-colors">{t('footer.faq')}</a></li>
+                            <li><a href="#" className="hover:text-black transition-colors">{t('footer.help')}</a></li>
+                            <li><a href="#" className="hover:text-black transition-colors">{t('footer.services')}</a></li>
                         </ul>
                     </div>
 
                     {/* Legal */}
                     <div>
-                        <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">Veri Politikamız</h3>
+                        <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">{t('footer.data_policy')}</h3>
                         <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-500">
                             <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Aydınlatma Metni</a></li>
-                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Çerez Politikası</a></li>
-                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">KVKK Aydınlatma</a></li>
-                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Üyelik Sözleşmesi</a></li>
-                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">Veri Sahibi Başvuru Formu</a></li>
+                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.cookie_policy')}</a></li>
+                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.kvkk')}</a></li>
+                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.membership_agreement')}</a></li>
+                            <li><a href="#" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.data_owner_form')}</a></li>
                         </ul>
                     </div>
 
                     {/* App Download */}
                     <div className="col-span-2 lg:col-span-1 mt-4 lg:mt-0">
-                        <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">Mobil Uygulama</h3>
-                        <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mb-4 sm:mb-6">İş fırsatlarını cebinizden takip edin.</p>
+                        <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">{t('footer.mobile_app')}</h3>
+                        <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mb-4 sm:mb-6">{t('footer.mobile_desc')}</p>
                         <div className="flex flex-row sm:flex-col gap-3">
                             <AppButton
                                 store="App Store"
@@ -74,7 +75,7 @@ const Footer = () => {
 
                 <div className="border-t border-gray-200 pt-6 sm:pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-gray-400 text-[10px] sm:text-xs font-medium text-center sm:text-left">
-                        © 2026 Kartvizid. Tüm hakları saklıdır.
+                        {t('footer.copyright')}
                     </p>
                 </div>
             </div>

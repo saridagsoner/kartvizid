@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { CV } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface SidebarLeftProps {
   popularProfessions: Array<{ label: string; count: number }>;
@@ -11,6 +12,7 @@ interface SidebarLeftProps {
 }
 
 const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCities, platformStats, jobFinders = [] }) => {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col gap-5 h-fit">
       {/* İş Bulanlar Section */}
@@ -21,7 +23,7 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
               <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
               <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
             </svg>
-            Kartvizid'te İş Bulanlar
+            {t('sidebar.job_finders')}
           </h3>
         </div>
         <div className="p-5">
@@ -40,14 +42,14 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
               ))}
             </div>
           ) : (
-            <p className="text-xs text-gray-400 italic text-center py-2">Henüz iş bulan yok.</p>
+            <p className="text-xs text-gray-400 italic text-center py-2">{t('sidebar.no_job_finders')}</p>
           )}
         </div>
       </div>
       {/* Popüler Meslekler Section */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-all duration-300">
         <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-          <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-sm tracking-tight">Talep Gören Meslekler</h3>
+          <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-sm tracking-tight">{t('sidebar.popular_professions')}</h3>
         </div>
         <div className="p-5">
           <div className="space-y-3">
@@ -64,7 +66,7 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
       {/* Popüler Şehirler Section */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-all duration-300">
         <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-          <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-sm tracking-tight">Öne Çıkan Şehirler</h3>
+          <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-sm tracking-tight">{t('sidebar.featured_cities')}</h3>
         </div>
         <div className="p-5">
           <div className="flex flex-wrap gap-x-3 gap-y-2 transition-all duration-500">
@@ -85,7 +87,7 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
       {/* Stats Card - Platform İstatistikleri */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
         <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-          <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-sm tracking-tight">Kartvizid İstatistikleri</h3>
+          <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-sm tracking-tight">{t('sidebar.platform_stats')}</h3>
         </div>
         <div className="p-5 space-y-4">
           {platformStats.map((stat, i) => (

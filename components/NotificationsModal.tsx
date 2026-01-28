@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import { ContactRequest, NotificationItem } from '../types';
 import NotificationDropdown from './NotificationDropdown';
 
@@ -19,6 +20,7 @@ const NotificationsModal: React.FC<NotificationsModalProps> = ({
     onMarkAllRead,
     onOpenProfile
 }) => {
+    const { t } = useLanguage();
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             {/* Blurred Backdrop */}
@@ -32,13 +34,13 @@ const NotificationsModal: React.FC<NotificationsModalProps> = ({
 
                 {/* Header */}
                 <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 sticky top-0 z-10">
-                    <h2 className="text-xl font-black text-black dark:text-white tracking-tight">Tüm Bildirimler</h2>
+                    <h2 className="text-xl font-black text-black dark:text-white tracking-tight">{t('notif.title')}</h2>
                     <div className="flex items-center gap-4">
                         <button
                             onClick={onMarkAllRead}
                             className="text-gray-500 text-[10px] font-bold hover:text-red-500 transition-colors uppercase tracking-wider"
                         >
-                            BİLDİRİMLERİ TEMİZLE
+                            {t('notif.clear_all')}
                         </button>
                         <button
                             onClick={onClose}

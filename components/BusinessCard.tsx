@@ -1,5 +1,6 @@
 import React from 'react';
 import { CV } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface BusinessCardProps {
   cv: CV;
@@ -7,6 +8,7 @@ interface BusinessCardProps {
 }
 
 const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
+  const { t } = useLanguage();
   return (
     <div
       onClick={onClick}
@@ -48,7 +50,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
               {cv.isEmailPublic && (
                 <div
                   className="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 transition-colors"
-                  title="E-posta Görünür"
+                  title={t('card.email_visible')}
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
                 </div>
@@ -56,7 +58,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
               {cv.isPhonePublic && (
                 <div
                   className="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 transition-colors"
-                  title="Telefon Görünür"
+                  title={t('card.phone_visible')}
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.05 12.05 0 0 0 .57 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.05 12.05 0 0 0 2.81.57A2 2 0 0 1 22 16.92z"></path></svg>
                 </div>
@@ -81,11 +83,11 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
               </svg>
-              {cv.experienceYears} Yıl Deneyim
+              {cv.experienceYears} {t('card.years_exp')}
             </span>
             {/* Mobile Compact Exp */}
             <span className="flex sm:hidden items-center gap-1">
-              <span className="font-black text-black dark:text-gray-300">{cv.experienceYears} Yıl</span>
+              <span className="font-black text-black dark:text-gray-300">{cv.experienceYears} {t('card.years_exp')}</span>
             </span>
             <span className="flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-black dark:text-gray-300">
@@ -109,7 +111,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
         {/* Action Button - Mobile: Arrow Icon, Desktop: Button */}
         <div className="flex items-center self-center sm:self-center shrink-0 ml-auto sm:ml-0">
           <button className="hidden sm:block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-black dark:text-white px-8 py-3 rounded-full font-black text-xs hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] dark:hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm uppercase tracking-widest">
-            Görüntüle
+            {t('card.view')}
           </button>
           <button className="sm:hidden w-8 h-8 flex items-center justify-center bg-gray-50 dark:bg-gray-700 rounded-full text-gray-400">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

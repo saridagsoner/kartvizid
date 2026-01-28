@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import TipsModal from './TipsModal';
 import PromoCarousel from './PromoCarousel';
 import { CV, PopularCompany } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface SidebarRightProps {
   popularCVs?: CV[];
@@ -12,6 +13,7 @@ interface SidebarRightProps {
 }
 
 const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCompanies = [], onCVClick, onCompanyClick }) => {
+  const { t } = useLanguage();
   const [isTipsModalOpen, setIsTipsModalOpen] = useState(false);
 
   return (
@@ -22,7 +24,7 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
       {/* Popüler İşverenler */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
         <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-          <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold text-sm tracking-tight">İş Verenler</h3>
+          <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold text-sm tracking-tight">{t('sidebar.employers')}</h3>
         </div>
         <div className="p-5 space-y-4">
           {popularCompanies.length > 0 ? (
@@ -59,7 +61,7 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
               </div>
             ))
           ) : (
-            <p className="text-xs text-gray-400 italic text-center py-2">Henüz veri yok.</p>
+            <p className="text-xs text-gray-400 italic text-center py-2">{t('sidebar.no_data')}</p>
           )}
         </div>
       </div>
@@ -67,7 +69,7 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
       {/* Popüler Kartvizidler - Moved to bottom */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
         <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-          <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold text-sm tracking-tight">En Çok Görüntülenen Kartvizidler</h3>
+          <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold text-sm tracking-tight">{t('sidebar.most_viewed')}</h3>
         </div>
         <div className="p-5 space-y-4">
           {popularCVs.length > 0 ? (
@@ -90,7 +92,7 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
               </div>
             ))
           ) : (
-            <p className="text-xs text-gray-400 italic text-center py-2">Henüz öne çıkan yok.</p>
+            <p className="text-xs text-gray-400 italic text-center py-2">{t('sidebar.no_featured')}</p>
           )}
         </div>
       </div>

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface SortDropdownProps {
     value: string;
@@ -9,13 +10,15 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ value, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
+    const { t } = useLanguage();
+
     const options = [
-        { id: 'default', label: 'Varsayılan' },
-        { id: 'newest', label: 'En Yeniler' },
-        { id: 'oldest', label: 'En Eskiler' }
+        { id: 'default', label: t('sort.default') },
+        { id: 'newest', label: t('sort.newest') },
+        { id: 'oldest', label: t('sort.oldest') }
     ];
 
-    const activeLabel = options.find(o => o.id === value)?.label || 'Varsayılan';
+    const activeLabel = options.find(o => o.id === value)?.label || t('sort.default');
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {

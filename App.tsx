@@ -3,6 +3,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { CV, FilterState, ContactRequest, Company, NotificationItem } from './types';
 import { supabase } from './lib/supabase';
 import { useAuth } from './context/AuthContext';
+import { useLanguage } from './context/LanguageContext';
 import { useToast } from './context/ToastContext';
 // import { MOCK_CVS } from './constants'; // No longer needed
 import { MOCK_CVS } from './constants';
@@ -20,6 +21,7 @@ import CompanyFormModal from './components/CompanyFormModal';
 import SortDropdown from './components/SortDropdown';
 import MobileBottomNav from './components/MobileBottomNav';
 import NotificationsModal from './components/NotificationsModal';
+import JobSuccessModal from './components/JobSuccessModal';
 
 // SortDropdown moved to components/SortDropdown.tsx
 
@@ -44,6 +46,7 @@ const getFriendlyErrorMessage = (error: any): string => {
 
 const App: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCV, setSelectedCV] = useState<CV | null>(null);
@@ -96,6 +99,7 @@ const App: React.FC = () => {
   const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
   const [activeModalRequest, setActiveModalRequest] = useState<ContactRequest | null>(null);
   const [activeModalRequestId, setActiveModalRequestId] = useState<string | null>(null);
+  const [isJobSuccessOpen, setIsJobSuccessOpen] = useState(false);
 
   const handleAuthOpen = (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => {
     setAuthMode(mode);
@@ -576,16 +580,16 @@ const App: React.FC = () => {
 
       if (error) throw error;
 
-      showToast('Tebrikler! Yeni işinizde başarılar dileriz. 🎉', 'success');
-
       // Refresh lists
       fetchCVs();
       fetchJobFinders();
 
       // Update local state and close modal
+      // Update local state and close modal
       if (selectedCV?.id === currentUserCV.id) {
         setSelectedCV(prev => prev ? { ...prev, workingStatus: 'active' } : null);
-        setTimeout(() => setSelectedCV(null), 2000); // Close after 2 seconds
+        setSelectedCV(null); // Close profile immediately
+        setIsJobSuccessOpen(true); // Show success modal
       }
 
     } catch (err) {
@@ -613,7 +617,8 @@ const App: React.FC = () => {
                 logo_url
               ),
               cvs (
-                name,
+                name
+              )
             )
           `)
         .eq('target_user_id', user.id)
@@ -1000,6 +1005,11 @@ const App: React.FC = () => {
           isPhonePublic: item.is_phone_public,
           workingStatus: item.working_status || 'open',
           references: item.references || [],
+          // Map new JSONB columns
+          workExperience: item.work_experience || [],
+          educationDetails: item.education_details || [],
+          languageDetails: item.language_details || [],
+          certificates: item.certificates || [],
           created_at: item.created_at
         }));
         setCvList(mappedData);
@@ -1364,13 +1374,13 @@ const App: React.FC = () => {
     const totalViews = cvList.reduce((acc, cv) => acc + (cv.views || 0), 0);
 
     return [
-      { label: 'Toplam CV', value: totalCVs.toLocaleString('tr-TR') },
-      { label: 'Aktif İş Arayan', value: activeJobSeekers.toLocaleString('tr-TR') },
-      { label: 'Bu Hafta Yeni', value: `+ ${newThisWeek} ` },
-      { label: 'Toplam Görüntülenme', value: totalViews >= 1000 ? `${(totalViews / 1000).toFixed(1)} k` : totalViews.toString() },
-      { label: 'Başarılı Eşleşme', value: approvedRequestCount.toLocaleString('tr-TR') }
+      { label: t('stats.total_cv'), value: totalCVs.toLocaleString('tr-TR') },
+      { label: t('stats.active_seekers'), value: activeJobSeekers.toLocaleString('tr-TR') },
+      { label: t('stats.new_this_week'), value: `+ ${newThisWeek} ` },
+      { label: t('stats.total_views'), value: totalViews >= 1000 ? `${(totalViews / 1000).toFixed(1)} k` : totalViews.toString() },
+      { label: t('stats.matches'), value: approvedRequestCount.toLocaleString('tr-TR') }
     ];
-  }, [cvList, approvedRequestCount]);
+  }, [cvList, approvedRequestCount, t]);
 
   useEffect(() => {
     // Fetch Global Approved Requests for "Başarılı Eşleşme"
@@ -1468,7 +1478,7 @@ const App: React.FC = () => {
               availableCities={availableCities}
               mobileSort={
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest whitespace-nowrap">SIRALAMA:</span>
+                  <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest whitespace-nowrap">{t('feed.sort')}:</span>
                   <SortDropdown value={sortBy} onChange={setSortBy} />
                 </div>
               }
@@ -1476,10 +1486,10 @@ const App: React.FC = () => {
 
             <div className="hidden sm:flex bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 px-4 py-2 sm:px-6 sm:py-3 mb-2 flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 shadow-sm transition-colors duration-300">
               <h2 className="text-xs sm:text-sm font-bold text-[#1f6d78] dark:text-white">
-                Kartvizid Listesi <span className="text-gray-400 dark:text-gray-500 font-normal ml-1">({filteredCVs.length} sonuç)</span>
+                {t('feed.list_title')} <span className="text-gray-400 dark:text-gray-500 font-normal ml-1">({filteredCVs.length} sonuç)</span>
               </h2>
               <div className="flex items-center gap-3 self-end sm:self-auto">
-                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Sıralama:</span>
+                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">{t('feed.sort')}:</span>
                 <SortDropdown value={sortBy} onChange={setSortBy} />
               </div>
             </div>
@@ -1500,7 +1510,7 @@ const App: React.FC = () => {
                 })
               ) : (
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-16 text-center border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
-                  <p className="text-gray-800 dark:text-white font-bold">Sonuç bulunamadı.</p>
+                  <p className="text-gray-800 dark:text-white font-bold">{t('feed.no_results')}</p>
                   <button onClick={() => {
                     setSortBy('default');
                     setActiveFilters({
@@ -1508,7 +1518,7 @@ const App: React.FC = () => {
                       skills: [], workType: '', employmentType: '', educationLevel: '', graduationStatus: '',
                       militaryStatus: '', maritalStatus: '', disabilityStatus: '', noticePeriod: '', travelStatus: '', driverLicenses: []
                     });
-                  }} className="mt-4 text-blue-500 font-bold hover:underline">Filtreleri Sıfırla</button>
+                  }} className="mt-4 text-blue-500 font-bold hover:underline">{t('feed.reset_filters')}</button>
                 </div>
               )}
             </div>
@@ -1519,27 +1529,27 @@ const App: React.FC = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className={`px - 4 py - 2 rounded - full text - sm font - bold transition - all ${currentPage === 1
+                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentPage === 1
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-white text-black border border-gray-200 hover:bg-black hover:text-white hover:border-black shadow-sm'
                     } `}
                 >
-                  ← Önceki
+                  ← {t('feed.prev')}
                 </button>
 
                 <span className="text-sm font-medium text-gray-500">
-                  Sayfa {currentPage} / {totalPages}
+                  {t('feed.page')} {currentPage} / {totalPages}
                 </span>
 
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className={`px - 4 py - 2 rounded - full text - sm font - bold transition - all ${currentPage === totalPages
+                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentPage === totalPages
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-white text-black border border-gray-200 hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] shadow-sm'
                     } `}
                 >
-                  Sonraki →
+                  {t('feed.next')} →
                 </button>
               </div>
             )}
@@ -1547,85 +1557,100 @@ const App: React.FC = () => {
 
 
         </div>
-      </div>
+      </div >
 
       <Footer />
 
 
 
-      {selectedCV && (
-        <ProfileModal
-          cv={selectedCV}
-          onClose={() => setSelectedCV(null)}
-          requestStatus={sentRequests.find(r => r.target_user_id === selectedCV.userId)?.status || 'none'}
-          onRequestAccess={() => handleSendRequest(selectedCV.userId)}
-          onCancelRequest={() => handleCancelRequest(selectedCV.userId)}
-          onJobFound={handleJobFound}
-        />
-      )}
-      {isCVFormOpen && (
-        <CVFormModal
-          onClose={() => setIsCVFormOpen(false)}
-          onSubmit={handleCreateCV}
-          initialData={currentUserCV || undefined}
-          availableCities={availableCities}
-        />
-      )}
-      {isCompanyFormOpen && (
-        <CompanyFormModal
-          onClose={() => setIsCompanyFormOpen(false)}
-          onSubmit={handleCompanySubmit}
-          initialData={activeCompany || undefined}
-          availableCities={availableCities}
-        />
-      )}
-      {selectedCompanyProfile && (
-        <CompanyProfileModal
-          company={selectedCompanyProfile}
-          onClose={() => { setSelectedCompanyProfile(null); setActiveModalRequestId(null); }}
-          requestStatus={activeModalRequest?.status}
-          requestId={activeModalRequest?.id}
-          onAction={async (id, action) => {
-            await handleRequestAction(id, action);
-            // Update local modal state immediately
-            setActiveModalRequest(prev => prev ? { ...prev, status: action } : null);
-          }}
-          onRevoke={async (id) => {
-            await handleRequestAction(id, 'rejected');
-            // Update local modal state immediately
-            setActiveModalRequest(prev => prev ? { ...prev, status: 'rejected' } : null);
-          }}
-        />
-      )}
+      {
+        selectedCV && (
+          <ProfileModal
+            cv={selectedCV}
+            onClose={() => setSelectedCV(null)}
+            requestStatus={sentRequests.find(r => r.target_user_id === selectedCV.userId)?.status || 'none'}
+            onRequestAccess={() => handleSendRequest(selectedCV.userId)}
+            onCancelRequest={() => handleCancelRequest(selectedCV.userId)}
+            onJobFound={handleJobFound}
+          />
+        )
+      }
+      {
+        isCVFormOpen && (
+          <CVFormModal
+            onClose={() => setIsCVFormOpen(false)}
+            onSubmit={handleCreateCV}
+            initialData={currentUserCV || undefined}
+            availableCities={availableCities}
+          />
+        )
+      }
+      {
+        isCompanyFormOpen && (
+          <CompanyFormModal
+            onClose={() => setIsCompanyFormOpen(false)}
+            onSubmit={handleCompanySubmit}
+            initialData={activeCompany || undefined}
+            availableCities={availableCities}
+          />
+        )
+      }
+      {
+        selectedCompanyProfile && (
+          <CompanyProfileModal
+            company={selectedCompanyProfile}
+            onClose={() => { setSelectedCompanyProfile(null); setActiveModalRequestId(null); }}
+            requestStatus={activeModalRequest?.status}
+            requestId={activeModalRequest?.id}
+            onAction={async (id, action) => {
+              await handleRequestAction(id, action);
+              // Update local modal state immediately
+              setActiveModalRequest(prev => prev ? { ...prev, status: action } : null);
+            }}
+            onRevoke={async (id) => {
+              await handleRequestAction(id, 'rejected');
+              // Update local modal state immediately
+              setActiveModalRequest(prev => prev ? { ...prev, status: 'rejected' } : null);
+            }}
+          />
+        )
+      }
       {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
 
       {/* Mobile Bottom Navigation - Only for logged in users */}
-      {user && (
-        <MobileBottomNav
-          user={user}
-          onSearch={(val) => {
-            setSearchQuery(val);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          onCreateCV={() => setIsCVFormOpen(true)}
-          onOpenCompanyProfile={() => setIsCompanyFormOpen(true)}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          hasCV={!!currentUserCV}
-          userPhotoUrl={user.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
-          notificationCount={generalNotifications.filter(n => !n.is_read).length}
-          notifications={generalNotifications}
-          onNotificationAction={handleRequestAction}
-          onMarkNotificationRead={markNotificationRead}
-          onMarkAllRead={markAllNotificationsRead}
-          onOpenProfile={handleOpenProfile}
-          onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
-          signOut={async () => {
-            await supabase.auth.signOut();
-            // window.location.reload(); 
-          }}
+      {
+        user && (
+          <MobileBottomNav
+            user={user}
+            onSearch={(val) => {
+              setSearchQuery(val);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onCreateCV={() => setIsCVFormOpen(true)}
+            onOpenCompanyProfile={() => setIsCompanyFormOpen(true)}
+            onOpenSettings={() => setIsSettingsOpen(true)}
+            hasCV={!!currentUserCV}
+            userPhotoUrl={user.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
+            notificationCount={generalNotifications.filter(n => !n.is_read).length}
+            notifications={generalNotifications}
+            onNotificationAction={handleRequestAction}
+            onMarkNotificationRead={markNotificationRead}
+            onMarkAllRead={markAllNotificationsRead}
+            onOpenProfile={handleOpenProfile}
+            onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
+            signOut={async () => {
+              await supabase.auth.signOut();
+              // window.location.reload(); 
+            }}
+          />
+        )
+      }
+      {isJobSuccessOpen && (
+        <JobSuccessModal
+          onClose={() => setIsJobSuccessOpen(false)}
         />
       )}
-    </div>
+    </div >
   );
 };
 

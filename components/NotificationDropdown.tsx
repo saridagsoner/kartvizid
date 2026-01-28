@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { ContactRequest, NotificationItem } from '../types';
 import { supabase } from '../lib/supabase';
@@ -15,6 +16,7 @@ interface NotificationDropdownProps {
 }
 
 const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, notifications, onAction, onMarkRead, onMarkAllRead, mobile, embedded }) => {
+  const { t } = useLanguage();
   const { user } = useAuth();
 
   const handleProfileClick = (id: string, role?: string, requestId?: string) => {
@@ -74,9 +76,9 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
         {/* Header - Hidden if embedded */}
         {!embedded && (
           <div className="px-5 py-4 border-b border-gray-50 flex justify-between items-center bg-white">
-            <h3 className="font-bold text-gray-900 text-sm">Bildirimler</h3>
+            <h3 className="font-bold text-gray-900 text-sm">{t('notif.title')}</h3>
             <button onClick={onMarkAllRead} className="text-gray-500 text-[10px] font-bold hover:text-red-500 transition-colors uppercase tracking-wider">
-              BİLDİRİMLERİ TEMİZLE
+              {t('notif.clear_all')}
             </button>
           </div>
         )}
@@ -88,8 +90,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
               <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 border border-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
               </div>
-              <p className="text-gray-900 font-medium text-sm">Bildiriminiz Yok</p>
-              <p className="text-gray-400 text-xs mt-1">Yeni bir şey olduğunda burada görünecek.</p>
+              <p className="text-gray-900 font-medium text-sm">{t('notif.empty')}</p>
             </div>
           ) : (
             notifications.map((item) => {
@@ -141,10 +142,10 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
 
                       <p className="text-xs text-gray-600 mt-0.5 leading-relaxed line-clamp-2">
                         {isContactRequest(item)
-                          ? "İletişim bilgilerinizi görüntülemek istiyor."
+                          ? t('notif.sent_request')
                           : (
-                            item.title === 'İletişim İsteği Onaylandı' ? 'İletişim isteğinizi onayladı.' :
-                              item.title === 'İstek Sonuçlandı' ? 'İletişim isteğinizi reddetti.' :
+                            item.title === 'İletişim İsteği Onaylandı' ? t('notif.req_approved') :
+                              item.title === 'İstek Sonuçlandı' ? t('notif.req_rejected') :
                                 item.message.replace(details.name, '').trim()
                           )
                         }
@@ -156,7 +157,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
                           {isResolved ? (
                             <div className={`text-[10px] font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5 
                                 ${status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                              {status === 'approved' ? '✓ İstek Onaylandı' : '✕ İstek Reddedildi'}
+                              {status === 'approved' ? `✓ ${t('notif.approved')}` : `✕ ${t('notif.rejected')}`}
                             </div>
                           ) : (
                             /* Pending Actions */
@@ -166,13 +167,13 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
                                   onClick={(e) => { e.stopPropagation(); onAction(isContactRequest(item) ? item.id : (item as any).related_id, 'approved'); }}
                                   className="flex-1 bg-black text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-gray-800 transition-colors"
                                 >
-                                  Onayla
+                                  {t('profile.approve_request')}
                                 </button>
                                 <button
                                   onClick={(e) => { e.stopPropagation(); onAction(isContactRequest(item) ? item.id : (item as any).related_id, 'rejected'); }}
                                   className="flex-1 bg-gray-100 text-black text-[10px] font-bold py-1.5 rounded-lg hover:bg-gray-200 transition-colors"
                                 >
-                                  Reddet
+                                  {t('profile.reject_request')}
                                 </button>
                               </div>
                             )
@@ -191,7 +192,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
         {!embedded && (
           <div className="p-3 bg-gray-50 border-t border-gray-100 text-center">
             <button onClick={onClose} className="text-black text-[10px] font-black uppercase tracking-widest hover:text-gray-600">
-              Kapat
+              {t('profile.close')}
             </button>
           </div>
         )}

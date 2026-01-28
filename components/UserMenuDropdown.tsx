@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 
 interface UserMenuDropdownProps {
   onClose: () => void;
@@ -11,11 +12,12 @@ interface UserMenuDropdownProps {
 
 const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ onClose, onLogout, onOpenSettings, mobile }) => {
   const { theme, toggleTheme } = useTheme();
+  const { t } = useLanguage();
 
   return (
     <div className={`${mobile ? 'w-64 bg-white rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden' : 'absolute right-0 top-12 w-64 bg-white rounded-[2rem] shadow-2xl border border-gray-100 z-[60] py-4 animate-in slide-in-from-top-4 duration-300'}`}>
       <div className="px-6 py-2 mb-2">
-        <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.15em]">Hesabım</h3>
+        <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.15em]">{t('account.title')}</h3>
       </div>
 
       <div className="flex flex-col">
@@ -32,7 +34,7 @@ const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ onClose, onLogout, 
               <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
             </svg>
           </div>
-          Ayarlar
+          {t('account.settings')}
         </button>
 
         <button
@@ -63,7 +65,7 @@ const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ onClose, onLogout, 
                 </svg>
               )}
             </div>
-            Görünüm: {theme === 'dark' ? 'Koyu' : 'Aydınlık'}
+            {t('account.appearance')}: {theme === 'dark' ? t('account.dark') : t('account.light')}
           </div>
 
           <div className={`w-10 h-5 rounded-full p-1 transition-all duration-300 ${theme === 'dark' ? 'bg-[#1f6d78]' : 'bg-gray-300'}`}>
@@ -85,13 +87,13 @@ const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ onClose, onLogout, 
               <line x1="21" y1="12" x2="9" y2="12"></line>
             </svg>
           </div>
-          Çıkış Yap
+          {t('account.sign_out')}
         </button>
       </div>
 
       <div className="mt-4 px-6 pt-4 border-t border-gray-50">
         <p className="text-[10px] text-gray-400 font-bold leading-relaxed uppercase tracking-wider">
-          Dijital kartvizid'ini oluşturup işverenler tarafından keşfedilmeye hemen başla!
+          {t('account.promo_text')}
         </p>
       </div>
     </div>

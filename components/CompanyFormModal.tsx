@@ -1,5 +1,6 @@
 
 import React, { useState, useRef } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 import { Company } from '../types';
 import { supabase } from '../lib/supabase';
 import ImageCropper from './ImageCropper';
@@ -14,6 +15,7 @@ interface CompanyFormModalProps {
 }
 
 const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, initialData }) => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState<Partial<Company>>({
         name: initialData?.name || '',
         description: initialData?.description || '',
@@ -107,8 +109,8 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                 {/* Header */}
                 <div className="p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
                     <div>
-                        <h2 className="text-2xl font-black text-black dark:text-white tracking-tighter">İş Veren Profilinizi Oluşturun</h2>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Adayların sizi tanıması için kurumsal bilgilerinizi girin</p>
+                        <h2 className="text-2xl font-black text-black dark:text-white tracking-tighter">{t('company.create_title')}</h2>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">{t('company.create_subtitle')}</p>
                     </div>
                     <button
                         onClick={onClose}
@@ -123,8 +125,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
 
                     {/* Bölüm 1: Temel Bilgiler */}
                     <section>
-                        <SectionTitle title="1. KURUMSAL KİMLİK" subtitle="İş veren profilinizin görünen yüzü" />
-
+                        <SectionTitle title={t('company.identity')} subtitle={t('company.identity_subtitle')} />
                         <div className="flex flex-col md:flex-row gap-8 mb-8">
                             <div className="shrink-0">
                                 <input
@@ -162,7 +163,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                             >
                                                 <path d="M3 21h18M5 21V7l8-4 8 4v14M8 21v-4h8v4" />
                                             </svg>
-                                            <p className="text-[10px] font-black uppercase mt-2 text-gray-400 group-hover:text-black tracking-widest transition-colors">Logo*</p>
+                                            <p className="text-[10px] font-black uppercase mt-2 text-gray-400 group-hover:text-black tracking-widest transition-colors">{t('company.logo')}*</p>
                                         </>
                                     )}
 
@@ -177,8 +178,8 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                             <div className="flex-1 space-y-6">
                                 <div className="space-y-2">
                                     <div className="flex justify-between">
-                                        <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">İş Veren / Kurum Adı *</label>
-                                        <span className="text-[10px] font-bold text-[#1f6d78] bg-[#1f6d78]/5 px-2 py-0.5 rounded-full">Zorunlu</span>
+                                        <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('company.name')} *</label>
+                                        <span className="text-[10px] font-bold text-[#1f6d78] bg-[#1f6d78]/5 px-2 py-0.5 rounded-full">{t('form.required')}</span>
                                     </div>
                                     <input
                                         type="text"
@@ -191,7 +192,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Sektör *</label>
+                                        <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('company.industry')} *</label>
                                         <input
                                             type="text"
                                             value={formData.industry}
@@ -201,7 +202,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Web Sitesi</label>
+                                        <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('company.website')}</label>
                                         <input
                                             type="url"
                                             value={formData.website}
@@ -218,17 +219,17 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                             <div className="space-y-2">
                                 <div className="flex justify-between">
-                                    <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Şehir *</label>
+                                    <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.city')} *</label>
                                 </div>
                                 <SearchableSelect
                                     value={formData.city || ''}
                                     onChange={(val) => setFormData({ ...formData, city: val, district: '' })}
                                     options={Object.keys(TURKEY_LOCATIONS).sort()}
-                                    placeholder="Şehir Seçiniz"
+                                    placeholder={t('filters.city')}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">İlçe *</label>
+                                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.district')} *</label>
                                 <SearchableSelect
                                     value={formData.district || ''}
                                     onChange={(val) => setFormData({ ...formData, district: val })}
@@ -239,7 +240,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                             </div>
                             <div className="space-y-2">
                                 <div className="flex justify-between">
-                                    <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Ülke</label>
+                                    <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('company.country')}</label>
                                 </div>
                                 <input
                                     type="text"
@@ -250,7 +251,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Adres Detayı</label>
+                                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('company.address')}</label>
                                 <input
                                     type="text"
                                     value={formData.address}
@@ -264,16 +265,16 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
 
                     {/* Bölüm 2: Hakkımızda */}
                     <section>
-                        <SectionTitle title="2. İŞ VEREN HAKKINDA" subtitle="Kültürünüzü ve vizyonunuzu anlatın" />
+                        <SectionTitle title={t('company.about_section')} subtitle={t('company.about_subtitle')} />
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">HAKKINDA *</label>
+                            <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.about_me')} *</label>
                             <textarea
                                 value={formData.description}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
                                 className="w-full bg-gray-50 dark:bg-gray-800 rounded-[2rem] px-8 py-6 outline-none h-32 resize-none focus:bg-white dark:focus:bg-gray-700 focus:border-[#1f6d78]/10 border border-transparent transition-all font-medium text-sm leading-relaxed text-gray-800 dark:text-gray-100"
-                                placeholder="Kendinizden ve şirketinizden bahsedin..."
+                                placeholder={t('company.about_placeholder')}
                             ></textarea>
-                            <p className="text-[10px] text-gray-400 font-bold ml-4">Bu bilgiler adayların şirketinizi tanıması için önemlidir.</p>
+                            <p className="text-[10px] text-gray-400 font-bold ml-4">{t('company.about_hint')}</p>
                         </div>
                     </section>
                 </div>
@@ -284,7 +285,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                         onClick={onClose}
                         className="flex-1 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-black dark:text-white py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm"
                     >
-                        Vazgeç
+                        {t('form.cancel')}
                     </button>
                     <button
                         onClick={() => {
@@ -318,7 +319,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                         }}
                         className="flex-[2] bg-[#1f6d78] text-white py-5 rounded-full font-black text-base uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-xl active:scale-[0.98]"
                     >
-                        Profili Kaydet
+                        {t('company.save')}
                     </button>
                 </div>
             </div>

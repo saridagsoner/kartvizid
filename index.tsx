@@ -11,16 +11,19 @@ if (!rootElement) {
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider } from './context/LanguageContext';
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <ToastProvider>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </ToastProvider>
+      <LanguageProvider>
+        <ToastProvider>
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
+        </ToastProvider>
+      </LanguageProvider>
     </AuthProvider>
   </React.StrictMode>
 );

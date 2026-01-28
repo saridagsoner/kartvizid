@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 interface SettingsModalProps {
     onClose: () => void;
@@ -8,7 +9,8 @@ interface SettingsModalProps {
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     const { user, signOut } = useAuth();
-    const [activeTab, setActiveTab] = useState<'account' | 'security' | 'notifications'>('account');
+    const { language, setLanguage, t } = useLanguage();
+    const [activeTab, setActiveTab] = useState<'general' | 'account' | 'security' | 'notifications'>('account');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     // Security State
@@ -153,12 +155,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 ⚠️
                             </div>
                             <h3 className="text-xl font-black text-black mb-3 leading-tight">
-                                Hesabınızı silmek istediğinize emin misiniz?
+                                {t('settings.delete_confirm_title')}
                             </h3>
                             <p className="text-sm text-gray-500 mb-8 leading-relaxed">
                                 {isEmployer
-                                    ? "Bu işlem geri alınamaz. İş veren profiliniz ve tüm verileriniz kalıcı olarak silinecektir."
-                                    : "Bu işlem geri alınamaz. CV'niz, profiliniz ve tüm verileriniz kalıcı olarak silinecektir."
+                                    ? t('settings.delete_confirm_desc_emp')
+                                    : t('settings.delete_confirm_desc_seek')
                                 }
                             </p>
                             <div className="flex flex-col gap-3">
@@ -167,14 +169,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                     disabled={loading}
                                     className="w-full bg-red-600 text-white py-3.5 rounded-xl font-bold text-sm hover:bg-red-700 transition-all shadow-lg shadow-red-200 active:scale-95 disabled:opacity-70"
                                 >
-                                    {loading ? 'Siliniyor...' : 'Evet, Hesabımı Sil'}
+                                    {loading ? '...' : t('settings.delete_confirm_yes')}
                                 </button>
                                 <button
                                     onClick={() => setShowDeleteConfirm(false)}
                                     disabled={loading}
                                     className="w-full bg-gray-50 text-black py-3.5 rounded-xl font-bold text-sm hover:bg-gray-100 transition-all active:scale-95"
                                 >
-                                    Vazgeç
+                                    {t('settings.cancel')}
                                 </button>
                             </div>
                         </div>
@@ -184,9 +186,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                 {/* Header */}
                 <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10 shrink-0">
                     <div>
-                        <h2 className="text-2xl font-black text-black tracking-tighter">Hesap Ayarları</h2>
+                        <h2 className="text-2xl font-black text-black tracking-tighter">{t('settings.header_title')}</h2>
                         <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-1">
-                            Profil ve güvenlik tercihlerinizi yönetin
+                            {t('settings.header_subtitle')}
                         </p>
                     </div>
                     <button
@@ -202,40 +204,86 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                     <div className="w-48 bg-gray-50 p-6 flex flex-col gap-2 border-r border-gray-100 shrink-0">
                         <button
                             onClick={() => setActiveTab('account')}
-                            className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'account' ? 'bg-black text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
+                            className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'account' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
                                 }`}
                         >
-                            Hesap
+                            {t('settings.account')}
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('general')}
+                            className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'general' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
+                                }`}
+                        >
+                            {t('settings.general')}
                         </button>
                         <button
                             onClick={() => setActiveTab('security')}
-                            className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'security' ? 'bg-black text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
+                            className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'security' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
                                 }`}
                         >
-                            Güvenlik
+                            {t('settings.security')}
                         </button>
                         <button
                             onClick={() => setActiveTab('notifications')}
-                            className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'notifications' ? 'bg-black text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
+                            className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'notifications' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
                                 }`}
                         >
-                            Bildirimler
+                            {t('settings.notifications')}
                         </button>
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 p-8 overflow-y-auto custom-scrollbar">
 
+                        {activeTab === 'general' && (
+                            <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
+                                <div>
+                                    <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2 mb-4">
+                                        {t('settings.language')}
+                                    </h3>
+                                    <p className="text-xs text-gray-500 mb-4">{t('settings.language_desc')}</p>
+                                    <div className="grid grid-cols-1 gap-3">
+                                        {[
+                                            { code: 'tr', label: 'Türkçe', flag: '🇹🇷' },
+                                            { code: 'en', label: 'English', flag: '🇬🇧' },
+                                            { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
+                                            { code: 'fr', label: 'Français', flag: '🇫🇷' },
+                                            { code: 'es', label: 'Español', flag: '🇪🇸' },
+                                        ].map((lang) => (
+                                            <button
+                                                key={lang.code}
+                                                onClick={() => setLanguage(lang.code as any)}
+                                                className={`flex items-center justify-between p-4 rounded-xl border transition-all active:scale-95 ${language === lang.code
+                                                    ? 'bg-[#1f6d78] text-white border-[#1f6d78] shadow-md'
+                                                    : 'bg-white border-gray-100 text-gray-700 hover:bg-gray-50 hover:border-gray-200'
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-2xl">{lang.flag}</span>
+                                                    <span className="font-bold text-sm">{lang.label}</span>
+                                                </div>
+                                                {language === lang.code && (
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                                    </svg>
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {activeTab === 'account' && (
                             <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
                                 <div>
                                     <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2 mb-4">
-                                        Hesap Özeti
+                                        {t('settings.account_summary')}
                                     </h3>
                                     <div className="bg-gray-50 p-4 rounded-xl space-y-2">
-                                        <p className="text-sm"><strong>E-posta:</strong> {user?.email}</p>
-                                        <p className="text-sm"><strong>Üyelik Tarihi:</strong> {new Date(user?.created_at || '').toLocaleDateString('tr-TR')}</p>
-                                        <p className="text-xs text-gray-400 mt-2">Kullanıcı ID: {user?.id}</p>
+                                        <p className="text-sm"><strong>{t('settings.email_label')}:</strong> {user?.email}</p>
+                                        <p className="text-sm"><strong>{t('settings.member_since')}:</strong> {new Date(user?.created_at || '').toLocaleDateString('tr-TR')}</p>
+                                        <p className="text-xs text-gray-400 mt-2">{t('settings.user_id')}: {user?.id}</p>
                                     </div>
                                 </div>
 
@@ -243,23 +291,23 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 <div className="pt-8 border-t border-gray-100">
                                     <div className="bg-red-50 rounded-2xl p-5 border border-red-100">
                                         <div className="mb-4">
-                                            <p className="text-sm font-bold text-red-900">Hesabımı Sil</p>
+                                            <p className="text-sm font-bold text-red-900">{t('settings.delete_account')}</p>
                                             <p className="text-xs text-red-700 mt-1">
                                                 {isEmployer
-                                                    ? "İş veren profiliniz ve tüm verileriniz kalıcı olarak silinir."
-                                                    : "CV'niz, başvurularınız ve profiliniz kalıcı olarak silinir."
+                                                    ? t('settings.delete_desc_emp')
+                                                    : t('settings.delete_desc_seek')
                                                 }
                                             </p>
                                         </div>
                                         <p className="text-[10px] text-red-600/70 italic mb-5">
-                                            Dikkat: Bu işlem geri alınamaz. Silme işleminden sonra tüm verilerinize erişimi kaybedeceksiniz.
+                                            {t('settings.delete_warning')}
                                         </p>
                                         <button
                                             onClick={handleDeleteClick}
                                             disabled={loading}
                                             className="w-full bg-white border border-red-200 text-red-600 px-5 py-3 rounded-xl text-sm font-bold hover:bg-red-600 hover:text-white transition-all shadow-sm active:scale-95 disabled:opacity-50"
                                         >
-                                            {loading ? 'Siliniyor...' : 'Hesabı Sil'}
+                                            {loading ? 'Siliniyor...' : t('settings.delete_btn')}
                                         </button>
                                     </div>
                                 </div>
@@ -270,54 +318,79 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                             <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
                                 <div className="space-y-4">
                                     <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2">
-                                        E-posta Değiştir
+                                        {t('settings.change_email')}
                                     </h3>
+
+                                    {/* Current Email Display */}
+                                    <div className="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-100">
+                                        <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Mevcut E-posta</p>
+                                        <p className="text-sm font-bold text-gray-800">{user?.email}</p>
+
+                                        {/* Pending Email Warning */}
+                                        {user?.new_email && (
+                                            <div className="mt-3 bg-yellow-50 border border-yellow-100 p-3 rounded-lg flex items-start gap-3">
+                                                <div className="text-yellow-600 text-lg">⚠️</div>
+                                                <div>
+                                                    <p className="text-xs font-bold text-yellow-800 mb-1">Onay Bekleyen Değişiklik</p>
+                                                    <p className="text-xs text-yellow-700 leading-relaxed">
+                                                        Yeni e-posta adresiniz: <span className="font-bold">{user.new_email}</span>
+                                                        <br />
+                                                        Lütfen hem eski ({user.email}) hem de yeni adresinize gönderilen onay linklerine tıklayın.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
                                     <div className="space-y-3">
                                         <div className="flex gap-3">
                                             <input
                                                 type="email"
                                                 value={newEmail}
                                                 onChange={(e) => setNewEmail(e.target.value)}
-                                                placeholder="Yeni e-posta adresi"
-                                                className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-black/5 transaction-all"
+                                                placeholder={t('settings.new_email')}
+                                                className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-[#1f6d78]/20 focus:border-[#1f6d78] border border-transparent transition-all"
                                             />
                                             <button
                                                 onClick={handleUpdateEmail}
-                                                disabled={loading || !newEmail}
-                                                className="bg-black text-white px-6 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                                disabled={loading || !newEmail || newEmail === user?.email}
+                                                className="bg-[#1f6d78] text-white px-6 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-[#155e68] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#1f6d78]/20"
                                             >
-                                                {loading ? '...' : 'Güncelle'}
+                                                {loading ? '...' : t('settings.update')}
                                             </button>
                                         </div>
+                                        <p className="text-[10px] text-gray-400 italic px-1">
+                                            * Güvenliğiniz için değişiklik işlemi her iki e-posta adresine de onay linki gönderir.
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-4">
                                     <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2">
-                                        Şifre Değiştir
+                                        {t('settings.change_password')}
                                     </h3>
                                     <div className="space-y-3">
                                         <input
                                             type="password"
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
-                                            placeholder="Yeni şifre"
+                                            placeholder={t('settings.new_password')}
                                             className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-black/5 transaction-all"
                                         />
                                         <input
                                             type="password"
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
-                                            placeholder="Yeni şifre (tekrar)"
+                                            placeholder={t('settings.new_password_confirm')}
                                             className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-black/5 transaction-all"
                                         />
                                         <div className="flex justify-end pt-2">
                                             <button
                                                 onClick={handleUpdatePassword}
                                                 disabled={loading || !newPassword || !confirmPassword}
-                                                className="bg-black text-white px-8 py-3 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+                                                className="bg-[#1f6d78] text-white px-8 py-3 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-[#155e68] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
                                             >
-                                                {loading ? 'Güncelleniyor...' : 'Şifreyi Güncelle'}
+                                                {loading ? 'Güncelleniyor...' : t('settings.update_password')}
                                             </button>
                                         </div>
                                     </div>
@@ -329,20 +402,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                             <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
                                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => toggleNotification('email')}>
                                     <div>
-                                        <h4 className="font-bold text-sm text-black">E-posta Bildirimleri</h4>
-                                        <p className="text-xs text-gray-500 mt-1">Önemli güncellemeler ve aktiviteler hakkında e-posta al.</p>
+                                        <h4 className="font-bold text-sm text-black">{t('settings.notif_email_title')}</h4>
+                                        <p className="text-xs text-gray-500 mt-1">{t('settings.notif_email_desc')}</p>
                                     </div>
-                                    <div className={`w-12 h-7 rounded-full p-1 transition-all duration-300 ${emailNotif ? 'bg-black' : 'bg-gray-300'}`}>
+                                    <div className={`w-12 h-7 rounded-full p-1 transition-all duration-300 ${emailNotif ? 'bg-[#1f6d78]' : 'bg-gray-300'}`}>
                                         <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform duration-300 ${emailNotif ? 'translate-x-5' : 'translate-x-0'}`}></div>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => toggleNotification('marketing')}>
                                     <div>
-                                        <h4 className="font-bold text-sm text-black">Pazarlama İletileri</h4>
-                                        <p className="text-xs text-gray-500 mt-1">Yeni özellikler ve kampanyalar hakkında bilgi ver.</p>
+                                        <h4 className="font-bold text-sm text-black">{t('settings.notif_marketing_title')}</h4>
+                                        <p className="text-xs text-gray-500 mt-1">{t('settings.notif_marketing_desc')}</p>
                                     </div>
-                                    <div className={`w-12 h-7 rounded-full p-1 transition-all duration-300 ${marketingNotif ? 'bg-black' : 'bg-gray-300'}`}>
+                                    <div className={`w-12 h-7 rounded-full p-1 transition-all duration-300 ${marketingNotif ? 'bg-[#1f6d78]' : 'bg-gray-300'}`}>
                                         <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform duration-300 ${marketingNotif ? 'translate-x-5' : 'translate-x-0'}`}></div>
                                     </div>
                                 </div>
