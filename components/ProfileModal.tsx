@@ -165,8 +165,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   <InfoTag label={t('form.profession')} value={cv.profession} />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InfoTag label={t('form.city')} value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} icon="📍" />
-                  <InfoTag label={t('form.experience')} value={`${cv.experienceYears} ${t('card.years_exp')}`} icon="💼" />
+                  <InfoTag label={t('form.city')} value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} />
+                  <InfoTag label={t('form.experience')} value={`${cv.experienceYears} ${t('card.years_exp')}`} />
                 </div>
               </div>
             </div>
