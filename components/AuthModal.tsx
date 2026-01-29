@@ -12,6 +12,7 @@ interface AuthModalProps {
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'signin', initialRole = 'job_seeker' }) => {
     const [mode, setMode] = useState<'signin' | 'signup'>(initialMode);
+    const [showSuccess, setShowSuccess] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
@@ -57,8 +58,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 // However, doing it here might be racy if the user isn't fully created/confirmed.
                 // For now, we rely on metadata. 
 
-                alert('Kayıt başarılı! Lütfen e-postanızı doğrulayın, ya da otomatik giriş yapıldıysa devam edin.');
-                onClose();
+                // Show success modal instead of alert
+                setShowSuccess(true);
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
@@ -201,6 +202,28 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                         </button>
                     </p>
                 </div>
+                {/* Success Overlay */}
+                {showSuccess && (
+                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-800 animate-in fade-in duration-300">
+                        <div className="text-center p-8 w-full">
+                            <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl animate-in zoom-in-50 duration-500">
+                                ✉️
+                            </div>
+                            <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">
+                                Kayıt Başarılı!
+                            </h3>
+                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8 leading-relaxed max-w-xs mx-auto">
+                                Lütfen e-posta adresinizi doğrulayın. Hesabınızı aktifleştirmek için mail kutunuzu kontrol edin.
+                            </p>
+                            <button
+                                onClick={onClose}
+                                className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-[#155e68] transition-all shadow-xl shadow-[#1f6d78]/20 active:scale-95"
+                            >
+                                Tamam
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

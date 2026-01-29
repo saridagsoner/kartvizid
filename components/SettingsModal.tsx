@@ -12,6 +12,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     const { language, setLanguage, t } = useLanguage();
     const [activeTab, setActiveTab] = useState<'general' | 'account' | 'security' | 'notifications'>('account');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
 
     // Security State
     const [newPassword, setNewPassword] = useState('');
@@ -19,6 +20,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     const [newEmail, setNewEmail] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // ... (notification state code unchanged) ...
     // Notification State
     const [emailNotif, setEmailNotif] = useState(true);
     const [marketingNotif, setMarketingNotif] = useState(false);
@@ -42,6 +44,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
             fetchSettings();
         }
     }, [user]);
+
+
 
     const handleUpdatePassword = async () => {
         if (newPassword !== confirmPassword) {
@@ -127,16 +131,22 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
             if (error) throw error;
 
-            alert('Hesabınız başarıyla silindi. Bizi tercih ettiğiniz için teşekkürler.');
-            await signOut();
-            window.location.reload(); // Force reload to clear any cached states
+            // Don't sign out yet, show success UI
+            setShowDeleteConfirm(false);
+            setShowDeleteSuccess(true);
+
         } catch (error: any) {
             console.error('Error deleting account:', error);
-            alert('Hesap silinirken bir hata oluştu: ' + error.message + '\n\nLütfen "delete_account" SQL fonksiyonunun Supabase üzerinde kurulu olduğundan emin olun.');
+            alert('Hesap silinirken bir hata oluştu: ' + error.message);
             setShowDeleteConfirm(false); // Close modal on error to allow retry
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleFinalExit = async () => {
+        await signOut();
+        window.location.reload();
     };
 
 
@@ -179,6 +189,29 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                     {t('settings.cancel')}
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Account Deletion Success Overlay */}
+                {showDeleteSuccess && (
+                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/95 backdrop-blur-md p-6 animate-in fade-in duration-300">
+                        <div className="bg-white border border-gray-100 rounded-3xl p-8 w-full max-w-sm shadow-2xl scale-100 animate-in zoom-in-95 duration-300 text-center">
+                            <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
+                                👋
+                            </div>
+                            <h3 className="text-2xl font-black text-[#1f6d78] mb-4 leading-tight tracking-tight">
+                                {t('settings.delete_success_title') || 'Hesabınız Silindi'}
+                            </h3>
+                            <p className="text-sm font-medium text-gray-500 mb-8 leading-relaxed">
+                                {t('settings.delete_success_desc') || 'Kartvizid ailesinin bir parçası olduğunuz için teşekkür ederiz. Sizi tekrar aramızda görmekten mutluluk duyarız.'}
+                            </p>
+                            <button
+                                onClick={handleFinalExit}
+                                className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-[#155e68] transition-all shadow-xl shadow-[#1f6d78]/20 active:scale-95"
+                            >
+                                {t('common.done') || 'Hoşça Kal'}
+                            </button>
                         </div>
                     </div>
                 )}

@@ -36,7 +36,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
         <div className="flex-1 min-w-0 pt-0 sm:pt-1">
           <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-4 mb-0.5 sm:mb-1.5">
             <div className="flex items-center gap-2">
-              <h3 className="text-sm sm:text-2xl font-black text-black dark:text-white tracking-tight leading-tight sm:leading-none line-clamp-1">
+              <h3 className="text-sm sm:text-2xl font-black text-black dark:text-white tracking-tight leading-normal sm:leading-normal line-clamp-1 py-0.5">
                 {cv.name}
               </h3>
               {/* Mobile Only Icons Inline */}

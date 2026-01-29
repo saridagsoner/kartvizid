@@ -235,7 +235,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 ))}
               </div>
             ) : (
-              <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_exp')}</p>
+              <p className="text-sm font-bold text-gray-400 italic">Henüz iş deneyimi eklenmemiş.</p>
             )}
           </section>
 
@@ -255,7 +255,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                           <h4 className="font-bold text-sm text-black dark:text-gray-100">{edu.university}</h4>
                           <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{edu.department} ({resolveValue(edu.level)})</p>
                         </div>
-                        <span className="bg-[#1f6d78] text-white text-[9px] font-bold px-3 py-1.5 rounded-full">{resolveValue(edu.status)}</span>
+                        <span className="bg-[#1f6d78] text-white text-[9px] font-bold px-3 py-1.5 rounded-full">{edu.status || resolveValue(edu.level)}</span>
                       </div>
                     ))}
                   </div>
@@ -301,7 +301,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_skills') || 'Yetenek bilgisi girilmemiştir.'}</p>
+                  <p className="text-sm font-bold text-gray-400 italic">Henüz uzmanlık alanı eklenmemiş.</p>
                 )}
               </div>
 
@@ -317,7 +317,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_cert') || 'Sertifika bilgisi girilmemiştir.'}</p>
+                  <p className="text-sm font-bold text-gray-400 italic">Henüz sertifika veya kurs eklenmemiş.</p>
                 )}
               </div>
             </div>
@@ -347,7 +347,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           <section>
             <SectionTitle title={t('profile.about')} />
             <div className="p-8 bg-gray-50 dark:bg-gray-800 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 italic text-gray-700 dark:text-gray-300 leading-relaxed text-sm font-medium">
-              "{cv.about || t('errors.no_about')}"
+              "{cv.about || 'Kullanıcı henüz kendini tanıtan bir yazı eklememiş.'}"
             </div>
           </section>
 
@@ -378,7 +378,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 ))}
               </div>
             ) : (
-              <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_ref')}</p>
+              <p className="text-sm font-bold text-gray-400 italic">Henüz referans eklenmemiş.</p>
             )}
           </section>
 
@@ -428,7 +428,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 </div>
               </div>
             ) : (
-              <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_contact')}</p>
+              <p className="text-sm font-bold text-gray-400 italic">İletişim bilgileri görüntülenemiyor.</p>
             )}
           </section>
         </div>

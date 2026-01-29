@@ -976,6 +976,7 @@ const App: React.FC = () => {
           name: item.name || '',
           profession: item.profession || '',
           city: item.city || '',
+          district: item.district || '',
           experienceYears: item.experience_years || 0,
           language: item.language || '',
           languageLevel: item.language_level || '',
@@ -1199,7 +1200,7 @@ const App: React.FC = () => {
         cv.city.toLocaleLowerCase('tr').includes(searchLower) ||
         cv.skills.some(s => s.toLocaleLowerCase('tr').includes(searchLower));
 
-      const matchesProfession = !activeFilters.profession || cv.profession === activeFilters.profession;
+      const matchesProfession = !activeFilters.profession || cv.profession?.split(',').map(p => p.trim()).includes(activeFilters.profession);
       const matchesCity = !activeFilters.city || cv.city === activeFilters.city;
 
       // Experience Logic
@@ -1262,7 +1263,10 @@ const App: React.FC = () => {
   }, [filteredCVs, currentPage]);
 
   const availableProfessions = useMemo(() => {
-    const unique = new Set(cvList.map(cv => cv.profession).filter(Boolean));
+    const allProfessions = cvList.flatMap(cv =>
+      cv.profession?.split(',').map(p => p.trim()).filter(Boolean) || []
+    );
+    const unique = new Set(allProfessions);
     return Array.from(unique).sort().map(p => ({ label: p }));
   }, [cvList]);
 
@@ -1302,7 +1306,11 @@ const App: React.FC = () => {
     const counts: Record<string, number> = {};
     cvList.forEach(cv => {
       if (cv.profession) {
-        counts[cv.profession] = (counts[cv.profession] || 0) + 1;
+        // Split by comma and count each unique profession for that user
+        const profs = cv.profession.split(',').map(p => p.trim()).filter(Boolean);
+        profs.forEach(p => {
+          counts[p] = (counts[p] || 0) + 1;
+        });
       }
     });
 
@@ -1336,7 +1344,10 @@ const App: React.FC = () => {
     const counts: Record<string, number> = {};
     recentCVs.forEach(cv => {
       if (cv.profession) {
-        counts[cv.profession] = (counts[cv.profession] || 0) + 1;
+        const profs = cv.profession.split(',').map(p => p.trim()).filter(Boolean);
+        profs.forEach(p => {
+          counts[p] = (counts[p] || 0) + 1;
+        });
       }
     });
 

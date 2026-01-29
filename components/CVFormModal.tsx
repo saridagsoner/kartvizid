@@ -3,6 +3,7 @@ import { CV, EducationEntry, WorkExperienceEntry, LanguageEntry, CertificateEntr
 import { TURKEY_LOCATIONS } from '../locations';
 import SearchableSelect from './SearchableSelect';
 import MonthYearPicker from './MonthYearPicker';
+import ImageCropper from './ImageCropper';
 import {
   WORK_TYPES,
   EMPLOYMENT_TYPES,
@@ -85,6 +86,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
   });
 
   const [refInput, setRefInput] = useState({ name: '', company: '', role: '', phone: '', email: '' });
+  const [showWarning, setShowWarning] = useState<{ show: boolean, missing: string[] }>({ show: false, missing: [] });
 
   const handleAddReference = () => {
     if (refInput.name && refInput.company) {
@@ -192,22 +194,29 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [tempImageSrc, setTempImageSrc] = useState<string | null>(null);
 
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      if (!e.target.files || e.target.files.length === 0) {
-        return;
-      }
+  const onFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      const fileExt = file.name.split('.').pop();
+      const reader = new FileReader();
+      reader.addEventListener('load', () => setTempImageSrc(reader.result?.toString() || null));
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    setTempImageSrc(null); // Close cropper
+    setUploading(true);
+
+    try {
+      const fileExt = 'jpg'; // Cropped image is usually jpeg/png
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
 
-      setUploading(true);
-
       const { error: uploadError } = await supabase.storage
         .from('cv-photos')
-        .upload(filePath, file);
+        .upload(filePath, croppedBlob);
 
       if (uploadError) {
         throw uploadError;
@@ -238,6 +247,15 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
     <div className="fixed inset-0 z-[110] flex items-center justify-center sm:p-4 bg-black/60 backdrop-blur-xl">
       <div className="bg-white dark:bg-gray-900 w-[95%] sm:w-full sm:max-w-[800px] h-[90vh] rounded-[2rem] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
 
+        {tempImageSrc && (
+          <ImageCropper
+            imageSrc={tempImageSrc}
+            onCropComplete={handleCropComplete}
+            onClose={() => setTempImageSrc(null)}
+            aspect={3 / 4} // Portrait aspect ratio for CV
+          />
+        )}
+
         {/* Header */}
         <div className="p-5 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
           <div>
@@ -264,7 +282,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                 <input
                   type="file"
                   ref={fileInputRef}
-                  onChange={handlePhotoUpload}
+                  onChange={onFileSelect}
                   className="hidden"
                   accept="image/*"
                 />
@@ -327,6 +345,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                       className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-4 py-3 sm:px-6 sm:py-3.5 outline-none transition-all text-[11px] sm:text-sm font-bold text-gray-800 dark:text-gray-100"
                       placeholder={t('form.profession_example')}
                     />
+                    <p className="text-[9px] text-gray-400 mt-1 ml-1 font-bold">Birden fazla ünvan için virgül (,) ile ayırınız.</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -558,6 +577,10 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     {EDUCATION_LEVELS.map(l => <button key={l} onClick={() => setEduInput({ ...eduInput, level: l })} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border ${eduInput.level === l ? 'bg-[#1f6d78] text-white' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400'}`}>{l}</button>)}
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                    <button onClick={() => setEduInput({ ...eduInput, status: 'Devam Ediyor' })} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border ${eduInput.status === 'Devam Ediyor' ? 'bg-[#1f6d78] text-white border-[#1f6d78]' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'}`}>Devam Ediyor</button>
+                    <button onClick={() => setEduInput({ ...eduInput, status: 'Mezun' })} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border ${eduInput.status === 'Mezun' ? 'bg-[#1f6d78] text-white border-[#1f6d78]' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'}`}>Mezun</button>
                   </div>
                   <button onClick={addEducation} className="w-full bg-[#1f6d78] text-white font-bold py-2.5 sm:py-3 rounded-xl hover:bg-[#155e68] text-[10px] sm:text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ {t('form.add_education')}</button>
                 </div>
@@ -835,6 +858,29 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
           </button>
           <button
             onClick={() => {
+              // Validation
+              const requiredFields = [
+                { key: 'name', label: t('form.fullname') },
+                { key: 'profession', label: t('form.profession') },
+                { key: 'city', label: t('form.city') },
+                { key: 'email', label: t('form.email') },
+                { key: 'phone', label: t('form.phone') },
+                { key: 'about', label: t('form.about_me') },
+                { key: 'educationDetails', label: t('form.education_info') },
+                { key: 'languageDetails', label: t('form.languages') }
+              ];
+
+              const missing = requiredFields.filter(field => {
+                const val = formData[field.key as keyof CV];
+                if (Array.isArray(val)) return val.length === 0;
+                return !val;
+              });
+
+              if (missing.length > 0) {
+                setShowWarning({ show: true, missing: missing.map(m => m.label) });
+                return;
+              }
+
               // Sync legacy fields for backward compatibility (Business Card view)
               const syncedData = {
                 ...formData,
@@ -851,6 +897,49 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
             {t('form.save_publish')}
           </button>
         </div>
+
+        {/* Warning Overlay */}
+        {showWarning.show && (
+          <div className="absolute inset-0 z-[150] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6 animate-in fade-in duration-300">
+            <div className="bg-white border-2 border-red-50 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl scale-100 animate-in zoom-in-95 duration-300 text-center relative overflow-hidden">
+              {/* Decoration */}
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[#1f6d78]/5 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+
+              <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-xl relative z-10">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </div>
+              <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
+                Eksik Bilgiler Var
+              </h3>
+              <p className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-wider relative z-10">
+                Lütfen aşağıdaki alanları doldurunuz:
+              </p>
+
+              <div className="bg-gray-50 rounded-2xl p-4 mb-8 border border-gray-100 relative z-10">
+                <ul className="text-left space-y-2">
+                  {showWarning.missing.map((item, idx) => (
+                    <li key={idx} className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                      <span className="w-1.5 h-1.5 rounded-full bg-black shrink-0"></span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <button
+                onClick={() => setShowWarning({ show: false, missing: [] })}
+                className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg shadow-[#1f6d78]/20 active:scale-95 relative z-10"
+              >
+                Tamam, Dolduracağım
+              </button>
+            </div>
+          </div>
+        )}
       </div >
     </div >
   );
