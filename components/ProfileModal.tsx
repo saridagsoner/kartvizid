@@ -336,7 +336,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('form.driving_license')}</span>
                 <div className="flex flex-wrap gap-1.5">
                   {cv.driverLicense && cv.driverLicense.length > 0 ? (
-                    cv.driverLicense.map(l => <span key={l} className="w-8 h-8 rounded-lg bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-[10px] font-black">{l}</span>)
+                    cv.driverLicense.map(l => (
+                      <div key={l} className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full px-5 py-3 flex items-center justify-center">
+                        <span className="text-xs sm:text-sm font-bold text-black dark:text-gray-100">{l}</span>
+                      </div>
+                    ))
                   ) : <span className="text-sm font-bold text-gray-400 italic bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 border rounded-full px-4 py-2 w-full">{t('common.none')}</span>}
                 </div>
               </div>
