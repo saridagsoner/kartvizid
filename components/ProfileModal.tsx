@@ -71,6 +71,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       'Yapıldı': 'military.done',
       'Muaf': 'military.exempt',
       'Tecilli': 'military.postponed',
+      'Yükümlü Değil': 'military.not_obligated',
       // Marital
       'Bekar': 'marital.single',
       'Evli': 'marital.married',
@@ -327,7 +328,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           <section>
             <SectionTitle title={t('profile.personal')} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <InfoTag label={t('form.military')} value={resolveValue(cv.militaryStatus)} />
+              {cv.militaryStatus && <InfoTag label={t('form.military')} value={resolveValue(cv.militaryStatus)} />}
               <InfoTag label={t('form.marital')} value={resolveValue(cv.maritalStatus)} />
               <InfoTag label={t('form.travel')} value={resolveValue(cv.travelStatus)} />
               <InfoTag label={t('form.disability')} value={resolveValue(cv.disabilityStatus)} />

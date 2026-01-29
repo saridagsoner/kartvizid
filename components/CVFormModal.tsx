@@ -70,7 +70,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
     workExperience: initialData?.workExperience || [],
     workType: initialData?.workType || 'Ofis',
     employmentType: initialData?.employmentType || 'Tam Zamanlı',
-    militaryStatus: initialData?.militaryStatus || 'Yapıldı',
+    militaryStatus: initialData?.militaryStatus || '',
     maritalStatus: initialData?.maritalStatus || 'Bekar',
     disabilityStatus: initialData?.disabilityStatus || 'Yok',
     travelStatus: initialData?.travelStatus || 'Seyahat Engeli Yok',
@@ -705,7 +705,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
               <div className="space-y-4">
                 <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.military')}</label>
                 <div className="flex flex-wrap gap-2">
-                  {MILITARY_STATUSES.map(s => <SelectionPill key={s} label={s} active={formData.militaryStatus === s} onClick={() => setFormData({ ...formData, militaryStatus: s })} />)}
+                  {MILITARY_STATUSES.map(s => <SelectionPill key={s} label={s} active={formData.militaryStatus === s} onClick={() => setFormData({ ...formData, militaryStatus: formData.militaryStatus === s ? '' : s })} />)}
                 </div>
               </div>
               <div className="space-y-4">
