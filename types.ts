@@ -81,6 +81,8 @@ export interface CV {
     email?: string;
   }>;
   workingStatus?: 'active' | 'passive' | 'open';
+  preferredCity?: string;
+  preferredRoles?: string[];
   created_at?: string;
 }
 

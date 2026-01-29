@@ -1011,6 +1011,8 @@ const App: React.FC = () => {
           educationDetails: item.education_details || [],
           languageDetails: item.language_details || [],
           certificates: item.certificates || [],
+          preferredCity: item.preferred_city,
+          preferredRoles: item.preferred_roles || [],
           created_at: item.created_at
         }));
         setCvList(mappedData);
@@ -1155,7 +1157,9 @@ const App: React.FC = () => {
         is_email_public: cvData.isEmailPublic,
         is_phone_public: cvData.isPhonePublic,
         working_status: cvData.workingStatus,
-        references: cvData.references
+        references: cvData.references,
+        preferred_city: cvData.preferredCity,
+        preferred_roles: cvData.preferredRoles
       } as any;
 
       // Clean up undefined values

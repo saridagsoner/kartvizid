@@ -55,7 +55,7 @@ export const generatePrintableCV = (cv: CV): string => {
 
         <!-- Print Controls -->
         <div class="fixed top-5 right-5 flex gap-4 no-print">
-            <button onclick="window.print()" class="bg-black text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-gray-800 transition-transform hover:scale-105 active:scale-95 flex items-center gap-2">
+            <button onclick="window.print()" class="bg-[#1f6d78] text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#155e68] transition-transform hover:scale-105 active:scale-95 flex items-center gap-2">
                 Yazdır / PDF İndir
             </button>
         </div>
@@ -158,6 +158,14 @@ export const generatePrintableCV = (cv: CV): string => {
                              <div class="col-span-2">
                                 <p class="text-[10px] uppercase font-bold text-gray-400 mb-0.5">Maaş Beklentisi</p>
                                 <p class="text-sm font-bold text-black">${cv.salaryMin.toLocaleString('tr-TR')}₺ - ${cv.salaryMax.toLocaleString('tr-TR')}₺ <span class="text-gray-400 font-normal ml-1">(Aylık Net)</span></p>
+                             </div>
+                             <div class="col-span-2 mt-2">
+                                <p class="text-[10px] uppercase font-bold text-gray-400 mb-0.5">Tercih Edilen Şehir</p>
+                                <p class="text-sm font-bold text-black">${cv.preferredCity || 'Belirtilmedi'}</p>
+                             </div>
+                             <div class="col-span-2">
+                                <p class="text-[10px] uppercase font-bold text-gray-400 mb-0.5">Tercih Edilen Alanlar</p>
+                                <p class="text-sm font-bold text-black">${cv.preferredRoles && cv.preferredRoles.length > 0 ? cv.preferredRoles.join(', ') : 'Belirtilmedi'}</p>
                              </div>
                         </div>
                     </div>

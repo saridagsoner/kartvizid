@@ -82,6 +82,8 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
     isEmailPublic: initialData?.isEmailPublic || false,
     isPhonePublic: initialData?.isPhonePublic || false,
     workingStatus: initialData?.workingStatus || 'open',
+    preferredCity: initialData?.preferredCity || '',
+    preferredRoles: initialData?.preferredRoles || [],
     references: initialData?.references || [],
   });
 
@@ -127,6 +129,29 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
     setFormData(prev => ({
       ...prev,
       skills: prev.skills?.filter((_, i) => i !== idx)
+    }));
+  };
+
+
+  const [roleInput, setRoleInput] = useState('');
+
+  const handleRoleAdd = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && roleInput.trim()) {
+      e.preventDefault();
+      if (!formData.preferredRoles?.includes(roleInput.trim())) {
+        setFormData(prev => ({
+          ...prev,
+          preferredRoles: [...(prev.preferredRoles || []), roleInput.trim()]
+        }));
+      }
+      setRoleInput('');
+    }
+  };
+
+  const removeRole = (idx: number) => {
+    setFormData(prev => ({
+      ...prev,
+      preferredRoles: prev.preferredRoles?.filter((_, i) => i !== idx)
     }));
   };
 
@@ -458,6 +483,37 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
             <SectionTitle title={t('form.work_pref')} subtitle={t('form.work_pref_subtitle')} />
 
             <div className="space-y-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-10">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Tercih Edilen Şehir</label>
+                  <SearchableSelect
+                    value={formData.preferredCity || ''}
+                    onChange={(val) => setFormData({ ...formData, preferredCity: val })}
+                    options={Object.keys(TURKEY_LOCATIONS).sort()}
+                    placeholder="Şehir Seçiniz"
+                  />
+                </div>
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Tercih Edilen Alanlar</label>
+                  <input
+                    type="text"
+                    value={roleInput}
+                    onChange={e => setRoleInput(e.target.value)}
+                    onKeyDown={handleRoleAdd}
+                    className="w-full bg-gray-50 dark:bg-gray-800 rounded-full px-5 py-3 text-[11px] sm:text-sm font-bold outline-none dark:text-white"
+                    placeholder="Alan ekleyip Enter'a basın..."
+                  />
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {formData.preferredRoles?.map((role, idx) => (
+                      <span key={idx} className="bg-[#1f6d78] text-white text-[10px] font-black px-3 py-1.5 rounded-full flex items-center gap-2 uppercase tracking-wider">
+                        {role}
+                        <button onClick={() => removeRole(idx)} className="hover:opacity-50">×</button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-10">
                 <div className="space-y-4">
                   <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.work_model')}</label>

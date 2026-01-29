@@ -18,7 +18,7 @@ export const MOCK_CVS: CV[] = [
     education: 'İstanbul Teknik Üniversitesi - Bilgisayar Mühendisliği',
     educationLevel: 'Lisans',
     graduationStatus: 'Mezun',
-    workType: 'Remote',
+    workType: 'Uzaktan',
     employmentType: 'Tam Zamanlı',
     militaryStatus: 'Yapıldı',
     maritalStatus: 'Evli',
@@ -74,7 +74,7 @@ export const MOCK_CVS: CV[] = [
   },
 ];
 
-export const WORK_TYPES = ['Remote', 'Hibrit', 'Ofis'];
+export const WORK_TYPES = ['Uzaktan', 'Hibrit', 'İş Yeri'];
 export const EMPLOYMENT_TYPES = ['Tam Zamanlı', 'Yarı Zamanlı', 'Proje Bazlı', 'Freelance', 'Stajyer'];
 export const EDUCATION_LEVELS = ['Lise', 'Önlisans', 'Lisans', 'Yüksek Lisans', 'Doktora'];
 export const GRADUATION_STATUSES = ['Mezun', 'Öğrenci', 'Terk'];

@@ -216,6 +216,26 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 </div>
               </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Tercih Edilen Şehir</label>
+                <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full px-6 py-3 flex items-center">
+                  <span className="text-sm font-black text-black dark:text-gray-100">
+                    {cv.preferredCity || '-'}
+                  </span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Tercih Edilen Alanlar</label>
+                <div className="flex flex-wrap gap-2">
+                  {cv.preferredRoles && cv.preferredRoles.length > 0 ? cv.preferredRoles.map(role => (
+                    <ValuePill key={role} label={role} />
+                  )) : <span className="text-sm font-bold text-gray-400 italic">-</span>}
+                </div>
+              </div>
+            </div>
+
           </section>
 
           {/* Bölüm 2.5: İş Deneyimi (New) */}
@@ -495,8 +515,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           )}
 
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 
