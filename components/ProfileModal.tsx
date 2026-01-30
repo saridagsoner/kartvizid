@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { CV } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { generatePrintableCV } from '../lib/generatePrintableCV';
 
 interface ProfileModalProps {
@@ -16,6 +17,8 @@ interface ProfileModalProps {
 const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus = 'none', onRequestAccess, onCancelRequest, onJobFound }) => {
   const { t } = useLanguage();
   const { user } = useAuth();
+  const { showToast } = useToast();
+  const [showRoleWarning, setShowRoleWarning] = useState(false);
   const isOwner = user?.id === cv.userId;
 
   const hasAccess = requestStatus === 'approved' || isOwner;
@@ -260,6 +263,28 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             )}
           </section>
 
+          {/* Bölüm 2.6: Staj Deneyimi */}
+          <section>
+            <SectionTitle title="Staj Deneyimi" />
+            {cv.internshipDetails && cv.internshipDetails.length > 0 ? (
+              <div className="space-y-4">
+                {cv.internshipDetails.map((intern) => (
+                  <div key={intern.id} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <h4 className="font-black text-black dark:text-gray-100 text-sm">{intern.role}</h4>
+                      <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">{intern.company}</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-700 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-600 text-[10px] font-black uppercase text-gray-400 dark:text-gray-300 whitespace-nowrap">
+                      {intern.startDate} - {intern.isCurrent ? (t('common.ongoing') || 'Devam Ediyor') : intern.endDate}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm font-bold text-gray-400 italic">Henüz staj deneyimi eklenmemiş.</p>
+            )}
+          </section>
+
           {/* Bölüm 3: Eğitim ve Yetenekler */}
           <section>
             <SectionTitle title={t('profile.edu_skills')} />
@@ -488,7 +513,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             <>
               {!hasAccess && (
                 <button
-                  onClick={isPending ? onCancelRequest : onRequestAccess}
+                  onClick={isPending ? onCancelRequest : () => {
+                    if (user?.user_metadata?.role === 'job_seeker') {
+                      setShowRoleWarning(true);
+                      return;
+                    }
+                    onRequestAccess?.();
+                  }}
                   className={`flex-[2] py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] group ${isPending
                     ? 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-600 hover:shadow-none'
                     : 'bg-[#1f6d78] text-white hover:bg-[#155e68]'
@@ -516,6 +547,45 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
 
         </div>
       </div >
+
+      {/* Role Warning Modal - Centered & Themed */}
+      {showRoleWarning && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-200 relative">
+
+            {/* Close Button */}
+            <button
+              onClick={() => setShowRoleWarning(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              ✕
+            </button>
+
+            {/* Icon */}
+            <div className="w-16 h-16 bg-[#1f6d78]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1f6d78" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+
+            <h3 className="text-xl font-black text-black dark:text-white mb-3">İş Veren Hesabı Gerekli</h3>
+
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
+              Başka bir iş arayanla iletişime geçmek için önce <span className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold">iş veren hesabı</span> oluşturmalısınız.
+            </p>
+
+            <button
+              onClick={() => setShowRoleWarning(false)}
+              className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20"
+            >
+              Anladım
+            </button>
+          </div>
+        </div>
+      )}
+
     </div >
   );
 };

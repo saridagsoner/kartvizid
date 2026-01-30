@@ -1009,6 +1009,7 @@ const App: React.FC = () => {
           references: item.references || [],
           // Map new JSONB columns
           workExperience: item.work_experience || [],
+          internshipDetails: item.internship_details || [],
           educationDetails: item.education_details || [],
           languageDetails: item.language_details || [],
           certificates: item.certificates || [],
@@ -1130,6 +1131,7 @@ const App: React.FC = () => {
         district: cvData.district,
         experience_years: cvData.experienceYears,
         work_experience: cvData.workExperience,
+        internship_details: cvData.internshipDetails,
         education_details: cvData.educationDetails,
         language_details: cvData.languageDetails,
         certificates: cvData.certificates,

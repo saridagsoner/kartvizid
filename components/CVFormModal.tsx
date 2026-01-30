@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CV, EducationEntry, WorkExperienceEntry, LanguageEntry, CertificateEntry } from '../types';
+import { CV, EducationEntry, WorkExperienceEntry, InternshipEntry, LanguageEntry, CertificateEntry } from '../types';
 import { TURKEY_LOCATIONS } from '../locations';
 import SearchableSelect from './SearchableSelect';
 import MonthYearPicker from './MonthYearPicker';
@@ -67,6 +67,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
     educationLevel: initialData?.educationLevel || 'Lisans', // Legacy fallback
     graduationStatus: initialData?.graduationStatus || 'Mezun', // Legacy fallback
     educationDetails: initialData?.educationDetails || [],
+    internshipDetails: initialData?.internshipDetails || [],
     workExperience: initialData?.workExperience || [],
     workType: initialData?.workType || 'Ofis',
     employmentType: initialData?.employmentType || 'Tam Zamanlı',
@@ -181,6 +182,21 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
   };
   const removeEducation = (id: string) => {
     setFormData(prev => ({ ...prev, educationDetails: prev.educationDetails?.filter(e => e.id !== id) }));
+  };
+
+  // Internship
+  const [internInput, setInternInput] = useState<Partial<InternshipEntry>>({ company: '', role: '', startDate: '', endDate: '', isCurrent: false });
+
+  const addInternship = () => {
+    if (internInput.company && internInput.role) {
+      const newIntern = { ...internInput, id: Math.random().toString() } as InternshipEntry;
+      setFormData(prev => ({ ...prev, internshipDetails: [...(prev.internshipDetails || []), newIntern] }));
+      setInternInput({ company: '', role: '', startDate: '', endDate: '', isCurrent: false });
+    }
+  };
+
+  const removeInternship = (id: string) => {
+    setFormData(prev => ({ ...prev, internshipDetails: prev.internshipDetails?.filter(i => i.id !== id) }));
   };
 
   // Language
@@ -639,6 +655,37 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                     <button onClick={() => setEduInput({ ...eduInput, status: 'Mezun' })} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border ${eduInput.status === 'Mezun' ? 'bg-[#1f6d78] text-white border-[#1f6d78]' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700'}`}>Mezun</button>
                   </div>
                   <button onClick={addEducation} className="w-full bg-[#1f6d78] text-white font-bold py-2.5 sm:py-3 rounded-xl hover:bg-[#155e68] text-[10px] sm:text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ {t('form.add_education')}</button>
+                </div>
+              </div>
+
+
+              {/* Internship (Staj) Section */}
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Staj Deneyimi</label>
+                {formData.internshipDetails?.map(intern => (
+                  <div key={intern.id} className="bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl border border-gray-200 dark:border-gray-700 relative group flex justify-between items-center">
+                    <div>
+                      <h4 className="font-bold text-sm text-black dark:text-white">{intern.role}</h4>
+                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{intern.company}</p>
+                      <p className="text-[10px] text-gray-400 mt-1">{intern.startDate} - {intern.isCurrent ? 'Devam Ediyor' : intern.endDate}</p>
+                    </div>
+                    <button onClick={() => removeInternship(intern.id)} className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 rounded-full font-bold">×</button>
+                  </div>
+                ))}
+
+                <div className="bg-white dark:bg-gray-900 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 space-y-4">
+                  <h5 className="text-[10px] sm:text-xs font-black text-black dark:text-gray-300 uppercase tracking-widest">+ Staj Ekle</h5>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" placeholder="Kurum Adı *" value={internInput.company} onChange={e => setInternInput({ ...internInput, company: e.target.value })} className="bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-[11px] sm:text-sm font-bold outline-none dark:text-white" />
+                    <input type="text" placeholder="Pozisyon / Departman *" value={internInput.role} onChange={e => setInternInput({ ...internInput, role: e.target.value })} className="bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-[11px] sm:text-sm font-bold outline-none dark:text-white" />
+                    <MonthYearPicker placeholder={t('form.start_date_label')} value={internInput.startDate} onChange={val => setInternInput({ ...internInput, startDate: val })} />
+                    <MonthYearPicker placeholder={t('form.end_date_label')} disabled={internInput.isCurrent} value={internInput.endDate || ''} onChange={val => setInternInput({ ...internInput, endDate: val })} />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input type="checkbox" checked={internInput.isCurrent} onChange={e => setInternInput({ ...internInput, isCurrent: e.target.checked })} className="accent-[#1f6d78] w-4 h-4" />
+                    <span className="text-xs font-bold dark:text-gray-300">{t('form.currently_working')}</span>
+                  </div>
+                  <button onClick={addInternship} className="w-full bg-[#1f6d78] text-white font-bold py-2.5 sm:py-3 rounded-xl hover:bg-[#155e68] text-[10px] sm:text-xs uppercase tracking-widest transition-all active:scale-95 shadow-lg">+ Ekle</button>
                 </div>
               </div>
 

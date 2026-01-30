@@ -161,6 +161,25 @@ export const generatePrintableCV = (cv: CV): string => {
                         </div>
                     </div>
 
+                    <!-- Internships -->
+                    ${cv.internshipDetails && cv.internshipDetails.length > 0 ? `
+                    <div>
+                        <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-4">Staj Deneyimi</h3>
+                        <div class="space-y-4">
+                            ${cv.internshipDetails.map(intern => `
+                                <div>
+                                    <h4 class="font-bold text-lg text-black">${intern.role}</h4>
+                                    <div class="flex gap-2 text-sm font-bold text-gray-700">
+                                        <span>${intern.company}</span>
+                                        <span class="text-gray-300">|</span>
+                                        <span>${intern.startDate} - ${intern.isCurrent ? 'Devam Ediyor' : intern.endDate}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
                     <!-- Work Preferences -->
                     <div>
                         <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-4">İş Tercihleri</h3>

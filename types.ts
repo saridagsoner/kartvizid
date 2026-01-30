@@ -19,6 +19,16 @@ export interface WorkExperienceEntry {
   description?: string;
 }
 
+export interface InternshipEntry {
+  id: string;
+  company: string;
+  role: string;
+  startDate: string;
+  endDate?: string;
+  isCurrent?: boolean;
+  description?: string;
+}
+
 export interface LanguageEntry {
   id: string;
   language: string;
@@ -56,6 +66,7 @@ export interface CV {
   graduationStatus?: string; // Legacy
   educationDetails?: EducationEntry[];
   workExperience?: WorkExperienceEntry[];
+  internshipDetails?: InternshipEntry[];
   workType?: string;
   employmentType?: string;
   militaryStatus?: string;
