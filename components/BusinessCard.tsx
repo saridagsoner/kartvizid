@@ -110,7 +110,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
 
         {/* Action Button - Mobile: Arrow Icon, Desktop: Button */}
         <div className="flex items-center self-center sm:self-center shrink-0 ml-auto sm:ml-0">
-          <button className="hidden sm:block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-black dark:text-white px-8 py-3 rounded-full font-black text-xs hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] dark:hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm uppercase tracking-widest">
+          <button className="hidden sm:block bg-white dark:bg-gray-800 border-[0.5px] border-[#1f6d78] text-[#1f6d78] px-8 py-3 rounded-full font-black text-xs hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] dark:hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm uppercase tracking-widest">
             {t('card.view')}
           </button>
           <button className="sm:hidden w-8 h-8 flex items-center justify-center bg-gray-50 dark:bg-gray-700 rounded-full text-gray-400">

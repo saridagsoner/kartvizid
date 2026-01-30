@@ -74,11 +74,7 @@ export const generatePrintableCV = (cv: CV): string => {
                     <h1 class="text-4xl font-black text-black mb-2 uppercase tracking-tight">${cv.name}</h1>
                     <p class="text-xl font-medium text-gray-600 uppercase tracking-wide mb-6">${cv.profession}</p>
                     
-                    <div class="flex flex-wrap gap-x-8 gap-y-2 text-sm text-gray-600">
-                        ${cv.email ? `<div><span class="font-bold text-black">E-posta:</span> ${cv.email}</div>` : ''}
-                        ${cv.phone ? `<div><span class="font-bold text-black">Telefon:</span> ${cv.phone}</div>` : ''}
-                        ${cv.city ? `<div><span class="font-bold text-black">Konum:</span> ${cv.city}</div>` : ''}
-                    </div>
+
                 </div>
             </div>
 
@@ -88,6 +84,28 @@ export const generatePrintableCV = (cv: CV): string => {
                 <!-- Left Column (Compact info) -->
                 <div class="w-[30%] shrink-0 flex flex-col gap-8">
                     
+                    <!-- Contact Info -->
+                    <div>
+                        <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-3">İletişim</h3>
+                        <div class="flex flex-col gap-3 text-sm text-gray-700">
+                            ${cv.email ? `
+                                <div>
+                                    <span class="block text-[10px] font-bold text-gray-400 uppercase mb-0.5">E-posta</span>
+                                    <span class="font-medium break-all block leading-tight">${cv.email}</span>
+                                </div>` : ''}
+                            ${cv.phone ? `
+                                <div>
+                                    <span class="block text-[10px] font-bold text-gray-400 uppercase mb-0.5">Telefon</span>
+                                    <span class="font-medium block leading-tight">${cv.phone}</span>
+                                </div>` : ''}
+                            ${cv.city ? `
+                                <div>
+                                    <span class="block text-[10px] font-bold text-gray-400 uppercase mb-0.5">Konum</span>
+                                    <span class="font-medium block leading-tight">${cv.city}</span>
+                                </div>` : ''}
+                        </div>
+                    </div>
+
                     <!-- About -->
                     <div>
                         <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-3">Hakkında</h3>
@@ -155,10 +173,7 @@ export const generatePrintableCV = (cv: CV): string => {
                                 <p class="text-[10px] uppercase font-bold text-gray-400 mb-0.5">İstihdam Türü</p>
                                 <p class="text-sm font-bold text-black">${cv.employmentType || '-'}</p>
                              </div>
-                             <div class="col-span-2">
-                                <p class="text-[10px] uppercase font-bold text-gray-400 mb-0.5">Maaş Beklentisi</p>
-                                <p class="text-sm font-bold text-black">${cv.salaryMin.toLocaleString('tr-TR')}₺ - ${cv.salaryMax.toLocaleString('tr-TR')}₺ <span class="text-gray-400 font-normal ml-1">(Aylık Net)</span></p>
-                             </div>
+
                              <div class="col-span-2 mt-2">
                                 <p class="text-[10px] uppercase font-bold text-gray-400 mb-0.5">Tercih Edilen Şehir</p>
                                 <p class="text-sm font-bold text-black">${cv.preferredCity || 'Belirtilmedi'}</p>

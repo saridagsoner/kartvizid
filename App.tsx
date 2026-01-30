@@ -22,6 +22,7 @@ import SortDropdown from './components/SortDropdown';
 import MobileBottomNav from './components/MobileBottomNav';
 import NotificationsModal from './components/NotificationsModal';
 import JobSuccessModal from './components/JobSuccessModal';
+import { BusinessCardSkeleton } from './components/Skeleton';
 
 // SortDropdown moved to components/SortDropdown.tsx
 
@@ -1473,6 +1474,7 @@ const App: React.FC = () => {
               weeklyTrends={weeklyRisingStats}
               platformStats={platformStats}
               jobFinders={jobFinders}
+              loading={loading}
             />
           </aside>
 
@@ -1482,6 +1484,7 @@ const App: React.FC = () => {
               popularCompanies={popularCompanies}
               onCVClick={handleCVClick}
               onCompanyClick={(company) => setSelectedCompanyProfile(company)}
+              loading={loading}
             />
           </aside>
 
@@ -1523,6 +1526,14 @@ const App: React.FC = () => {
                     />
                   );
                 })
+              ) : loading ? (
+                <>
+                  <BusinessCardSkeleton />
+                  <BusinessCardSkeleton />
+                  <BusinessCardSkeleton />
+                  <BusinessCardSkeleton />
+                  <BusinessCardSkeleton />
+                </>
               ) : (
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-16 text-center border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
                   <p className="text-gray-800 dark:text-white font-bold">{t('feed.no_results')}</p>

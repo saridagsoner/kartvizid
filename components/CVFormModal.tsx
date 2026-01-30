@@ -908,7 +908,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
         <div className="p-5 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-3 sm:gap-5 sticky bottom-0 z-10 shrink-0">
           <button
             onClick={onClose}
-            className="flex-1 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-black dark:text-white py-3 sm:py-5 rounded-full font-black text-xs sm:text-sm uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm"
+            className="flex-1 bg-white dark:bg-gray-800 border-2 border-[#1f6d78] text-[#1f6d78] py-3 sm:py-5 rounded-full font-black text-xs sm:text-sm uppercase tracking-widest hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-sm"
           >
             {t('form.cancel')}
           </button>

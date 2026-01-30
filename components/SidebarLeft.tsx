@@ -2,6 +2,7 @@
 import React from 'react';
 import { CV } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { JobFinderSkeleton, StatsSkeleton } from './Skeleton';
 
 interface SidebarLeftProps {
   popularProfessions: Array<{ label: string; count: number }>;
@@ -9,9 +10,10 @@ interface SidebarLeftProps {
   weeklyTrends: Array<{ label: string; growth: number }>;
   platformStats: Array<{ label: string; value: string }>;
   jobFinders?: CV[];
+  loading?: boolean;
 }
 
-const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCities, platformStats, jobFinders = [] }) => {
+const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCities, platformStats, jobFinders = [], loading = false }) => {
   const { t } = useLanguage();
   return (
     <div className="flex flex-col gap-5 h-fit">
@@ -27,7 +29,13 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
           </h3>
         </div>
         <div className="p-5">
-          {jobFinders.length > 0 ? (
+          {loading ? (
+            <div className="space-y-4">
+              <JobFinderSkeleton />
+              <JobFinderSkeleton />
+              <JobFinderSkeleton />
+            </div>
+          ) : jobFinders.length > 0 ? (
             <div className="space-y-4">
               {jobFinders.slice(0, 5).map((cv) => (
                 <div key={cv.id} className="flex items-center gap-3 group cursor-pointer animate-fade-in bg-[#1f6d78] dark:bg-[#155e68] p-1.5 rounded-xl border border-[#1f6d78] dark:border-[#155e68] hover:bg-white dark:hover:bg-gray-700 hover:text-black dark:hover:text-white hover:border-gray-200 dark:hover:border-gray-600 transition-all">
@@ -52,9 +60,9 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
           <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-sm tracking-tight">{t('sidebar.popular_professions')}</h3>
         </div>
         <div className="p-5">
-          <div className="space-y-3">
+          <div>
             {(popularProfessions || []).slice(0, 5).map((prof, i) => (
-              <div key={i} className="flex items-center justify-between text-[13px] group cursor-pointer animate-fade-in">
+              <div key={i} className="flex items-center justify-between text-[13px] group cursor-pointer animate-fade-in border-b border-gray-200 dark:border-gray-700 last:border-0 pb-2 mb-2 last:pb-0 last:mb-0">
                 <span className="text-gray-600 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white font-medium transition-colors">{prof.label}</span>
                 <span className="text-gray-400 dark:text-gray-500 font-normal">{prof.count}</span>
               </div>
@@ -89,9 +97,11 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
         <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
           <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-sm tracking-tight">{t('sidebar.platform_stats')}</h3>
         </div>
-        <div className="p-5 space-y-4">
-          {platformStats.map((stat, i) => (
-            <div key={i} className="flex justify-between items-center text-sm">
+        <div className="p-5">
+          {loading ? (
+            <StatsSkeleton />
+          ) : platformStats.map((stat, i) => (
+            <div key={i} className="flex justify-between items-center text-sm border-b border-gray-200 dark:border-gray-700 last:border-0 pb-3 mb-3 last:pb-0 last:mb-0">
               <span className="text-gray-500 dark:text-gray-400 font-medium">{stat.label}</span>
               <span className="font-bold text-[#1f6d78] dark:text-[#2dd4bf]">
                 {stat.value}

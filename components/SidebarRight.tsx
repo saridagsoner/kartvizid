@@ -4,15 +4,17 @@ import TipsModal from './TipsModal';
 import PromoCarousel from './PromoCarousel';
 import { CV, PopularCompany } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { JobFinderSkeleton } from './Skeleton';
 
 interface SidebarRightProps {
   popularCVs?: CV[];
   popularCompanies?: PopularCompany[];
   onCVClick?: (cv: CV) => void;
   onCompanyClick?: (company: PopularCompany) => void;
+  loading?: boolean;
 }
 
-const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCompanies = [], onCVClick, onCompanyClick }) => {
+const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCompanies = [], onCVClick, onCompanyClick, loading = false }) => {
   const { t } = useLanguage();
   const [isTipsModalOpen, setIsTipsModalOpen] = useState(false);
 
@@ -26,8 +28,14 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
         <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
           <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold text-sm tracking-tight">{t('sidebar.employers')}</h3>
         </div>
-        <div className="p-5 space-y-4">
-          {popularCompanies.length > 0 ? (
+        <div className="p-5">
+          {loading ? (
+            <div className="space-y-4">
+              <JobFinderSkeleton />
+              <JobFinderSkeleton />
+              <JobFinderSkeleton />
+            </div>
+          ) : popularCompanies.length > 0 ? (
             popularCompanies.map((company) => (
               <div
                 key={company.id}
@@ -71,8 +79,14 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
         <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
           <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold text-sm tracking-tight">{t('sidebar.most_viewed')}</h3>
         </div>
-        <div className="p-5 space-y-4">
-          {popularCVs.length > 0 ? (
+        <div className="p-5">
+          {loading ? (
+            <div className="space-y-4">
+              <JobFinderSkeleton />
+              <JobFinderSkeleton />
+              <JobFinderSkeleton />
+            </div>
+          ) : popularCVs.length > 0 ? (
             popularCVs.map((cv) => (
               <div
                 key={cv.id}

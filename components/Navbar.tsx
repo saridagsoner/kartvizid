@@ -119,7 +119,7 @@ const Navbar: React.FC<NavbarProps & {
                   {/* Desktop Button */}
                   <button
                     onClick={isEmployer && onOpenCompanyProfile ? onOpenCompanyProfile : onCreateCV}
-                    className="hidden sm:block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-black dark:text-white px-3 md:px-6 py-2 rounded-full font-bold text-xs md:text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95 whitespace-nowrap shadow-sm"
+                    className="hidden sm:block bg-white dark:bg-gray-800 border border-[#1f6d78] dark:border-gray-600 text-black dark:text-white px-3 md:px-6 py-2 rounded-full font-bold text-xs md:text-sm hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] dark:hover:bg-[#1f6d78] dark:hover:text-white transition-all active:scale-95 whitespace-nowrap shadow-sm"
                   >
                     {isEmployer
                       ? t('nav.employer_profile')
@@ -181,7 +181,7 @@ const Navbar: React.FC<NavbarProps & {
                         setIsProfileOpen(!isProfileOpen);
                         setIsNotifOpen(false);
                       }}
-                      className={`w-9 h-9 rounded-full overflow-hidden border transition-all ${isProfileOpen ? 'ring-2 ring-black border-black' : 'border-gray-200 hover:ring-2 hover:ring-gray-100'}`}
+                      className={`w-9 h-9 rounded-full overflow-hidden border transition-all ${isProfileOpen ? 'ring-2 ring-[#1f6d78] border-[#1f6d78]' : 'border-gray-200 hover:ring-2 hover:ring-gray-100'}`}
                     >
 
                       {userPhotoUrl ? (
