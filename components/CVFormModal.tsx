@@ -416,14 +416,33 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
 
                   <div className="space-y-2">
                     <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.experience')}</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={formData.experienceYears === 0 ? '' : formData.experienceYears}
-                      onChange={e => setFormData({ ...formData, experienceYears: e.target.value === '' ? 0 : parseInt(e.target.value) })}
-                      className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-4 py-3 sm:px-6 sm:py-3.5 outline-none text-[11px] sm:text-sm font-bold text-gray-800 dark:text-gray-100"
-                      placeholder="0"
-                    />
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <input
+                          type="number"
+                          min="0"
+                          value={formData.experienceYears === 0 ? '' : formData.experienceYears}
+                          onChange={e => setFormData({ ...formData, experienceYears: e.target.value === '' ? 0 : parseInt(e.target.value) })}
+                          className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-4 py-3 sm:px-6 sm:py-3.5 outline-none text-[11px] sm:text-sm font-bold text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
+                          placeholder="Yıl"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <input
+                          type="number"
+                          min="0"
+                          max="11"
+                          value={formData.experienceMonths === 0 ? '' : formData.experienceMonths}
+                          onChange={e => {
+                            let val = parseInt(e.target.value);
+                            if (val > 11) val = 11;
+                            setFormData({ ...formData, experienceMonths: e.target.value === '' ? 0 : val });
+                          }}
+                          className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-4 py-3 sm:px-6 sm:py-3.5 outline-none text-[11px] sm:text-sm font-bold text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
+                          placeholder="Ay"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -964,6 +983,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
               // Validation
               const requiredFields = [
                 { key: 'name', label: t('form.fullname') },
+                { key: 'photoUrl', label: 'Profil Fotoğrafı' },
                 { key: 'profession', label: t('form.profession') },
                 { key: 'city', label: t('form.city') },
                 { key: 'email', label: t('form.email') },

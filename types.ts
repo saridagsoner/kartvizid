@@ -51,6 +51,7 @@ export interface CV {
   city: string;
   district?: string;
   experienceYears: number;
+  experienceMonths?: number;
   language: string; // Legacy / Primary Display
   languageLevel?: string; // Legacy
   languageDetails?: LanguageEntry[];

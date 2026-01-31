@@ -272,6 +272,7 @@ const App: React.FC = () => {
           )
         `)
         .eq('user_id', user.id)
+        .eq('is_visible', true) // Only fetch visible notifications
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -402,10 +403,10 @@ const App: React.FC = () => {
   const markAllNotificationsRead = async () => {
     if (!user) return;
     try {
-      // Clear Notifications: Delete all from DB
+      // Clear Notifications: Soft Delete (Hide)
       const { error } = await supabase
         .from('notifications')
-        .delete()
+        .update({ is_visible: false })
         .eq('user_id', user.id);
 
       if (error) throw error;
@@ -979,6 +980,7 @@ const App: React.FC = () => {
           city: item.city || '',
           district: item.district || '',
           experienceYears: item.experience_years || 0,
+          experienceMonths: item.experience_months || 0,
           language: item.language || '',
           languageLevel: item.language_level || '',
           photoUrl: item.photo_url || '',
@@ -1130,6 +1132,7 @@ const App: React.FC = () => {
         city: cvData.city,
         district: cvData.district,
         experience_years: cvData.experienceYears,
+        experience_months: cvData.experienceMonths,
         work_experience: cvData.workExperience,
         internship_details: cvData.internshipDetails,
         education_details: cvData.educationDetails,

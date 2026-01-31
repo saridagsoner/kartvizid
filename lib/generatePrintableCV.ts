@@ -137,7 +137,7 @@ export const generatePrintableCV = (cv: CV): string => {
                     <div>
                         <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-3">Kişisel Bilgiler</h3>
                         <div class="space-y-2 text-sm">
-                             <div class="flex justify-between"><span class="text-gray-500">Tecrübe:</span> <span class="font-bold text-black">${cv.experienceYears} Yıl</span></div>
+                             <div class="flex justify-between"><span class="text-gray-500">Tecrübe:</span> <span class="font-bold text-black">${cv.experienceYears} Yıl${cv.experienceMonths ? ' ' + cv.experienceMonths + ' Ay' : ''} Deneyim</span></div>
                              <div class="flex justify-between"><span class="text-gray-500">Eğitim:</span> <span class="font-bold text-black">${cv.educationLevel || 'Lisans'}</span></div>
                              <div class="flex justify-between"><span class="text-gray-500">Askerlik:</span> <span class="font-bold text-black">${cv.militaryStatus || '-'}</span></div>
                              <div class="flex justify-between"><span class="text-gray-500">Ehliyet:</span> <span class="font-bold text-black">${cv.driverLicense?.join(', ') || '-'}</span></div>

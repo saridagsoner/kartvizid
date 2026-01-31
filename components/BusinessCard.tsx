@@ -83,11 +83,13 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
               </svg>
-              {cv.experienceYears} {t('card.years_exp')}
+              {cv.experienceYears} Yıl{cv.experienceMonths ? ` ${cv.experienceMonths} Ay` : ''} Deneyim
             </span>
             {/* Mobile Compact Exp */}
             <span className="flex sm:hidden items-center gap-1">
-              <span className="font-black text-black dark:text-gray-300">{cv.experienceYears} {t('card.years_exp')}</span>
+              <span className="font-black text-black dark:text-gray-300">
+                {cv.experienceYears} Yıl{cv.experienceMonths ? ` ${cv.experienceMonths} Ay` : ''} Deneyim
+              </span>
             </span>
             <span className="flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-black dark:text-gray-300">

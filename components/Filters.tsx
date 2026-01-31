@@ -39,7 +39,7 @@ const CustomDropdown: React.FC<{
     <div className="flex-1 min-w-[130px] relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full bg-white dark:bg-gray-800 border ${isOpen || value ? 'border-black dark:border-white shadow-md' : 'border-gray-100 dark:border-gray-700 shadow-sm'} rounded-full px-3 py-2 sm:px-5 sm:py-2.5 text-[10px] sm:text-xs font-bold text-gray-800 dark:text-white outline-none cursor-pointer hover:border-black dark:hover:border-white transition-all flex items-center justify-between group`}
+        className={`w-full bg-white dark:bg-gray-800 border ${isOpen || value ? 'border-[#1f6d78] dark:border-[#2dd4bf] text-[#1f6d78] dark:text-[#2dd4bf] shadow-md' : 'border-gray-100 dark:border-gray-700 text-gray-800 dark:text-white shadow-sm'} rounded-full px-3 py-2 sm:px-5 sm:py-2.5 text-[10px] sm:text-xs font-bold outline-none cursor-pointer hover:border-[#1f6d78] dark:hover:border-[#2dd4bf] transition-all flex items-center justify-between group`}
       >
         <span className="truncate pr-2">{value || label}</span>
         <svg
@@ -152,7 +152,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
       {/* Desktop Advanced Button */}
       <button
         onClick={() => setActiveModal('advanced')}
-        className={`hidden sm:flex bg-white dark:bg-gray-800 border px-5 py-2.5 rounded-full font-bold text-xs transition-all items-center gap-2 shadow-sm shrink-0 hover:border-[#1f6d78] active:scale-95 ${activeFiltersCount > 0 ? 'border-[#1f6d78] bg-gray-50 dark:bg-gray-700 text-black dark:text-white' : 'border-gray-200 dark:border-gray-700 text-black dark:text-white'
+        className={`hidden sm:flex bg-white dark:bg-gray-800 border px-5 py-2.5 rounded-full font-bold text-xs transition-all items-center gap-2 shadow-sm shrink-0 hover:border-[#1f6d78] dark:hover:border-[#2dd4bf] active:scale-95 ${activeFiltersCount > 0 ? 'border-[#1f6d78] dark:border-[#2dd4bf] bg-gray-50 dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf]' : 'border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white'
           }`}
       >
         <span>{t('filters.advanced')}</span>
@@ -167,7 +167,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
       <div className="sm:hidden flex items-center justify-between w-full">
         <button
           onClick={() => setActiveModal('advanced')}
-          className={`flex-1 bg-white dark:bg-gray-800 border px-4 py-2 rounded-full font-bold text-[10px] transition-all flex items-center justify-center gap-2 shadow-sm hover:border-[#1f6d78] active:scale-95 ${activeFiltersCount > 0 ? 'border-[#1f6d78] bg-gray-50 dark:bg-gray-700 text-black dark:text-white' : 'border-gray-200 dark:border-gray-700 text-black dark:text-white'
+          className={`flex-1 bg-white dark:bg-gray-800 border px-4 py-2 rounded-full font-bold text-[10px] transition-all flex items-center justify-center gap-2 shadow-sm hover:border-[#1f6d78] dark:hover:border-[#2dd4bf] active:scale-95 ${activeFiltersCount > 0 ? 'border-[#1f6d78] dark:border-[#2dd4bf] bg-gray-50 dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf]' : 'border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white'
             }`}
         >
           <span>{t('filters.advanced')}</span>
