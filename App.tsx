@@ -891,9 +891,9 @@ const App: React.FC = () => {
       }
     }
 
-    // Optimistic update
-    setReceivedRequests(prev => prev.filter(r => r.id !== requestId));
-    setGeneralNotifications(prev => prev.filter(n => n.related_id !== requestId)); // Also clear related notification if any
+    // Optimistic update: Update status instead of removing
+    setReceivedRequests(prev => prev.map(r => r.id === requestId ? { ...r, status: action } : r));
+    setGeneralNotifications(prev => prev.map(n => n.related_id === requestId ? { ...n, requestStatus: action } : n));
 
     try {
       // Identify self (the approver)

@@ -165,7 +165,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
                               <div className="flex gap-2">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); onAction(isContactRequest(item) ? item.id : (item as any).related_id, 'approved'); }}
-                                  className="flex-1 bg-black text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-gray-800 transition-colors"
+                                  className="flex-1 bg-[#1f6d78] text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-[#155e68] transition-colors"
                                 >
                                   {t('profile.approve_request')}
                                 </button>
