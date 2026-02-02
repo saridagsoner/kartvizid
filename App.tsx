@@ -23,6 +23,7 @@ import MobileBottomNav from './components/MobileBottomNav';
 import NotificationsModal from './components/NotificationsModal';
 import JobSuccessModal from './components/JobSuccessModal';
 import { BusinessCardSkeleton } from './components/Skeleton';
+import SavedCVsModal from './components/SavedCVsModal';
 
 // SortDropdown moved to components/SortDropdown.tsx
 
@@ -99,14 +100,58 @@ const App: React.FC = () => {
   const [authRole, setAuthRole] = useState<'job_seeker' | 'employer' | undefined>(undefined);
   const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
   const [activeModalRequest, setActiveModalRequest] = useState<ContactRequest | null>(null);
+  /* REMOVING DUPLICATE DECLARATION */
   const [activeModalRequestId, setActiveModalRequestId] = useState<string | null>(null);
   const [isJobSuccessOpen, setIsJobSuccessOpen] = useState(false);
+  const [isSavedCVsOpen, setIsSavedCVsOpen] = useState(false);
 
   const handleAuthOpen = (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => {
     setAuthMode(mode);
     setAuthRole(role);
     setIsAuthModalOpen(true);
   };
+
+  const handleOpenSavedCVs = () => {
+    setIsSavedCVsOpen(true);
+  };
+
+  const handleViewSavedCV = async (cvId: string) => {
+    // Try to find in current list first
+    const existing = cvList.find(c => c.id === cvId);
+    if (existing) {
+      setSelectedCV(existing);
+      return;
+    }
+
+    // Otherwise fetch
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('cvs')
+        .select(`
+          *,
+          languageDetails:cv_languages(*),
+          educationDetails:cv_education(*),
+          workExperience:cv_work_experience(*),
+          internshipDetails:cv_internships(*),
+          certificates:cv_certificates(*),
+          references:cv_references(*)
+        `)
+        .eq('id', cvId)
+        .single();
+
+      if (error) throw error;
+      if (data) setSelectedCV(data);
+    } catch (e) {
+      console.error('Error fetching CV:', e);
+      showToast('CV detayları alınamadı.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
 
   useEffect(() => {
     fetchCVs();
@@ -1451,6 +1496,7 @@ const App: React.FC = () => {
         onCloseAuth={() => setIsAuthModalOpen(false)}
         authMode={authMode}
         authRole={authRole}
+        onOpenSavedCVs={handleOpenSavedCVs}
       />
 
       {/* ... previous modals ... */}
@@ -1679,6 +1725,17 @@ const App: React.FC = () => {
       {isJobSuccessOpen && (
         <JobSuccessModal
           onClose={() => setIsJobSuccessOpen(false)}
+        />
+      )}
+
+      {isSavedCVsOpen && user && (
+        <SavedCVsModal
+          userId={user.id}
+          onClose={() => setIsSavedCVsOpen(false)}
+          onOpenCV={(cvId) => {
+            setIsSavedCVsOpen(false); // Close list
+            handleViewSavedCV(cvId);
+          }}
         />
       )}
     </div >

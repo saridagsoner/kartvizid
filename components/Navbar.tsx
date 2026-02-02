@@ -31,9 +31,10 @@ const Navbar: React.FC<NavbarProps & {
   onCloseAuth: () => void;
   authMode: 'signin' | 'signup';
   authRole?: 'job_seeker' | 'employer';
+  onOpenSavedCVs?: () => void;
 }> = ({
   onSearch, onCreateCV, onOpenCompanyProfile, onOpenSettings, hasCV, userPhotoUrl, notificationCount = 0, notifications = [], onNotificationAction, onMarkNotificationRead,
-  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole, onMarkAllRead, onOpenProfile
+  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole, onMarkAllRead, onOpenProfile, onOpenSavedCVs
 }) => {
     const { user, signOut } = useAuth();
     const { t } = useLanguage();
@@ -195,7 +196,7 @@ const Navbar: React.FC<NavbarProps & {
                         </div>
                       )}
                     </button>
-                    {isProfileOpen && <UserMenuDropdown onClose={() => setIsProfileOpen(false)} onLogout={signOut} onOpenSettings={onOpenSettings} />}
+                    {isProfileOpen && <UserMenuDropdown onClose={() => setIsProfileOpen(false)} onLogout={signOut} onOpenSettings={onOpenSettings} onOpenSavedCVs={onOpenSavedCVs} />}
                   </div>
                 </>
               ) : (

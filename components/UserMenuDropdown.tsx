@@ -2,17 +2,20 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 interface UserMenuDropdownProps {
   onClose: () => void;
   onLogout: () => void;
   onOpenSettings?: () => void;
+  onOpenSavedCVs?: () => void;
   mobile?: boolean;
 }
 
-const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ onClose, onLogout, onOpenSettings, mobile }) => {
+const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ onClose, onLogout, onOpenSettings, onOpenSavedCVs, mobile }) => {
   const { theme, toggleTheme } = useTheme();
   const { t } = useLanguage();
+  const { user } = useAuth();
 
   return (
     <div className={`${mobile ? 'w-64 bg-white rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden' : 'absolute right-0 top-12 w-64 bg-white rounded-[2rem] shadow-2xl border border-gray-100 z-[60] py-4 animate-in slide-in-from-top-4 duration-300'}`}>
@@ -21,6 +24,23 @@ const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ onClose, onLogout, 
       </div>
 
       <div className="flex flex-col">
+        {user?.user_metadata?.role === 'employer' && (
+          <button
+            onClick={() => {
+              onClose();
+              onOpenSavedCVs?.();
+            }}
+            className="w-full text-left px-6 py-4 text-sm font-black text-black hover:bg-gray-50 flex items-center gap-4 transition-colors"
+          >
+            <div className="w-8 h-8 rounded-full bg-gray-100 text-black flex items-center justify-center text-xs">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            Kaydettiklerim
+          </button>
+        )}
+
         <button
           onClick={() => {
             onClose();

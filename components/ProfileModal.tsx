@@ -5,6 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { generatePrintableCV } from '../lib/generatePrintableCV';
 
+import { supabase } from '../lib/supabase';
+
 interface ProfileModalProps {
   cv: CV;
   onClose: () => void;
@@ -19,7 +21,30 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   const { user } = useAuth();
   const { showToast } = useToast();
   const [showRoleWarning, setShowRoleWarning] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const isOwner = user?.id === cv.userId;
+
+  // Check if saved on mount
+  React.useEffect(() => {
+    if (user?.user_metadata?.role === 'employer' && !isOwner) {
+      checkIfSaved();
+    }
+  }, [user, cv.id]);
+
+  const checkIfSaved = async () => {
+    try {
+      if (!user) return;
+      const { data } = await supabase
+        .from('saved_cvs')
+        .select('id')
+        .match({ employer_id: user.id, cv_id: cv.id })
+        .maybeSingle();
+
+      setIsSaved(!!data);
+    } catch (e) {
+      console.error('Error checking saved status:', e);
+    }
+  };
 
   const hasAccess = requestStatus === 'approved' || isOwner;
   // Show if public OR if access is approved OR is owner
@@ -511,7 +536,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             </>
           ) : (
             <>
-              {!hasAccess && (
+              {!hasAccess ? (
                 <button
                   onClick={isPending ? onCancelRequest : () => {
                     if (user?.user_metadata?.role === 'job_seeker') {
@@ -532,14 +557,53 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                     </>
                   ) : t('profile.contact_request')}
                 </button>
-              )}
-
-              {hasAccess && (
+              ) : (
                 <button
                   disabled
                   className="flex-[2] bg-[#1f6d78] text-white py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest shadow-xl cursor-default"
                 >
                   {t('profile.contact_open')}
+                </button>
+              )}
+
+
+              {/* SAVE CV BUTTON (For Employers) */}
+              {user?.user_metadata?.role === 'employer' && !isOwner && (
+                <button
+                  onClick={async () => {
+                    try {
+                      if (isSaved) {
+                        // Unsave
+                        const { error } = await supabase
+                          .from('saved_cvs')
+                          .delete()
+                          .match({ employer_id: user.id, cv_id: cv.id });
+                        if (error) throw error;
+                        setIsSaved(false);
+                        showToast('CV kaydedilenlerden çıkarıldı.', 'info');
+                      } else {
+                        // Save
+                        const { error } = await supabase
+                          .from('saved_cvs')
+                          .insert({ employer_id: user.id, cv_id: cv.id });
+                        if (error) throw error;
+                        setIsSaved(true);
+                        showToast('CV başarıyla kaydedildi.', 'success');
+                      }
+                    } catch (error: any) {
+                      console.error('Error saving CV:', error);
+                      showToast('İşlem başarısız.', 'error');
+                    }
+                  }}
+                  className={`w-12 h-12 sm:w-16 sm:h-auto rounded-full flex items-center justify-center border transition-all active:scale-95 shadow-xl ${isSaved
+                    ? 'bg-white border-[#1f6d78] text-[#1f6d78]'
+                    : 'bg-white border-gray-200 text-gray-400 hover:text-[#1f6d78] hover:border-[#1f6d78]'
+                    }`}
+                  title={isSaved ? 'Kaydedilenlerden Çıkar' : 'CV\'yi Kaydet'}
+                >
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                  </svg>
                 </button>
               )}
             </>
@@ -549,42 +613,44 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       </div >
 
       {/* Role Warning Modal - Centered & Themed */}
-      {showRoleWarning && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-200 relative">
+      {
+        showRoleWarning && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-200 relative">
 
-            {/* Close Button */}
-            <button
-              onClick={() => setShowRoleWarning(false)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            >
-              ✕
-            </button>
+              {/* Close Button */}
+              <button
+                onClick={() => setShowRoleWarning(false)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                ✕
+              </button>
 
-            {/* Icon */}
-            <div className="w-16 h-16 bg-[#1f6d78]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1f6d78" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
+              {/* Icon */}
+              <div className="w-16 h-16 bg-[#1f6d78]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1f6d78" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </div>
+
+              <h3 className="text-xl font-black text-black dark:text-white mb-3">İş Veren Hesabı Gerekli</h3>
+
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
+                Başka bir iş arayanla iletişime geçmek için önce <span className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold">iş veren hesabı</span> oluşturmalısınız.
+              </p>
+
+              <button
+                onClick={() => setShowRoleWarning(false)}
+                className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20"
+              >
+                Anladım
+              </button>
             </div>
-
-            <h3 className="text-xl font-black text-black dark:text-white mb-3">İş Veren Hesabı Gerekli</h3>
-
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-              Başka bir iş arayanla iletişime geçmek için önce <span className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold">iş veren hesabı</span> oluşturmalısınız.
-            </p>
-
-            <button
-              onClick={() => setShowRoleWarning(false)}
-              className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20"
-            >
-              Anladım
-            </button>
           </div>
-        </div>
-      )}
+        )
+      }
 
     </div >
   );

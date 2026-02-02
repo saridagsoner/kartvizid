@@ -209,3 +209,19 @@ export interface UserProfile {
   full_name?: string;
   avatar_url?: string;
 }
+
+export interface SavedCV {
+  id: string;
+  employer_id: string;
+  cv_id: string;
+  created_at: string;
+  cv?: {
+    id: string;
+    name: string;
+    photo_url: string;
+    profession: string;
+    city: string;
+    experience_years: number;
+    experience_months?: number; // Add this if missing
+  };
+}
