@@ -22,6 +22,12 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
 
   return (
     <div className="flex flex-col gap-5 h-fit">
+      {/* Slogan */}
+      <h2 className="text-xl font-bold leading-tight tracking-tight text-center px-2">
+        <span className="text-gray-900 dark:text-white block">İş Aramayın,</span>
+        <span className="text-[#1f6d78] dark:text-[#2dd4bf] block mt-1">Bırakın İş Sizi Bulsun.</span>
+      </h2>
+
       {/* Dynamic Promo Carousel */}
       <PromoCarousel
         onOpenTips={() => setIsTipsModalOpen(true)}
