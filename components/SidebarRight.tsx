@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TipsModal from './TipsModal';
 import InfoModal from './InfoModal';
 import PromoCarousel from './PromoCarousel';
@@ -19,13 +19,52 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
   const { t } = useLanguage();
   const [isTipsModalOpen, setIsTipsModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [animationPhase, setAnimationPhase] = useState<'pulsing' | 'static'>('pulsing');
+
+  useEffect(() => { // Using React.useEffect since only useState was imported explicitly
+    const timer = setTimeout(() => {
+      setAnimationPhase('static');
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="flex flex-col gap-5 h-fit">
       {/* Slogan */}
-      <h2 className="text-2xl font-black leading-tight tracking-tight text-center px-1 mb-1">
-        <span className="text-gray-900 dark:text-white block">İş Aramayın,</span>
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1f6d78] to-[#2dd4bf] block mt-1 pb-1">Bırakın İş Sizi Bulsun.</span>
+      <style>
+        {`
+          @keyframes customPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+          }
+          .animate-custom-pulse {
+            animation: customPulse 3s ease-in-out infinite;
+          }
+          @keyframes iconSlideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+          }
+          .animate-icon-appear {
+            animation: iconSlideIn 0.5s ease-out forwards;
+          }
+        `}
+      </style>
+
+      {/* Slogan */}
+      <h2 className={`text-2xl font-black leading-tight tracking-tight text-center px-1 mb-1 transition-all duration-500 ${animationPhase === 'pulsing' ? 'animate-custom-pulse' : ''}`}>
+        <span className="text-gray-900 dark:text-white flex items-center justify-center gap-2">
+          {animationPhase === 'static' && (
+            <span className="animate-icon-appear text-[#1f6d78] inline-flex">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </span>
+          )}
+          İş Aramayın,
+        </span>
+        <span className="text-[#1f6d78] dark:text-[#2dd4bf] block mt-1 pb-1">Bırakın İş Sizi Bulsun.</span>
       </h2>
 
       {/* Dynamic Promo Carousel */}

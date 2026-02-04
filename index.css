@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}
+
 @layer base {
     :root {
         --primary-black: #000000;
@@ -76,6 +82,24 @@
     transform: translateY(-4px);
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
     /* Slightly lighter shadow for perf */
+}
+
+@keyframes heartbeat-slow {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.animate-heartbeat-slow {
+    animation: heartbeat-slow 3s ease-in-out infinite;
 }
 
 @keyframes fadeIn {
