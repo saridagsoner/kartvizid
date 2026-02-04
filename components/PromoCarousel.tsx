@@ -125,13 +125,11 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips, onOpenInfo })
                     className={`h-full flex flex-col items-center justify-center text-center text-gray-800 dark:text-gray-200 p-6 relative overflow-hidden cursor-pointer group ${commonBg}`}
                     onClick={onOpenInfo}
                 >
-                    {/* Icon - Info */}
-                    <div className="mb-6 text-[#1f6d78] transform group-hover:scale-110 transition-transform duration-500">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
+                    {/* Icon - Branded 'd' */}
+                    <div className="mb-6 transform group-hover:scale-110 transition-transform duration-500">
+                        <span className="inline-block text-6xl font-black text-[#1f6d78] transform rotate-[12deg] rounded-font leading-none select-none">
+                            d
+                        </span>
                     </div>
 
                     {/* Content */}
