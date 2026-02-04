@@ -275,11 +275,15 @@ const App: React.FC = () => {
     // Increment view ONLY if user is NOT the owner
     // If user is not logged in, we still count views (visitor views)
     if (!user || user.id !== cv.userId) {
+      // Optimistic Update
+      setCvList(prevList => prevList.map(item =>
+        item.id === cv.id ? { ...item, views: (item.views || 0) + 1 } : item
+      ));
+
       try {
-        await supabase.rpc('increment_cv_view', { cv_id: cv.id });
-        // Optionally refresh stats after some time or optimistic update
+        await supabase.rpc('increment_cv_views', { target_cv_id: cv.id });
       } catch (err) {
-        console.error('Failed to increment view', err);
+        console.error('Failed to increment views:', err);
       }
     }
   };
@@ -1261,11 +1265,14 @@ const App: React.FC = () => {
       // Experience Logic
       let matchesExperience = true;
       if (activeFilters.experience) {
-        if (activeFilters.experience.includes('Stajyer')) matchesExperience = cv.experienceYears < 1;
-        else if (activeFilters.experience.includes('Junior')) matchesExperience = cv.experienceYears >= 1 && cv.experienceYears < 3;
-        else if (activeFilters.experience.includes('Mid')) matchesExperience = cv.experienceYears >= 3 && cv.experienceYears < 5;
-        else if (activeFilters.experience.includes('Senior')) matchesExperience = cv.experienceYears >= 5 && cv.experienceYears < 10;
-        else if (activeFilters.experience.includes('Expert')) matchesExperience = cv.experienceYears >= 10;
+        // Calculate total years with decimal (e.g., 2.5 years)
+        const totalYears = (cv.experienceYears || 0) + ((cv.experienceMonths || 0) / 12);
+
+        if (activeFilters.experience.includes('Stajyer')) matchesExperience = totalYears < 1;
+        else if (activeFilters.experience.includes('Junior')) matchesExperience = totalYears >= 1 && totalYears < 3;
+        else if (activeFilters.experience.includes('Orta')) matchesExperience = totalYears >= 3 && totalYears < 5;
+        else if (activeFilters.experience.includes('Kıdemli')) matchesExperience = totalYears >= 5 && totalYears < 10;
+        else if (activeFilters.experience.includes('Uzman')) matchesExperience = totalYears >= 10;
       }
 
       const matchesLanguage = !activeFilters.language || cv.language === activeFilters.language;
@@ -1295,12 +1302,13 @@ const App: React.FC = () => {
     result = result.filter(cv => cv.workingStatus === 'open');
 
     // Sorting Logic
-    // Sorting Logic
-    // Sorting Logic
     if (sortBy === 'newest') {
       result = [...result].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
     } else if (sortBy === 'oldest') {
       result = [...result].sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+    } else if (sortBy === 'default') {
+      // Default = Popularity (Most Views)
+      result = [...result].sort((a, b) => (b.views || 0) - (a.views || 0));
     }
 
     return result;
@@ -1529,15 +1537,7 @@ const App: React.FC = () => {
             />
           </aside>
 
-          <aside className="hidden xl:block w-[304px] shrink-0 sticky top-[80px] h-fit pb-4 order-last">
-            <SidebarRight
-              popularCVs={popularCVs}
-              popularCompanies={popularCompanies}
-              onCVClick={handleCVClick}
-              onCompanyClick={(company) => setSelectedCompanyProfile(company)}
-              loading={loading}
-            />
-          </aside>
+
 
           <section className="flex-1 min-w-0 flex flex-col gap-4">
             <Filters
@@ -1631,6 +1631,16 @@ const App: React.FC = () => {
               </div>
             )}
           </section>
+
+          <aside className="hidden xl:block w-[304px] shrink-0 sticky top-[80px] self-start h-fit pb-4">
+            <SidebarRight
+              popularCVs={popularCVs}
+              popularCompanies={popularCompanies}
+              onCVClick={handleCVClick}
+              onCompanyClick={(company) => setSelectedCompanyProfile(company)}
+              loading={loading}
+            />
+          </aside>
 
 
         </div>

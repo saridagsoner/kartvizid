@@ -44,11 +44,11 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               flex items-center gap-4 text-sm font-bold animate-in slide-in-from-right-10 fade-in duration-300
               ${toast.type === 'error' ? 'bg-red-50 text-red-900 border border-red-100' :
                                 toast.type === 'success' ? 'bg-[#1f6d78] text-white border border-[#1f6d78]' :
-                                    'bg-white text-black border border-gray-200'}
+                                    'bg-[#1f6d78] text-white border border-[#1f6d78]'}
             `}
                     >
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center text-lg shrink-0 ${toast.type === 'error' ? 'bg-red-100' :
-                            toast.type === 'success' ? 'bg-white/20' : 'bg-gray-100'
+                            toast.type === 'success' ? 'bg-white/20' : 'bg-white/20'
                             }`}>
                             {toast.type === 'error' ? '✕' : toast.type === 'success' ? '✓' : 'i'}
                         </div>

@@ -21,37 +21,43 @@ BEGIN
     RAISE EXCEPTION 'Not authenticated';
   END IF;
 
-  -- 1. Delete Notifications (Sent or Received)
+  -- 1. Delete Notifications (user_id is the owner, sender_id is the trigger)
   BEGIN
     DELETE FROM public.notifications 
     WHERE user_id = current_user_id OR sender_id = current_user_id;
   EXCEPTION WHEN OTHERS THEN NULL; END;
 
-  -- 2. Delete Contact Requests (Sender or Target)
+  -- 2. Delete Contact Requests (requester_id or target_user_id)
   BEGIN
     DELETE FROM public.contact_requests 
-    WHERE sender_id = current_user_id OR target_user_id = current_user_id;
+    WHERE requester_id = current_user_id OR target_user_id = current_user_id;
   EXCEPTION WHEN OTHERS THEN NULL; END;
 
-  -- 3. Delete CV
+  -- 3. Delete Saved CVs (as employer)
+  BEGIN
+    DELETE FROM public.saved_cvs 
+    WHERE employer_id = current_user_id;
+  EXCEPTION WHEN OTHERS THEN NULL; END;
+
+  -- 4. Delete CV
   BEGIN
     DELETE FROM public.cvs 
     WHERE user_id = current_user_id;
   EXCEPTION WHEN OTHERS THEN NULL; END;
 
-  -- 4. Delete Company Profile (if employer)
+  -- 5. Delete Company Profile (using user_id)
   BEGIN
     DELETE FROM public.companies 
-    WHERE created_by = current_user_id;
+    WHERE user_id = current_user_id;
   EXCEPTION WHEN OTHERS THEN NULL; END;
 
-  -- 5. Delete Profile
+  -- 6. Delete Profile
   BEGIN
     DELETE FROM public.profiles 
     WHERE id = current_user_id;
   EXCEPTION WHEN OTHERS THEN NULL; END;
 
-  -- 6. Delete User from Auth (Critical Step)
+  -- 7. Delete User from Auth (Critical Step)
   -- This requires SECURITY DEFINER to work
   DELETE FROM auth.users 
   WHERE id = current_user_id;

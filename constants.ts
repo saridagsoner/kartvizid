@@ -99,9 +99,9 @@ export const ALL_SKILLS = [
 export const EXPERIENCE_LEVELS: PopularItem[] = [
   { label: 'Stajyer / Yeni Mezun', count: 120 },
   { label: 'Junior (1-3 Yıl)', count: 340 },
-  { label: 'Mid-Level (3-5 Yıl)', count: 210 },
-  { label: 'Senior (5-10 Yıl)', count: 150 },
-  { label: 'Expert (10+ Yıl)', count: 72 },
+  { label: 'Orta Seviye (3-5 Yıl)', count: 210 },
+  { label: 'Kıdemli (5-10 Yıl)', count: 150 },
+  { label: 'Uzman (10+ Yıl)', count: 72 },
 ];
 
 
