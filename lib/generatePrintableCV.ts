@@ -10,13 +10,12 @@ export const generatePrintableCV = (cv: CV): string => {
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Quicksand:wght@700&display=swap');
             body { 
                 font-family: 'Inter', sans-serif; 
                 -webkit-print-color-adjust: exact !important; 
                 print-color-adjust: exact !important;
                 background: #525659;
-                color: #000;
             }
             @page {
                 size: A4;
@@ -27,194 +26,255 @@ export const generatePrintableCV = (cv: CV): string => {
                 min-height: 297mm;
                 background: white;
                 margin: 0 auto;
-                padding: 12mm 15mm;
                 box-sizing: border-box;
                 position: relative;
-                display: flex;
-                flex-direction: column;
                 box-shadow: 0 0 10px rgba(0,0,0,0.1);
             }
             @media print {
                 body { background: white; }
                 .a4-page {
                     width: 210mm;
-                    height: 297mm;
+                    height: auto;
+                    min-height: 297mm;
                     box-shadow: none;
                     margin: 0;
-                    padding: 12mm 15mm;
                     page-break-after: always;
                 }
                 .no-print { display: none; }
+                
+                /* Ensure background colors print */
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             }
-            /* Clean typography utilities */
-            h1 { letter-spacing: -0.02em; }
-            h2 { letter-spacing: 0.05em; }
         </style>
     </head>
     <body class="bg-gray-100 flex items-center justify-center py-10 print:py-0">
 
         <!-- Print Controls -->
-        <div class="fixed top-5 right-5 flex gap-4 no-print">
+        <div class="fixed top-5 right-5 flex gap-4 no-print z-50">
             <button onclick="window.print()" class="bg-[#1f6d78] text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#155e68] transition-transform hover:scale-105 active:scale-95 flex items-center gap-2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                 Yazdır / PDF İndir
             </button>
         </div>
 
-        <div class="a4-page">
+        <div class="a4-page flex flex-col">
             
-            <!-- Header Section with Photo -->
-            <div class="flex gap-8 mb-12 border-b border-gray-200 pb-8">
-                <!-- Photo: Vertical Rectangle / Ovalish like business card -->
-                <div class="w-[140px] h-[190px] shrink-0">
-                    <img src="${cv.photoUrl || 'https://picsum.photos/seed/user-placeholder/300/400'}" class="w-full h-full object-cover rounded-[1.5rem] shadow-sm">
+            <!-- Compact Header with Brand Color -->
+            <div class="bg-[#1f6d78] text-white px-10 py-8 flex items-center gap-6 shrink-0 print:px-8 print:py-6">
+                ${cv.photoUrl ? `
+                <div class="w-24 h-24 shrink-0 rounded-full border-[3px] border-white/30 shadow-sm overflow-hidden bg-white">
+                    <img src="${cv.photoUrl}" class="w-full h-full object-cover">
                 </div>
+                ` : ''}
                 
-                <!-- Helper Info -->
-                <div class="flex-1 flex flex-col justify-center">
-                    <h1 class="text-4xl font-black text-black mb-2 uppercase tracking-tight">${cv.name}</h1>
-                    <p class="text-xl font-medium text-gray-600 uppercase tracking-wide mb-6">${cv.profession}</p>
-                    
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-3xl font-black uppercase tracking-tight leading-none mb-1.5">${cv.name}</h1>
+                    ${cv.profession ? `<p class="text-white/90 text-sm font-medium uppercase tracking-wide">${cv.profession}</p>` : ''}
+                </div>
 
+                <!-- Quick Contact (Right Side of Header - Optional style) -->
+                <div class="text-right text-xs text-white/80 font-medium space-y-0.5 hidden sm:block">
+                     ${cv.city ? `<div>${cv.city}</div>` : ''}
+                     ${cv.email ? `<div>${cv.email}</div>` : ''}
+                     ${cv.phone ? `<div>${cv.phone}</div>` : ''}
                 </div>
             </div>
 
-            <!-- Content Grid: 2 Columns (Sidebar styled left, Main Content right) -->
-            <div class="flex flex-1 gap-10 items-start">
+            <!-- Content Layout -->
+            <div class="flex flex-1 items-stretch">
                 
-                <!-- Left Column (Compact info) -->
-                <div class="w-[30%] shrink-0 flex flex-col gap-8">
+                <!-- LEFT SIDEBAR -->
+                <div class="w-[32%] bg-[#f8fafc] min-h-[calc(297mm-140px)] p-8 pt-10 border-r border-gray-100 flex flex-col gap-8 print:bg-slate-50">
                     
-                    <!-- Contact Info -->
-                    <div>
-                        <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-3">İletişim</h3>
-                        <div class="flex flex-col gap-3 text-sm text-gray-700">
-                            ${cv.email ? `
-                                <div>
-                                    <span class="block text-[10px] font-bold text-gray-400 uppercase mb-0.5">E-posta</span>
-                                    <span class="font-medium break-all block leading-tight">${cv.email}</span>
-                                </div>` : ''}
-                            ${cv.phone ? `
-                                <div>
-                                    <span class="block text-[10px] font-bold text-gray-400 uppercase mb-0.5">Telefon</span>
-                                    <span class="font-medium block leading-tight">${cv.phone}</span>
-                                </div>` : ''}
-                            ${cv.city ? `
-                                <div>
-                                    <span class="block text-[10px] font-bold text-gray-400 uppercase mb-0.5">Konum</span>
-                                    <span class="font-medium block leading-tight">${cv.city}</span>
-                                </div>` : ''}
-                        </div>
-                    </div>
-
-                    <!-- About -->
-                    <div>
-                        <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-3">Hakkında</h3>
-                        <p class="text-sm text-gray-700 leading-relaxed font-medium italic">
-                            "${cv.about || '...'}"
-                        </p>
+                    <!-- Contact (If screen is small or repeated preference) -->
+                    <div class="space-y-4">
+                        ${cv.email || cv.phone || cv.city ? `
+                            <div>
+                                <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">İletişim</h3>
+                                <div class="space-y-2.5 text-xs text-gray-600 font-medium">
+                                    ${cv.email ? `
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] text-gray-400 uppercase font-bold">E-posta</span>
+                                        <span class="break-all text-gray-800">${cv.email}</span>
+                                    </div>` : ''}
+                                    ${cv.phone ? `
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] text-gray-400 uppercase font-bold">Telefon</span>
+                                        <span class="text-gray-800">${cv.phone}</span>
+                                    </div>` : ''}
+                                    ${cv.city ? `
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] text-gray-400 uppercase font-bold">Konum</span>
+                                        <span class="text-gray-800">${cv.city}${cv.district ? ' / ' + cv.district : ''}</span>
+                                    </div>` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
 
                     <!-- Skills -->
+                    ${cv.skills && cv.skills.length > 0 ? `
                     <div>
-                        <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-3">Yetenekler</h3>
-                        <div class="flex flex-col gap-1.5">
-                            ${cv.skills.map(s => `<span class="text-sm font-medium text-gray-800">• ${s}</span>`).join('')}
-                        </div>
-                    </div>
-
-                    <!-- Languages -->
-                    <div>
-                        <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-3">Diller</h3>
-                        <div class="flex flex-col gap-1">
-                            <div class="flex justify-between items-baseline">
-                                <span class="text-sm font-bold text-gray-900">${cv.language}</span>
-                                <span class="text-xs text-gray-500">${cv.languageLevel}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Personal Info -->
-                    <div>
-                        <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-3">Kişisel Bilgiler</h3>
-                        <div class="space-y-2 text-sm">
-                             <div class="flex justify-between"><span class="text-gray-500">Tecrübe:</span> <span class="font-bold text-black">${cv.experienceYears} Yıl${cv.experienceMonths ? ' ' + cv.experienceMonths + ' Ay' : ''} Deneyim</span></div>
-                             <div class="flex justify-between"><span class="text-gray-500">Eğitim:</span> <span class="font-bold text-black">${cv.educationLevel || 'Lisans'}</span></div>
-                             <div class="flex justify-between"><span class="text-gray-500">Askerlik:</span> <span class="font-bold text-black">${cv.militaryStatus || '-'}</span></div>
-                             <div class="flex justify-between"><span class="text-gray-500">Ehliyet:</span> <span class="font-bold text-black">${cv.driverLicense?.join(', ') || '-'}</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column (Main Details) -->
-                <div class="flex-1 flex flex-col gap-8">
-                    
-                     <!-- Education -->
-                    <div>
-                        <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-4">Eğitim Bilgileri</h3>
-                        <div>
-                            <h4 class="font-bold text-lg text-black bg-gray-50/0">${cv.education}</h4>
-                            <div class="flex gap-4 mt-1 text-sm text-gray-600">
-                                 <span>${cv.educationLevel || 'Lisans'}</span>
-                                 <span class="text-gray-300">|</span>
-                                 <span>${cv.graduationStatus || 'Mezun'}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Internships -->
-                    ${cv.internshipDetails && cv.internshipDetails.length > 0 ? `
-                    <div>
-                        <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-4">Staj Deneyimi</h3>
-                        <div class="space-y-4">
-                            ${cv.internshipDetails.map(intern => `
-                                <div>
-                                    <h4 class="font-bold text-lg text-black">${intern.role}</h4>
-                                    <div class="flex gap-2 text-sm font-bold text-gray-700">
-                                        <span>${intern.company}</span>
-                                        <span class="text-gray-300">|</span>
-                                        <span>${intern.startDate} - ${intern.isCurrent ? 'Devam Ediyor' : intern.endDate}</span>
-                                    </div>
-                                </div>
+                        <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">Yetenekler</h3>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${cv.skills.map(s => `
+                                <span class="bg-white border border-gray-200 text-gray-700 text-[10px] px-2 py-1 rounded-md font-semibold shadow-sm">${s}</span>
                             `).join('')}
                         </div>
                     </div>
                     ` : ''}
 
-                    <!-- Work Preferences -->
+                    <!-- Languages -->
+                    ${(cv.languageDetails && cv.languageDetails.length > 0) || (cv.language && cv.languageLevel) ? `
                     <div>
-                        <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-4">İş Tercihleri</h3>
-                        <div class="grid grid-cols-2 gap-y-4 gap-x-8">
-                             <div>
-                                <p class="text-[10px] uppercase font-bold text-gray-400 mb-0.5">Çalışma Şekli</p>
-                                <p class="text-sm font-bold text-black">${cv.workType || '-'}</p>
-                             </div>
-                             <div>
-                                <p class="text-[10px] uppercase font-bold text-gray-400 mb-0.5">İstihdam Türü</p>
-                                <p class="text-sm font-bold text-black">${cv.employmentType || '-'}</p>
-                             </div>
+                        <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">Diller</h3>
+                        <div class="space-y-2">
+                            ${cv.languageDetails && cv.languageDetails.length > 0 ?
+                cv.languageDetails.map(l => `
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="font-bold text-gray-600">${l.language}</span>
+                                    <span class="text-[10px] text-gray-600 font-medium px-1.5 py-0.5 rounded">${l.level}</span>
+                                </div>
+                                `).join('')
+                : `
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="font-bold text-gray-600">${cv.language}</span>
+                                    <span class="text-[10px] text-gray-600 font-medium px-1.5 py-0.5 rounded">${cv.languageLevel}</span>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                    ` : ''}
 
-                             <div class="col-span-2 mt-2">
-                                <p class="text-[10px] uppercase font-bold text-gray-400 mb-0.5">Tercih Edilen Şehir</p>
-                                <p class="text-sm font-bold text-black">${cv.preferredCity || 'Belirtilmedi'}</p>
-                             </div>
-                             <div class="col-span-2">
-                                <p class="text-[10px] uppercase font-bold text-gray-400 mb-0.5">Tercih Edilen Alanlar</p>
-                                <p class="text-sm font-bold text-black">${cv.preferredRoles && cv.preferredRoles.length > 0 ? cv.preferredRoles.join(', ') : 'Belirtilmedi'}</p>
-                             </div>
+                    <!-- Personal Info Details (Military, Driver License etc) -->
+                     <div>
+                        <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">Kişisel</h3>
+                        <div class="space-y-1.5 text-xs">
+                            ${cv.experienceYears ? `
+                             <div class="flex justify-between"><span class="text-gray-400">Tecrübe</span> <span class="font-bold text-gray-800">${cv.experienceYears} Yıl</span></div>
+                            ` : ''}
+                            ${cv.militaryStatus && cv.militaryStatus !== 'Belirtilmedi' ? `
+                             <div class="flex justify-between"><span class="text-gray-400">Askerlik</span> <span class="font-bold text-gray-800">${cv.militaryStatus}</span></div>
+                            ` : ''}
+                            ${cv.driverLicense && cv.driverLicense.length > 0 ? `
+                             <div class="flex justify-between"><span class="text-gray-400">Ehliyet</span> <span class="font-bold text-gray-800">${cv.driverLicense.join(', ')}</span></div>
+                            ` : ''}
+                             ${cv.disabilityStatus && cv.disabilityStatus !== 'Yok' && cv.disabilityStatus !== 'Belirtilmedi' ? `
+                             <div class="flex justify-between"><span class="text-gray-400">Engel</span> <span class="font-bold text-gray-800">${cv.disabilityStatus}</span></div>
+                            ` : ''}
                         </div>
                     </div>
 
-                    <!-- References -->
+                </div>
+
+                <!-- RIGHT MAIN CONTENT -->
+                <div class="flex-1 p-8 pt-10 flex flex-col gap-8">
+                    
+                    <!-- About -->
+                    ${cv.about ? `
+                    <div class="mb-2">
+                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-3 border-b-2 border-gray-100 pb-1.5">Hakkında</h3>
+                        <p class="text-xs sm:text-sm text-gray-700 leading-relaxed text-justify">
+                            ${cv.about}
+                        </p>
+                    </div>
+                    ` : ''}
+
+                    <!-- Work Experience -->
+                    ${cv.workExperience && cv.workExperience.length > 0 ? `
+                    <div>
+                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-5 border-b-2 border-gray-100 pb-1.5">İş Deneyimi</h3>
+                        <div class="space-y-6">
+                            ${cv.workExperience.map(job => `
+                            <div class="relative pl-4 border-l-2 border-gray-100">
+                                <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-[#1f6d78] border border-white"></div>
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1">
+                                    <h4 class="font-bold text-gray-900 text-sm uppercased">${job.role}</h4>
+                                    <span class="text-[11px] font-bold text-[#1f6d78] whitespace-nowrap ml-auto sm:ml-4">
+                                        ${job.startDate} - ${job.isCurrent ? 'Devam Ediyor' : job.endDate}
+                                    </span>
+                                </div>
+                                <div class="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">${job.company}</div>
+                                ${job.description ? `<p class="text-xs text-gray-600 leading-relaxed whitespace-pre-line">${job.description}</p>` : ''}
+                            </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <!-- Internships (If any) -->
+                    ${cv.internshipDetails && cv.internshipDetails.length > 0 ? `
+                    <div>
+                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-5 border-b-2 border-gray-100 pb-1.5">Staj Deneyimi</h3>
+                        <div class="space-y-6">
+                            ${cv.internshipDetails.map(intern => `
+                            <div class="relative pl-4 border-l-2 border-gray-100">
+                                <div class="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-gray-300 border border-white"></div>
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1">
+                                    <h4 class="font-bold text-gray-900 text-sm">${intern.role}</h4>
+                                    <span class="text-[11px] font-medium text-gray-500 whitespace-nowrap">
+                                        ${intern.startDate} - ${intern.isCurrent ? 'Devam Ediyor' : intern.endDate}
+                                    </span>
+                                </div>
+                                <div class="text-xs font-bold text-gray-500 mb-2 uppercase">${intern.company}</div>
+                                ${intern.description ? `<p class="text-xs text-gray-600 leading-relaxed whitespace-pre-line">${intern.description}</p>` : ''}
+                            </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <!-- Education -->
+                    <div>
+                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-5 border-b-2 border-gray-100 pb-1.5">Eğitim</h3>
+                        <div class="space-y-5">
+                            ${cv.educationDetails && cv.educationDetails.length > 0 ?
+            cv.educationDetails.map(edu => `
+                                <div>
+                                    <div class="flex justify-between items-baseline mb-0.5">
+                                        <h4 class="font-bold text-gray-900 text-sm">${edu.university}</h4>
+                                        <span class="text-[11px] text-gray-400 font-medium whitespace-nowrap">${edu.startDate || ''} - ${edu.endDate || 'Mezun'}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 text-xs text-gray-600">
+                                        <span class="font-medium text-[#1f6d78]">${edu.department || ''}</span>
+                                        ${edu.level ? `<span class="w-1 h-1 rounded-full bg-gray-300"></span> <span>${edu.level}</span>` : ''}
+                                    </div>
+                                </div>
+                                `).join('')
+            : `
+                                <div>
+                                    <h4 class="font-bold text-gray-900 text-sm">${cv.education}</h4>
+                                    <div class="text-xs text-gray-600 italic mt-1">
+                                        ${cv.educationLevel || 'Lisans'} | ${cv.graduationStatus || 'Mezun'}
+                                    </div>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+
+                    <!-- Work Preferences (Compact) -->
+                     ${cv.preferredRoles && cv.preferredRoles.length > 0 ? `
+                     <div class="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                         <h3 class="text-xs font-black text-black uppercase tracking-widest mb-3">İş Tercihleri</h3>
+                         <div class="flex flex-wrap gap-4 text-xs">
+                             <div><span class="text-gray-400 uppercase font-bold text-[9px] block">Şehir</span> <span class="font-semibold text-gray-800">${cv.preferredCity || 'Belirtilmedi'}</span></div>
+                             <div><span class="text-gray-400 uppercase font-bold text-[9px] block">Pozisyonlar</span> <span class="font-semibold text-gray-800">${cv.preferredRoles.join(', ')}</span></div>
+                             <div><span class="text-gray-400 uppercase font-bold text-[9px] block">Çalışma Şekli</span> <span class="font-semibold text-gray-800">${cv.workType || '-'}</span></div>
+                         </div>
+                     </div>
+                     ` : ''}
+
+                     <!-- References -->
                     ${cv.references && cv.references.length > 0 ? `
                     <div>
-                        <h3 class="text-xs font-black uppercase tracking-widest text-black border-b-2 border-black pb-2 mb-4">Referanslar</h3>
-                        <div class="space-y-4">
+                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-4 border-b-2 border-gray-100 pb-1.5">Referanslar</h3>
+                        <div class="grid grid-cols-2 gap-4">
                            ${cv.references.map(ref => `
-                               <div>
-                                   <p class="font-bold text-sm text-black">${ref.name}</p>
-                                   <p class="text-xs text-gray-600 mb-1">${ref.role} @ ${ref.company}</p>
-                                   ${ref.phone ? `<p class="text-xs text-gray-500">Tel: ${ref.phone}</p>` : ''}
-                                   ${ref.email ? `<p class="text-xs text-gray-500">E-posta: ${ref.email}</p>` : ''}
+                               <div class="px-1 py-2">
+                                   <p class="font-bold text-xs text-black">${ref.name}</p>
+                                   <p class="text-[10px] text-[#1f6d78] font-bold mb-1">${ref.company} - ${ref.role}</p>
+                                   ${ref.phone ? `<p class="text-[10px] text-gray-500">Tel: ${ref.phone}</p>` : ''}
+                                   ${ref.email ? `<p class="text-[10px] text-gray-500 truncate">Mail: ${ref.email}</p>` : ''}
                                </div>
                            `).join('')}
                         </div>
@@ -224,12 +284,17 @@ export const generatePrintableCV = (cv: CV): string => {
                 </div>
             </div>
 
-            <!-- Footer Date -->
-            <div class="absolute bottom-6 right-8 text-[10px] text-gray-300 font-medium">
-                Kartvizid.com ile oluşturuldu
+            <!-- Minimal Footer -->
+            <!-- Minimal Footer -->
+            <div class="w-full text-right py-4 px-10 mt-auto bg-white border-t border-gray-100 print:border-none flex justify-end items-center gap-2">
+                <div class="flex items-center text-gray-900 text-lg font-bold tracking-tight leading-none" style="font-family: 'Quicksand', sans-serif;">
+                    <span>Kartvizi</span>
+                    <span class="inline-block transform rotate-[12deg] origin-center text-[#1f6d78] font-black">d</span>
+                </div>
+                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider relative top-[1px]">.com ile oluşturuldu</span>
             </div>
-        </div>
 
+        </div>
     </body>
     </html>
   `;

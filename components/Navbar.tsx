@@ -202,13 +202,13 @@ const Navbar: React.FC<NavbarProps & {
               ) : (
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => onOpenAuth('signup', 'employer')}
+                    onClick={() => onOpenAuth('signin', 'employer')}
                     className="bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold text-xs md:text-sm px-3 md:px-6 py-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
                   >
                     {t('nav.employer')}
                   </button>
                   <button
-                    onClick={() => onOpenAuth('signup', 'job_seeker')}
+                    onClick={() => onOpenAuth('signin', 'job_seeker')}
                     className="bg-[#1f6d78] text-white px-3 md:px-6 py-2 rounded-full font-bold text-xs md:text-sm hover:bg-[#155e68] transition-all active:scale-95 shadow-sm whitespace-nowrap"
                   >
                     {t('nav.job_seeker')}

@@ -55,9 +55,11 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
                   className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-all text-left group"
                 >
                   <span className="text-sm font-bold text-gray-700 group-hover:text-black transition-colors">{item.label}</span>
-                  <span className="text-[10px] bg-gray-100 px-2 py-1 rounded-full font-black text-gray-400 group-hover:bg-[#1f6d78] group-hover:text-white transition-all uppercase tracking-tighter">
-                    {item.count} Aday
-                  </span>
+                  {item.count > 0 && (
+                    <span className="text-[10px] bg-gray-100 px-2 py-1 rounded-full font-black text-gray-400 group-hover:bg-[#1f6d78] group-hover:text-white transition-all uppercase tracking-tighter">
+                      {item.count}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

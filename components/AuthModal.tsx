@@ -101,7 +101,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                     <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">
                         {isEmployer
                             ? (mode === 'signin' ? 'İş Veren Girişi' : 'İş Veren Hesabı Oluştur')
-                            : (mode === 'signin' ? 'Aday Girişi' : 'Aday Hesabı Oluştur')
+                            : (mode === 'signin' ? 'İş Arayan Girişi' : 'İş Arayan Hesabı Oluştur')
                         }
                     </h2>
                     <p className="text-gray-500 dark:text-gray-400 font-medium">
