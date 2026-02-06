@@ -4,9 +4,10 @@ import { useLanguage } from '../context/LanguageContext';
 interface PromoCarouselProps {
     onOpenTips: () => void;
     onOpenInfo: () => void;
+    onOpenPremium?: () => void;
 }
 
-const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips, onOpenInfo }) => {
+const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips, onOpenInfo, onOpenPremium }) => {
     const { t } = useLanguage();
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
@@ -20,9 +21,12 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips, onOpenInfo })
         {
             id: 'premium',
             content: (
-                <div className={`h-full flex flex-col items-center justify-center text-center text-gray-800 dark:text-gray-200 p-6 relative overflow-hidden ${commonBg}`}>
+                <div
+                    className={`h-full flex flex-col items-center justify-center text-center text-gray-800 dark:text-gray-200 p-6 relative overflow-hidden cursor-pointer group ${commonBg}`}
+                    onClick={onOpenPremium}
+                >
                     {/* Icon - Standalone, large and clean */}
-                    <div className="mb-6 text-[#1f6d78] transform hover:scale-110 transition-transform duration-500">
+                    <div className="mb-6 text-[#1f6d78] transform group-hover:scale-110 transition-transform duration-500">
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M6 3h12l4 6-10 13L2 9Z"></path>
                             <path d="M11 3 8 9l4 13 4-13-3-6"></path>
@@ -32,10 +36,10 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips, onOpenInfo })
 
                     {/* Content */}
                     <div className="relative z-10 max-w-[240px]">
-                        <h3 className="font-extrabold text-xl mb-3 tracking-tight text-gray-900 dark:text-white">
+                        <h3 className="font-extrabold text-xl mb-3 tracking-tight text-gray-900 dark:text-white group-hover:text-[#1f6d78] transition-colors">
                             {t('promo.premium_title')}
                         </h3>
-                        <p className="text-sm font-medium text-gray-500 leading-relaxed">
+                        <p className="text-sm font-medium text-gray-500 leading-relaxed group-hover:text-gray-600 transition-colors">
                             {t('promo.premium_desc')}
                         </p>
                     </div>

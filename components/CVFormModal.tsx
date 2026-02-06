@@ -21,6 +21,8 @@ import {
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabase';
 
+import KVKKApprovalModal from './KVKKApprovalModal';
+
 interface SelectionPillProps {
   label: string;
   active: boolean;
@@ -43,7 +45,7 @@ const SelectionPill: React.FC<SelectionPillProps> = ({ label, active, onClick })
 
 interface CVFormModalProps {
   onClose: () => void;
-  onSubmit: (cv: Partial<CV>) => void;
+  onSubmit: (cv: Partial<CV>, consentGiven?: boolean) => void;
   initialData?: Partial<CV>;
   availableCities?: Array<{ label: string }>;
 }
@@ -90,6 +92,45 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
 
   const [refInput, setRefInput] = useState({ name: '', company: '', role: '', phone: '', email: '' });
   const [showWarning, setShowWarning] = useState<{ show: boolean, missing: string[] }>({ show: false, missing: [] });
+  const [showKVKKModal, setShowKVKKModal] = useState(false);
+  const [hasPriorConsent, setHasPriorConsent] = useState(false);
+  const [isConsentGiven, setIsConsentGiven] = useState(false);
+  const [loadingConsent, setLoadingConsent] = useState(true);
+
+  // Fetch initial consent status
+  React.useEffect(() => {
+    const fetchConsent = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('kvkk_consent')
+            .eq('id', user.id)
+            .single();
+
+          if (data && data.kvkk_consent) {
+            setHasPriorConsent(true);
+            setIsConsentGiven(true);
+          }
+        }
+      } catch (e) {
+        console.error('Error fetching consent:', e);
+      } finally {
+        setLoadingConsent(false);
+      }
+    };
+    fetchConsent();
+  }, []);
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.checked;
+    if (newValue && !hasPriorConsent && !isConsentGiven) {
+      setShowKVKKModal(true);
+    } else {
+      setIsConsentGiven(newValue);
+    }
+  };
 
   const handleAddReference = () => {
     if (refInput.name && refInput.company) {
@@ -961,13 +1002,20 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
             </div>
           </section>
 
-          {/* KVKK Onay */}
-          <div className="p-4 sm:p-8 bg-gray-50 dark:bg-gray-800 rounded-2xl sm:rounded-[2.5rem] border border-gray-100 dark:border-gray-700 flex items-start gap-4">
-            <input type="checkbox" id="cv-form-terms" className="w-5 h-5 sm:w-6 sm:h-6 rounded-md accent-[#1f6d78] shrink-0 mt-0.5" />
-            <label htmlFor="cv-form-terms" className="text-[10px] sm:text-[11px] text-gray-500 font-bold leading-relaxed">
+          {/* KVKK Onay Checkbox */}
+          <div className="p-4 sm:p-8 bg-gray-50 dark:bg-gray-800 rounded-2xl sm:rounded-[2.5rem] border border-gray-100 dark:border-gray-700 flex items-start gap-4 mt-8">
+            <input
+              type="checkbox"
+              id="cv-form-terms"
+              checked={isConsentGiven}
+              onChange={handleCheckboxChange}
+              className="w-5 h-5 sm:w-6 sm:h-6 rounded-md accent-[#1f6d78] shrink-0 mt-0.5 cursor-pointer"
+            />
+            <label htmlFor="cv-form-terms" className="text-[10px] sm:text-[11px] text-gray-500 font-bold leading-relaxed cursor-pointer select-none">
               {t('form.kvkk_text')}
             </label>
           </div>
+
         </div>
 
         {/* Footer Actions */}
@@ -1004,7 +1052,13 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                 return;
               }
 
-              // Sync legacy fields for backward compatibility (Business Card view)
+              // Consent Validation
+              if (!isConsentGiven) {
+                alert('Lütfen KVKK metnini okuyup onaylayınız.');
+                return;
+              }
+
+              // Sync legacy fields
               const syncedData = {
                 ...formData,
                 education: formData.educationDetails?.[0]?.university || formData.education || '',
@@ -1013,56 +1067,92 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                 language: formData.languageDetails?.[0]?.language || formData.language || '',
                 languageLevel: formData.languageDetails?.[0]?.level || formData.languageLevel || '',
               };
-              onSubmit(syncedData);
+
+              onSubmit(syncedData, !hasPriorConsent);
             }}
-            className="flex-[2] bg-[#1f6d78] text-white py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-xl active:scale-[0.98]"
+            className={`flex-[2] py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] ${isConsentGiven
+              ? 'bg-[#1f6d78] text-white hover:bg-[#155e68]'
+              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
           >
             {t('form.save_publish')}
           </button>
         </div>
 
+        {/* KVKK Approval Modal */}
+        {
+          showKVKKModal && (
+            <KVKKApprovalModal
+              onCancel={() => setShowKVKKModal(false)}
+              onApprove={async () => {
+                setShowKVKKModal(false);
+                setIsConsentGiven(true);
+                setHasPriorConsent(true); // Optimistically set prior consent
+
+                // Save consent immediately to DB
+                try {
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (user) {
+                    await supabase
+                      .from('profiles')
+                      .update({
+                        kvkk_consent: true,
+                        kvkk_consent_date: new Date().toISOString()
+                      })
+                      .eq('id', user.id);
+                  }
+                } catch (err) {
+                  console.error('Error saving consent instantly:', err);
+                }
+              }}
+            />
+          )
+        }
+
         {/* Warning Overlay */}
-        {showWarning.show && (
-          <div className="absolute inset-0 z-[150] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6 animate-in fade-in duration-300">
-            <div className="bg-white border-2 border-red-50 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl scale-100 animate-in zoom-in-95 duration-300 text-center relative overflow-hidden">
-              {/* Decoration */}
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
-              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[#1f6d78]/5 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+        {
+          showWarning.show && (
+            <div className="absolute inset-0 z-[150] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6 animate-in fade-in duration-300">
+              <div className="bg-white border-2 border-red-50 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl scale-100 animate-in zoom-in-95 duration-300 text-center relative overflow-hidden">
+                {/* Decoration */}
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[#1f6d78]/5 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
 
-              <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-xl relative z-10">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <line x1="12" y1="8" x2="12" y2="12"></line>
-                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
+                <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-xl relative z-10">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                </div>
+                <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
+                  Eksik Bilgiler Var
+                </h3>
+                <p className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-wider relative z-10">
+                  Lütfen aşağıdaki alanları doldurunuz:
+                </p>
+
+                <div className="bg-gray-50 rounded-2xl p-4 mb-8 border border-gray-100 relative z-10">
+                  <ul className="text-left space-y-2">
+                    {showWarning.missing.map((item, idx) => (
+                      <li key={idx} className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-black shrink-0"></span>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <button
+                  onClick={() => setShowWarning({ show: false, missing: [] })}
+                  className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg shadow-[#1f6d78]/20 active:scale-95 relative z-10"
+                >
+                  Tamam, Dolduracağım
+                </button>
               </div>
-              <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
-                Eksik Bilgiler Var
-              </h3>
-              <p className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-wider relative z-10">
-                Lütfen aşağıdaki alanları doldurunuz:
-              </p>
-
-              <div className="bg-gray-50 rounded-2xl p-4 mb-8 border border-gray-100 relative z-10">
-                <ul className="text-left space-y-2">
-                  {showWarning.missing.map((item, idx) => (
-                    <li key={idx} className="flex items-center gap-3 text-sm font-bold text-gray-700">
-                      <span className="w-1.5 h-1.5 rounded-full bg-black shrink-0"></span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <button
-                onClick={() => setShowWarning({ show: false, missing: [] })}
-                className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg shadow-[#1f6d78]/20 active:scale-95 relative z-10"
-              >
-                Tamam, Dolduracağım
-              </button>
             </div>
-          </div>
-        )}
+          )
+        }
       </div >
     </div >
   );

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
 
 interface SettingsModalProps {
     onClose: () => void;
@@ -10,6 +11,7 @@ interface SettingsModalProps {
 const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     const { user, signOut } = useAuth();
     const { language, setLanguage, t } = useLanguage();
+    const { theme, toggleTheme } = useTheme();
     const [activeTab, setActiveTab] = useState<'general' | 'account' | 'security' | 'notifications'>('account');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
@@ -270,6 +272,48 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
                         {activeTab === 'general' && (
                             <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
+                                <div>
+                                    <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2 mb-4">
+                                        {t('account.appearance')}
+                                    </h3>
+                                    <button
+                                        onClick={toggleTheme}
+                                        className="w-full text-left p-4 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 flex items-center justify-between transition-colors"
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-gray-100 text-black flex items-center justify-center text-sm">
+                                                {theme === 'dark' ? (
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                                                    </svg>
+                                                ) : (
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                        <circle cx="12" cy="12" r="4"></circle>
+                                                        <path d="M12 2v2"></path>
+                                                        <path d="M12 20v2"></path>
+                                                        <path d="m4.93 4.93 1.41 1.41"></path>
+                                                        <path d="m17.66 17.66 1.41 1.41"></path>
+                                                        <path d="M2 12h2"></path>
+                                                        <path d="M20 12h2"></path>
+                                                        <path d="m6.34 17.66-1.41 1.41"></path>
+                                                        <path d="m19.07 4.93-1.41 1.41"></path>
+                                                    </svg>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-black text-sm">{theme === 'dark' ? t('account.dark') : t('account.light')}</p>
+                                                <p className="text-xs text-gray-400 font-medium mt-0.5">
+                                                    {theme === 'dark' ? 'Koyu mod aktif' : 'Aydınlık mod aktif'}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className={`w-12 h-7 rounded-full p-1 transition-all duration-300 ${theme === 'dark' ? 'bg-[#1f6d78]' : 'bg-gray-300'}`}>
+                                            <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform duration-300 ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                        </div>
+                                    </button>
+                                </div>
+
                                 <div>
                                     <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2 mb-4">
                                         {t('settings.language')}

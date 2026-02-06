@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useTheme } from '../context/ThemeContext';
+
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -9,11 +9,12 @@ interface UserMenuDropdownProps {
   onLogout: () => void;
   onOpenSettings?: () => void;
   onOpenSavedCVs?: () => void;
+  onOpenProfile?: (userId: string) => void;
   mobile?: boolean;
 }
 
-const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ onClose, onLogout, onOpenSettings, onOpenSavedCVs, mobile }) => {
-  const { theme, toggleTheme } = useTheme();
+const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ onClose, onLogout, onOpenSettings, onOpenSavedCVs, onOpenProfile, mobile }) => {
+
   const { t } = useLanguage();
   const { user } = useAuth();
 
@@ -24,6 +25,22 @@ const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ onClose, onLogout, 
       </div>
 
       <div className="flex flex-col">
+        <button
+          onClick={() => {
+            onClose();
+            if (user) onOpenProfile?.(user.id);
+          }}
+          className="w-full text-left px-6 py-4 text-sm font-black text-black hover:bg-gray-50 flex items-center gap-4 transition-colors"
+        >
+          <div className="w-8 h-8 rounded-full bg-gray-100 text-black flex items-center justify-center text-xs">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          Kartvizidim
+        </button>
+
         {user?.user_metadata?.role === 'employer' && (
           <button
             onClick={() => {
@@ -57,41 +74,7 @@ const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ onClose, onLogout, 
           {t('account.settings')}
         </button>
 
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleTheme();
-          }}
-          className="w-full text-left px-6 py-4 text-sm font-black text-black dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center justify-between transition-colors bg-white dark:bg-gray-900 border-t border-gray-50 dark:border-gray-800"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 text-black dark:text-white flex items-center justify-center text-xs">
-              {theme === 'dark' ? (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-                </svg>
-              ) : (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="4"></circle>
-                  <path d="M12 2v2"></path>
-                  <path d="M12 20v2"></path>
-                  <path d="m4.93 4.93 1.41 1.41"></path>
-                  <path d="m17.66 17.66 1.41 1.41"></path>
-                  <path d="M2 12h2"></path>
-                  <path d="M20 12h2"></path>
-                  <path d="m6.34 17.66-1.41 1.41"></path>
-                  <path d="m19.07 4.93-1.41 1.41"></path>
-                </svg>
-              )}
-            </div>
-            {t('account.appearance')}: {theme === 'dark' ? t('account.dark') : t('account.light')}
-          </div>
 
-          <div className={`w-10 h-5 rounded-full p-1 transition-all duration-300 ${theme === 'dark' ? 'bg-[#1f6d78]' : 'bg-gray-300'}`}>
-            <div className={`w-3 h-3 bg-white rounded-full shadow-sm transform transition-transform duration-300 ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`}></div>
-          </div>
-        </button>
 
         <button
           onClick={() => {

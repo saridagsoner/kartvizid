@@ -1167,13 +1167,31 @@ const App: React.FC = () => {
     }
   };
 
-  const handleCreateCV = async (cvData: Partial<CV>) => {
+  const handleCreateCV = async (cvData: Partial<CV>, consentGiven?: boolean) => {
     if (!user) {
       showToast('CV oluşturmak için giriş yapmalısınız.', 'error');
       return;
     }
 
     try {
+      if (consentGiven) {
+        // Update profile with KVKK consent
+        const { error: consentError } = await supabase
+          .from('profiles')
+          .update({
+            kvkk_consent: true,
+            kvkk_consent_date: new Date().toISOString()
+          })
+          .eq('id', user.id);
+
+        if (consentError) {
+          console.error('Error saving KVKK consent:', consentError);
+          // Optionally continue or throw? Continuing seems safer for UX, but logging is key.
+        } else {
+          console.log('KVKK consent saved successfully');
+        }
+      }
+
       const dbData = {
         user_id: user.id,
         name: cvData.name,
@@ -1524,9 +1542,9 @@ const App: React.FC = () => {
       )}
 
 
-      <div className="flex-1 flex justify-center pt-20 px-4 md:px-6">
+      <div className="flex-1 flex justify-center pt-[72px] px-4 md:px-6">
         <div className="max-w-[1440px] w-full flex items-start gap-6 pb-12">
-          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[80px] h-fit pb-4">
+          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[72px] h-fit pb-4">
             <SidebarLeft
               popularProfessions={professionStats}
               popularCities={cityStats}
@@ -1632,7 +1650,7 @@ const App: React.FC = () => {
             )}
           </section>
 
-          <aside className="hidden xl:block w-[304px] shrink-0 sticky top-[80px] self-start h-fit pb-4">
+          <aside className="hidden xl:block w-[304px] shrink-0 sticky top-[72px] self-start h-fit pb-4">
             <SidebarRight
               popularCVs={popularCVs}
               popularCompanies={popularCompanies}
@@ -1644,7 +1662,7 @@ const App: React.FC = () => {
 
 
         </div>
-      </div >
+      </div>
 
       <Footer />
 

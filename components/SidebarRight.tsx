@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import TipsModal from './TipsModal';
 import InfoModal from './InfoModal';
+import PremiumModal from './PremiumModal';
 import PromoCarousel from './PromoCarousel';
 import { CV, PopularCompany } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -19,6 +20,7 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
   const { t } = useLanguage();
   const [isTipsModalOpen, setIsTipsModalOpen] = useState(false);
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
   const [animationPhase, setAnimationPhase] = useState<'pulsing' | 'static'>('pulsing');
 
   useEffect(() => { // Using React.useEffect since only useState was imported explicitly
@@ -41,29 +43,12 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
           .animate-custom-pulse {
             animation: customPulse 3s ease-in-out infinite;
           }
-          @keyframes iconSlideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-          }
-          .animate-icon-appear {
-            animation: iconSlideIn 0.5s ease-out forwards;
-          }
         `}
       </style>
 
       {/* Slogan */}
-      <h2 className={`text-2xl font-black leading-tight tracking-tight text-center px-1 mb-1 transition-all duration-500 ${animationPhase === 'pulsing' ? 'animate-custom-pulse' : ''}`}>
-        <span className="text-gray-900 dark:text-white flex items-center justify-center gap-2">
-          {animationPhase === 'static' && (
-            <span className="animate-icon-appear text-[#1f6d78] inline-flex">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </span>
-          )}
-          İş Aramayın,
-        </span>
+      <h2 className={`text-xl font-black leading-tight tracking-tight text-center px-1 mb-1 transition-all duration-700 ${animationPhase === 'pulsing' ? 'animate-custom-pulse' : ''}`}>
+        <span className="text-gray-900 dark:text-white block">İş Aramayın,</span>
         <span className="text-[#1f6d78] dark:text-[#2dd4bf] block mt-1 pb-1">Bırakın İş Sizi Bulsun.</span>
       </h2>
 
@@ -71,6 +56,7 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
       <PromoCarousel
         onOpenTips={() => setIsTipsModalOpen(true)}
         onOpenInfo={() => setIsInfoModalOpen(true)}
+        onOpenPremium={() => setIsPremiumModalOpen(true)}
       />
 
       {/* Popüler İşverenler */}
@@ -175,6 +161,7 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
 
       {isTipsModalOpen && <TipsModal onClose={() => setIsTipsModalOpen(false)} />}
       {isInfoModalOpen && <InfoModal onClose={() => setIsInfoModalOpen(false)} />}
+      {isPremiumModalOpen && <PremiumModal onClose={() => setIsPremiumModalOpen(false)} />}
 
 
     </div>
