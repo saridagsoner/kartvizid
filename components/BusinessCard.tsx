@@ -80,15 +80,6 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
               </svg>
               {cv.experienceYears} Yıl{cv.experienceMonths ? ` ${cv.experienceMonths} Ay` : ''} Deneyim
             </span>
-            <span className="flex items-center gap-1.5">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 dark:text-gray-400 sm:w-[14px] sm:h-[14px]">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="2" y1="12" x2="22" y2="12"></line>
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-              </svg>
-              {cv.language}
-            </span>
-
           </div>
 
           {/* Summary Section - HIDDEN ON MOBILE */}
@@ -99,7 +90,14 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
           </div>
         </div>
 
-        {/* Action Button - HIDDEN ON MOBILE */}
+        {/* Action Button - Mobile Minimal */}
+        <div className="flex sm:hidden items-center self-center shrink-0 ml-auto pl-2">
+          <button className="bg-gray-50 dark:bg-gray-700 text-[#1f6d78] dark:text-[#2dd4bf] px-4 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-wider hover:bg-[#1f6d78] hover:text-white transition-colors">
+            {t('card.view')}
+          </button>
+        </div>
+
+        {/* Action Button - Desktop Standard */}
         <div className="hidden sm:flex items-center self-center sm:self-center shrink-0 ml-auto sm:ml-0">
           <button className="bg-white dark:bg-gray-800 border-[0.5px] border-[#1f6d78] text-[#1f6d78] px-8 py-3 rounded-full font-black text-xs hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] dark:hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm uppercase tracking-widest">
             {t('card.view')}
