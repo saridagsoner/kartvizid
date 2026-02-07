@@ -1563,7 +1563,7 @@ const App: React.FC = () => {
 
 
           <section className="flex-1 min-w-0 flex flex-col gap-4">
-            {/* Mobile Search Bar */},
+            {/* Mobile Search Bar */}
             <div className="block sm:hidden w-full mb-0 -mt-4">
               <div className="flex items-center gap-2">
                 <div className="relative flex-1">
