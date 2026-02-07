@@ -137,7 +137,6 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                     <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
                                 </div>
                             ) : (
-                                <div className={`${activeTab === 'profile' ? 'text-[#1f6d78]' : 'text-gray-400'}`}>
                                 <div className="text-black dark:text-white">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
