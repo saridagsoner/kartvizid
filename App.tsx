@@ -106,7 +106,7 @@ const App: React.FC = () => {
   const [isJobSuccessOpen, setIsJobSuccessOpen] = useState(false);
   const [isSavedCVsOpen, setIsSavedCVsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [activeFilterModal, setActiveFilterModal] = useState<'professions' | 'cities' | 'experience' | 'advanced' | null>(null);
 
   const handleAuthOpen = (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => {
     setAuthMode(mode);
