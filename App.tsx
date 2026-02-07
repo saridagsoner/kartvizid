@@ -25,6 +25,7 @@ import JobSuccessModal from './components/JobSuccessModal';
 import { BusinessCardSkeleton } from './components/Skeleton';
 import SavedCVsModal from './components/SavedCVsModal';
 import MobileMenuDrawer from './components/MobileMenuDrawer';
+import AdvancedFilterModal from './components/AdvancedFilterModal';
 
 // SortDropdown moved to components/SortDropdown.tsx
 
@@ -1629,6 +1630,24 @@ const App: React.FC = () => {
                 }
               />
             </div>
+
+            {/* Mobile Advanced Filter Modal */}
+            {activeFilterModal === 'advanced' && (
+              <div className="sm:hidden">
+                <AdvancedFilterModal
+                  initialFilters={activeFilters}
+                  onApply={(newFilters) => {
+                    Object.entries(newFilters).forEach(([key, val]) => {
+                      handleFilterUpdate(key, val);
+                    });
+                    setActiveFilterModal(null);
+                  }}
+                  onClose={() => setActiveFilterModal(null)}
+                  availableProfessions={availableProfessions}
+                  availableCities={availableCities}
+                />
+              </div>
+            )}
 
             <div className="hidden sm:flex bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 px-4 py-2 sm:px-6 sm:py-3 mb-2 flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 shadow-sm transition-colors duration-300">
               <h2 className="text-xs sm:text-sm font-bold text-[#1f6d78] dark:text-white">
