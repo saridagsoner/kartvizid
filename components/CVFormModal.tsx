@@ -326,8 +326,8 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
 
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center sm:p-4 bg-black/60 backdrop-blur-xl">
-      <div className="bg-white dark:bg-gray-900 w-[95%] sm:w-full sm:max-w-[800px] h-[90vh] rounded-[2rem] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-black/60 sm:backdrop-blur-xl animate-in slide-in-from-bottom sm:slide-in-from-bottom-10 duration-300 sm:duration-500">
+      <div className="bg-white dark:bg-gray-900 w-full h-full sm:w-full sm:max-w-[800px] sm:h-[90vh] rounded-none sm:rounded-[3rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden">
 
         {tempImageSrc && (
           <ImageCropper
@@ -339,7 +339,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
         )}
 
         {/* Header */}
-        <div className="p-5 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
+        <div className="p-4 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
           <div>
             <h2 className="text-lg sm:text-2xl font-black text-black dark:text-white tracking-tighter">{t('form.cv_create_title')}</h2>
             <p className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">{t('form.cv_create_subtitle')}</p>
