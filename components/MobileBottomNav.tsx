@@ -85,7 +85,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                             <span className="inline-block transform rotate-[12deg] origin-center text-[#1f6d78] font-black text-2xl leading-none rounded-font tracking-tight">d</span>
                         </div>
                         <span className="text-[10px] font-medium text-[#1f6d78] leading-none">
-                            {activeTab === null ? 'Kartvizid' : 'Anasayfa'}
+                            {activeTab === null ? 'Kartvizid v2.1' : 'Anasayfa'}
                         </span>
                     </button>
 
