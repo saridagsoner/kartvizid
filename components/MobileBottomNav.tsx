@@ -91,10 +91,10 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         onClick={() => toggleTab('notifications')}
                         className={`relative flex flex-col items-center justify-center w-16 h-full space-y-0.5 ${activeTab === 'notifications' ? 'text-[#1f6d78]' : 'text-gray-400'}`}
                     >
-                        <div className="h-8 flex items-center justify-center">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={activeTab === 'notifications' ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M12 22a2.5 2.5 0 0 0 2.5-2.5h-5A2.5 2.5 0 0 0 12 22z" />
-                                <path d="M19 16.5C19 14 17 12 17 8a5 5 0 0 0-10 0c0 4-2 6-2 8.5C5 18 6 19 12 19s7-1 7-2.5z" />
+                        <div className="h-8 flex items-center justify-center text-black dark:text-white">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                             </svg>
                         </div>
                         <span className="text-[10px] font-medium leading-none">Bildirim</span>
@@ -110,8 +110,8 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         onClick={isEmployer && onOpenCompanyProfile ? onOpenCompanyProfile : onCreateCV}
                         className="flex flex-col items-center justify-center w-16 h-full space-y-0.5 text-gray-400 hover:text-[#1f6d78] transition-colors active:scale-95 active:text-[#1f6d78]"
                     >
-                        <div className="h-8 flex items-center justify-center">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <div className="h-8 flex items-center justify-center text-black dark:text-white">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
@@ -138,9 +138,10 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                 </div>
                             ) : (
                                 <div className={`${activeTab === 'profile' ? 'text-[#1f6d78]' : 'text-gray-400'}`}>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={activeTab === 'profile' ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
-                                        <rect x="5" y="15" width="14" height="6" rx="3" ry="3"></rect>
-                                        <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
+                                <div className="text-black dark:text-white">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
                                     </svg>
                                 </div>
                             )}
