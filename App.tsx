@@ -1491,7 +1491,7 @@ const App: React.FC = () => {
   }, []); // Run once on mount or consider polling if needed
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F0F2F5] dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-white sm:bg-[#F0F2F5] dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
 
 
       // ... inside render
