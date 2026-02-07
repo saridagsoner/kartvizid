@@ -155,7 +155,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     const isEmployer = user?.user_metadata?.role === 'employer';
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center sm:p-4 bg-white sm:bg-black/60 sm:backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[250] flex items-center justify-center sm:p-4 bg-white sm:bg-black/60 sm:backdrop-blur-sm animate-in fade-in duration-200">
             {/* Fixed Height Layout */}
             <div className="bg-white w-full h-full sm:h-[600px] sm:max-h-[90vh] sm:max-w-2xl sm:rounded-[2rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden">
 
@@ -219,10 +219,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                 )}
 
                 {/* Header */}
-                <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10 shrink-0">
+                <div className="p-6 sm:p-8 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10 shrink-0">
                     <div>
-                        <h2 className="text-2xl font-black text-black tracking-tighter">{t('settings.header_title')}</h2>
-                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-1">
+                        <h2 className="text-xl sm:text-2xl font-black text-black tracking-tighter">{t('settings.header_title')}</h2>
+                        <p className="text-[10px] sm:text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-1">
                             {t('settings.header_subtitle')}
                         </p>
                     </div>
@@ -234,33 +234,33 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                     </button>
                 </div>
 
-                <div className="flex flex-1 overflow-hidden">
+                <div className="flex flex-col sm:flex-row flex-1 overflow-hidden">
                     {/* Sidebar Tabs */}
-                    <div className="w-48 bg-gray-50 p-6 flex flex-col gap-2 border-r border-gray-100 shrink-0">
+                    <div className="w-full sm:w-48 bg-gray-50 p-4 sm:p-6 flex flex-row sm:flex-col gap-2 border-b sm:border-b-0 sm:border-r border-gray-100 shrink-0 overflow-x-auto hide-scrollbar snap-x snap-mandatory">
                         <button
                             onClick={() => setActiveTab('account')}
-                            className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'account' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
+                            className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'account' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
                                 }`}
                         >
                             {t('settings.account')}
                         </button>
                         <button
                             onClick={() => setActiveTab('general')}
-                            className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'general' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
+                            className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'general' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
                                 }`}
                         >
                             {t('settings.general')}
                         </button>
                         <button
                             onClick={() => setActiveTab('security')}
-                            className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'security' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
+                            className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'security' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
                                 }`}
                         >
                             {t('settings.security')}
                         </button>
                         <button
                             onClick={() => setActiveTab('notifications')}
-                            className={`text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === 'notifications' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
+                            className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'notifications' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
                                 }`}
                         >
                             {t('settings.notifications')}
@@ -268,7 +268,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 p-8 overflow-y-auto custom-scrollbar">
+                    <div className="flex-1 p-6 sm:p-8 overflow-y-auto custom-scrollbar">
 
                         {activeTab === 'general' && (
                             <div className="space-y-8 animate-in slide-in-from-right-4 duration-300">
