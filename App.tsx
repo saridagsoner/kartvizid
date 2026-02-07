@@ -106,6 +106,7 @@ const App: React.FC = () => {
   const [isJobSuccessOpen, setIsJobSuccessOpen] = useState(false);
   const [isSavedCVsOpen, setIsSavedCVsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   const handleAuthOpen = (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => {
     setAuthMode(mode);
@@ -1559,9 +1560,7 @@ const App: React.FC = () => {
 
 
 
-          const [showMobileFilters, setShowMobileFilters] = useState(false); // Add state
 
-          // ... (existing code)
 
           <section className="flex-1 min-w-0 flex flex-col gap-4">
             {/* Mobile Search Bar + Filter Toggle */}
