@@ -1579,6 +1579,17 @@ const App: React.FC = () => {
               </div>
             </div>
 
+            {/* Mobile Header (Kartvizidler + Sort) */}
+            <div className="flex sm:hidden items-end justify-between px-2 my-2">
+              <h2 className="text-[9px] font-black text-black uppercase tracking-widest">
+                KARTVİZİD LİSTESİ
+              </h2>
+              <div className="flex items-center gap-2">
+                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">{t('feed.sort')}:</span>
+                <SortDropdown value={sortBy} onChange={setSortBy} />
+              </div>
+            </div>
+
             <div className="hidden sm:block">
               <Filters
                 currentFilters={activeFilters}
