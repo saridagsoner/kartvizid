@@ -1823,6 +1823,13 @@ const App: React.FC = () => {
           setIsMobileMenuOpen(false);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
+        user={user}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        onLogout={async () => {
+          await supabase.auth.signOut();
+          setIsMobileMenuOpen(false);
+          // window.location.reload(); 
+        }}
       />
       {isJobSuccessOpen && (
         <JobSuccessModal
