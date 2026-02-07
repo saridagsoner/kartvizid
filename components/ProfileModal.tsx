@@ -516,11 +516,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
         </div>
 
         {/* Footer Actions */}
-        <div className="p-5 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-3 sm:gap-5 sticky bottom-0 z-10 shrink-0">
+        <div className="p-3 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-2 sm:gap-5 sticky bottom-0 z-10 shrink-0">
           {isOwner && cv.workingStatus !== 'active' && (
             <button
               onClick={onJobFound}
-              className="flex-[2] bg-[#1f6d78] text-white py-3 sm:py-5 rounded-full font-black text-xs sm:text-sm uppercase tracking-widest hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20"
+              className="flex-[1.5] bg-[#1f6d78] text-white py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-sm uppercase tracking-wider sm:tracking-widest hover:bg-[#155e68] transition-all active:scale-95 shadow-md sm:shadow-lg shadow-[#1f6d78]/20"
             >
               {t('profile.job_found')}
             </button>
@@ -530,13 +530,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             <>
               <button
                 onClick={handleDownload}
-                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-3 sm:py-5 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-xl"
+                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-sm sm:shadow-xl"
               >
                 {t('profile.download_cv')}
               </button>
               <button
                 onClick={handleShare}
-                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-3 sm:py-5 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-xl"
+                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-sm sm:shadow-xl"
               >
                 {t('profile.share_cv')}
               </button>
@@ -552,7 +552,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                     }
                     onRequestAccess?.();
                   }}
-                  className={`flex-[2] py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] group ${isPending
+                  className={`flex-[2] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest transition-all shadow-md sm:shadow-xl active:scale-[0.98] group ${isPending
                     ? 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-600 hover:shadow-none'
                     : 'bg-[#1f6d78] text-white hover:bg-[#155e68]'
                     }`}
@@ -567,7 +567,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
               ) : (
                 <button
                   disabled
-                  className="flex-[2] bg-[#1f6d78] text-white py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest shadow-xl cursor-default"
+                  className="flex-[2] bg-[#1f6d78] text-white py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest shadow-md sm:shadow-xl cursor-default"
                 >
                   {t('profile.contact_open')}
                 </button>
