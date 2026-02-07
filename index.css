@@ -16,6 +16,13 @@
         --text-secondary: #65676B;
     }
 
+    /* Mobile Background Override */
+    @media (max-width: 640px) {
+        :root {
+            --bg-gray: #ffffff;
+        }
+    }
+
     html {
         scroll-behavior: smooth;
     }
