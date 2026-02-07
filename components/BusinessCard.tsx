@@ -64,8 +64,8 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
           <p className="text-xs sm:text-base text-gray-500 dark:text-gray-400 font-bold mb-1.5 sm:mb-4 tracking-tight line-clamp-1">{cv.profession}</p>
 
           {/* Details Section with Simple Icons - Restored on Mobile */}
-          <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-6 gap-y-1 text-[10px] sm:text-[13px] text-gray-500 dark:text-gray-400 font-bold">
-            <span className="flex items-center gap-1.5">
+          <div className="flex flex-nowrap items-center gap-x-2 sm:gap-x-6 gap-y-1 text-[10px] sm:text-[13px] text-gray-500 dark:text-gray-400 font-bold overflow-hidden">
+            <span className="flex items-center gap-1.5 whitespace-nowrap shrink-0">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 dark:text-gray-400 sm:w-[14px] sm:h-[14px]">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
@@ -73,12 +73,12 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
               {cv.city}
             </span>
 
-            <span className="flex items-center gap-1.5">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 dark:text-gray-400 sm:w-[14px] sm:h-[14px]">
+            <span className="flex items-center gap-1.5 whitespace-nowrap shrink min-w-0">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 dark:text-gray-400 sm:w-[14px] sm:h-[14px] shrink-0">
                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
               </svg>
-              {cv.experienceYears} Yıl{cv.experienceMonths ? ` ${cv.experienceMonths} Ay` : ''} Deneyim
+              <span>{cv.experienceYears} Yıl{cv.experienceMonths ? ` ${cv.experienceMonths} Ay` : ''} Deneyim</span>
             </span>
           </div>
 
@@ -90,9 +90,9 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
           </div>
         </div>
 
-        {/* Action Button - Mobile Minimal */}
-        <div className="flex sm:hidden items-center self-center shrink-0 ml-auto pl-2">
-          <button className="bg-gray-50 dark:bg-gray-700 text-[#1f6d78] dark:text-[#2dd4bf] px-4 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-wider hover:bg-[#1f6d78] hover:text-white transition-colors">
+        {/* Action Button - Mobile Minimal - Right Side Centered */}
+        <div className="flex sm:hidden items-center self-center shrink-0 ml-1">
+          <button className="bg-gray-50 dark:bg-gray-700 text-[#1f6d78] dark:text-[#2dd4bf] px-2 py-0.5 rounded-full font-bold text-[8px] uppercase tracking-wide leading-none hover:bg-[#1f6d78] hover:text-white transition-colors">
             {t('card.view')}
           </button>
         </div>
