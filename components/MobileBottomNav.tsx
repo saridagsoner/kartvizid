@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ContactRequest, NotificationItem } from '../types';
 import NotificationDropdown from './NotificationDropdown';
-import UserMenuDropdown from './UserMenuDropdown';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
 interface MobileBottomNavProps {
     user: any;
-    onSearch: (query: string) => void; // Can scroll top
+    onSearch: (query: string) => void;
     onCreateCV: () => void;
     onOpenCompanyProfile?: () => void;
-    onOpenSettings?: () => void;
     hasCV?: boolean;
     userPhotoUrl?: string;
     notificationCount?: number;
@@ -29,7 +27,6 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     onSearch,
     onCreateCV,
     onOpenCompanyProfile,
-    onOpenSettings,
     hasCV,
     userPhotoUrl,
     notificationCount = 0,
@@ -128,7 +125,8 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                             if (!user) {
                                 onOpenAuth('signin');
                             } else {
-                                toggleTab('profile');
+                                // Direct Profile Access
+                                if (onOpenProfile) onOpenProfile(user.id, user.user_metadata?.role);
                             }
                         }}
                         className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 ${activeTab === 'profile' ? 'text-[#1f6d78]' : 'text-gray-400'}`}
@@ -175,18 +173,6 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         onOpenProfile={onOpenProfile}
                         // We will need to update NotificationDropdown to accept a 'mobile' prop to style it as a sheet/block
                         // For now, let's wrap it in a container that constraints its width/height
-                        mobile={true}
-                    />
-                </div>
-            )}
-
-            {/* Profile Sheet */}
-            {activeTab === 'profile' && (
-                <div className="fixed bottom-20 right-4 z-[95] sm:hidden animate-in slide-in-from-bottom-4 duration-300">
-                    <UserMenuDropdown
-                        onClose={() => setActiveTab(null)}
-                        onLogout={signOut}
-                        onOpenSettings={onOpenSettings}
                         mobile={true}
                     />
                 </div>

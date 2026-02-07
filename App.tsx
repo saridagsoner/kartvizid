@@ -1825,6 +1825,10 @@ const App: React.FC = () => {
         }}
         user={user}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenSavedCVs={() => {
+          setIsMobileMenuOpen(false);
+          setIsSavedCVsOpen(true);
+        }}
         onLogout={async () => {
           await supabase.auth.signOut();
           setIsMobileMenuOpen(false);
