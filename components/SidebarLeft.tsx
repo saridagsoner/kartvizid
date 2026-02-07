@@ -81,7 +81,7 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
             {(popularCities || []).slice(0, 5).map((city, i) => (
               <span
                 key={i}
-                className="text-gray-600 dark:text-gray-300 text-[12px] font-medium cursor-pointer hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] transition-colors animate-fade-in"
+                className={`${city.label === 'Gaziantep' ? 'text-black dark:text-white font-black text-[13px]' : 'text-gray-600 dark:text-gray-300 text-[12px] font-medium'} cursor-pointer hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] transition-colors animate-fade-in`}
               >
                 {city.label}
               </span>
