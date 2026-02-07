@@ -22,19 +22,19 @@ const NotificationsModal: React.FC<NotificationsModalProps> = ({
 }) => {
     const { t } = useLanguage();
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            {/* Blurred Backdrop */}
+        <div className="fixed inset-0 z-[100] flex items-center justify-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-transparent">
+            {/* Blurred Backdrop - Desktop Only */}
             <div
-                className="absolute inset-0 bg-white/30 dark:bg-black/30 backdrop-blur-xl transition-all duration-300"
+                className="hidden sm:block absolute inset-0 bg-white/30 dark:bg-black/30 backdrop-blur-xl transition-all duration-300"
                 onClick={onClose}
             />
 
             {/* Modal Content */}
-            <div className="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden max-h-[80vh] flex flex-col animate-in zoom-in-95 duration-200">
+            <div className="relative w-full h-full sm:h-auto sm:max-h-[80vh] sm:max-w-lg bg-white dark:bg-gray-800 rounded-none sm:rounded-3xl shadow-none sm:shadow-2xl border-0 sm:border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col animate-in slide-in-from-bottom sm:zoom-in-95 duration-200">
 
                 {/* Header */}
-                <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 sticky top-0 z-10">
-                    <h2 className="text-xl font-black text-black dark:text-white tracking-tight">{t('notif.title')}</h2>
+                <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 sticky top-0 z-10 shrink-0">
+                    <h2 className="text-lg sm:text-xl font-black text-black dark:text-white tracking-tight">{t('notif.title')}</h2>
                     <div className="flex items-center gap-4">
                         <button
                             onClick={onMarkAllRead}
