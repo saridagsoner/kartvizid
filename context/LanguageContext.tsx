@@ -206,6 +206,8 @@ const translations: Record<Language, Record<string, string>> = {
         'profile.rejected_msg': 'tarafından gönderilen iletişim isteğini reddettiniz.',
         'profile.undo_reject': 'İSTEĞİ ONAYLA',
         'profile.close': 'KAPAT',
+        'profile.settings': 'Ayarlar',
+        'profile.logout': 'Çıkış Yap',
 
         // Notifications
         'notif.title': 'Tüm Bildirimler',
@@ -540,6 +542,8 @@ const translations: Record<Language, Record<string, string>> = {
         'profile.rejected_msg': 'You rejected the contact request from',
         'profile.undo_reject': 'APPROVE REQUEST',
         'profile.close': 'CLOSE',
+        'profile.settings': 'Settings',
+        'profile.logout': 'Log Out',
 
         // Notifications
         'notif.title': 'All Notifications',

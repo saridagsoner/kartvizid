@@ -155,9 +155,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     const isEmployer = user?.user_metadata?.role === 'employer';
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center sm:p-4 bg-white sm:bg-black/60 sm:backdrop-blur-sm animate-in fade-in duration-200">
             {/* Fixed Height Layout */}
-            <div className="bg-white w-full max-w-2xl rounded-[2rem] shadow-2xl relative flex flex-col overflow-hidden h-[600px] max-h-[90vh]">
+            <div className="bg-white w-full h-full sm:h-[600px] sm:max-h-[90vh] sm:max-w-2xl sm:rounded-[2rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden">
 
                 {/* Custom Delete Confirmation Overlay */}
                 {showDeleteConfirm && (
