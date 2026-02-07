@@ -4,6 +4,8 @@ import NotificationDropdown from './NotificationDropdown';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
+// Rebuild verified
+
 interface MobileBottomNavProps {
     user: any;
     onSearch: (query: string) => void;
