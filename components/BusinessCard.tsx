@@ -12,7 +12,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-[2.5rem] p-3 sm:p-6 border border-gray-200 dark:border-gray-700 card-hover cursor-pointer relative animate-fade-in shadow-sm"
+      className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-[2.5rem] p-3 sm:p-6 border border-gray-200 dark:border-gray-700 card-hover cursor-pointer relative animate-fade-in shadow-md"
     >
       <div className="flex flex-row items-start gap-2.5 sm:gap-8">
         <div className="relative shrink-0">
