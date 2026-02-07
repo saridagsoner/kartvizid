@@ -92,7 +92,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
 
         {/* Action Button - Mobile Minimal - Right Side Centered */}
         <div className="flex sm:hidden items-center self-center shrink-0 ml-1">
-          <button className="bg-gray-50 dark:bg-gray-700 text-[#1f6d78] dark:text-[#2dd4bf] px-2 py-0.5 rounded-full font-bold text-[8px] uppercase tracking-wide leading-none hover:bg-[#1f6d78] hover:text-white transition-colors">
+          <button className="bg-gray-50 dark:bg-gray-700 text-[#1f6d78] dark:text-[#2dd4bf] px-3 py-1.5 rounded-full font-bold text-[9px] uppercase tracking-wider hover:bg-[#1f6d78] hover:text-white transition-colors">
             {t('card.view')}
           </button>
         </div>
