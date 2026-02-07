@@ -1602,25 +1602,29 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Mobile Header (Kartvizidler + Sort) */}
-            <div className="flex sm:hidden items-end justify-between px-2 mt-2 mb-0.5">
-              <h2 className="text-[10px] font-black text-black uppercase tracking-widest">
-                KARTVİZİD LİSTESİ
-              </h2>
+            {/* Mobile Header (Advanced Filters Button + Sort) */}
+            <div className="flex sm:hidden items-center justify-between px-2 mt-2 mb-0.5">
+              <button
+                onClick={() => setActiveFilterModal('advanced')}
+                className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-2 rounded-full font-bold text-[10px] transition-all flex items-center gap-2 shadow-sm text-gray-700 dark:text-gray-200 active:scale-95"
+              >
+                <span>{t('filters.advanced')}</span>
+              </button>
+
               <div className="flex items-center gap-2">
                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">{t('feed.sort')}:</span>
                 <SortDropdown value={sortBy} onChange={setSortBy} />
               </div>
             </div>
 
-            {/* Filters Section - Visible on Mobile if Toggled */}
-            <div className={`${showMobileFilters ? 'block' : 'hidden'} sm:block`}>
+            <div className="hidden sm:block">
               <Filters
                 currentFilters={activeFilters}
                 onChange={handleFilterUpdate}
                 availableProfessions={availableProfessions}
                 availableCities={availableCities}
-                showOnMobile={showMobileFilters}
+                activeModal={activeFilterModal}
+                onActiveModalChange={setActiveFilterModal}
                 mobileSort={
                   <div className="flex items-center gap-2">
                     <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest whitespace-nowrap">{t('feed.sort')}:</span>
