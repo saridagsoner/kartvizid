@@ -24,6 +24,7 @@ import NotificationsModal from './components/NotificationsModal';
 import JobSuccessModal from './components/JobSuccessModal';
 import { BusinessCardSkeleton } from './components/Skeleton';
 import SavedCVsModal from './components/SavedCVsModal';
+import MobileMenuDrawer from './components/MobileMenuDrawer';
 
 // SortDropdown moved to components/SortDropdown.tsx
 
@@ -104,6 +105,7 @@ const App: React.FC = () => {
   const [activeModalRequestId, setActiveModalRequestId] = useState<string | null>(null);
   const [isJobSuccessOpen, setIsJobSuccessOpen] = useState(false);
   const [isSavedCVsOpen, setIsSavedCVsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleAuthOpen = (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => {
     setAuthMode(mode);
@@ -1542,7 +1544,7 @@ const App: React.FC = () => {
       )}
 
 
-      <div className="flex-1 flex justify-center pt-[72px] px-4 md:px-6">
+      <div className="flex-1 flex justify-center pt-[72px] px-2 md:px-6">
         <div className="max-w-[1440px] w-full flex items-start gap-6 pb-12">
           <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[72px] h-fit pb-4">
             <SidebarLeft
@@ -1558,18 +1560,39 @@ const App: React.FC = () => {
 
 
           <section className="flex-1 min-w-0 flex flex-col gap-4">
-            <Filters
-              currentFilters={activeFilters}
-              onChange={handleFilterUpdate}
-              availableProfessions={availableProfessions}
-              availableCities={availableCities}
-              mobileSort={
-                <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest whitespace-nowrap">{t('feed.sort')}:</span>
-                  <SortDropdown value={sortBy} onChange={setSortBy} />
+            {/* Mobile Search Bar (Replaces Filters) */}
+            <div className="block sm:hidden w-full mb-0 -mt-4">
+              <div className="relative">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
                 </div>
-              }
-            />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={t('nav.search_placeholder')}
+                  className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl pl-12 pr-4 py-3 text-sm font-bold outline-none focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all shadow-sm"
+                />
+              </div>
+            </div>
+
+            <div className="hidden sm:block">
+              <Filters
+                currentFilters={activeFilters}
+                onChange={handleFilterUpdate}
+                availableProfessions={availableProfessions}
+                availableCities={availableCities}
+                mobileSort={
+                  <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest whitespace-nowrap">{t('feed.sort')}:</span>
+                    <SortDropdown value={sortBy} onChange={setSortBy} />
+                  </div>
+                }
+              />
+            </div>
 
             <div className="hidden sm:flex bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 px-4 py-2 sm:px-6 sm:py-3 mb-2 flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 shadow-sm transition-colors duration-300">
               <h2 className="text-xs sm:text-sm font-bold text-[#1f6d78] dark:text-white">
@@ -1723,33 +1746,84 @@ const App: React.FC = () => {
       {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
 
       {/* Mobile Bottom Navigation - Only for logged in users */}
-      {
-        user && (
-          <MobileBottomNav
-            user={user}
-            onSearch={(val) => {
-              setSearchQuery(val);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            onCreateCV={() => setIsCVFormOpen(true)}
-            onOpenCompanyProfile={() => setIsCompanyFormOpen(true)}
-            onOpenSettings={() => setIsSettingsOpen(true)}
-            hasCV={!!currentUserCV}
-            userPhotoUrl={user.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
-            notificationCount={generalNotifications.filter(n => !n.is_read).length}
-            notifications={generalNotifications}
-            onNotificationAction={handleRequestAction}
-            onMarkNotificationRead={markNotificationRead}
-            onMarkAllRead={markAllNotificationsRead}
-            onOpenProfile={handleOpenProfile}
-            onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
-            signOut={async () => {
-              await supabase.auth.signOut();
-              // window.location.reload(); 
-            }}
-          />
-        )
-      }
+      {/* Mobile Bottom Navigation - Visible for all users */}
+      <MobileBottomNav
+        user={user}
+        onSearch={(val) => {
+          setSearchQuery(val);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onCreateCV={() => {
+          if (!user) {
+            handleAuthOpen('signin');
+            return;
+          }
+          setIsCVFormOpen(true);
+        }}
+        onOpenCompanyProfile={() => {
+          if (!user) {
+            handleAuthOpen('signin', 'employer');
+            return;
+          }
+          setIsCompanyFormOpen(true);
+        }}
+        onOpenSettings={() => {
+          if (!user) {
+            handleAuthOpen('signin');
+            return;
+          }
+          setIsSettingsOpen(true);
+        }}
+        hasCV={!!currentUserCV}
+        userPhotoUrl={user?.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
+        notificationCount={generalNotifications.filter(n => !n.is_read).length}
+        notifications={generalNotifications}
+        onNotificationAction={handleRequestAction}
+        onMarkNotificationRead={markNotificationRead}
+        onMarkAllRead={markAllNotificationsRead}
+        onOpenProfile={() => {
+          if (!user) {
+            handleAuthOpen('signin');
+            return;
+          }
+          handleOpenProfile();
+        }}
+        onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
+        signOut={async () => {
+          await supabase.auth.signOut();
+          // window.location.reload(); 
+        }}
+        onOpenMenu={() => setIsMobileMenuOpen(true)}
+      />
+
+      <MobileMenuDrawer
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        popularProfessions={professionStats}
+        popularCities={cityStats}
+        weeklyTrends={weeklyRisingStats}
+        jobFinders={jobFinders}
+        platformStats={platformStats}
+        popularCVs={popularCVs}
+        popularCompanies={popularCompanies}
+        onJobFinderClick={(cv) => {
+          handleCVClick(cv);
+          setIsMobileMenuOpen(false);
+        }}
+        onCVClick={(cv) => {
+          handleCVClick(cv);
+          setIsMobileMenuOpen(false);
+        }}
+        onCompanyClick={(company) => {
+          // handle company click
+          setIsMobileMenuOpen(false);
+        }}
+        onFilterApply={(type, value) => {
+          handleFilterUpdate(type, value);
+          setIsMobileMenuOpen(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
       {isJobSuccessOpen && (
         <JobSuccessModal
           onClose={() => setIsJobSuccessOpen(false)}

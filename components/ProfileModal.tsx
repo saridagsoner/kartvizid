@@ -159,20 +159,27 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   );
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl animate-in fade-in duration-300">
-      <div className="bg-white dark:bg-gray-900 w-full max-w-[800px] h-[90vh] rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[120] flex sm:items-center sm:justify-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-black/60 sm:dark:bg-black/60 sm:backdrop-blur-xl animate-in slide-in-from-right sm:fade-in sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
+      <div className="w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-gray-900 border-none sm:border border-gray-100 dark:border-gray-800">
         {/* Header */}
-        <div className="p-5 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
-          <div>
-            <h2 className="text-lg sm:text-2xl font-black text-black dark:text-white tracking-tighter">{t('profile.cv_title')}</h2>
-            <p className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">{t('profile.cv_subtitle')}</p>
-          </div>
+        <div className="p-4 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0 gap-4">
           <button
             onClick={onClose}
-            className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-lg sm:text-2xl text-black dark:text-white hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-90 shadow-sm"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors active:scale-95 sm:order-2"
           >
-            ×
+            <span className="sr-only">Kapat</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="block sm:hidden">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            <span className="hidden sm:block text-2xl leading-none">×</span>
           </button>
+
+          <div className="flex-1 sm:order-1 text-center sm:text-left">
+            <h2 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tighter truncate">{t('profile.cv_title')}</h2>
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{t('profile.cv_subtitle')}</p>
+          </div>
+
+          <div className="w-10 sm:hidden"></div> {/* Spacer for centering title on mobile */}
         </div>
 
         {/* Modal Body */}

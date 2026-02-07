@@ -19,7 +19,7 @@ const Footer = () => {
     };
 
     return (
-        <footer className="bg-[#F0F2F5] dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 pt-8 pb-6 sm:pt-16 sm:pb-8 mt-auto border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
+        <footer className="hidden sm:block bg-[#F0F2F5] dark:bg-gray-900/50 text-gray-800 dark:text-gray-200 pt-8 pb-6 sm:pt-16 sm:pb-8 mt-auto border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
             <div className="max-w-[1440px] mx-auto px-5 sm:px-6">
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 sm:gap-12 mb-8 sm:mb-16">
 

@@ -18,7 +18,7 @@ interface LegalModalProps {
     onClose: () => void;
 }
 
-const LEGAL_CONTENT: Record<LegalSection, { title: string; content: React.ReactNode }> = {
+export const LEGAL_CONTENT: Record<LegalSection, { title: string; content: React.ReactNode }> = {
     general: {
         title: "Genel Koşullar",
         content: (
@@ -213,8 +213,8 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
                                 key={key}
                                 onClick={() => setActiveSection(key as LegalSection)}
                                 className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeSection === key
-                                        ? 'bg-[#1f6d78] text-white shadow-md shadow-[#1f6d78]/20'
-                                        : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+                                    ? 'bg-[#1f6d78] text-white shadow-md shadow-[#1f6d78]/20'
+                                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
                                     }`}
                             >
                                 {data.title}
@@ -255,8 +255,8 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
                                 key={key}
                                 onClick={() => setActiveSection(key as LegalSection)}
                                 className={`px-4 py-2 rounded-full text-xs font-bold transition-all inline-block ${activeSection === key
-                                        ? 'bg-[#1f6d78] text-white'
-                                        : 'bg-white border border-gray-200 text-gray-500'
+                                    ? 'bg-[#1f6d78] text-white'
+                                    : 'bg-white border border-gray-200 text-gray-500'
                                     }`}
                             >
                                 {data.title}

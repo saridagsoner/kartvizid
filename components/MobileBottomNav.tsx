@@ -21,6 +21,7 @@ interface MobileBottomNavProps {
     onOpenProfile?: (userId: string, role?: string) => void;
     onOpenAuth: (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => void;
     signOut: () => void;
+    onOpenMenu?: () => void;
 }
 
 const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
@@ -38,7 +39,8 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     onMarkAllRead,
     onOpenProfile,
     onOpenAuth,
-    signOut
+    signOut,
+    onOpenMenu
 }) => {
     const [activeTab, setActiveTab] = useState<'home' | 'notifications' | 'profile' | 'search' | null>(null);
     const isEmployer = user?.user_metadata?.role === 'employer';
@@ -55,6 +57,9 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     }, []);
 
     const toggleTab = (tab: 'notifications' | 'profile' | 'search') => {
+        if (tab === 'notifications' && !user) {
+            return;
+        }
         if (activeTab === tab) {
             setActiveTab(null);
         } else {
@@ -62,139 +67,93 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         }
     };
 
-    if (!user) return null; // Only show for logged in users? Or maybe show simplified for guests? 
-    // Assuming persistent bottom nav is main UI for logged users. 
-    // For non-logged in, maybe just standard buttons?
-    // Let's stick to logged in focus for now based on context.
+
 
     return (
         <>
             {/* Fixed Bottom Bar */}
             <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 z-[100] sm:hidden pb-safe">
-                <div className="flex items-center justify-around h-16 px-2">
-                    {/* Home Button */}
+                <div className="flex items-center justify-around h-16 px-2 pt-1">
+                    {/* Menu Button (Replaces Home) */}
                     <button
                         onClick={() => {
-                            setActiveTab(null);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            if (onOpenMenu) onOpenMenu();
                         }}
-                        className={`flex flex-col items-center justify-center w-16 h-full space-y-1 ${!activeTab ? 'text-[#1f6d78]' : 'text-gray-400'}`}
+                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 group`}
                     >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={!activeTab ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
-                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                            <polyline points="9 22 9 12 15 12 15 22" />
-                        </svg>
+                        <div className="h-8 group-active:scale-95 transition-transform flex items-center justify-center">
+                            <span className="inline-block transform rotate-[12deg] origin-center text-[#1f6d78] font-black text-2xl leading-none rounded-font tracking-tight">d</span>
+                        </div>
+                        <span className="text-[10px] font-medium text-[#1f6d78] leading-none">
+                            {activeTab === null ? 'Kartvizid' : 'Anasayfa'}
+                        </span>
                     </button>
 
                     {/* Notifications Button */}
-                    <div className="relative">
-                        <button
-                            onClick={() => toggleTab('notifications')}
-                            className={`flex flex-col items-center justify-center w-16 h-full space-y-1 ${activeTab === 'notifications' ? 'text-[#1f6d78]' : 'text-gray-400'}`}
-                        >
+                    <button
+                        onClick={() => toggleTab('notifications')}
+                        className={`relative flex flex-col items-center justify-center w-16 h-full space-y-0.5 ${activeTab === 'notifications' ? 'text-[#1f6d78]' : 'text-gray-400'}`}
+                    >
+                        <div className="h-8 flex items-center justify-center">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={activeTab === 'notifications' ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-                                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                                <path d="M12 22a2.5 2.5 0 0 0 2.5-2.5h-5A2.5 2.5 0 0 0 12 22z" />
+                                <path d="M19 16.5C19 14 17 12 17 8a5 5 0 0 0-10 0c0 4-2 6-2 8.5C5 18 6 19 12 19s7-1 7-2.5z" />
                             </svg>
-                        </button>
+                        </div>
+                        <span className="text-[10px] font-medium leading-none">Bildirim</span>
                         {notificationCount > 0 && (
-                            <span className="absolute top-3 right-3 w-4 h-4 bg-red-500 border-2 border-white rounded-full text-[9px] text-white flex items-center justify-center font-bold">
+                            <span className="absolute top-2 right-4 w-3.5 h-3.5 bg-red-500 border-2 border-white rounded-full text-[8px] text-white flex items-center justify-center font-bold">
                                 {notificationCount}
                             </span>
                         )}
-                    </div>
-
-                    {/* Main Action Button (Create/Edit) */}
-                    <div className="relative -top-5">
-                        <button
-                            onClick={isEmployer && onOpenCompanyProfile ? onOpenCompanyProfile : onCreateCV}
-                            className="w-14 h-14 bg-black text-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-900 transition-transform active:scale-95 border-4 border-white dark:border-gray-900"
-                        >
-                            {isEmployer ? (
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                            ) : hasCV ? (
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                            ) : (
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                            )}
-                        </button>
-                    </div>
-
-                    {/* Search Button */}
-                    <button
-                        onClick={() => toggleTab('search')}
-                        className={`flex flex-col items-center justify-center w-16 h-full space-y-1 ${activeTab === 'search' ? 'text-[#1f6d78]' : 'text-gray-400'}`}
-                    >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={activeTab === 'search' ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
                     </button>
 
+                    {/* Main Action Button (Create/Edit) - Simplified & Inline */}
+                    <button
+                        onClick={isEmployer && onOpenCompanyProfile ? onOpenCompanyProfile : onCreateCV}
+                        className="flex flex-col items-center justify-center w-16 h-full space-y-0.5 text-gray-400 hover:text-[#1f6d78] transition-colors active:scale-95 active:text-[#1f6d78]"
+                    >
+                        <div className="h-8 flex items-center justify-center">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </div>
+                        <span className="text-[10px] font-medium leading-none text-center">Oluştur</span>
+                    </button>
 
                     {/* Profile Button */}
                     <button
-                        onClick={() => toggleTab('profile')}
-                        className={`flex flex-col items-center justify-center w-16 h-full space-y-1 ${activeTab === 'profile' ? 'ring-2 ring-black rounded-full p-1' : ''}`}
+                        onClick={() => {
+                            if (!user) {
+                                onOpenAuth('signin');
+                            } else {
+                                toggleTab('profile');
+                            }
+                        }}
+                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 ${activeTab === 'profile' ? 'text-[#1f6d78]' : 'text-gray-400'}`}
                     >
-                        <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-200">
+                        <div className="h-8 flex flex-col items-center justify-center">
                             {userPhotoUrl ? (
-                                <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
+                                <div className={`w-6 h-6 rounded-full overflow-hidden border ${activeTab === 'profile' ? 'border-[#1f6d78]' : 'border-gray-200'}`}>
+                                    <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
+                                </div>
                             ) : (
-                                <div className="w-full h-full bg-gray-50 flex items-center justify-center text-gray-400">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="12" cy="7" r="4"></circle>
+                                <div className={`${activeTab === 'profile' ? 'text-[#1f6d78]' : 'text-gray-400'}`}>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={activeTab === 'profile' ? "2.5" : "2"} strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="5" y="15" width="14" height="6" rx="3" ry="3"></rect>
+                                        <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
                                     </svg>
                                 </div>
                             )}
                         </div>
+                        <span className={`text-[10px] font-medium leading-none ${activeTab === 'profile' ? 'text-[#1f6d78]' : 'text-gray-400'}`}>Profil</span>
                     </button>
                 </div>
             </div>
 
             {/* Search Overlay - Shows at Top (Covering Header) */}
-            {activeTab === 'search' && (
-                <div className="fixed top-0 left-0 right-0 p-4 pt-4 sm:pt-4 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 z-[110] sm:hidden animate-in slide-in-from-top-2 duration-200 shadow-xl h-20 flex items-center">
-                    <div className="relative w-full flex items-center gap-2">
-                        <div className="relative flex-1">
-                            <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                </svg>
-                            </div>
-                            <input
-                                type="text"
-                                value={query}
-                                autoFocus
-                                onChange={(e) => {
-                                    setQuery(e.target.value);
-                                    if (onSearch) onSearch(e.target.value);
-                                }}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        e.currentTarget.blur();
-                                        if (onSearch) onSearch(query);
-                                    }
-                                }}
-                                placeholder={t('nav.search_placeholder')}
-                                className="w-full bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border border-transparent focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] rounded-full pl-10 pr-4 py-3 text-sm font-medium outline-none transition-all shadow-sm"
-                            />
-                        </div>
-                        <button
-                            onClick={() => {
-                                setActiveTab(null);
-                                setQuery('');
-                                onSearch('');
-                            }}
-                            className="text-sm font-semibold text-gray-500 hover:text-black dark:hover:text-white px-2"
-                        >
-                            {t('mobile.cancel')}
-                        </button>
-                    </div>
-                </div>
-            )}
+
 
             {/* Bottom Sheets Overlay Background*/}
             {(activeTab === 'notifications' || activeTab === 'profile' || activeTab === 'search') && (
