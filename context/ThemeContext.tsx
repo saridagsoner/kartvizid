@@ -18,14 +18,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const [theme, setTheme] = useState<Theme>('light');
 
     useEffect(() => {
-        // Check localStorage or system preference
+        // Check localStorage - DEFAULT TO LIGHT if no storage
         const savedTheme = localStorage.getItem('theme') as Theme;
         if (savedTheme) {
             setTheme(savedTheme);
             document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            setTheme('dark');
-            document.documentElement.classList.add('dark');
+        } else {
+            // Default to light mode (ignore system preference)
+            setTheme('light');
+            document.documentElement.classList.remove('dark');
         }
     }, []);
 
