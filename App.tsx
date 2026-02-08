@@ -1586,9 +1586,9 @@ const App: React.FC = () => {
                 {/* Filter Toggle Button */}
                 <button
                   onClick={() => setActiveFilterModal('advanced')}
-                  className="flex items-center justify-center w-[46px] h-[46px] text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors active:scale-95"
+                  className="flex items-center justify-center w-[46px] h-[46px] text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-colors active:scale-95"
                 >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="4" y1="21" x2="4" y2="14"></line>
                     <line x1="4" y1="10" x2="4" y2="3"></line>
                     <line x1="12" y1="21" x2="12" y2="12"></line>
