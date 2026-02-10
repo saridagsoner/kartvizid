@@ -1,0 +1,16 @@
+{
+    "name": "Kartvizid",
+    "short_name": "Kartvizid",
+    "description": "Dijital CV & Doğru Eşleşme",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "icons": [
+        {
+            "src": "/favicon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

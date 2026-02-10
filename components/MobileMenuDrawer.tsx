@@ -322,11 +322,9 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             <div className={`fixed top-0 bottom-0 left-0 w-[80%] max-w-[300px] bg-white dark:bg-gray-900 z-[160] shadow-2xl animate-in slide-in-from-left duration-300 flex flex-col ${activeCategory ? 'hidden' : ''}`}>
                 {/* Header - Brand */}
                 <div className="h-24 flex flex-col justify-center px-6 border-b border-gray-100 dark:border-gray-800 shrink-0 bg-white dark:bg-gray-900">
-                    <div className="flex items-center text-[#2b2b2b] dark:text-white text-2xl font-bold font-comfortaa font-extra-thick leading-none tracking-[-0.03em]">
-                        <span>Kar</span>
-                        <span className="ml-[3px]">t</span>
-                        <span className="ml-[2px]">vizi</span>
-                        <span className="inline-block ml-[1px] transform rotate-[12deg] origin-center text-[#1f6d78] font-black">d</span>
+                    <div className="flex items-center text-[#2b2b2b] dark:text-white text-2xl font-bold rounded-font tracking-tight leading-none">
+                        <span>Kartvizi</span>
+                        <span className="inline-block ml-1 transform rotate-[12deg] origin-center text-[#1f6d78] font-black">d</span>
                     </div>
                     <span className="text-[11px] text-gray-400 dark:text-gray-500 font-bold tracking-tight mt-0.5 lowercase pl-1">dijital cv & doğru eşleşme</span>
                 </div>

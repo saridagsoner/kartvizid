@@ -26,11 +26,9 @@ const Footer = () => {
                     {/* Brand Column */}
                     <div className="space-y-4 sm:space-y-6 col-span-2 lg:col-span-1">
                         <div className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
-                            <div className="flex items-center text-[#2b2b2b] dark:text-white text-2xl sm:text-[32px] font-bold font-comfortaa font-extra-thick leading-none tracking-[-0.03em]">
-                                <span>Kar</span>
-                                <span className="ml-[3px]">t</span>
-                                <span className="ml-[2px]">vizi</span>
-                                <span className="inline-block ml-[1px] transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
+                            <div className="flex items-center text-[#2b2b2b] dark:text-white text-2xl sm:text-[32px] font-bold rounded-font tracking-tight leading-none">
+                                <span>Kartvizi</span>
+                                <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                             </div>
                             <span className="text-[10px] sm:text-[11px] font-bold text-gray-400 tracking-tight mt-0.5 leading-none whitespace-nowrap pl-1">
                                 dijital cv & doğru eşleşme
