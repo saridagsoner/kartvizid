@@ -1,0 +1,21 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: White Rounded Square -->
+  <rect width="512" height="512" rx="120" fill="white"/>
+  
+  <!-- Content: 'd' Shape matched to reference -->
+  <!-- Color: #1f6d78 -->
+  <!-- Rotation: 12 degrees -->
+  <!-- Stroke Width: 55px (Calibrate to match the visual weight of the uploaded image) -->
+  
+  <g transform="translate(256, 256) rotate(12) scale(1.18) translate(-256, -256)">
+      <!-- The Bowl -->
+      <!-- Center (215, 280), Radius 85 -->
+      <!-- Stroke 55 -->
+      <circle cx="215" cy="280" r="85" stroke="#1f6d78" stroke-width="55" fill="none" />
+      
+      <!-- The Stem -->
+      <!-- Bowl outer right = 215 + 85 + (55/2) = 327.5 -->
+      <!-- Stem width 55. Center x = 327.5 - 27.5 = 300 -->
+      <rect x="272.5" y="95" width="55" height="265" rx="27.5" fill="#1f6d78" />
+  </g>
+</svg>

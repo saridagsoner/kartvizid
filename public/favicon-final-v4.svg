@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: White Rounded Square -->
+  <rect width="512" height="512" rx="120" fill="white"/>
+  
+  <!-- Content: Custom 'd' with Long Stem and Smaller Bowl -->
+  <!-- Color: #1f6d78 -->
+  <!-- Rotation: 12 degrees -->
+  <!-- Stroke: 54px -->
+  
+  <g transform="translate(256, 256) rotate(12) scale(1.1) translate(-256, -256)">
+      <!-- The Bowl -->
+      <!-- Center (210, 290) - Moved down slightly -->
+      <!-- Radius 78 (Smaller than before) -->
+      <!-- Stroke 54 -->
+      <circle cx="210" cy="290" r="78" stroke="#1f6d78" stroke-width="54" fill="none" />
+      
+      <!-- The Stem -->
+      <!-- Top y=80 (High up for long stem)
+           Height 295 (Extends slightly below bowl for "çizgi hafif çıkmış" look)
+           Bottom y=375
+      -->
+      <rect x="261" y="80" width="54" height="295" rx="27" fill="#1f6d78" />
+  </g>
+</svg>

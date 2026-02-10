@@ -1,0 +1,19 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: White Rounded Square -->
+  <rect width="512" height="512" rx="120" fill="white"/>
+  
+  <!-- Content: Single Rotated 'd' -->
+  <!-- Using standard fonts that resemble the logo -->
+  <text 
+    x="50%" 
+    y="50%" 
+    dominant-baseline="central" 
+    text-anchor="middle" 
+    fill="#1f6d78" 
+    font-family="Quicksand, Verdana, sans-serif" 
+    font-weight="900" 
+    font-size="400" 
+    transform="rotate(12, 256, 256)"
+    dy="0"
+  >d</text>
+</svg>

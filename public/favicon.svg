@@ -1,0 +1,66 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- 1. Background: White Rounded Square -->
+  <rect width="512" height="512" rx="120" fill="white"/>
+  
+  <!-- 2. The 'd' Logo: Path Based (No Fonts) -->
+  <!-- Color: #1f6d78 (Teal from Navbar) -->
+  <!-- Transformation: Rotated 12 degrees around center -->
+  
+  <g transform="rotate(12, 256, 256)">
+    <!-- The Bowl: A circle -->
+    <!-- Center (220, 300), Radius 85, Stroke Width 48 -->
+    <path 
+      d="M 305 295 A 85 85 0 1 1 135 295 A 85 85 0 1 1 305 295 Z" 
+      fill="none" 
+      stroke="#1f6d78" 
+      stroke-width="48"
+    />
+    
+    <!-- The Stem: A rounded line -->
+    <!-- Starts at x=305, y=100 goes down to y=350 -->
+    <!-- We need to align it seamlessly with the bowl right edge -->
+    <!-- The bowl right edge is at x = 220 + 85 + (48/2) = 329 approx? -->
+    <!-- Let's refine geometry for Quicksand style: The stem Tangentially touches the bowl. -->
+    
+    <!-- Quicksand 'd' Geometry:
+         - Bowl is a circle.
+         - Stem connects to the right side of the bowl.
+    -->
+    
+    <!-- Re-drawing with a single unified path for perfection -->
+    <path fill="#1f6d78" d="
+      M 345 120 
+      L 345 350 
+      A 24 24 0 0 1 297 350 
+      L 297 305 
+      A 95 95 0 1 0 130 305 
+      A 95 95 0 0 0 297 305 
+      L 297 120 
+      A 24 24 0 0 1 345 120 
+      Z
+      M 297 305
+      A 47 47 0 1 1 203 305
+      A 47 47 0 0 1 297 305
+      Z
+    "/>
+    
+    <!-- Wait, the above path is a bit complex to guess blindly.
+         Let's stick to primitive shapes which are easier to control.
+    -->
+  </g>
+  
+  <g transform="rotate(12, 256, 256)">
+      <!-- Bowl (Hollow Circle) -->
+      <!-- Outer Radius ~100, Inner Radius ~50 -->
+      <!-- Center x=200, y=280 -->
+      <circle cx="200" cy="280" r="75" stroke="#1f6d78" stroke-width="50" fill="none" />
+      
+      <!-- Stem (Vertical Line) -->
+      <!-- x position: Needs to touch the outer right of the bowl circle -->
+      <!-- Bowl center 200 + radius 75 + half-stroke 25 = 300 -->
+      <!-- So Stem starts at x=275 (center of stem line) if stem width is 50 -->
+      
+      <!-- Stem Rect -->
+      <rect x="250" y="100" width="50" height="260" rx="25" fill="#1f6d78" />
+  </g>
+</svg>
