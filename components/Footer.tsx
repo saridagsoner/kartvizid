@@ -26,7 +26,7 @@ const Footer = () => {
                     {/* Brand Column */}
                     <div className="space-y-4 sm:space-y-6 col-span-2 lg:col-span-1">
                         <div className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
-                            <div className="flex items-center text-[#2b2b2b] dark:text-white text-2xl sm:text-[32px] font-bold font-comfortaa font-extra-thick leading-none">
+                            <div className="flex items-center text-[#2b2b2b] dark:text-white text-2xl sm:text-[32px] font-bold font-comfortaa font-extra-thick leading-none tracking-[0.02em]">
                                 <span>Kartvizi</span>
                                 <span className="inline-block ml-[1px] transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                             </div>
