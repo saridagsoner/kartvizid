@@ -69,8 +69,10 @@ const Navbar: React.FC<NavbarProps & {
             {/* Left Section: Logo */}
             <div className="lg:w-[290px] shrink-0 flex items-center">
               <div className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
-                <div className="flex items-center text-[#2b2b2b] dark:text-white text-[28px] md:text-[36px] font-bold font-comfortaa font-extra-thick leading-none tracking-[0.02em]">
-                  <span>Kartvizi</span>
+                <div className="flex items-center text-[#2b2b2b] dark:text-white text-[28px] md:text-[36px] font-bold font-comfortaa font-extra-thick leading-none tracking-[-0.03em]">
+                  <span>Kar</span>
+                  <span className="ml-[3px]">t</span>
+                  <span className="ml-[2px]">vizi</span>
                   <span className="inline-block ml-[1px] transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                 </div>
                 <span className="block text-[10px] sm:text-[12px] font-bold text-gray-400 tracking-tight mt-0.5 leading-none whitespace-nowrap pl-1">
