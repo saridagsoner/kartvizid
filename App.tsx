@@ -26,6 +26,7 @@ import { BusinessCardSkeleton } from './components/Skeleton';
 import SavedCVsModal from './components/SavedCVsModal';
 import MobileMenuDrawer from './components/MobileMenuDrawer';
 import AdvancedFilterModal from './components/AdvancedFilterModal';
+import ResetPasswordModal from './components/ResetPasswordModal';
 
 // SortDropdown moved to components/SortDropdown.tsx
 
@@ -106,14 +107,27 @@ const App: React.FC = () => {
   const [activeModalRequestId, setActiveModalRequestId] = useState<string | null>(null);
   const [isJobSuccessOpen, setIsJobSuccessOpen] = useState(false);
   const [isSavedCVsOpen, setIsSavedCVsOpen] = useState(false);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFilterModal, setActiveFilterModal] = useState<'professions' | 'cities' | 'experience' | 'advanced' | null>(null);
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
+
+  // Listen for Supabase PASSWORD_RECOVERY event
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsResetPasswordOpen(true);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleAuthOpen = (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => {
     setAuthMode(mode);
     setAuthRole(role);
     setIsAuthModalOpen(true);
   };
+
 
   const handleOpenSavedCVs = () => {
     setIsSavedCVsOpen(true);
@@ -1543,6 +1557,10 @@ const App: React.FC = () => {
           onMarkAllRead={markAllNotificationsRead}
           onOpenProfile={handleOpenProfile}
         />
+      )}
+
+      {isResetPasswordOpen && (
+        <ResetPasswordModal onClose={() => setIsResetPasswordOpen(false)} />
       )}
 
 
