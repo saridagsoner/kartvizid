@@ -1622,7 +1622,7 @@ const App: React.FC = () => {
             </div>
 
             {/* Mobile Header (Kartvizidler + Sort) */}
-            <div className="flex sm:hidden items-end justify-between px-2 mt-2 mb-0.5">
+            <div className="flex sm:hidden items-end justify-between px-2 mt-0.5 mb-0">
               <h2 className="text-[10px] font-black text-black uppercase tracking-widest">
                 KARTVİZİD LİSTESİ
               </h2>
@@ -1838,6 +1838,7 @@ const App: React.FC = () => {
             handleAuthOpen('signin', 'employer');
             return;
           }
+          fetchCompany();
           setIsCompanyFormOpen(true);
         }}
         onOpenSettings={() => {
@@ -1849,8 +1850,11 @@ const App: React.FC = () => {
         }}
         hasCV={!!currentUserCV}
         userPhotoUrl={user?.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
-        notificationCount={generalNotifications.filter(n => !n.is_read).length}
-        notifications={generalNotifications}
+        notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
+        notifications={[
+          ...receivedRequests,
+          ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
+        ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
         onNotificationAction={handleRequestAction}
         onMarkNotificationRead={markNotificationRead}
         onMarkAllRead={markAllNotificationsRead}

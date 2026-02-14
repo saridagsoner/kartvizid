@@ -163,21 +163,17 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                 />
             )}
 
-            {/* Notifications Sheet */}
+            {/* Notifications Sheet - Full Screen */}
             {activeTab === 'notifications' && (
-                <div className="fixed bottom-20 left-4 right-4 z-[95] sm:hidden animate-in slide-in-from-bottom-4 duration-300">
-                    <NotificationDropdown
-                        onClose={() => setActiveTab(null)}
-                        notifications={notifications}
-                        onAction={onNotificationAction || (() => { })}
-                        onMarkRead={onMarkNotificationRead}
-                        onMarkAllRead={onMarkAllRead}
-                        onOpenProfile={onOpenProfile}
-                        // We will need to update NotificationDropdown to accept a 'mobile' prop to style it as a sheet/block
-                        // For now, let's wrap it in a container that constraints its width/height
-                        mobile={true}
-                    />
-                </div>
+                <NotificationDropdown
+                    onClose={() => setActiveTab(null)}
+                    notifications={notifications}
+                    onAction={onNotificationAction || (() => { })}
+                    onMarkRead={onMarkNotificationRead}
+                    onMarkAllRead={onMarkAllRead}
+                    onOpenProfile={onOpenProfile}
+                    mobile={true}
+                />
             )}
         </>
     );

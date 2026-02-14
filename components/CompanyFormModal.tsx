@@ -103,11 +103,11 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
     );
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl">
-            <div className="bg-white dark:bg-gray-900 w-full max-w-[800px] h-[90vh] rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-xl">
+            <div className="bg-white dark:bg-gray-900 w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
 
                 {/* Header */}
-                <div className="p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
+                <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
                     <div>
                         <h2 className="text-2xl font-black text-black dark:text-white tracking-tighter">{t('company.create_title')}</h2>
                         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">{t('company.create_subtitle')}</p>
@@ -121,7 +121,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                 </div>
 
                 {/* Form Body */}
-                <div className="flex-1 overflow-y-auto p-10 custom-scrollbar space-y-12 bg-white dark:bg-gray-900">
+                <div className="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar space-y-8 sm:space-y-12 bg-white dark:bg-gray-900">
 
                     {/* Bölüm 1: Temel Bilgiler */}
                     <section>
@@ -280,7 +280,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-5 sticky bottom-0 z-10 shrink-0">
+                <div className="p-6 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-5 sticky bottom-0 z-10 shrink-0">
                     <button
                         onClick={onClose}
                         className="flex-1 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-black dark:text-white py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm"

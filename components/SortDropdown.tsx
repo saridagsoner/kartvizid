@@ -34,7 +34,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ value, onChange }) => {
         <div className="relative" ref={containerRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center gap-3 bg-white dark:bg-gray-800 border ${isOpen ? 'border-[#1f6d78] shadow-md' : 'border-gray-200 dark:border-gray-700'} rounded-full px-3 py-1.5 sm:px-5 sm:py-2 text-[10px] sm:text-xs font-bold text-gray-800 dark:text-white transition-all hover:border-[#1f6d78] dark:hover:border-[#1f6d78] active:scale-95`}
+                className={`flex items-center gap-2 bg-white dark:bg-gray-800 border ${isOpen ? 'border-[#1f6d78] shadow-md' : 'border-gray-200 dark:border-gray-700'} rounded-full px-2.5 py-1 sm:px-5 sm:py-2 text-[10px] sm:text-xs font-bold text-gray-800 dark:text-white transition-all hover:border-[#1f6d78] dark:hover:border-[#1f6d78] active:scale-95`}
             >
                 <span>{activeLabel}</span>
                 <svg
