@@ -1716,7 +1716,7 @@ const App: React.FC = () => {
 
             {/* Pagination Controls */}
             {filteredCVs.length > ITEMS_PER_PAGE && (
-              <div className="mt-6 flex justify-center items-center gap-4">
+              <div className="mt-6 flex justify-center items-center gap-4 pb-24 sm:pb-0">
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
