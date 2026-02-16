@@ -72,7 +72,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         <>
             {/* Fixed Bottom Bar */}
             <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 z-[100] sm:hidden pb-safe">
-                <div className="flex items-center justify-around h-16 px-2 pt-1">
+                <div className="flex items-center justify-around h-16 px-2 pb-2">
                     {/* Menu Button (Replaces Home) */}
                     <button
                         onClick={() => {
@@ -94,7 +94,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         className={`relative flex flex-col items-center justify-center w-16 h-full space-y-0.5 ${activeTab === 'notifications' ? 'text-[#1f6d78]' : 'text-gray-400'}`}
                     >
                         <div className="h-8 flex items-center justify-center text-black dark:text-white">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
                                 <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                             </svg>
@@ -113,7 +113,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         className="flex flex-col items-center justify-center w-16 h-full space-y-0.5 text-gray-400 hover:text-[#1f6d78] transition-colors active:scale-95 active:text-[#1f6d78]"
                     >
                         <div className="h-8 flex items-center justify-center text-black dark:text-white">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
@@ -140,7 +140,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                 </div>
                             ) : (
                                 <div className="text-black dark:text-white">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                         <circle cx="12" cy="7" r="4" />
                                     </svg>
