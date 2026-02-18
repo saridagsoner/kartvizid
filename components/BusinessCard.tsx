@@ -32,10 +32,10 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
         </div>
 
         {/* Info Section */}
-        <div className="flex-1 min-w-0 pt-0 sm:pt-1">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-4 mb-0.5 sm:mb-1.5">
+        <div className="flex-1 min-w-0 pt-0 sm:pt-1 flex flex-col gap-0 sm:gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tight leading-normal sm:leading-normal line-clamp-1 py-0.5">
+              <h3 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tight leading-normal sm:leading-normal line-clamp-1">
                 {cv.name}
               </h3>
               {/* Mobile Only Icons Inline - REMOVED per request */}
@@ -61,10 +61,10 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
             </div>
           </div>
 
-          <p className="text-xs sm:text-base text-gray-500 dark:text-gray-400 font-bold mb-1.5 sm:mb-4 tracking-tight line-clamp-1">{cv.profession}</p>
+          <p className="text-sm sm:text-base text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1">{cv.profession}</p>
 
           {/* Details Section with Simple Icons - Restored on Mobile */}
-          <div className="flex flex-nowrap items-center gap-x-2 sm:gap-x-6 gap-y-1 text-[10px] sm:text-[13px] text-gray-500 dark:text-gray-400 font-bold overflow-hidden">
+          <div className="mt-1 sm:mt-0 flex flex-nowrap items-center gap-x-2 sm:gap-x-6 gap-y-1 text-[10px] sm:text-[13px] text-gray-500 dark:text-gray-400 font-bold overflow-hidden">
             <span className="flex items-center gap-1.5 whitespace-nowrap shrink-0">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 dark:text-gray-400 sm:w-[14px] sm:h-[14px]">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>

@@ -29,6 +29,7 @@ import AdvancedFilterModal from './components/AdvancedFilterModal';
 import ResetPasswordModal from './components/ResetPasswordModal';
 
 // SortDropdown moved to components/SortDropdown.tsx
+import CVPromoModal from './components/CVPromoModal';
 
 const getFriendlyErrorMessage = (error: any): string => {
   const message = error.message || error.toString();
@@ -111,6 +112,7 @@ const App: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFilterModal, setActiveFilterModal] = useState<'professions' | 'cities' | 'experience' | 'advanced' | null>(null);
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
+  const [isCVPromoOpen, setIsCVPromoOpen] = useState(false);
 
   // Listen for Supabase PASSWORD_RECOVERY event
   useEffect(() => {
@@ -1862,6 +1864,10 @@ const App: React.FC = () => {
             handleAuthOpen('signin');
             return;
           }
+          if (uid === user.id && !currentUserCV) {
+            setIsCVPromoOpen(true);
+            return;
+          }
           handleOpenProfile(uid, role);
         }}
         onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
@@ -1924,6 +1930,15 @@ const App: React.FC = () => {
           onOpenCV={(cvId) => {
             setIsSavedCVsOpen(false); // Close list
             handleViewSavedCV(cvId);
+          }}
+        />
+      )}
+      {isCVPromoOpen && (
+        <CVPromoModal
+          onClose={() => setIsCVPromoOpen(false)}
+          onCreateCV={() => {
+            setIsCVPromoOpen(false);
+            setIsCVFormOpen(true);
           }}
         />
       )}

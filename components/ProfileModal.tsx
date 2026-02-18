@@ -552,7 +552,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                     }
                     onRequestAccess?.();
                   }}
-                  className={`flex-[2] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest transition-all shadow-md sm:shadow-xl active:scale-[0.98] group ${isPending
+                  className={`flex-[2] py-4 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest transition-all shadow-md sm:shadow-xl active:scale-[0.98] group ${isPending
                     ? 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-600 hover:shadow-none'
                     : 'bg-[#1f6d78] text-white hover:bg-[#155e68]'
                     }`}
@@ -567,7 +567,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
               ) : (
                 <button
                   disabled
-                  className="flex-[2] bg-[#1f6d78] text-white py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest shadow-md sm:shadow-xl cursor-default"
+                  className="flex-[2] bg-[#1f6d78] text-white py-4 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest shadow-md sm:shadow-xl cursor-default"
                 >
                   {t('profile.contact_open')}
                 </button>
