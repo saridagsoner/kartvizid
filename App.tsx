@@ -1622,9 +1622,9 @@ const App: React.FC = () => {
             </div>
 
             {/* Mobile Header (Kartvizidler + Sort) */}
-            <div className="flex sm:hidden items-center justify-between px-2 mt-0.5 mb-0">
+            <div className="flex sm:hidden items-center justify-between px-2 mt-2 mb-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-xs font-bold text-black tracking-widest">
+                <h2 className="text-xs font-bold text-[#1f6d78] tracking-widest">
                   Kartvizid Listesi
                 </h2>
                 <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
