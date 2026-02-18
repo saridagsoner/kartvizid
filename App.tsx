@@ -1599,38 +1599,35 @@ const App: React.FC = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t('nav.search_placeholder')}
-                    className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl pl-12 pr-4 py-3 text-sm font-medium outline-none focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all shadow-sm"
+                    className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl pl-12 pr-4 py-3 text-base sm:text-sm font-medium outline-none focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all shadow-sm"
                   />
                 </div>
 
-                {/* Filter Toggle Button */}
-                <button
-                  onClick={() => setActiveFilterModal('advanced')}
-                  className="flex items-center justify-center w-[46px] h-[46px] text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-colors active:scale-95"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="4" y1="21" x2="4" y2="14"></line>
-                    <line x1="4" y1="10" x2="4" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12" y2="3"></line>
-                    <line x1="20" y1="21" x2="20" y2="16"></line>
-                    <line x1="20" y1="12" x2="20" y2="3"></line>
-                    <line x1="1" y1="14" x2="7" y2="14"></line>
-                    <line x1="9" y1="8" x2="15" y2="8"></line>
-                    <line x1="17" y1="16" x2="23" y2="16"></line>
-                  </svg>
-                </button>
+
               </div>
             </div>
 
             {/* Mobile Header (Kartvizidler + Sort) */}
-            <div className="flex sm:hidden items-center justify-between px-2 mt-2 mb-1">
+            <div className="flex sm:hidden items-center justify-between px-2 mt-4 mb-3">
               <div className="flex items-center gap-2">
                 <h2 className="text-xs font-bold text-[#1f6d78] tracking-widest">
                   Kartvizid Listesi
                 </h2>
                 <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
               </div>
+
+              <button
+                onClick={() => setActiveFilterModal('advanced')}
+                className="flex items-center gap-1 text-[#1f6d78] dark:text-[#2dd4bf] hover:opacity-80 transition-opacity active:scale-95"
+              >
+                <span className="text-[10px] font-bold tracking-widest">Filtre</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="4" y1="8" x2="20" y2="8" />
+                  <circle cx="16" cy="8" r="2" fill="white" className="dark:fill-gray-900" />
+                  <line x1="4" y1="16" x2="20" y2="16" />
+                  <circle cx="8" cy="16" r="2" fill="white" className="dark:fill-gray-900" />
+                </svg>
+              </button>
             </div>
 
             <div className="hidden sm:block">
