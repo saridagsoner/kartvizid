@@ -1581,7 +1581,7 @@ const App: React.FC = () => {
 
 
 
-          <section className="flex-1 min-w-0 flex flex-col gap-4">
+          <section className="flex-1 min-w-0 flex flex-col gap-2 sm:gap-4">
             {/* Mobile Search Bar + Filter Toggle */}
             <div className="block sm:hidden w-full mb-0 -mt-4">
               <div className="flex items-center gap-2">
@@ -1622,13 +1622,12 @@ const App: React.FC = () => {
             </div>
 
             {/* Mobile Header (Kartvizidler + Sort) */}
-            <div className="flex sm:hidden items-end justify-between px-2 mt-0.5 mb-0">
-              <h2 className="text-[10px] font-black text-black uppercase tracking-widest">
-                KARTVİZİD LİSTESİ
-              </h2>
+            <div className="flex sm:hidden items-center justify-between px-2 mt-0.5 mb-0">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">{t('feed.sort')}:</span>
-                <SortDropdown value={sortBy} onChange={setSortBy} />
+                <h2 className="text-xs font-bold text-black tracking-widest">
+                  Kartvizid Listesi
+                </h2>
+                <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
               </div>
             </div>
 

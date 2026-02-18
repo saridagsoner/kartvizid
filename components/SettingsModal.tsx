@@ -22,6 +22,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     const [newEmail, setNewEmail] = useState('');
     const [loading, setLoading] = useState(false);
 
+
     // ... (notification state code unchanged) ...
     // Notification State
     const [emailNotif, setEmailNotif] = useState(true);
@@ -91,6 +92,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
             setLoading(false);
         }
     };
+
+
 
     const toggleNotification = async (type: 'email' | 'marketing') => {
         if (!user) return;
@@ -403,7 +406,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                         <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Mevcut E-posta</p>
                                         <p className="text-sm font-bold text-gray-800">{user?.email}</p>
 
-                                        {/* Pending Email Warning */}
+
                                         {user?.new_email && (
                                             <div className="mt-3 bg-yellow-50 border border-yellow-100 p-3 rounded-lg flex items-start gap-3">
                                                 <div className="text-yellow-600 text-lg">⚠️</div>

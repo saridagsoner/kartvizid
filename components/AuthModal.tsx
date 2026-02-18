@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
-
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -18,9 +17,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
+
     const [error, setError] = useState<string | null>(null);
     const [isEmployer, setIsEmployer] = useState(initialRole === 'employer');
-
     const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
@@ -36,8 +35,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
             }
         }
     }, [isOpen, initialMode, initialRole]);
-
-    if (!isOpen) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -65,11 +62,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 });
                 if (error) throw error;
 
-                // If the trigger doesn't handle it, we might want to manually update.
-                // However, doing it here might be racy if the user isn't fully created/confirmed.
-                // For now, we rely on metadata. 
-
-                // Show success modal instead of alert
+                // Always show success message for email verification
                 setShowSuccess(true);
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
@@ -92,6 +85,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
             setLoading(false);
         }
     };
+
+    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-black/50 sm:backdrop-blur-sm animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:fade-in duration-200">
