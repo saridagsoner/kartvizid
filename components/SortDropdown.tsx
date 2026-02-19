@@ -50,7 +50,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ value, onChange, minimal = 
             </button>
 
             {isOpen && (
-                <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 py-2 z-[60] animate-in slide-in-from-top-2 duration-200 overflow-hidden">
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-[60] animate-in slide-in-from-top-2 duration-200 overflow-hidden">
                     {options.map((opt) => (
                         <button
                             key={opt.id}

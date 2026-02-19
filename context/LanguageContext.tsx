@@ -22,7 +22,7 @@ const translations: Record<Language, Record<string, string>> = {
         'settings.account': 'Hesap',
         'settings.security': 'Güvenlik',
         'settings.notifications': 'Bildirimler',
-        'nav.search_placeholder': 'Meslek, isim veya şehir ara...',
+        'nav.search_placeholder': 'Aradığın yeteneği, hayalindeki işi bul...',
         'nav.employer_profile': 'İş Veren Profili',
         'nav.create_cv': 'CV Oluştur',
         'nav.fix_cv': 'CV\'yi Düzelt',

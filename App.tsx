@@ -55,6 +55,7 @@ const App: React.FC = () => {
   const { t } = useLanguage();
   const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [selectedCV, setSelectedCV] = useState<CV | null>(null);
   const [isCVFormOpen, setIsCVFormOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -1588,8 +1589,9 @@ const App: React.FC = () => {
             <div className="block sm:hidden w-full mb-0 -mt-4">
               <div className="flex items-center gap-2">
                 <div className="relative flex-1">
-                  <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${isSearchFocused ? 'text-[#1f6d78] dark:text-[#2dd4bf]' : 'text-gray-300'
+                    }`}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="11" cy="11" r="8"></circle>
                       <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
@@ -1598,8 +1600,10 @@ const App: React.FC = () => {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={t('nav.search_placeholder')}
-                    className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl pl-12 pr-4 py-3 text-base sm:text-sm font-medium outline-none focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all shadow-sm"
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
+                    placeholder={isSearchFocused ? 'Meslek, Şehir, İsim veya Unvan Ara' : t('nav.search_placeholder')}
+                    className={`w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full pl-11 pr-4 py-2 sm:py-3 h-10 sm:h-11 font-light tracking-tighter outline-none focus:outline-none focus:border-gray-300 dark:focus:border-gray-600 focus:ring-0 transition-all placeholder:text-gray-400/80 ${isSearchFocused ? 'text-[15px]' : 'text-base sm:text-sm'}`}
                   />
                 </div>
 
@@ -1608,9 +1612,9 @@ const App: React.FC = () => {
             </div>
 
             {/* Mobile Header (Kartvizidler + Sort) */}
-            <div className="flex sm:hidden items-center justify-between px-2 mt-4 mb-3">
+            <div className="flex sm:hidden items-center justify-between px-2 mt-1.5 mb-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-xs font-bold text-[#1f6d78] tracking-widest">
+                <h2 className="text-xs font-bold text-[#1f6d78] tracking-wide ml-1">
                   Kartvizid Listesi
                 </h2>
                 <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
@@ -1618,10 +1622,10 @@ const App: React.FC = () => {
 
               <button
                 onClick={() => setActiveFilterModal('advanced')}
-                className="flex items-center gap-1 text-[#1f6d78] dark:text-[#2dd4bf] hover:opacity-80 transition-opacity active:scale-95"
+                className="flex items-center gap-1.5 hover:opacity-80 transition-opacity active:scale-95 mr-1"
               >
-                <span className="text-[10px] font-bold tracking-widest">Filtre</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <span className="text-xs font-bold tracking-wide text-[#1f6d78] dark:text-[#2dd4bf]">Filtre</span>
+                <svg className="text-gray-400 dark:text-gray-500" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="4" y1="8" x2="20" y2="8" />
                   <circle cx="16" cy="8" r="2" fill="white" className="dark:fill-gray-900" />
                   <line x1="4" y1="16" x2="20" y2="16" />
