@@ -1589,7 +1589,7 @@ const App: React.FC = () => {
             <div className="block sm:hidden w-full mb-0 -mt-4">
               <div className="flex items-center gap-2">
                 <div className="relative flex-1">
-                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${isSearchFocused ? 'text-[#1f6d78] dark:text-[#2dd4bf]' : 'text-gray-300'
+                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${isSearchFocused ? 'text-[#1f6d78] dark:text-[#2dd4bf]' : 'text-gray-500'
                     }`}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <circle cx="11" cy="11" r="8"></circle>
@@ -1603,7 +1603,7 @@ const App: React.FC = () => {
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
                     placeholder={isSearchFocused ? 'Meslek, Şehir, İsim veya Unvan Ara' : t('nav.search_placeholder')}
-                    className={`w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[11px] pl-11 pr-4 py-3 h-12 sm:h-12 font-light tracking-tighter outline-none appearance-none focus:outline-none focus:border-gray-300 dark:focus:border-gray-600 focus:ring-0 transition-all placeholder:text-gray-400/80 ${isSearchFocused ? 'text-[15px]' : 'text-base sm:text-sm'}`}
+                    className={`w-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-[15px] pl-11 pr-4 py-2.5 h-11 sm:h-11 font-light tracking-tighter outline-none appearance-none focus:outline-none focus:border-gray-300 dark:focus:border-gray-600 focus:ring-0 transition-all placeholder:text-gray-400/80 ${isSearchFocused ? 'text-[14px]' : 'text-[14px] sm:text-sm'}`}
                   />
                 </div>
 
