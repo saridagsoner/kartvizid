@@ -71,7 +71,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     return (
         <>
             {/* Fixed Bottom Bar */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 rounded-t-2xl z-[100] sm:hidden pb-safe">
+            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg z-[100] sm:hidden pb-safe">
                 <div className="flex items-center justify-around h-16 px-2 pb-2">
                     {/* Menu Button (Replaces Home) */}
                     <button

@@ -1603,7 +1603,7 @@ const App: React.FC = () => {
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
                     placeholder={isSearchFocused ? 'Meslek, Şehir, İsim veya Unvan Ara' : t('nav.search_placeholder')}
-                    className={`w-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-[15px] pl-11 pr-4 py-2.5 h-11 sm:h-11 font-light tracking-tighter outline-none appearance-none focus:outline-none focus:border-gray-300 dark:focus:border-gray-600 focus:ring-0 transition-all placeholder:text-gray-400/80 ${isSearchFocused ? 'text-[14px]' : 'text-[14px] sm:text-sm'}`}
+                    className={`w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-[18px] pl-11 pr-4 py-2.5 h-11 sm:h-11 font-light tracking-tighter outline-none appearance-none focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 focus:ring-0 transition-all placeholder:text-gray-400/80 ${isSearchFocused ? 'text-[14px]' : 'text-[14px] sm:text-sm'}`}
                   />
                 </div>
 
