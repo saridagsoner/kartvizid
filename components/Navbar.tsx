@@ -107,7 +107,7 @@ const Navbar: React.FC<NavbarProps & {
                     e.currentTarget.blur();
                   }
                 }}
-                className="w-full bg-[#F0F2F5] dark:bg-gray-700 hover:bg-[#E8EAED] dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all outline-none rounded-lg px-12 py-2.5 text-sm text-gray-800 dark:text-gray-100 border border-transparent focus:border-[#1f6d78]/20 shadow-sm placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full bg-[#F0F2F5] dark:bg-gray-700 hover:bg-[#E8EAED] dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all outline-none rounded-lg px-12 py-2.5 text-[16px] lg:text-sm text-gray-800 dark:text-gray-100 border border-transparent focus:border-[#1f6d78]/20 shadow-sm placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
 
