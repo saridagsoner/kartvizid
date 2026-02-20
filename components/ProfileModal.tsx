@@ -159,7 +159,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   );
 
   return (
-    <div className="fixed inset-0 z-[120] flex sm:items-center sm:justify-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-black/60 sm:dark:bg-black/60 sm:backdrop-blur-xl animate-in slide-in-from-right sm:fade-in sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[120] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-white dark:bg-gray-900 sm:bg-black/60 sm:dark:bg-black/60 sm:backdrop-blur-xl animate-in slide-in-from-right sm:fade-in sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
       <div className="w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-gray-900 border-none sm:border border-gray-100 dark:border-gray-800">
         {/* Header */}
         <div className="p-4 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0 gap-4">
@@ -188,21 +188,22 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           {/* Bölüm 1: Temel Bilgiler */}
           <section>
             <SectionTitle title={t('profile.basic_info')} />
-            <div className="flex flex-col md:flex-row gap-6 sm:gap-10 items-center md:items-start">
-              <div className="shrink-0">
-                <div className="w-24 h-32 sm:w-32 sm:h-44 rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 dark:border-gray-700 overflow-hidden shadow-xl bg-gray-50 dark:bg-gray-800">
-                  <img src={cv.photoUrl} alt={cv.name} className="w-full h-full object-cover" />
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-row gap-5 sm:gap-8 items-center sm:items-start">
+                <div className="shrink-0">
+                  <div className="w-28 h-36 sm:w-32 sm:h-44 rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 dark:border-gray-700 overflow-hidden shadow-xl bg-gray-50 dark:bg-gray-800">
+                    <img src={cv.photoUrl} alt={cv.name} className="w-full h-full object-cover" />
+                  </div>
                 </div>
-              </div>
-              <div className="flex-1 w-full space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex-1 space-y-4">
                   <InfoTag label={t('form.fullname')} value={cv.name} />
                   <InfoTag label={t('form.profession')} value={cv.profession} />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <InfoTag label={t('form.city')} value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} />
-                  <InfoTag label={t('form.experience')} value={`${cv.experienceYears} Yıl${cv.experienceMonths ? ' ' + cv.experienceMonths + ' Ay' : ''} Deneyim`} />
-                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <InfoTag label={t('form.city')} value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} />
+                <InfoTag label={t('form.experience')} value={`${cv.experienceYears} Yıl${cv.experienceMonths ? ' ' + cv.experienceMonths + ' Ay' : ''} Deneyim`} />
               </div>
             </div>
 
@@ -516,7 +517,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
         </div>
 
         {/* Footer Actions */}
-        <div className="p-3 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-2 sm:gap-5 sticky bottom-0 z-10 shrink-0">
+        <div className="pt-3 px-3 pb-2 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-2 sm:gap-5 sticky bottom-0 z-10 shrink-0">
           {isOwner && cv.workingStatus !== 'active' && (
             <button
               onClick={onJobFound}
@@ -622,7 +623,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       {/* Role Warning Modal - Centered & Themed */}
       {
         showRoleWarning && (
-          <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 animate-in fade-in duration-200">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in duration-200 bg-black/50 backdrop-blur-sm">
             <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-200 relative">
 
               {/* Close Button */}

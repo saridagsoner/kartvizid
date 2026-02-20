@@ -135,16 +135,3 @@ input[type=number]::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
-
-/* Override for more oval look across the site */
-.rounded-lg {
-    border-radius: 1.25rem !important;
-}
-
-.rounded-xl {
-    border-radius: 1.75rem !important;
-}
-
-.rounded-2xl {
-    border-radius: 2.25rem !important;
-}

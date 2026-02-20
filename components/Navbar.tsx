@@ -107,7 +107,7 @@ const Navbar: React.FC<NavbarProps & {
                     e.currentTarget.blur();
                   }
                 }}
-                className="w-full bg-[#F0F2F5] dark:bg-gray-700 hover:bg-[#E8EAED] dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all outline-none rounded-full px-12 py-2.5 text-sm text-gray-800 dark:text-gray-100 border border-transparent focus:border-[#1f6d78]/20 shadow-sm placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full bg-[#F0F2F5] dark:bg-gray-700 hover:bg-[#E8EAED] dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all outline-none rounded-lg px-12 py-2.5 text-sm text-gray-800 dark:text-gray-100 border border-transparent focus:border-[#1f6d78]/20 shadow-sm placeholder-gray-500 dark:placeholder-gray-400"
               />
             </div>
 
@@ -120,7 +120,7 @@ const Navbar: React.FC<NavbarProps & {
                   {/* Desktop Button */}
                   <button
                     onClick={isEmployer && onOpenCompanyProfile ? onOpenCompanyProfile : onCreateCV}
-                    className="hidden sm:block bg-white dark:bg-gray-800 border border-[#1f6d78] dark:border-gray-600 text-black dark:text-white px-3 md:px-6 py-2 rounded-full font-bold text-xs md:text-sm hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] dark:hover:bg-[#1f6d78] dark:hover:text-white transition-all active:scale-95 whitespace-nowrap shadow-sm"
+                    className="hidden sm:block bg-white dark:bg-gray-800 border border-[#1f6d78] dark:border-gray-600 text-black dark:text-white px-3 md:px-6 py-2 rounded-xl font-bold text-xs md:text-sm hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] dark:hover:bg-[#1f6d78] dark:hover:text-white transition-all active:scale-95 whitespace-nowrap shadow-sm"
                   >
                     {isEmployer
                       ? t('nav.employer_profile')
@@ -203,13 +203,13 @@ const Navbar: React.FC<NavbarProps & {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => onOpenAuth('signin', 'employer')}
-                    className="bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold text-xs md:text-sm px-3 md:px-6 py-2 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
+                    className="bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold text-xs md:text-sm px-3 md:px-6 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
                   >
                     {t('nav.employer')}
                   </button>
                   <button
                     onClick={() => onOpenAuth('signin', 'job_seeker')}
-                    className="bg-[#1f6d78] text-white px-3 md:px-6 py-2 rounded-full font-bold text-xs md:text-sm hover:bg-[#155e68] transition-all active:scale-95 shadow-sm whitespace-nowrap"
+                    className="bg-[#1f6d78] text-white px-3 md:px-6 py-2 rounded-xl font-bold text-xs md:text-sm hover:bg-[#155e68] transition-all active:scale-95 shadow-sm whitespace-nowrap"
                   >
                     {t('nav.job_seeker')}
                   </button>

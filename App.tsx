@@ -1603,7 +1603,7 @@ const App: React.FC = () => {
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
                     placeholder={isSearchFocused ? 'Meslek, Şehir, İsim veya Unvan Ara' : t('nav.search_placeholder')}
-                    className={`w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-[18px] pl-11 pr-4 py-2.5 h-11 sm:h-11 font-light tracking-tighter outline-none appearance-none focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 focus:ring-0 transition-all placeholder:text-gray-400/80 ${isSearchFocused ? 'text-[14px]' : 'text-[14px] sm:text-sm'}`}
+                    className={`w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg pl-11 pr-4 py-2.5 h-11 sm:h-11 font-light tracking-tighter outline-none appearance-none focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 focus:ring-0 transition-all placeholder:text-gray-400/80 ${isSearchFocused ? 'text-[14px]' : 'text-[14px] sm:text-sm'}`}
                   />
                 </div>
 
@@ -1718,12 +1718,12 @@ const App: React.FC = () => {
 
             {/* Pagination Controls */}
             {filteredCVs.length > ITEMS_PER_PAGE && (
-              <div className="mt-6 flex justify-center items-center gap-4 pb-24 sm:pb-0">
+              <div className="mt-8 flex justify-center items-center gap-4 pb-8 sm:pb-0">
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                   className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentPage === 1
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-transparent'
                     : 'bg-white text-black border border-gray-200 hover:bg-black hover:text-white hover:border-black shadow-sm'
                     } `}
                 >
@@ -1738,8 +1738,8 @@ const App: React.FC = () => {
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
                   className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentPage === totalPages
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-white text-black border border-gray-200 hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] shadow-sm'
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-transparent'
+                    : 'bg-white text-[#1f6d78] border border-[#1f6d78] hover:bg-[#1f6d78] hover:text-white shadow-sm'
                     } `}
                 >
                   {t('feed.next')} →
@@ -1820,10 +1820,20 @@ const App: React.FC = () => {
       }
       {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
 
-      {/* Mobile Bottom Navigation - Only for logged in users */}
       {/* Mobile Bottom Navigation - Visible for all users */}
       <MobileBottomNav
         user={user}
+        isHomeView={!selectedCV && !isCVFormOpen && !isSettingsOpen && !isCompanyFormOpen && !selectedCompanyProfile && !isNotificationsModalOpen && !isSavedCVsOpen}
+        onGoHome={() => {
+          setSelectedCV(null);
+          setIsCVFormOpen(false);
+          setIsSettingsOpen(false);
+          setIsCompanyFormOpen(false);
+          setSelectedCompanyProfile(null);
+          setIsNotificationsModalOpen(false);
+          setIsSavedCVsOpen(false);
+          setIsMobileMenuOpen(false);
+        }}
         onSearch={(val) => {
           setSearchQuery(val);
           window.scrollTo({ top: 0, behavior: 'smooth' });

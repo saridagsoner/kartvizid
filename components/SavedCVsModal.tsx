@@ -63,7 +63,7 @@ const SavedCVsModal: React.FC<SavedCVsModalProps> = ({ onClose, onOpenCV, userId
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[100] flex sm:items-center sm:justify-center p-4 pb-[84px] sm:pb-0">
             {/* Blurred Backdrop */}
             <div
                 className="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-md transition-all duration-300"

@@ -326,7 +326,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
 
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-black/60 sm:backdrop-blur-xl animate-in slide-in-from-bottom sm:slide-in-from-bottom-10 duration-300 sm:duration-500">
+    <div className="fixed inset-0 z-[120] flex items-center justify-center sm:p-4 pb-[84px] sm:pb-0 bg-white dark:bg-gray-900 sm:bg-black/60 sm:backdrop-blur-xl animate-in slide-in-from-bottom sm:slide-in-from-bottom-10 duration-300 sm:duration-500">
       <div className="bg-white dark:bg-gray-900 w-full h-full sm:w-full sm:max-w-[800px] sm:h-[90vh] rounded-none sm:rounded-[3rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden">
 
         {tempImageSrc && (
