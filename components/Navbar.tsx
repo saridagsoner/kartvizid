@@ -36,7 +36,7 @@ const Navbar: React.FC<NavbarProps & {
   onSearch, onCreateCV, onOpenCompanyProfile, onOpenSettings, hasCV, userPhotoUrl, notificationCount = 0, notifications = [], onNotificationAction, onMarkNotificationRead,
   onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole, onMarkAllRead, onOpenProfile, onOpenSavedCVs
 }) => {
-    const { user, signOut } = useAuth();
+    const { user, loading, signOut } = useAuth();
     const { t } = useLanguage();
     const [query, setQuery] = useState('');
     const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -112,8 +112,13 @@ const Navbar: React.FC<NavbarProps & {
             </div>
 
             {/* Right Section: Actions */}
-            <div className={`${user ? 'hidden sm:flex' : 'flex'} md:w-[330px] shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto lg:ml-0`}>
-              {user ? (
+            <div className={`${loading ? 'flex' : user ? 'hidden sm:flex' : 'flex'} md:w-[330px] shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto lg:ml-0`}>
+              {loading ? (
+                <div className="flex items-center gap-3 opacity-50">
+                  <div className="w-20 md:w-28 h-9 md:h-10 bg-gray-100 dark:bg-gray-700 animate-pulse rounded-xl"></div>
+                  <div className="w-24 md:w-32 h-9 md:h-10 bg-gray-100 dark:bg-gray-700 animate-pulse rounded-xl"></div>
+                </div>
+              ) : user ? (
                 <>
 
 

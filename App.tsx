@@ -1381,6 +1381,19 @@ const App: React.FC = () => {
     setActiveFilters(prev => ({ ...prev, [key]: value }));
   };
 
+  const closeAllModals = () => {
+    setIsCVFormOpen(false);
+    setIsSettingsOpen(false);
+    setIsCompanyFormOpen(false);
+    setIsNotificationsModalOpen(false);
+    setIsSavedCVsOpen(false);
+    setIsAuthModalOpen(false);
+    setSelectedCV(null);
+    setSelectedCompanyProfile(null);
+    setIsMobileMenuOpen(false);
+    setIsCVPromoOpen(false);
+  };
+
   const handleRequestResponse = async (requestId: string, action: 'approved' | 'rejected') => {
     try {
       const { error } = await supabase
@@ -1513,15 +1526,21 @@ const App: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-white sm:bg-[#F0F2F5] dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
 
 
-      // ... inside render
       <Navbar
         onSearch={setSearchQuery}
-        onCreateCV={() => setIsCVFormOpen(true)}
+        onCreateCV={() => {
+          closeAllModals();
+          setIsCVFormOpen(true);
+        }}
         onOpenCompanyProfile={() => {
+          closeAllModals();
           fetchCompany();
           setIsCompanyFormOpen(true);
         }}
-        onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenSettings={() => {
+          closeAllModals();
+          setIsSettingsOpen(true);
+        }}
         hasCV={!!currentUserCV}
         userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
 
@@ -1535,15 +1554,24 @@ const App: React.FC = () => {
         onMarkNotificationRead={markNotificationRead}
         onMarkAllRead={markAllNotificationsRead}
 
-        onOpenProfile={handleOpenProfile}
-        onViewAll={() => setIsNotificationsModalOpen(true)}
+        onOpenProfile={(uid, role) => {
+          closeAllModals();
+          handleOpenProfile(uid, role);
+        }}
+        onViewAll={() => {
+          closeAllModals();
+          setIsNotificationsModalOpen(true);
+        }}
 
         onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
         isAuthModalOpen={isAuthModalOpen}
         onCloseAuth={() => setIsAuthModalOpen(false)}
         authMode={authMode}
         authRole={authRole}
-        onOpenSavedCVs={handleOpenSavedCVs}
+        onOpenSavedCVs={() => {
+          closeAllModals();
+          handleOpenSavedCVs();
+        }}
       />
 
       {/* ... previous modals ... */}
@@ -1567,9 +1595,9 @@ const App: React.FC = () => {
       )}
 
 
-      <div className="flex-1 flex justify-center pt-[72px] px-2 md:px-6">
+      <div className="flex-1 flex justify-center pt-24 px-2 md:px-6">
         <div className="max-w-[1440px] w-full flex items-start gap-6 pb-12">
-          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[72px] h-fit pb-4">
+          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-24 h-fit pb-4">
             <SidebarLeft
               popularProfessions={professionStats}
               popularCities={cityStats}
@@ -1823,7 +1851,9 @@ const App: React.FC = () => {
       {/* Mobile Bottom Navigation - Visible for all users */}
       <MobileBottomNav
         user={user}
-        isHomeView={!selectedCV && !isCVFormOpen && !isSettingsOpen && !isCompanyFormOpen && !selectedCompanyProfile && !isNotificationsModalOpen && !isSavedCVsOpen}
+        isProfileOpen={isCVPromoOpen || (selectedCV?.userId === user?.id)}
+        isCreateOpen={isCVFormOpen || isCompanyFormOpen}
+        isHomeView={!selectedCV && !isCVFormOpen && !isSettingsOpen && !isCompanyFormOpen && !selectedCompanyProfile && !isNotificationsModalOpen && !isSavedCVsOpen && !isCVPromoOpen}
         onGoHome={() => {
           setSelectedCV(null);
           setIsCVFormOpen(false);
@@ -1840,24 +1870,38 @@ const App: React.FC = () => {
         }}
         onCreateCV={() => {
           if (!user) {
+            closeAllModals();
             handleAuthOpen('signin');
             return;
           }
+          if (isCVFormOpen) {
+            closeAllModals();
+            return;
+          }
+          closeAllModals();
           setIsCVFormOpen(true);
         }}
         onOpenCompanyProfile={() => {
           if (!user) {
+            closeAllModals();
             handleAuthOpen('signin', 'employer');
             return;
           }
+          if (isCompanyFormOpen) {
+            closeAllModals();
+            return;
+          }
+          closeAllModals();
           fetchCompany();
           setIsCompanyFormOpen(true);
         }}
         onOpenSettings={() => {
           if (!user) {
+            closeAllModals();
             handleAuthOpen('signin');
             return;
           }
+          closeAllModals();
           setIsSettingsOpen(true);
         }}
         hasCV={!!currentUserCV}
@@ -1872,13 +1916,24 @@ const App: React.FC = () => {
         onMarkAllRead={markAllNotificationsRead}
         onOpenProfile={(uid, role) => {
           if (!user) {
+            closeAllModals();
             handleAuthOpen('signin');
             return;
           }
           if (uid === user.id && !currentUserCV) {
+            if (isCVPromoOpen) {
+              closeAllModals();
+              return;
+            }
+            closeAllModals();
             setIsCVPromoOpen(true);
             return;
           }
+          if (selectedCV?.userId === uid) {
+            closeAllModals();
+            return;
+          }
+          closeAllModals();
           handleOpenProfile(uid, role);
         }}
         onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}

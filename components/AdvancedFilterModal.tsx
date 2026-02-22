@@ -59,19 +59,19 @@ const ModalDropdown: React.FC<{
     <div className="space-y-4 flex-1 relative" ref={containerRef}>
       <label className="block text-[13px] font-bold text-black dark:text-gray-300 uppercase tracking-tight ml-1">{label}</label>
 
-      <div className="relative group">
+      <div className="relative group h-[42px] sm:h-[48px] rounded-full overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:border-[#1f6d78] focus-within:ring-4 focus-within:ring-[#1f6d78]/5 transition-all">
         <input
           type="text"
           value={isOpen ? searchTerm : (value || '')}
           placeholder={isOpen ? t('filter.search_placeholder_dropdown') : placeholder}
           onFocus={() => setIsOpen(true)}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={`w-full bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-full px-6 py-3 sm:px-8 sm:py-5 outline-none font-bold text-xs sm:text-sm transition-all border border-gray-200 dark:border-gray-700 focus:border-[#1f6d78] focus:ring-4 focus:ring-[#1f6d78]/5 placeholder:text-gray-400 ${value && !isOpen ? 'text-black dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}
+          className={`w-[111.11%] h-[46px] sm:h-[53.33px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.9] px-5 sm:px-6 py-0 placeholder:text-gray-400 ${value && !isOpen ? 'text-black dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}
         />
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-[#1f6d78] transition-colors">
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-[#1f6d78] transition-colors">
           <svg
             className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-            width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
           >
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
@@ -308,28 +308,28 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <FilterSection title={t('filter.salary_title')}>
               <div className="flex items-center gap-3 w-full">
-                <div className="flex-1 relative">
+                <div className="flex-1 relative h-[42px] sm:h-[48px] rounded-full overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:border-[#1f6d78] focus-within:ring-4 focus-within:ring-[#1f6d78]/5 transition-all">
                   <input
                     type="text"
                     inputMode="numeric"
                     placeholder={t('filter.salary_min')}
                     value={filters.salaryMin}
                     onChange={e => handleSalaryChange('salaryMin', e.target.value)}
-                    className="w-full bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-full px-6 py-3.5 outline-none font-bold text-xs focus:border-[#1f6d78] focus:ring-4 focus:ring-[#1f6d78]/5 transition-all border border-gray-200 dark:border-gray-700 shadow-sm placeholder:text-gray-400 dark:text-white"
+                    className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-6 sm:px-7 py-0 placeholder:text-gray-400 dark:text-white"
                   />
-                  <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[10px]">₺</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[10px]">₺</span>
                 </div>
                 <div className="w-4 h-0.5 bg-gray-300 rounded-full shrink-0"></div>
-                <div className="flex-1 relative">
+                <div className="flex-1 relative h-[42px] sm:h-[48px] rounded-full overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:border-[#1f6d78] focus-within:ring-4 focus-within:ring-[#1f6d78]/5 transition-all">
                   <input
                     type="text"
                     inputMode="numeric"
                     placeholder={t('filter.salary_max')}
                     value={filters.salaryMax}
                     onChange={e => handleSalaryChange('salaryMax', e.target.value)}
-                    className="w-full bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-full px-6 py-3.5 outline-none font-bold text-xs focus:border-[#1f6d78] focus:ring-4 focus:ring-[#1f6d78]/5 transition-all border border-gray-200 dark:border-gray-700 shadow-sm placeholder:text-gray-400 dark:text-white"
+                    className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-6 sm:px-7 py-0 placeholder:text-gray-400 dark:text-white"
                   />
-                  <span className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[10px]">₺</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[10px]">₺</span>
                 </div>
               </div>
             </FilterSection>

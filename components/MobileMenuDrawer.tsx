@@ -50,12 +50,12 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
     const MenuItem = ({ label, onClick, icon }: { label: string, onClick: () => void, icon: React.ReactNode }) => (
         <button
             onClick={onClick}
-            className="w-full text-left py-3.5 flex items-center gap-3.5 group"
+            className="w-full text-left py-3 flex items-center gap-3 group"
         >
-            <div className="text-gray-700 dark:text-gray-300 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors">
+            <div className="text-gray-700 dark:text-gray-300 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors flex items-center justify-center shrink-0 w-6">
                 {icon}
             </div>
-            <span className="text-[15px] font-bold text-gray-800 dark:text-gray-200 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors rounded-font tracking-tight">
+            <span className="text-[14px] font-bold text-gray-800 dark:text-gray-200 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors rounded-font tracking-tight">
                 {label}
             </span>
         </button>
@@ -426,56 +426,55 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             {/* Main Menu Drawer */}
             <div className={`fixed top-0 bottom-0 left-0 w-[75%] max-w-[280px] bg-white dark:bg-gray-900 z-[160] shadow-2xl animate-in slide-in-from-left duration-300 flex flex-col ${activeCategory ? 'hidden' : ''}`}>
                 {/* Header - Brand */}
-                <div className="h-24 flex flex-col justify-center px-6 border-b border-gray-100 dark:border-gray-800 shrink-0 bg-white dark:bg-gray-900">
-                    <div className="flex items-center text-[#2b2b2b] dark:text-white text-2xl font-bold rounded-font tracking-tight leading-none">
-                        <span>Kartvizi</span>
-                        <span className="inline-block ml-1 transform rotate-[12deg] origin-center text-[#1f6d78] font-black">d</span>
+                <div className="h-[72px] flex flex-col justify-center px-6 border-b border-gray-100 dark:border-gray-800 shrink-0 bg-white dark:bg-gray-900 pb-2">
+                    <div className="flex flex-col w-max">
+                        <div className="flex items-center text-[#2b2b2b] dark:text-white text-[28px] font-extrabold rounded-font tracking-tight leading-none mb-0.5">
+                            <span>Kartvizi</span>
+                            <span className="inline-block transform rotate-[12deg] origin-center text-[#1f6d78] font-black w-[13px] ml-0.5 -mt-0.5">d</span>
+                        </div>
+                        <span className="text-[10px] text-[#9ca3af] dark:text-gray-500 font-bold lowercase tracking-normal pl-[2px] pr-1">
+                            dijital cv & doğru eşleşme
+                        </span>
                     </div>
-                    <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold tracking-tight mt-1 uppercase tracking-wider pl-0.5">Dijital CV & Eşleşme</span>
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto px-5 py-4 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto px-5 pt-0 pb-4 custom-scrollbar">
                     <div className="flex flex-col space-y-1">
                         <MenuItem
                             label="Kartvizid Nedir?"
                             onClick={() => setActiveCategory('about')}
-                            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#1f6d78] dark:text-[#2dd4bf]"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>}
+                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#1f6d78] dark:text-[#2dd4bf]"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>}
                         />
                         <MenuItem
-                            label={t('sidebar.job_finders')}
+                            label="Kartvizid'te İş Bulanlar"
                             onClick={() => setActiveCategory('jobFinders')}
-                            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>}
+                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>}
                         />
                         <MenuItem
-                            label={t('sidebar.popular_professions')}
-                            onClick={() => setActiveCategory('professions')}
-                            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>}
-                        />
-                        <MenuItem
-                            label={t('sidebar.featured_cities')}
-                            onClick={() => setActiveCategory('cities')}
-                            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>}
-                        />
-                        <MenuItem
-                            label={t('sidebar.employers')}
+                            label="İş Verenler"
                             onClick={() => setActiveCategory('companies')}
-                            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>}
+                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>}
                         />
                         <MenuItem
-                            label={t('sidebar.most_viewed')}
+                            label="Talep Gören Meslekler"
+                            onClick={() => setActiveCategory('professions')}
+                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>}
+                        />
+                        <MenuItem
+                            label="Öne Çıkan Şehirler"
+                            onClick={() => setActiveCategory('cities')}
+                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>}
+                        />
+                        <MenuItem
+                            label="En Çok Görüntülenenler"
                             onClick={() => setActiveCategory('mostViewed')}
-                            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>}
+                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path><line x1="12" y1="10" x2="12" y2="17"></line><line x1="10" y1="15" x2="14" y2="15"></line></svg>}
                         />
                         <MenuItem
-                            label={t('sidebar.platform_stats')}
+                            label="Kartvizid İstatistikleri"
                             onClick={() => setActiveCategory('stats')}
-                            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>}
-                        />
-                        <MenuItem
-                            label="Dijital CV Doğru Eşleşme"
-                            onClick={() => { /* No action specified, or placeholder */ }}
-                            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#1f6d78]"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>}
+                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>}
                         />
 
                         <div className="my-3 border-t border-gray-100 dark:border-gray-800"></div>
@@ -483,17 +482,17 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                         <MenuItem
                             label="Site Kullanımı"
                             onClick={() => setActiveCategory('siteUsage')}
-                            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>}
+                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>}
                         />
                         <MenuItem
                             label="Veri Politikamız"
                             onClick={() => setActiveCategory('dataPolicy')}
-                            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>}
+                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>}
                         />
                         <MenuItem
                             label="Mobil Uygulama"
                             onClick={() => setActiveCategory('mobileApp')}
-                            icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>}
+                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>}
                         />
 
                         {user && (
@@ -504,24 +503,24 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                     <MenuItem
                                         label="Kaydettiklerim"
                                         onClick={onOpenSavedCVs}
-                                        icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>}
+                                        icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>}
                                     />
                                 )}
 
                                 <MenuItem
-                                    label={t('profile.settings')}
+                                    label="Ayarlar"
                                     onClick={onOpenSettings}
-                                    icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>}
+                                    icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>}
                                 />
                                 <button
                                     onClick={onLogout}
-                                    className="w-full text-left py-3.5 flex items-center gap-3.5 group"
+                                    className="w-full text-left py-3 flex items-center gap-3 group"
                                 >
-                                    <div className="text-red-500 group-hover:text-red-600 transition-colors">
-                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                                    <div className="text-red-500 group-hover:text-red-600 transition-colors flex items-center justify-center shrink-0 w-6">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                                     </div>
-                                    <span className="text-[15px] font-bold text-red-500 group-hover:text-red-600 transition-colors rounded-font tracking-tight">
-                                        {t('profile.logout')}
+                                    <span className="text-[14px] font-bold text-red-500 group-hover:text-red-600 transition-colors rounded-font tracking-tight">
+                                        Çıkış Yap
                                     </span>
                                 </button>
                             </>

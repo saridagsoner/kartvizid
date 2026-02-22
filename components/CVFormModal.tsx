@@ -410,23 +410,27 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.fullname')} *</label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={e => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-4 py-3 sm:px-6 sm:py-3.5 outline-none transition-all text-[11px] sm:text-sm font-bold text-gray-800 dark:text-gray-100"
-                      placeholder={t('form.fullname_example')}
-                    />
+                    <div className="w-full h-[42px] sm:h-[48px] bg-gray-50 dark:bg-gray-800 rounded-full border border-transparent focus-within:border-[#1f6d78]/10 focus-within:bg-white dark:focus-within:bg-gray-700 transition-all overflow-hidden">
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                        className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-5 sm:px-7 py-0 text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
+                        placeholder={t('form.fullname_example')}
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.profession')} *</label>
-                    <input
-                      type="text"
-                      value={formData.profession}
-                      onChange={e => setFormData({ ...formData, profession: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-4 py-3 sm:px-6 sm:py-3.5 outline-none transition-all text-[11px] sm:text-sm font-bold text-gray-800 dark:text-gray-100"
-                      placeholder={t('form.profession_example')}
-                    />
+                    <div className="w-full h-[42px] sm:h-[48px] bg-gray-50 dark:bg-gray-800 rounded-full border border-transparent focus-within:border-[#1f6d78]/10 focus-within:bg-white dark:focus-within:bg-gray-700 transition-all overflow-hidden">
+                      <input
+                        type="text"
+                        value={formData.profession}
+                        onChange={e => setFormData({ ...formData, profession: e.target.value })}
+                        className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-5 sm:px-7 py-0 text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
+                        placeholder={t('form.profession_example')}
+                      />
+                    </div>
                     <p className="text-[9px] text-gray-400 mt-1 ml-1 font-bold">Birden fazla ünvan için virgül (,) ile ayırınız.</p>
                   </div>
                 </div>
@@ -459,29 +463,33 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                     <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.experience')}</label>
                     <div className="flex gap-2">
                       <div className="flex-1">
-                        <input
-                          type="number"
-                          min="0"
-                          value={formData.experienceYears === 0 ? '' : formData.experienceYears}
-                          onChange={e => setFormData({ ...formData, experienceYears: e.target.value === '' ? 0 : parseInt(e.target.value) })}
-                          className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-4 py-3 sm:px-6 sm:py-3.5 outline-none text-[11px] sm:text-sm font-bold text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
-                          placeholder="Yıl"
-                        />
+                        <div className="w-full h-[42px] sm:h-[48px] bg-gray-50 dark:bg-gray-800 rounded-full border border-transparent focus-within:border-[#1f6d78]/10 focus-within:bg-white dark:focus-within:bg-gray-700 transition-all overflow-hidden">
+                          <input
+                            type="number"
+                            min="0"
+                            value={formData.experienceYears === 0 ? '' : formData.experienceYears}
+                            onChange={e => setFormData({ ...formData, experienceYears: e.target.value === '' ? 0 : parseInt(e.target.value) })}
+                            className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-5 sm:px-7 py-0 text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
+                            placeholder="Yıl"
+                          />
+                        </div>
                       </div>
                       <div className="flex-1">
-                        <input
-                          type="number"
-                          min="0"
-                          max="11"
-                          value={formData.experienceMonths === 0 ? '' : formData.experienceMonths}
-                          onChange={e => {
-                            let val = parseInt(e.target.value);
-                            if (val > 11) val = 11;
-                            setFormData({ ...formData, experienceMonths: e.target.value === '' ? 0 : val });
-                          }}
-                          className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-4 py-3 sm:px-6 sm:py-3.5 outline-none text-[11px] sm:text-sm font-bold text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
-                          placeholder="Ay"
-                        />
+                        <div className="w-full h-[42px] sm:h-[48px] bg-gray-50 dark:bg-gray-800 rounded-full border border-transparent focus-within:border-[#1f6d78]/10 focus-within:bg-white dark:focus-within:bg-gray-700 transition-all overflow-hidden">
+                          <input
+                            type="number"
+                            min="0"
+                            max="11"
+                            value={formData.experienceMonths === 0 ? '' : formData.experienceMonths}
+                            onChange={e => {
+                              let val = parseInt(e.target.value);
+                              if (val > 11) val = 11;
+                              setFormData({ ...formData, experienceMonths: e.target.value === '' ? 0 : val });
+                            }}
+                            className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-5 sm:px-7 py-0 text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
+                            placeholder="Ay"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -522,13 +530,15 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                       <span className="text-[8px] sm:text-[9px] font-bold text-gray-500 uppercase tracking-wider">{formData.isEmailPublic ? t('form.visible') : t('form.hidden')}</span>
                     </div>
                   </div>
-                  <input
-                    type="email"
-                    value={formData.email || ''}
-                    onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    className={`w-full border focus:bg-white dark:focus:bg-gray-700 rounded-full px-4 py-3 sm:px-6 sm:py-3.5 outline-none transition-all text-[11px] sm:text-sm font-bold ${formData.isEmailPublic ? 'bg-white dark:bg-gray-700 border-[#1f6d78]/10 dark:text-white' : 'bg-gray-100 dark:bg-gray-900 border-transparent text-gray-500'}`}
-                    placeholder="ornek@email.com"
-                  />
+                  <div className={`w-full h-[42px] sm:h-[48px] rounded-full border transition-all overflow-hidden focus-within:bg-white dark:focus-within:bg-gray-700 ${formData.isEmailPublic ? 'bg-white dark:bg-gray-700 border-[#1f6d78]/10' : 'bg-gray-100 dark:bg-gray-900 border-transparent'}`}>
+                    <input
+                      type="email"
+                      value={formData.email || ''}
+                      onChange={e => setFormData({ ...formData, email: e.target.value })}
+                      className={`w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-5 sm:px-7 py-0 ${formData.isEmailPublic ? 'text-black dark:text-white' : 'text-gray-500'}`}
+                      placeholder="ornek@email.com"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -541,13 +551,15 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                       <span className="text-[8px] sm:text-[9px] font-bold text-gray-500 uppercase tracking-wider">{formData.isPhonePublic ? t('form.visible') : t('form.hidden')}</span>
                     </div>
                   </div>
-                  <input
-                    type="tel"
-                    value={formData.phone || ''}
-                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    className={`w-full border focus:bg-white dark:focus:bg-gray-700 rounded-full px-4 py-3 sm:px-6 sm:py-3.5 outline-none transition-all text-[11px] sm:text-sm font-bold ${formData.isPhonePublic ? 'bg-white dark:bg-gray-700 border-[#1f6d78]/10 dark:text-white' : 'bg-gray-100 dark:bg-gray-900 border-transparent text-gray-500'}`}
-                    placeholder="0555 123 45 67"
-                  />
+                  <div className={`w-full h-[42px] sm:h-[48px] rounded-full border transition-all overflow-hidden focus-within:bg-white dark:focus-within:bg-gray-700 ${formData.isPhonePublic ? 'bg-white dark:bg-gray-700 border-[#1f6d78]/10' : 'bg-gray-100 dark:bg-gray-900 border-transparent'}`}>
+                    <input
+                      type="tel"
+                      value={formData.phone || ''}
+                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                      className={`w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-5 sm:px-7 py-0 ${formData.isPhonePublic ? 'text-black dark:text-white' : 'text-gray-500'}`}
+                      placeholder="0555 123 45 67"
+                    />
+                  </div>
                 </div>
               </div>
               <p className="text-[8px] sm:text-[9px] text-gray-400 mt-3 sm:mt-4 leading-relaxed">* Yanındaki yuvarlak kutucuğu işaretlemediğiniz sürece iletişim bilgileriniz profilinizde <strong>görünmez</strong>.</p>
@@ -571,14 +583,16 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                 </div>
                 <div className="space-y-4">
                   <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Tercih Edilen Alanlar</label>
-                  <input
-                    type="text"
-                    value={roleInput}
-                    onChange={e => setRoleInput(e.target.value)}
-                    onKeyDown={handleRoleAdd}
-                    className="w-full bg-gray-50 dark:bg-gray-800 rounded-full px-5 py-3 text-[11px] sm:text-sm font-bold outline-none dark:text-white"
-                    placeholder="Alan ekleyip Enter'a basın..."
-                  />
+                  <div className="w-full h-[42px] sm:h-[48px] bg-gray-50 dark:bg-gray-800 rounded-full border border-transparent focus-within:border-[#1f6d78]/10 focus-within:bg-white dark:focus-within:bg-gray-700 transition-all overflow-hidden">
+                    <input
+                      type="text"
+                      value={roleInput}
+                      onChange={e => setRoleInput(e.target.value)}
+                      onKeyDown={handleRoleAdd}
+                      className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-6 sm:px-8 py-0 dark:text-white placeholder:text-gray-400"
+                      placeholder="Alan ekleyip Enter'a basın..."
+                    />
+                  </div>
                   <div className="flex flex-wrap gap-2 pt-2">
                     {formData.preferredRoles?.map((role, idx) => (
                       <span key={idx} className="bg-[#1f6d78] text-white text-[10px] font-black px-3 py-1.5 rounded-full flex items-center gap-2 uppercase tracking-wider">
@@ -669,8 +683,12 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
               <div className="bg-white dark:bg-gray-900 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 space-y-4">
                 <h5 className="text-[10px] sm:text-xs font-black text-black dark:text-gray-300 uppercase tracking-widest">{t('form.add_experience')}</h5>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input type="text" placeholder={`${t('form.institution')} *`} value={workInput.company} onChange={e => setWorkInput({ ...workInput, company: e.target.value })} className="bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-[11px] sm:text-sm font-bold outline-none dark:text-white" />
-                  <input type="text" placeholder={`${t('form.position')} *`} value={workInput.role} onChange={e => setWorkInput({ ...workInput, role: e.target.value })} className="bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-[11px] sm:text-sm font-bold outline-none dark:text-white" />
+                  <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                    <input type="text" placeholder={`${t('form.institution')} *`} value={workInput.company} onChange={e => setWorkInput({ ...workInput, company: e.target.value })} className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white" />
+                  </div>
+                  <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                    <input type="text" placeholder={`${t('form.position')} *`} value={workInput.role} onChange={e => setWorkInput({ ...workInput, role: e.target.value })} className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white" />
+                  </div>
                   <MonthYearPicker placeholder={t('form.start_date_label')} value={workInput.startDate} onChange={val => setWorkInput({ ...workInput, startDate: val })} />
                   <MonthYearPicker placeholder={t('form.end_date_label')} disabled={workInput.isCurrent} value={workInput.endDate || ''} onChange={val => setWorkInput({ ...workInput, endDate: val })} />
                 </div>
@@ -704,8 +722,12 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
 
                 <div className="bg-white dark:bg-gray-900 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" placeholder={t('form.university')} value={eduInput.university} onChange={e => setEduInput({ ...eduInput, university: e.target.value })} className="w-full bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 outline-none text-[11px] sm:text-sm font-bold dark:text-white" />
-                    <input type="text" placeholder={t('form.department')} value={eduInput.department} onChange={e => setEduInput({ ...eduInput, department: e.target.value })} className="w-full bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 outline-none text-[11px] sm:text-sm font-bold dark:text-white" />
+                    <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                      <input type="text" placeholder={t('form.university')} value={eduInput.university} onChange={e => setEduInput({ ...eduInput, university: e.target.value })} className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white" />
+                    </div>
+                    <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                      <input type="text" placeholder={t('form.department')} value={eduInput.department} onChange={e => setEduInput({ ...eduInput, department: e.target.value })} className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white" />
+                    </div>
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     {EDUCATION_LEVELS.map(l => <button key={l} onClick={() => setEduInput({ ...eduInput, level: l })} className={`px-3 py-1.5 rounded-full text-[10px] font-bold border ${eduInput.level === l ? 'bg-[#1f6d78] text-white' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400'}`}>{l}</button>)}
@@ -736,8 +758,12 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                 <div className="bg-white dark:bg-gray-900 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 space-y-4">
                   <h5 className="text-[10px] sm:text-xs font-black text-black dark:text-gray-300 uppercase tracking-widest">+ Staj Ekle</h5>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" placeholder="Kurum Adı *" value={internInput.company} onChange={e => setInternInput({ ...internInput, company: e.target.value })} className="bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-[11px] sm:text-sm font-bold outline-none dark:text-white" />
-                    <input type="text" placeholder="Pozisyon / Departman *" value={internInput.role} onChange={e => setInternInput({ ...internInput, role: e.target.value })} className="bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-[11px] sm:text-sm font-bold outline-none dark:text-white" />
+                    <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                      <input type="text" placeholder="Kurum Adı *" value={internInput.company} onChange={e => setInternInput({ ...internInput, company: e.target.value })} className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white" />
+                    </div>
+                    <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                      <input type="text" placeholder="Pozisyon / Departman *" value={internInput.role} onChange={e => setInternInput({ ...internInput, role: e.target.value })} className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white" />
+                    </div>
                     <MonthYearPicker placeholder={t('form.start_date_label')} value={internInput.startDate} onChange={val => setInternInput({ ...internInput, startDate: val })} />
                     <MonthYearPicker placeholder={t('form.end_date_label')} disabled={internInput.isCurrent} value={internInput.endDate || ''} onChange={val => setInternInput({ ...internInput, endDate: val })} />
                   </div>
@@ -809,21 +835,25 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                 <div className="bg-white dark:bg-gray-900 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 space-y-4">
                   <h5 className="text-[10px] sm:text-xs font-black text-black dark:text-gray-300 uppercase tracking-widest">{t('form.add_certificate')}</h5>
                   <div className="flex flex-col gap-4">
-                    <input
-                      type="text"
-                      placeholder={`${t('form.cert_name')} *`}
-                      value={certInput.name}
-                      onChange={e => setCertInput({ ...certInput, name: e.target.value })}
-                      className="w-full bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 outline-none font-bold text-[11px] sm:text-sm dark:text-white"
-                    />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
                       <input
                         type="text"
-                        placeholder={t('form.cert_issuer')}
-                        value={certInput.issuer}
-                        onChange={e => setCertInput({ ...certInput, issuer: e.target.value })}
-                        className="w-full bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 outline-none font-bold text-[11px] sm:text-sm dark:text-white"
+                        placeholder={`${t('form.cert_name')} *`}
+                        value={certInput.name}
+                        onChange={e => setCertInput({ ...certInput, name: e.target.value })}
+                        className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white"
                       />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                        <input
+                          type="text"
+                          placeholder={t('form.cert_issuer')}
+                          value={certInput.issuer}
+                          onChange={e => setCertInput({ ...certInput, issuer: e.target.value })}
+                          className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white"
+                        />
+                      </div>
                       <MonthYearPicker
                         placeholder={t('form.cert_date')}
                         value={certInput.date || ''}
@@ -915,12 +945,14 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
             <SectionTitle title={t('form.about')} subtitle={t('form.about_subtitle')} />
             <div className="space-y-4">
               <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.about_me')}</label>
-              <textarea
-                value={formData.about}
-                onChange={e => setFormData({ ...formData, about: e.target.value })}
-                className="w-full bg-gray-50 dark:bg-gray-800 rounded-[1.5rem] sm:rounded-[2rem] px-5 py-4 sm:px-8 sm:py-6 outline-none h-24 sm:h-32 resize-none focus:bg-white dark:focus:bg-gray-700 focus:border-[#1f6d78]/10 border border-transparent transition-all font-medium text-[11px] sm:text-sm leading-relaxed text-gray-800 dark:text-gray-100"
-                placeholder={t('form.about_placeholder')}
-              ></textarea>
+              <div className="w-full bg-gray-50 dark:bg-gray-800 rounded-[1.5rem] sm:rounded-[2rem] border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden h-24 sm:h-32">
+                <textarea
+                  value={formData.about}
+                  onChange={e => setFormData({ ...formData, about: e.target.value })}
+                  className="w-[117.6%] h-[117.6%] bg-transparent outline-none resize-none px-5 py-4 sm:px-8 sm:py-6 text-[16px] origin-top-left scale-[0.85] font-medium leading-[1.4] text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
+                  placeholder={t('form.about_placeholder')}
+                ></textarea>
+              </div>
             </div>
           </section>
 
@@ -956,41 +988,51 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
               <div className="bg-white dark:bg-gray-900 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6">
                 <h5 className="text-[10px] sm:text-xs font-black text-black dark:text-gray-300 uppercase tracking-widest mb-3 sm:mb-4">{t('form.add_reference')}</h5>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <input
-                    type="text"
-                    placeholder={`${t('form.fullname')} *`}
-                    className="bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-[11px] sm:text-sm font-bold outline-none border border-transparent focus:bg-white dark:focus:bg-gray-700 focus:border-[#1f6d78]/10 transition-all dark:text-white"
-                    value={refInput.name}
-                    onChange={e => setRefInput({ ...refInput, name: e.target.value })}
-                  />
-                  <input
-                    type="text"
-                    placeholder={`${t('form.institution')} *`}
-                    className="bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-[11px] sm:text-sm font-bold outline-none border border-transparent focus:bg-white dark:focus:bg-gray-700 focus:border-[#1f6d78]/10 transition-all dark:text-white"
-                    value={refInput.company}
-                    onChange={e => setRefInput({ ...refInput, company: e.target.value })}
-                  />
-                  <input
-                    type="text"
-                    placeholder={t('form.profession')}
-                    className="bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-[11px] sm:text-sm font-bold outline-none border border-transparent focus:bg-white dark:focus:bg-gray-700 focus:border-[#1f6d78]/10 transition-all dark:text-white"
-                    value={refInput.role}
-                    onChange={e => setRefInput({ ...refInput, role: e.target.value })}
-                  />
-                  <input
-                    type="tel"
-                    placeholder={`${t('form.phone')} (${t('form.optional')})`}
-                    className="bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-[11px] sm:text-sm font-bold outline-none border border-transparent focus:bg-white dark:focus:bg-gray-700 focus:border-[#1f6d78]/10 transition-all dark:text-white"
-                    value={refInput.phone}
-                    onChange={e => setRefInput({ ...refInput, phone: e.target.value })}
-                  />
-                  <input
-                    type="email"
-                    placeholder={`${t('form.email')} (${t('form.optional')})`}
-                    className="bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-[11px] sm:text-sm font-bold outline-none border border-transparent focus:bg-white dark:focus:bg-gray-700 focus:border-[#1f6d78]/10 transition-all dark:text-white"
-                    value={refInput.email}
-                    onChange={e => setRefInput({ ...refInput, email: e.target.value })}
-                  />
+                  <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                    <input
+                      type="text"
+                      placeholder={`${t('form.fullname')} *`}
+                      className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white"
+                      value={refInput.name}
+                      onChange={e => setRefInput({ ...refInput, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                    <input
+                      type="text"
+                      placeholder={`${t('form.institution')} *`}
+                      className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white"
+                      value={refInput.company}
+                      onChange={e => setRefInput({ ...refInput, company: e.target.value })}
+                    />
+                  </div>
+                  <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                    <input
+                      type="text"
+                      placeholder={t('form.profession')}
+                      className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white"
+                      value={refInput.role}
+                      onChange={e => setRefInput({ ...refInput, role: e.target.value })}
+                    />
+                  </div>
+                  <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                    <input
+                      type="tel"
+                      placeholder={`${t('form.phone')} (${t('form.optional')})`}
+                      className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white"
+                      value={refInput.phone}
+                      onChange={e => setRefInput({ ...refInput, phone: e.target.value })}
+                    />
+                  </div>
+                  <div className="w-full h-[38px] sm:h-[46px] bg-gray-50 dark:bg-gray-800 rounded-xl border border-transparent focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/10 transition-all overflow-hidden">
+                    <input
+                      type="email"
+                      placeholder={`${t('form.email')} (${t('form.optional')})`}
+                      className="w-[117.6%] h-[42.22px] sm:h-[54.11px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-4 py-0 sm:px-5 dark:text-white"
+                      value={refInput.email}
+                      onChange={e => setRefInput({ ...refInput, email: e.target.value })}
+                    />
+                  </div>
                 </div>
                 <button
                   onClick={handleAddReference}

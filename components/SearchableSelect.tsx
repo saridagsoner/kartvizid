@@ -60,14 +60,14 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
                 <div className="absolute z-50 top-[110%] left-0 w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                     {/* Search Input */}
                     <div className="p-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
-                        <div className="relative">
+                        <div className="relative h-[38px] overflow-hidden">
                             <input
                                 type="text"
                                 autoFocus
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Ara..."
-                                className="w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-9 pr-4 py-2.5 text-sm font-bold outline-none focus:border-[#1f6d78] transition-colors dark:text-white"
+                                className="w-[111.11%] h-[42.22px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-0 text-[16px] origin-top-left scale-[0.9] font-bold outline-none focus:border-[#1f6d78] transition-colors dark:text-white"
                                 onClick={(e) => e.stopPropagation()}
                             />
                             <svg

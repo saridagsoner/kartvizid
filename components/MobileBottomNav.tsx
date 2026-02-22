@@ -67,6 +67,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         if (activeTab === tab) {
             setActiveTab(null);
         } else {
+            if (onGoHome) onGoHome();
             setActiveTab(tab);
         }
     };
@@ -97,10 +98,11 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                 setActiveTab(null);
                                 if (onGoHome) onGoHome();
                             } else if (onOpenMenu) {
+                                setActiveTab(null);
                                 onOpenMenu();
                             }
                         }}
-                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 group`}
+                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 group transition-transform duration-200 active:scale-90`}
                     >
                         {renderHomeIcon()}
                         <span className="text-[10px] font-medium text-[#1f6d78] leading-none">
@@ -111,10 +113,10 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     {/* Notifications Button */}
                     <button
                         onClick={() => toggleTab('notifications')}
-                        className={`relative flex flex-col items-center justify-center w-16 h-full space-y-0.5 ${activeTab === 'notifications' ? 'text-[#1f6d78]' : 'text-[#1f6d78]'}`}
+                        className={`relative flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${activeTab === 'notifications' ? 'text-[#1f6d78]' : 'text-[#1f6d78]'}`}
                     >
                         <div className="h-8 flex items-center justify-center">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill={isNotifActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
                                 <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                             </svg>
@@ -133,6 +135,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                             if (!user) {
                                 toggleTab('create');
                             } else {
+                                setActiveTab(null);
                                 if (isEmployer && onOpenCompanyProfile) {
                                     onOpenCompanyProfile();
                                 } else {
@@ -140,7 +143,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                 }
                             }
                         }}
-                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-colors active:scale-95 ${activeTab === 'create' ? 'text-[#1f6d78]' : 'text-[#1f6d78] hover:text-[#1f6d78] active:text-[#1f6d78]'}`}
+                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${activeTab === 'create' ? 'text-[#1f6d78]' : 'text-[#1f6d78] hover:text-[#1f6d78]'}`}
                     >
                         <div className="h-8 flex items-center justify-center">
                             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
@@ -157,26 +160,27 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                             if (!user) {
                                 toggleTab('profile');
                             } else {
+                                setActiveTab(null);
                                 if (onOpenProfile) onOpenProfile(user.id, user.user_metadata?.role);
                             }
                         }}
-                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 ${activeTab === 'profile' ? 'text-[#1f6d78]' : 'text-[#1f6d78]'}`}
+                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${activeTab === 'profile' ? 'text-[#1f6d78]' : 'text-[#1f6d78]'}`}
                     >
                         <div className="h-8 flex flex-col items-center justify-center">
                             {userPhotoUrl ? (
-                                <div className={`w-6 h-6 rounded-full overflow-hidden border ${activeTab === 'profile' ? 'border-[#1f6d78]' : 'border-gray-200'}`}>
+                                <div className={`w-6 h-6 rounded-full overflow-hidden border ${isProfileActiveTab ? 'border-[#1f6d78]' : 'border-gray-200'}`}>
                                     <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
                                 </div>
                             ) : (
                                 <div>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill={isProfileActiveTab ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2z" />
                                         <circle cx="12" cy="7" r="4" />
                                     </svg>
                                 </div>
                             )}
                         </div>
-                        <span className={`text-[10px] font-medium leading-none ${activeTab === 'profile' ? 'text-[#1f6d78]' : 'text-[#1f6d78]'}`}>Profil</span>
+                        <span className={`text-[10px] font-medium leading-none ${isProfileActiveTab ? 'text-[#1f6d78]' : 'text-[#1f6d78]'}`}>Profil</span>
                     </button>
                 </div>
             </div>
