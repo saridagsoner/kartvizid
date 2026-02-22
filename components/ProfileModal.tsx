@@ -204,6 +204,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <InfoTag label={t('form.city')} value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} />
                 <InfoTag label={t('form.experience')} value={`${cv.experienceYears} Yıl${cv.experienceMonths ? ' ' + cv.experienceMonths + ' Ay' : ''} Deneyim`} />
+                {cv.birthDate && <InfoTag label="Doğum Tarihi" value={cv.birthDate} />}
               </div>
             </div>
 

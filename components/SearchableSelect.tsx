@@ -8,7 +8,7 @@ interface SearchableSelectProps {
     disabled?: boolean;
 }
 
-const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, options, placeholder = 'Seçiniz', disabled = false }) => {
+const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, options, placeholder = 'Şehir', disabled = false }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
     const dropdownRef = useRef<HTMLDivElement>(null);

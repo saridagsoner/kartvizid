@@ -1,0 +1,2 @@
+ALTER TABLE public.cvs DROP COLUMN IF EXISTS age;
+ALTER TABLE public.cvs ADD COLUMN IF NOT EXISTS birth_date text;

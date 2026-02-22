@@ -50,6 +50,7 @@ export interface CV {
   profession: string;
   city: string;
   district?: string;
+  birthDate?: string;
   experienceYears: number;
   experienceMonths?: number;
   language: string; // Legacy / Primary Display

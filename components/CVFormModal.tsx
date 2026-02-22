@@ -88,6 +88,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
     preferredCity: initialData?.preferredCity || '',
     preferredRoles: initialData?.preferredRoles || [],
     references: initialData?.references || [],
+    birthDate: initialData?.birthDate || '',
   });
 
   const [refInput, setRefInput] = useState({ name: '', company: '', role: '', phone: '', email: '' });
@@ -443,7 +444,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                           value={formData.city}
                           onChange={(val) => setFormData({ ...formData, city: val, district: '' })}
                           options={Object.keys(TURKEY_LOCATIONS).sort()}
-                          placeholder="Şehir Seçiniz"
+                          placeholder="Şehir"
                         />
                       </div>
                       <div className="space-y-2">
@@ -455,6 +456,60 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                           placeholder="İlçe"
                           disabled={!formData.city}
                         />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mt-4">
+                      <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Doğum Tarihi</label>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <div className="w-full h-[42px] sm:h-[48px] bg-gray-50 dark:bg-gray-800 rounded-full border border-transparent focus-within:border-[#1f6d78]/10 focus-within:bg-white dark:focus-within:bg-gray-700 transition-all overflow-hidden flex items-center justify-center">
+                            <input
+                              type="text"
+                              maxLength={2}
+                              value={(formData.birthDate || '').split('.')[0] || ''}
+                              onChange={e => {
+                                const val = e.target.value.replace(/\D/g, '');
+                                const parts = (formData.birthDate || '').split('.');
+                                setFormData({ ...formData, birthDate: `${val}.${parts[1] || ''}.${parts[2] || ''}` });
+                              }}
+                              className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] text-center text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
+                              placeholder="GG"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex-1">
+                          <div className="w-full h-[42px] sm:h-[48px] bg-gray-50 dark:bg-gray-800 rounded-full border border-transparent focus-within:border-[#1f6d78]/10 focus-within:bg-white dark:focus-within:bg-gray-700 transition-all overflow-hidden flex items-center justify-center">
+                            <input
+                              type="text"
+                              maxLength={2}
+                              value={(formData.birthDate || '').split('.')[1] || ''}
+                              onChange={e => {
+                                const val = e.target.value.replace(/\D/g, '');
+                                const parts = (formData.birthDate || '').split('.');
+                                setFormData({ ...formData, birthDate: `${parts[0] || ''}.${val}.${parts[2] || ''}` });
+                              }}
+                              className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] text-center text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
+                              placeholder="AA"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex-1">
+                          <div className="w-full h-[42px] sm:h-[48px] bg-gray-50 dark:bg-gray-800 rounded-full border border-transparent focus-within:border-[#1f6d78]/10 focus-within:bg-white dark:focus-within:bg-gray-700 transition-all overflow-hidden flex items-center justify-center">
+                            <input
+                              type="text"
+                              maxLength={4}
+                              value={(formData.birthDate || '').split('.')[2] || ''}
+                              onChange={e => {
+                                const val = e.target.value.replace(/\D/g, '');
+                                const parts = (formData.birthDate || '').split('.');
+                                setFormData({ ...formData, birthDate: `${parts[0] || ''}.${parts[1] || ''}.${val}` });
+                              }}
+                              className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] text-center text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
+                              placeholder="YYYY"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -578,7 +633,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                     value={formData.preferredCity || ''}
                     onChange={(val) => setFormData({ ...formData, preferredCity: val })}
                     options={Object.keys(TURKEY_LOCATIONS).sort()}
-                    placeholder="Şehir Seçiniz"
+                    placeholder="Şehir"
                   />
                 </div>
                 <div className="space-y-4">
