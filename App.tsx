@@ -1851,7 +1851,7 @@ const App: React.FC = () => {
       {/* Mobile Bottom Navigation - Visible for all users */}
       <MobileBottomNav
         user={user}
-        isProfileOpen={isCVPromoOpen || (selectedCV?.userId === user?.id)}
+        isProfileOpen={isCVPromoOpen || (!!user && !!selectedCV && selectedCV.userId === user.id)}
         isCreateOpen={isCVFormOpen || isCompanyFormOpen}
         isHomeView={!selectedCV && !isCVFormOpen && !isSettingsOpen && !isCompanyFormOpen && !selectedCompanyProfile && !isNotificationsModalOpen && !isSavedCVsOpen && !isCVPromoOpen}
         onGoHome={() => {
@@ -1862,6 +1862,9 @@ const App: React.FC = () => {
           setSelectedCompanyProfile(null);
           setIsNotificationsModalOpen(false);
           setIsSavedCVsOpen(false);
+          setIsCVPromoOpen(false);
+          setSearchQuery('');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
           setIsMobileMenuOpen(false);
         }}
         onSearch={(val) => {

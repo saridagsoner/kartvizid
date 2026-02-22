@@ -71,7 +71,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
   return (
     <>
       {!mobile && !embedded && <div className="fixed inset-0 z-[55]" onClick={onClose} />}
-      <div className={`${embedded ? 'w-full h-full bg-transparent' : mobile ? 'fixed inset-0 z-[105] w-full h-full bg-white dark:bg-gray-900 overflow-hidden flex flex-col animate-in slide-in-from-bottom duration-300' : 'absolute -right-4 sm:right-0 top-14 w-[320px] sm:w-[380px] bg-white rounded-2xl shadow-xl border border-gray-100 z-[60] overflow-hidden animate-in slide-in-from-top-2 duration-200'}`}>
+      <div className={`${embedded ? 'w-full h-full bg-transparent' : mobile ? 'fixed inset-0 z-[140] w-full h-full bg-white dark:bg-gray-900 overflow-hidden flex flex-col animate-in slide-in-from-bottom duration-300' : 'absolute -right-4 sm:right-0 top-14 w-[320px] sm:w-[380px] bg-white rounded-2xl shadow-xl border border-gray-100 z-[60] overflow-hidden animate-in slide-in-from-top-2 duration-200'}`}>
 
         {/* Header - Hidden if embedded */}
         {!embedded && (
