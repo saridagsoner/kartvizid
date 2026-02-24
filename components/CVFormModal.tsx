@@ -1125,17 +1125,27 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
             {t('form.cancel')}
           </button>
           <button
-            disabled={isSubmitting || !isConsentGiven}
+            disabled={isSubmitting}
             onClick={async () => {
-              // Validation
+              // Consent Validation
+              if (!isConsentGiven) {
+                alert('Lütfen KVKK metnini okuyup onaylayınız.');
+                return;
+              }
+
+              // Photo and About Validation
+              if (!formData.photoUrl || !formData.about) {
+                alert('İşverenlerin sizi fark edebilmesi ve olumlu dönüş alabilmeniz için Fotoğraf ve Hakkımda kısımlarını doldurmanız çok önemlidir. Lütfen daha iyi bir izlenim bırakmak için bu alanları doldurup tekrar deneyin.');
+                return;
+              }
+
+              // Validation for other fields
               const requiredFields = [
                 { key: 'name', label: t('form.fullname') },
-                { key: 'photoUrl', label: 'Profil Fotoğrafı' },
                 { key: 'profession', label: t('form.profession') },
                 { key: 'city', label: t('form.city') },
                 { key: 'email', label: t('form.email') },
-                { key: 'phone', label: t('form.phone') },
-                { key: 'about', label: t('form.about_me') }
+                { key: 'phone', label: t('form.phone') }
               ];
 
               const missing = requiredFields.filter(field => {
@@ -1146,12 +1156,6 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
 
               if (missing.length > 0) {
                 setShowWarning({ show: true, missing: missing.map(m => m.label) });
-                return;
-              }
-
-              // Consent Validation
-              if (!isConsentGiven) {
-                alert('Lütfen KVKK metnini okuyup onaylayınız.');
                 return;
               }
 
@@ -1174,8 +1178,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                 setIsSubmitting(false);
               }
             }}
-            className={`flex-[2] py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] ${isSubmitting ? 'bg-gray-400 text-white cursor-not-allowed' :
-                isConsentGiven ? 'bg-[#1f6d78] text-white hover:bg-[#155e68]' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            className={`flex-[2] py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] ${isSubmitting ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-[#1f6d78] text-white hover:bg-[#155e68]'
               }`}
           >
             {isSubmitting ? 'Kaydediliyor...' : t('form.save_publish')}
