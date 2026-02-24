@@ -45,7 +45,7 @@ const SelectionPill: React.FC<SelectionPillProps> = ({ label, active, onClick })
 
 interface CVFormModalProps {
   onClose: () => void;
-  onSubmit: (cv: Partial<CV>, consentGiven?: boolean) => void;
+  onSubmit: (cv: Partial<CV>, consentGiven?: boolean) => void | Promise<void>;
   initialData?: Partial<CV>;
   availableCities?: Array<{ label: string }>;
 }
@@ -97,6 +97,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
   const [hasPriorConsent, setHasPriorConsent] = useState(false);
   const [isConsentGiven, setIsConsentGiven] = useState(false);
   const [loadingConsent, setLoadingConsent] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch initial consent status
   React.useEffect(() => {
@@ -1124,7 +1125,8 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
             {t('form.cancel')}
           </button>
           <button
-            onClick={() => {
+            disabled={isSubmitting || !isConsentGiven}
+            onClick={async () => {
               // Validation
               const requiredFields = [
                 { key: 'name', label: t('form.fullname') },
@@ -1133,9 +1135,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                 { key: 'city', label: t('form.city') },
                 { key: 'email', label: t('form.email') },
                 { key: 'phone', label: t('form.phone') },
-                { key: 'about', label: t('form.about_me') },
-                { key: 'educationDetails', label: t('form.education_info') },
-                { key: 'languageDetails', label: t('form.languages') }
+                { key: 'about', label: t('form.about_me') }
               ];
 
               const missing = requiredFields.filter(field => {
@@ -1165,14 +1165,20 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                 languageLevel: formData.languageDetails?.[0]?.level || formData.languageLevel || '',
               };
 
-              onSubmit(syncedData, !hasPriorConsent);
+              setIsSubmitting(true);
+              try {
+                await onSubmit(syncedData, !hasPriorConsent);
+              } catch (err) {
+                console.error('Submission failed', err);
+              } finally {
+                setIsSubmitting(false);
+              }
             }}
-            className={`flex-[2] py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] ${isConsentGiven
-              ? 'bg-[#1f6d78] text-white hover:bg-[#155e68]'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            className={`flex-[2] py-3 sm:py-5 rounded-full font-black text-xs sm:text-base uppercase tracking-widest transition-all shadow-xl active:scale-[0.98] ${isSubmitting ? 'bg-gray-400 text-white cursor-not-allowed' :
+                isConsentGiven ? 'bg-[#1f6d78] text-white hover:bg-[#155e68]' : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }`}
           >
-            {t('form.save_publish')}
+            {isSubmitting ? 'Kaydediliyor...' : t('form.save_publish')}
           </button>
         </div>
 

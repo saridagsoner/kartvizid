@@ -1104,6 +1104,21 @@ const App: React.FC = () => {
     return cvList.find((cv: any) => cv.userId === user.id);
   }, [user, cvList]);
 
+  // Prompt user to complete CV if photo or about is missing
+  useEffect(() => {
+    if (user && currentUserCV) {
+      if (!currentUserCV.photoUrl || !currentUserCV.about) {
+        const hasSeenToast = sessionStorage.getItem('cv_completion_toast_seen');
+        if (!hasSeenToast) {
+          setTimeout(() => {
+            showToast('İş verenlerin sizi daha iyi tanıyabilmesi için lütfen Profilinizden CV\'nizi tamamen doldurun.', 'info');
+          }, 2000);
+          sessionStorage.setItem('cv_completion_toast_seen', 'true');
+        }
+      }
+    }
+  }, [user, currentUserCV, showToast]);
+
   const fetchCompany = async () => {
     if (!user) return;
     try {
@@ -1813,7 +1828,14 @@ const App: React.FC = () => {
           <CVFormModal
             onClose={() => setIsCVFormOpen(false)}
             onSubmit={handleCreateCV}
-            initialData={currentUserCV || undefined}
+            initialData={currentUserCV || (user?.user_metadata ? {
+              name: user.user_metadata.full_name || '',
+              profession: user.user_metadata.profession || '',
+              city: user.user_metadata.city || '',
+              experienceYears: user.user_metadata.experience_years ? Number(user.user_metadata.experience_years) : 0,
+              experienceMonths: user.user_metadata.experience_months ? Number(user.user_metadata.experience_months) : 0,
+              email: user.email || ''
+            } : undefined) as Partial<CV>}
             availableCities={availableCities}
           />
         )
