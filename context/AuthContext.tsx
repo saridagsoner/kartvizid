@@ -24,53 +24,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-
-      if (session?.user && session.user.user_metadata?.role === 'job_seeker') {
-        try {
-          const { data: existingCV } = await supabase
-            .from('cvs')
-            .select('id')
-            .eq('user_id', session.user.id)
-            .maybeSingle();
-
-          if (!existingCV) {
-            const meta = session.user.user_metadata || {};
-            await supabase.from('cvs').insert({
-              user_id: session.user.id,
-              name: meta.full_name || 'İsimsiz Kullanıcı',
-              profession: meta.profession || 'Belirtilmedi',
-              city: meta.city || 'Belirtilmedi',
-              experience_years: meta.experience_years ? Number(meta.experience_years) : 0,
-              experience_months: meta.experience_months ? Number(meta.experience_months) : 0,
-              email: session.user.email,
-              skills: [],
-              education_details: [],
-              work_experience: [],
-              internship_details: [],
-              language_details: [],
-              certificates: [],
-              is_new: true,
-              views: 0,
-              is_placed: false,
-              is_active: true,
-              about: '',
-              photo_url: '',
-              language: 'Belirtilmedi',
-              education: 'Belirtilmedi',
-              salary_min: 0,
-              salary_max: 0,
-              working_status: 'open'
-            });
-            window.dispatchEvent(new Event('new_cv_created'));
-          }
-        } catch (e) {
-          console.error('Frontend fallback CV creation failed:', e);
-        }
-      }
     });
 
     return () => subscription.unsubscribe();

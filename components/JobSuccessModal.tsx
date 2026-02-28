@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import confetti from 'canvas-confetti';
 import { useLanguage } from '../context/LanguageContext';
 
 interface JobSuccessModalProps {
@@ -9,38 +8,6 @@ interface JobSuccessModalProps {
 const JobSuccessModal: React.FC<JobSuccessModalProps> = ({ onClose }) => {
     const { t } = useLanguage();
 
-    useEffect(() => {
-        // Fire confetti indefinitely while mounted
-        let animationFrameId: number;
-
-        const frame = () => {
-            confetti({
-                particleCount: 2,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 },
-                zIndex: 9999,
-                colors: ['#1f6d78', '#ffecd2', '#d4af37']
-            });
-            confetti({
-                particleCount: 2,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 },
-                zIndex: 9999,
-                colors: ['#1f6d78', '#ffecd2', '#d4af37']
-            });
-
-            // Keep loop running until unmount
-            animationFrameId = requestAnimationFrame(frame);
-        };
-
-        frame();
-
-        return () => {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        };
-    }, []);
 
     return (
 

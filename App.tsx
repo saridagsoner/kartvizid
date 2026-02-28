@@ -237,16 +237,6 @@ const App: React.FC = () => {
     }
   }, [user]);
 
-  // Listen for frontend-side automatic CV creations
-  useEffect(() => {
-    const handleNewCVCreated = () => {
-      fetchCVs();
-      fetchJobFinders();
-    };
-    window.addEventListener('new_cv_created', handleNewCVCreated);
-    return () => window.removeEventListener('new_cv_created', handleNewCVCreated);
-  }, []);
-
   // Listen for custom "open-profile" event (triggered by NotificationDropdown)
   useEffect(() => {
     const handleOpenProfileEvent = (e: Event) => {

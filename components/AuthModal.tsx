@@ -23,12 +23,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     const [isEmployer, setIsEmployer] = useState(initialRole === 'employer');
     const [showPassword, setShowPassword] = useState(false);
 
-    // Yeni Kayıt alanları (CV İçin)
-    const [fullName, setFullName] = useState('');
-    const [profession, setProfession] = useState('');
-    const [city, setCity] = useState('');
-    const [experienceYears, setExperienceYears] = useState<number | ''>('');
-    const [experienceMonths, setExperienceMonths] = useState<number | ''>('');
+
 
     useEffect(() => {
         if (isOpen) {
@@ -64,12 +59,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                     password,
                     options: {
                         data: {
-                            role: isEmployer ? 'employer' : 'job_seeker',
-                            full_name: !isEmployer ? fullName : undefined,
-                            profession: (!isEmployer && profession) ? profession : undefined,
-                            city: (!isEmployer && city) ? city : undefined,
-                            experience_years: (!isEmployer && experienceYears !== '') ? Number(experienceYears) : undefined,
-                            experience_months: (!isEmployer && experienceMonths !== '') ? Number(experienceMonths) : undefined,
+                            role: isEmployer ? 'employer' : 'job_seeker'
                         }
                     }
                 });
@@ -133,9 +123,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                 ? 'Şifrenizi sıfırlamak için e-posta adresinizi girin.'
                                 : (isEmployer
                                     ? 'Firma profilinizi yönetmek için giriş yapın.'
-                                    : (mode === 'signin'
-                                        ? 'Sizinle hangi işverenlerin ilgilendiğini görmek için giriş yapın.'
-                                        : 'Saniyeler içinde hesabınızı oluşturun, ana sayfada kartvizitiniz\nsizin için iş bulmaya başlasın.')
+                                    : 'Kariyerinizde yeni bir sayfa açmak için hemen giriş yapın.'
                                 )
                             }
                         </p>
@@ -146,79 +134,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                             <div className="bg-red-50 text-red-600 text-[11px] sm:text-sm p-3 rounded-xl font-medium border border-red-100">
                                 {error}
                             </div>
-                        )}
-
-                        {mode === 'signup' && !isEmployer && (
-                            <>
-                                <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">İsim Soyisim</label>
-                                    <input
-                                        type="text"
-                                        value={fullName}
-                                        onChange={(e) => setFullName(e.target.value)}
-                                        required
-                                        className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3.5 text-base text-gray-800 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-[#1f6d78]/5 focus:border-[#1f6d78] transition-all placeholder:text-gray-400"
-                                        placeholder="Adınız Soyadınız"
-                                    />
-                                </div>
-
-                                <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">Meslek</label>
-                                    <input
-                                        type="text"
-                                        value={profession}
-                                        onChange={(e) => setProfession(e.target.value)}
-                                        required
-                                        className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3.5 text-base text-gray-800 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-[#1f6d78]/5 focus:border-[#1f6d78] transition-all placeholder:text-gray-400"
-                                        placeholder="Örn: Muhasebeci, Bilgisayar Mühendisi"
-                                    />
-                                    <p className="text-[9px] text-gray-500 ml-1">Yaptığınız meslekleri virgülle ayırarak daha fazla meslek yazabilirsiniz.</p>
-                                </div>
-
-                                <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">Şehir</label>
-                                    <SearchableSelect
-                                        value={city}
-                                        onChange={(val) => setCity(val)}
-                                        options={Object.keys(TURKEY_LOCATIONS).sort()}
-                                        placeholder="Şehir"
-                                    />
-                                </div>
-
-                                <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">Tecrübe</label>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max="100"
-                                            value={experienceYears}
-                                            onChange={(e) => {
-                                                const val = e.target.value;
-                                                if (val === '') setExperienceYears('');
-                                                else if (Number(val) >= 0 && Number(val) <= 100) setExperienceYears(Number(val));
-                                            }}
-                                            required
-                                            className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3.5 text-base text-gray-800 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-[#1f6d78] transition-all"
-                                            placeholder="Yıl (Örn: 5)"
-                                        />
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max="11"
-                                            value={experienceMonths}
-                                            onChange={(e) => {
-                                                const val = e.target.value;
-                                                if (val === '') setExperienceMonths('');
-                                                else if (Number(val) >= 0 && Number(val) <= 11) setExperienceMonths(Number(val));
-                                            }}
-                                            className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3.5 text-base text-gray-800 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-[#1f6d78] transition-all"
-                                            placeholder="Ay (Örn: 6)"
-                                        />
-                                    </div>
-                                    <p className="text-[9px] text-gray-500 ml-1">En deneyimli olduğunuz meslekteki tecrübenizi girin.</p>
-                                </div>
-                            </>
                         )}
 
                         <div className={`flex flex-col gap-4 ${(mode === 'signin' || mode === 'reset') ? 'my-auto' : ''}`}>
