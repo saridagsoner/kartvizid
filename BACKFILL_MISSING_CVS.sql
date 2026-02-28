@@ -1,6 +1,6 @@
 -- Bu script, daha önceden kayıt olmuş ama hatadan dolayı CV'si 
 -- (kartviziti) oluşmamış "iş arayan" hesaplarını tespit eder ve onlar için de 
--- eksik kartvizitleri geriye dönük olarak oluşturur.
+-- eksik kartvizitleri "iş arıyor" (open) statüsünde geriye dönük olarak oluşturur.
 
 INSERT INTO public.cvs (
   user_id, 
@@ -25,7 +25,8 @@ INSERT INTO public.cvs (
   language, 
   education, 
   salary_min, 
-  salary_max
+  salary_max,
+  working_status
 )
 SELECT 
   u.id,
@@ -50,7 +51,8 @@ SELECT
   'Belirtilmedi', 
   'Belirtilmedi', 
   0, 
-  0
+  0,
+  'open'
 FROM auth.users u
 LEFT JOIN public.cvs c ON u.id = c.user_id
 WHERE COALESCE(u.raw_user_meta_data->>'role', '') = 'job_seeker'

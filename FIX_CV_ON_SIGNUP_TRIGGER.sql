@@ -1,6 +1,6 @@
 -- Bu script, yeni kayıt olan iş arayanlar için oluşturulan tetikleyiciyi (trigger) günceller.
--- Eksik kalan "language", "education", "salary_min" gibi potansiyel NOT NULL alanlarına 
--- varsayılan (default) değerler atayarak sessizce hata verip CV oluşturmayı iptal etmesini önler.
+-- "working_status" alanının varsayılan olarak "active" (iş buldu/gizli) gelmesini engelleyip 
+-- zorla "open" (iş arıyor/görünür) yapar. Böylece ana sayfada listelemeye düşer.
 
 CREATE OR REPLACE FUNCTION public.handle_new_job_seeker()
 RETURNS trigger AS $$
@@ -29,7 +29,8 @@ BEGIN
       language,
       education,
       salary_min,
-      salary_max
+      salary_max,
+      working_status
     ) VALUES (
       NEW.id,
       COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
@@ -50,16 +51,15 @@ BEGIN
       true,
       '',
       '',
-      'Belirtilmedi',   -- Eski şemalarda verisi zorunluysa çökmesini engeller
+      'Belirtilmedi',
       'Belirtilmedi',
       0,
-      0
+      0,
+      'open' -- ÇÖZÜM: Kartvizidin ana sayfada "iş arıyor" modunda parlamasını sağlar
     );
   END IF;
   RETURN NEW;
 EXCEPTION WHEN OTHERS THEN
-  -- Eğer buraya düşüyorsa veri tabanınızda ek bir zorunlu alan olabilir.
-  -- Hata fırlatarak sessizce kaybolmasını değil, Supabase loglarına düşmesini sağlıyoruz.
   RAISE WARNING 'Kartvizit oluşturulurken hata: %', SQLERRM;
   RETURN NEW;
 END;
