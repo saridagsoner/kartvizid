@@ -143,7 +143,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
       }));
       setRefInput({ name: '', company: '', role: '', phone: '', email: '' });
     } else {
-      alert('Referans Eklemek için İsim ve Kurum girmelisiniz.');
+      setShowWarning({ show: true, missing: ['Referans Eklemek için İsim ve Kurum girmelisiniz.'] });
     }
   };
 
@@ -310,7 +310,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
 
       setFormData(prev => ({ ...prev, photoUrl: data.publicUrl }));
     } catch (error: any) {
-      alert('Fotoğraf yüklenirken hata oluştu: ' + error.message);
+      setShowWarning({ show: true, missing: ['Fotoğraf yüklenirken hata oluştu: ' + error.message] });
     } finally {
       setUploading(false);
     }
@@ -1129,13 +1129,16 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
             onClick={async () => {
               // Consent Validation
               if (!isConsentGiven) {
-                alert('Lütfen KVKK metnini okuyup onaylayınız.');
+                setShowWarning({ show: true, missing: ['Lütfen KVKK metnini okuyup onaylayınız.'] });
                 return;
               }
 
               // Photo and About Validation
               if (!formData.photoUrl || !formData.about) {
-                alert('İşverenlerin sizi fark edebilmesi ve olumlu dönüş alabilmeniz için Fotoğraf ve Hakkımda kısımlarını doldurmanız çok önemlidir. Lütfen daha iyi bir izlenim bırakmak için bu alanları doldurup tekrar deneyin.');
+                setShowWarning({
+                  show: true,
+                  missing: ['İşverenlerin sizi fark edebilmesi ve olumlu dönüş alabilmeniz için Fotoğraf ve Hakkımda kısımlarını doldurmanız çok önemlidir. Lütfen daha iyi bir izlenim bırakmak için bu alanları doldurup tekrar deneyin.']
+                });
                 return;
               }
 
@@ -1232,10 +1235,10 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialDat
                   </svg>
                 </div>
                 <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
-                  Eksik Bilgiler Var
+                  {showWarning.missing.length === 1 && showWarning.missing[0].length > 50 ? 'Bilgi Mesajı' : 'Eksik Bilgiler Var'}
                 </h3>
                 <p className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-wider relative z-10">
-                  Lütfen aşağıdaki alanları doldurunuz:
+                  {showWarning.missing.length === 1 && showWarning.missing[0].length > 50 ? 'Lütfen dikkate alınız:' : 'Lütfen aşağıdaki alanları doldurunuz:'}
                 </p>
 
                 <div className="bg-gray-50 rounded-2xl p-4 mb-8 border border-gray-100 relative z-10">

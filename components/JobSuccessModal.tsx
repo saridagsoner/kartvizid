@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import confetti from 'canvas-confetti';
 
 interface JobSuccessModalProps {
     onClose: () => void;
@@ -8,9 +9,30 @@ interface JobSuccessModalProps {
 const JobSuccessModal: React.FC<JobSuccessModalProps> = ({ onClose }) => {
     const { t } = useLanguage();
 
+    useEffect(() => {
+        // Trigger confetti on mount
+        const duration = 3 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 200 };
+
+        const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+        const interval: any = setInterval(function () {
+            const timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                return clearInterval(interval);
+            }
+
+            const particleCount = 50 * (timeLeft / duration);
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+        }, 250);
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
-
         <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/50 backdrop-blur-[6px] animate-in fade-in duration-300">
             {/* Modal Container - Smaller max-w-xl (rectangular card shape) */}
             <div className="bg-white dark:bg-gray-900 rounded-[1.5rem] w-full max-w-xl relative shadow-2xl animate-in zoom-in-95 overflow-hidden">
@@ -37,17 +59,15 @@ const JobSuccessModal: React.FC<JobSuccessModalProps> = ({ onClose }) => {
                         </div>
                     </div>
 
-                    <p className="text-[#1f6d78] dark:text-[#2dd4bf] font-serif italic text-lg sm:text-xl leading-relaxed max-w-[360px] opacity-90">
-                        "{t('success.job_found_msg') || 'Yeni işinizde başarılar dileriz!'}"
-                    </p>
-
-
+                    <div className="text-[#1f6d78] dark:text-[#2dd4bf] font-serif italic text-lg sm:text-xl leading-relaxed max-w-[380px] opacity-90 space-y-2">
+                        <p>"Yeni işinizde başarılar dileriz!</p>
+                        <p>Kartvizid ailesi olarak kariyer yolculuğunuzda yanınızda olmaktan mutluluk duyduk."</p>
+                    </div>
 
                 </div>
             </div>
         </div>
     );
-
 };
 
 export default JobSuccessModal;

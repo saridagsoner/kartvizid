@@ -93,32 +93,32 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
     return (
         <div className="fixed inset-0 z-[140] flex flex-col justify-end sm:justify-center items-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-black/50 sm:backdrop-blur-sm animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:fade-in duration-200">
-            <div className="bg-white dark:bg-gray-800 w-full h-full max-h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-none sm:shadow-2xl relative flex flex-col rounded-none sm:rounded-3xl overflow-hidden">
+            <div className="bg-white dark:bg-gray-900 w-full h-full max-h-[100dvh] sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-none sm:shadow-2xl relative flex flex-col rounded-none sm:rounded-3xl overflow-hidden sm:border sm:border-gray-100 dark:border-gray-800">
 
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400 z-20 bg-white/50 backdrop-blur-sm"
+                    className="absolute top-4 right-4 sm:top-5 sm:right-5 p-2.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400 z-50 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50"
                 >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
 
                 {/* Scrollable Content Area */}
-                <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar p-5 sm:p-8 pt-10 sm:pt-8 w-full pb-8">
-                    <div className="text-center mb-6 px-4">
-                        <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2 leading-tight">
+                <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar p-6 sm:p-10 pt-12 sm:pt-10 w-full pb-[100px] sm:pb-8 relative z-10">
+                    <div className="text-center mb-8 px-2">
+                        <h2 className="text-[28px] sm:text-[32px] font-black text-gray-900 dark:text-white mb-3 leading-tight tracking-tight">
                             {mode === 'reset'
                                 ? 'Şifremi Unuttum'
                                 : (isEmployer
-                                    ? (mode === 'signin' ? 'İş Veren Girişi' : 'İş Veren Hesabı Oluştur')
-                                    : (mode === 'signin' ? 'İş Arayan Girişi' : 'İş Arayan Hesabı Oluştur')
+                                    ? (mode === 'signin' ? 'İş Veren Girişi' : 'İş Veren Kaydı')
+                                    : (mode === 'signin' ? 'İş Arayan Girişi' : 'Hesap Oluştur')
                                 )
                             }
                         </h2>
-                        <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">
+                        <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-[0.15em] mx-auto max-w-[280px] sm:max-w-sm">
                             {mode === 'reset'
                                 ? 'Şifrenizi sıfırlamak için e-posta adresinizi girin.'
                                 : (isEmployer
@@ -129,50 +129,50 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                         </p>
                     </div>
 
-                    <form id="auth-form" onSubmit={handleSubmit} className="flex flex-col gap-4 flex-1">
+                    <form id="auth-form" onSubmit={handleSubmit} className="flex flex-col gap-5 flex-1 w-full max-w-sm mx-auto">
                         {error && (
-                            <div className="bg-red-50 text-red-600 text-[11px] sm:text-sm p-3 rounded-xl font-medium border border-red-100">
+                            <div className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-[11px] sm:text-sm p-3.5 rounded-2xl font-bold border border-red-100 dark:border-red-500/20 text-center">
                                 {error}
                             </div>
                         )}
 
                         <div className={`flex flex-col gap-4 ${(mode === 'signin' || mode === 'reset') ? 'my-auto' : ''}`}>
-                            <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">E-posta</label>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest ml-1 pl-1">E-posta</label>
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3.5 text-base text-gray-800 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-[#1f6d78] transition-all placeholder:text-gray-400"
+                                    className="w-full bg-gray-50 dark:bg-gray-800/50 border-2 border-transparent focus:bg-white dark:focus:bg-gray-800 focus:border-[#1f6d78]/30 dark:focus:border-[#2dd4bf]/30 rounded-2xl px-5 py-4 text-[15px] sm:text-base text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-[#1f6d78]/10 transition-all placeholder:text-gray-400 placeholder:font-medium shadow-sm"
                                     placeholder="ornek@email.com"
                                 />
                             </div>
 
                             {mode !== 'reset' && (
-                                <div className="space-y-1">
-                                    <label className="text-[10px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">Şifre</label>
+                                <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest ml-1 pl-1">Şifre</label>
                                     <div className="relative">
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             required
-                                            className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3.5 text-base text-gray-800 dark:text-gray-100 font-medium focus:outline-none focus:ring-2 focus:ring-[#1f6d78]/5 focus:border-[#1f6d78] transition-all placeholder:text-gray-400 pr-12"
+                                            className="w-full bg-gray-50 dark:bg-gray-800/50 border-2 border-transparent focus:bg-white dark:focus:bg-gray-800 focus:border-[#1f6d78]/30 dark:focus:border-[#2dd4bf]/30 rounded-2xl px-5 py-4 text-[15px] sm:text-base text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-[#1f6d78]/10 transition-all placeholder:text-gray-400 placeholder:font-medium shadow-sm pr-12"
                                             placeholder="••••••••"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] focus:outline-none transition-colors"
                                         >
                                             {showPassword ? (
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
                                                     <circle cx="12" cy="12" r="3" />
                                                 </svg>
                                             ) : (
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                                     <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
                                                     <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
                                                     <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
@@ -183,11 +183,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                     </div>
 
                                     {mode === 'signin' && (
-                                        <div className="flex justify-end mt-1">
+                                        <div className="flex justify-end mt-2">
                                             <button
                                                 type="button"
                                                 onClick={() => { setMode('reset'); setError(null); }}
-                                                className="text-[10px] sm:text-xs font-bold text-[#1f6d78] hover:underline"
+                                                className="text-[11px] font-black text-[#1f6d78] dark:text-[#2dd4bf] hover:text-[#155e68] dark:hover:text-white transition-colors"
                                             >
                                                 Şifremi Unuttum?
                                             </button>
@@ -197,37 +197,31 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                             )}
 
                             {mode === 'signin' && (
-                                <div className="flex items-center gap-2 px-1">
+                                <div className="flex items-center gap-3 px-2 mt-1">
                                     <input
                                         type="checkbox"
                                         id="rememberMe"
                                         checked={rememberMe}
                                         onChange={(e) => setRememberMe(e.target.checked)}
-                                        className="w-4 h-4 rounded border-gray-300 text-[#1f6d78] focus:ring-[#1f6d78] focus:ring-offset-0 cursor-pointer accent-[#1f6d78]"
+                                        className="w-4 h-4 rounded-md border-gray-300 dark:border-gray-600 text-[#1f6d78] focus:ring-[#1f6d78] focus:ring-offset-0 cursor-pointer accent-[#1f6d78] dark:bg-gray-800"
                                     />
-                                    <label htmlFor="rememberMe" className="text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-400 cursor-pointer select-none">
+                                    <label htmlFor="rememberMe" className="text-sm font-bold text-gray-600 dark:text-gray-300 cursor-pointer select-none">
                                         Beni Hatırla
                                     </label>
                                 </div>
                             )}
                         </div>
 
-
-                        {/* Show employer checkbox ONLY if no initialRole was passed (generic entry) 
-                        OR if we want to allow switching. But user requested 'accordingly'. 
-                        So if initialRole is set, we hide the checkbox to avoid confusion, 
-                        assuming the button click determines the intent. 
-                    */}
                         {!initialRole && mode === 'signup' && (
-                            <div className="flex items-center gap-2 px-1">
+                            <div className="flex items-center gap-3 px-2 mt-1">
                                 <input
                                     type="checkbox"
                                     id="isEmployer"
                                     checked={isEmployer}
                                     onChange={(e) => setIsEmployer(e.target.checked)}
-                                    className="w-4 h-4 rounded border-gray-300 text-[#1f6d78] focus:ring-[#1f6d78] focus:ring-offset-0 cursor-pointer accent-[#1f6d78]"
+                                    className="w-4 h-4 rounded-md border-gray-300 dark:border-gray-600 text-[#1f6d78] focus:ring-[#1f6d78] focus:ring-offset-0 cursor-pointer accent-[#1f6d78] dark:bg-gray-800"
                                 />
-                                <label htmlFor="isEmployer" className="text-xs sm:text-sm font-bold text-gray-600 dark:text-gray-400 cursor-pointer select-none">
+                                <label htmlFor="isEmployer" className="text-sm font-bold text-gray-600 dark:text-gray-300 cursor-pointer select-none">
                                     İşveren Hesabı Oluştur (Firma Profili)
                                 </label>
                             </div>
@@ -236,19 +230,20 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-[90%] sm:w-full mx-auto bg-[#1f6d78] text-white font-bold py-3.5 sm:py-3.5 rounded-full hover:bg-[#155e68] shadow-lg active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-[15px] leading-none mt-auto`}
+                            className={`w-full bg-[#1f6d78] dark:bg-[#2dd4bf] text-white dark:text-gray-900 font-black py-4 rounded-2xl hover:bg-[#155e68] dark:hover:bg-teal-300 shadow-xl shadow-[#1f6d78]/20 dark:shadow-[#2dd4bf]/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[15px] uppercase tracking-widest leading-none mt-6 mb-2`}
                         >
                             {loading ? 'İşleniyor...' : (mode === 'signin' ? 'Giriş Yap' : (mode === 'reset' ? 'Sıfırlama Linki Gönder' : 'Kayıt Ol'))}
                         </button>
-                    </form>
 
-                    <div className={`mt-5 text-center ${mode === 'signup' ? 'pb-24' : 'pb-12'} sm:pb-8`}>
-                        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium">
-                            {mode === 'signin'
-                                ? 'Hesabın yok mu?'
-                                : (mode === 'reset' ? 'Giriş ekranına dön:' : 'Zaten hesabın var mı?')
-                            }
+                        <div className="text-center pt-4 pb-6 sm:pb-2">
+                            <p className="text-[13px] text-gray-500 dark:text-gray-400 font-bold mb-1">
+                                {mode === 'signin'
+                                    ? 'Hesabın yok mu?'
+                                    : (mode === 'reset' ? 'Giriş ekranına dön:' : 'Zaten hesabın var mı?')
+                                }
+                            </p>
                             <button
+                                type="button"
                                 onClick={() => {
                                     if (mode === 'signin') {
                                         setMode('signup');
@@ -257,12 +252,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                     }
                                     setError(null);
                                 }}
-                                className="ml-2 text-xs sm:text-sm font-bold text-[#1f6d78] hover:underline pb-2"
+                                className="text-[14px] font-black text-[#1f6d78] dark:text-[#2dd4bf] hover:text-[#155e68] dark:hover:text-white transition-colors"
                             >
-                                {mode === 'signin' ? 'Kayıt Ol' : 'Giriş Yap'}
+                                {mode === 'signin' ? 'Hemen Kayıt Ol' : 'Giriş Yap'}
                             </button>
-                        </p>
-                    </div>
+                        </div>
+                    </form>
 
                     {/* Success Overlay for SIGNUP */}
                     {showSuccess && (

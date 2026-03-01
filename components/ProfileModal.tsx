@@ -22,6 +22,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   const { showToast } = useToast();
   const [showRoleWarning, setShowRoleWarning] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [showWarning, setShowWarning] = useState<{ show: boolean, message: string }>({ show: false, message: '' });
   const isOwner = user?.id === cv.userId;
 
   // Check if saved on mount
@@ -74,7 +75,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       } else {
         // Fallback for desktop: Copy to clipboard
         await navigator.clipboard.writeText(window.location.href);
-        alert('Link kopyalandı!');
+        setShowWarning({ show: true, message: 'Link başarıyla kopyalandı!' });
       }
     } catch (err) {
       console.log('Share canceled or not supported');
@@ -152,8 +153,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
     </div>
   );
 
-  const ValuePill = ({ label }: { label: string }) => (
-    <span className="bg-[#1f6d78] text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider shadow-sm">
+  const ValuePill = ({ label, key }: { label: string, key?: React.Key }) => (
+    <span key={key} className="bg-[#1f6d78] text-white px-3 py-2 sm:px-5 sm:py-2.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider shadow-sm">
       {resolveValue(label)}
     </span>
   );
@@ -620,6 +621,32 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
 
         </div>
       </div >
+
+      {/* Warning / Success Overlay */}
+      {showWarning.show && (
+        <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6 animate-in fade-in duration-200 rounded-[3rem]">
+          <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl scale-100 animate-in zoom-in-95 duration-200 text-center relative overflow-hidden">
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+            <div className="w-16 h-16 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-sm relative z-10">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
+              Başarılı
+            </h3>
+            <p className="text-sm font-bold text-gray-500 mb-8 leading-relaxed relative z-10">
+              {showWarning.message}
+            </p>
+            <button
+              onClick={() => setShowWarning({ show: false, message: '' })}
+              className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active:scale-95 relative z-10"
+            >
+              Tamam
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Role Warning Modal - Centered & Themed */}
       {

@@ -15,6 +15,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     const [activeTab, setActiveTab] = useState<'general' | 'account' | 'security' | 'notifications'>('account');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
+    const [showWarning, setShowWarning] = useState<{ show: boolean, message: string }>({ show: false, message: '' });
 
     // Security State
     const [newPassword, setNewPassword] = useState('');
@@ -52,11 +53,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
     const handleUpdatePassword = async () => {
         if (newPassword !== confirmPassword) {
-            alert('Şifreler eşleşmiyor!');
+            setShowWarning({ show: true, message: 'Şifreler eşleşmiyor!' });
             return;
         }
         if (newPassword.length < 6) {
-            alert('Şifre en az 6 karakter olmalıdır.');
+            setShowWarning({ show: true, message: 'Şifre en az 6 karakter olmalıdır.' });
             return;
         }
 
@@ -64,11 +65,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
             setLoading(true);
             const { error } = await supabase.auth.updateUser({ password: newPassword });
             if (error) throw error;
-            alert('Şifreniz başarıyla güncellendi!');
+            setShowWarning({ show: true, message: 'Şifreniz başarıyla güncellendi!' });
             setNewPassword('');
             setConfirmPassword('');
         } catch (error: any) {
-            alert('Hata: ' + error.message);
+            setShowWarning({ show: true, message: 'Hata: ' + error.message });
         } finally {
             setLoading(false);
         }
@@ -76,7 +77,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
     const handleUpdateEmail = async () => {
         if (!newEmail.includes('@')) {
-            alert('Geçerli bir e-posta adresi giriniz.');
+            setShowWarning({ show: true, message: 'Geçerli bir e-posta adresi giriniz.' });
             return;
         }
 
@@ -84,10 +85,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
             setLoading(true);
             const { error } = await supabase.auth.updateUser({ email: newEmail });
             if (error) throw error;
-            alert('E-posta güncelleme onayı için yeni adresinize bir mail gönderdik. Lütfen kontrol edin.');
+            setShowWarning({ show: true, message: 'E-posta güncelleme onayı için yeni adresinize bir mail gönderdik. Lütfen kontrol edin.' });
             setNewEmail('');
         } catch (error: any) {
-            alert('Hata: ' + error.message);
+            setShowWarning({ show: true, message: 'Hata: ' + error.message });
         } finally {
             setLoading(false);
         }
@@ -142,7 +143,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
         } catch (error: any) {
             console.error('Error deleting account:', error);
-            alert('Hesap silinirken bir hata oluştu: ' + error.message);
+            setShowWarning({ show: true, message: 'Hesap silinirken bir hata oluştu: ' + error.message });
             setShowDeleteConfirm(false); // Close modal on error to allow retry
         } finally {
             setLoading(false);
@@ -161,6 +162,34 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
         <div className="fixed inset-0 z-[250] flex items-center justify-center sm:p-4 bg-white sm:bg-black/60 sm:backdrop-blur-sm animate-in fade-in duration-200">
             {/* Fixed Height Layout */}
             <div className="bg-white w-full h-full sm:h-[600px] sm:max-h-[90vh] sm:max-w-2xl sm:rounded-[2rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden">
+
+                {/* Warning / Error Overlay */}
+                {showWarning.show && (
+                    <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6 animate-in fade-in duration-200">
+                        <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl scale-100 animate-in zoom-in-95 duration-200 text-center relative overflow-hidden">
+                            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+                            <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-xl relative z-10">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                            </div>
+                            <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
+                                Bilgi Mesajı
+                            </h3>
+                            <p className="text-sm font-bold text-gray-500 mb-8 leading-relaxed relative z-10">
+                                {showWarning.message}
+                            </p>
+                            <button
+                                onClick={() => setShowWarning({ show: false, message: '' })}
+                                className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active:scale-95 relative z-10"
+                            >
+                                Tamam
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 {/* Custom Delete Confirmation Overlay */}
                 {showDeleteConfirm && (

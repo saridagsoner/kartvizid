@@ -83,8 +83,8 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
           </div>
 
           {/* Summary Section - HIDDEN ON MOBILE */}
-          <div className="hidden sm:block mt-2 sm:mt-6">
-            <p className="text-[9px] sm:text-[13px] text-gray-600 dark:text-gray-300 font-medium leading-relaxed line-clamp-2 italic">
+          <div className="hidden sm:block mt-2 sm:mt-3">
+            <p className="text-[9px] sm:text-[13px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed line-clamp-2">
               "{cv.about}"
             </p>
           </div>

@@ -15,6 +15,8 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ imageSrc, onCropComplete, o
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
+    const [showWarning, setShowWarning] = useState<{ show: boolean, message: string }>({ show: false, message: '' });
+
     const onCropChange = (crop: { x: number; y: number }) => {
         setCrop(crop);
     };
@@ -35,13 +37,41 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ imageSrc, onCropComplete, o
             }
         } catch (e) {
             console.error(e);
-            alert('Fotoğraf kırpılırken bir hata oluştu.');
+            setShowWarning({ show: true, message: 'Fotoğraf kırpılırken bir hata oluştu.' });
         }
     }, [imageSrc, croppedAreaPixels, onCropComplete]);
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden flex flex-col h-[500px] animate-in zoom-in-95 duration-200">
+            <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden flex flex-col h-[500px] animate-in zoom-in-95 duration-200 relative">
+
+                {/* Warning / Error Overlay */}
+                {showWarning.show && (
+                    <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6 animate-in fade-in duration-200">
+                        <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl scale-100 animate-in zoom-in-95 duration-200 text-center relative overflow-hidden">
+                            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+                            <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-xl relative z-10">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                                </svg>
+                            </div>
+                            <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
+                                Hata Oluştu
+                            </h3>
+                            <p className="text-sm font-bold text-gray-500 mb-8 leading-relaxed relative z-10">
+                                {showWarning.message}
+                            </p>
+                            <button
+                                onClick={() => setShowWarning({ show: false, message: '' })}
+                                className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active:scale-95 relative z-10"
+                            >
+                                Tamam
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-white z-10">
                     <h3 className="font-bold text-lg text-gray-900">Fotoğrafı Ayarla</h3>
