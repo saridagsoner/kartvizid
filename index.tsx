@@ -13,17 +13,21 @@ import { ToastProvider } from './context/ToastContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 
+import { HelmetProvider } from 'react-helmet-async';
+
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <LanguageProvider>
-        <ToastProvider>
-          <ThemeProvider>
-            <App />
-          </ThemeProvider>
-        </ToastProvider>
-      </LanguageProvider>
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <LanguageProvider>
+          <ToastProvider>
+            <ThemeProvider>
+              <App />
+            </ThemeProvider>
+          </ToastProvider>
+        </LanguageProvider>
+      </AuthProvider>
+    </HelmetProvider>
   </React.StrictMode>
 );

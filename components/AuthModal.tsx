@@ -235,8 +235,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                             {loading ? 'İşleniyor...' : (mode === 'signin' ? 'Giriş Yap' : (mode === 'reset' ? 'Sıfırlama Linki Gönder' : 'Kayıt Ol'))}
                         </button>
 
-                        <div className="text-center pt-4 pb-6 sm:pb-2">
-                            <p className="text-[13px] text-gray-500 dark:text-gray-400 font-bold mb-1">
+                        <div className="flex flex-row flex-wrap items-center justify-center gap-1.5 pt-4 pb-6 sm:pb-2">
+                            <p className="text-[13.5px] text-gray-500 dark:text-gray-400 font-bold">
                                 {mode === 'signin'
                                     ? 'Hesabın yok mu?'
                                     : (mode === 'reset' ? 'Giriş ekranına dön:' : 'Zaten hesabın var mı?')
@@ -252,7 +252,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                     }
                                     setError(null);
                                 }}
-                                className="text-[14px] font-black text-[#1f6d78] dark:text-[#2dd4bf] hover:text-[#155e68] dark:hover:text-white transition-colors"
+                                className="text-[13.5px] font-black text-[#1f6d78] dark:text-[#2dd4bf] hover:text-[#155e68] dark:hover:text-white transition-colors"
                             >
                                 {mode === 'signin' ? 'Hemen Kayıt Ol' : 'Giriş Yap'}
                             </button>

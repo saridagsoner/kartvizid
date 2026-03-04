@@ -12,24 +12,25 @@ import SidebarLeft from './components/SidebarLeft';
 import SidebarRight from './components/SidebarRight';
 import BusinessCard from './components/BusinessCard';
 import Filters from './components/Filters';
-import ProfileModal from './components/ProfileModal';
-import CompanyProfileModal from './components/CompanyProfileModal';
-import CVFormModal from './components/CVFormModal';
 import Footer from './components/Footer';
-import SettingsModal from './components/SettingsModal';
-import CompanyFormModal from './components/CompanyFormModal';
 import SortDropdown from './components/SortDropdown';
 import MobileBottomNav from './components/MobileBottomNav';
-import NotificationsModal from './components/NotificationsModal';
-import JobSuccessModal from './components/JobSuccessModal';
-import { BusinessCardSkeleton } from './components/Skeleton';
-import SavedCVsModal from './components/SavedCVsModal';
 import MobileMenuDrawer from './components/MobileMenuDrawer';
-import AdvancedFilterModal from './components/AdvancedFilterModal';
-import ResetPasswordModal from './components/ResetPasswordModal';
+import { BusinessCardSkeleton } from './components/Skeleton';
 
-// SortDropdown moved to components/SortDropdown.tsx
-import CVPromoModal from './components/CVPromoModal';
+// Lazy loaded modals and heavy components
+const ProfileModal = React.lazy(() => import('./components/ProfileModal'));
+const CompanyProfileModal = React.lazy(() => import('./components/CompanyProfileModal'));
+const CVFormModal = React.lazy(() => import('./components/CVFormModal'));
+const SettingsModal = React.lazy(() => import('./components/SettingsModal'));
+const CompanyFormModal = React.lazy(() => import('./components/CompanyFormModal'));
+const NotificationsModal = React.lazy(() => import('./components/NotificationsModal'));
+const JobSuccessModal = React.lazy(() => import('./components/JobSuccessModal'));
+const SavedCVsModal = React.lazy(() => import('./components/SavedCVsModal'));
+const AdvancedFilterModal = React.lazy(() => import('./components/AdvancedFilterModal'));
+const ResetPasswordModal = React.lazy(() => import('./components/ResetPasswordModal'));
+const CVPromoModal = React.lazy(() => import('./components/CVPromoModal'));
+const AuthModal = React.lazy(() => import('./components/AuthModal'));
 
 const getFriendlyErrorMessage = (error: any): string => {
   const message = error.message || error.toString();
@@ -1878,163 +1879,233 @@ const App: React.FC = () => {
         isProfileOpen={isCVPromoOpen || (!!user && !!selectedCV && selectedCV.userId === user.id)}
         isCreateOpen={isCVFormOpen || isCompanyFormOpen}
         isHomeView={!selectedCV && !isCVFormOpen && !isSettingsOpen && !isCompanyFormOpen && !selectedCompanyProfile && !isNotificationsModalOpen && !isSavedCVsOpen && !isCVPromoOpen}
-        onGoHome={() => {
-          setSelectedCV(null);
-          setIsCVFormOpen(false);
-          setIsSettingsOpen(false);
-          setIsCompanyFormOpen(false);
-          setSelectedCompanyProfile(null);
-          setIsNotificationsModalOpen(false);
-          setIsSavedCVsOpen(false);
-          setIsCVPromoOpen(false);
-          setSearchQuery('');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          setIsMobileMenuOpen(false);
-        }}
-        onSearch={(val) => {
-          setSearchQuery(val);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onCreateCV={() => {
-          if (!user) {
-            closeAllModals();
-            handleAuthOpen('signin');
-            return;
-          }
-          if (isCVFormOpen) {
-            closeAllModals();
-            return;
-          }
-          closeAllModals();
-          setIsCVFormOpen(true);
-        }}
-        onOpenCompanyProfile={() => {
-          if (!user) {
-            closeAllModals();
-            handleAuthOpen('signin', 'employer');
-            return;
-          }
-          if (isCompanyFormOpen) {
-            closeAllModals();
-            return;
-          }
-          closeAllModals();
-          fetchCompany();
-          setIsCompanyFormOpen(true);
-        }}
-        onOpenSettings={() => {
-          if (!user) {
-            closeAllModals();
-            handleAuthOpen('signin');
-            return;
-          }
-          closeAllModals();
-          setIsSettingsOpen(true);
-        }}
-        hasCV={!!currentUserCV}
-        userPhotoUrl={user?.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
-        notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
-        notifications={[
-          ...receivedRequests,
-          ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
-        ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-        onNotificationAction={handleRequestAction}
-        onMarkNotificationRead={markNotificationRead}
-        onMarkAllRead={markAllNotificationsRead}
-        onOpenProfile={(uid, role) => {
-          if (!user) {
-            closeAllModals();
-            handleAuthOpen('signin');
-            return;
-          }
-          if (uid === user.id && !currentUserCV) {
-            if (isCVPromoOpen) {
+      />
+      <React.Suspense fallback={null}>
+        {
+          selectedCV && (
+            <ProfileModal
+              cv={selectedCV}
+              onClose={() => setSelectedCV(null)}
+              requestStatus={sentRequests.find(r => r.target_user_id === selectedCV.userId)?.status || 'none'}
+              onRequestAccess={() => handleSendRequest(selectedCV.userId)}
+              onCancelRequest={() => handleCancelRequest(selectedCV.userId)}
+              onJobFound={handleJobFound}
+            />
+          )
+        }
+        {
+          isCVFormOpen && (
+            <CVFormModal
+              onClose={() => setIsCVFormOpen(false)}
+              onSubmit={handleCreateCV}
+              initialData={currentUserCV || (user?.user_metadata ? {
+                name: user.user_metadata.full_name || '',
+                profession: user.user_metadata.profession || '',
+                city: user.user_metadata.city || '',
+                experienceYears: user.user_metadata.experience_years ? Number(user.user_metadata.experience_years) : 0,
+                experienceMonths: user.user_metadata.experience_months ? Number(user.user_metadata.experience_months) : 0,
+                email: user.email || ''
+              } : undefined) as Partial<CV>}
+              availableCities={availableCities}
+            />
+          )
+        }
+        {
+          isCompanyFormOpen && (
+            <CompanyFormModal
+              onClose={() => setIsCompanyFormOpen(false)}
+              onSubmit={handleCompanySubmit}
+              initialData={activeCompany || undefined}
+              availableCities={availableCities}
+            />
+          )
+        }
+        {
+          selectedCompanyProfile && (
+            <CompanyProfileModal
+              company={selectedCompanyProfile}
+              onClose={() => { setSelectedCompanyProfile(null); setActiveModalRequestId(null); }}
+              requestStatus={activeModalRequest?.status}
+              requestId={activeModalRequest?.id}
+              onAction={async (id, action) => {
+                await handleRequestAction(id, action);
+                // Update local modal state immediately
+                setActiveModalRequest(prev => prev ? { ...prev, status: action } : null);
+              }}
+              onRevoke={async (id) => {
+                await handleRequestAction(id, 'rejected');
+                // Update local modal state immediately
+                setActiveModalRequest(prev => prev ? { ...prev, status: 'rejected' } : null);
+              }}
+            />
+          )
+        }
+        {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
+
+        {/* Mobile Bottom Navigation - Visible for all users */}
+        <MobileBottomNav
+          user={user}
+          isProfileOpen={isCVPromoOpen || (!!user && !!selectedCV && selectedCV.userId === user.id)}
+          isCreateOpen={isCVFormOpen || isCompanyFormOpen}
+          isHomeView={!selectedCV && !isCVFormOpen && !isSettingsOpen && !isCompanyFormOpen && !selectedCompanyProfile && !isNotificationsModalOpen && !isSavedCVsOpen && !isCVPromoOpen}
+          onGoHome={() => {
+            setSelectedCV(null);
+            setIsCVFormOpen(false);
+            setIsSettingsOpen(false);
+            setIsCompanyFormOpen(false);
+            setSelectedCompanyProfile(null);
+            setIsNotificationsModalOpen(false);
+            setIsSavedCVsOpen(false);
+            setIsCVPromoOpen(false);
+            setSearchQuery('');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setIsMobileMenuOpen(false);
+          }}
+          onSearch={(val) => {
+            setSearchQuery(val);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onCreateCV={() => {
+            if (!user) {
+              closeAllModals();
+              handleAuthOpen('signin');
+              return;
+            }
+            if (isCVFormOpen) {
               closeAllModals();
               return;
             }
             closeAllModals();
-            setIsCVPromoOpen(true);
-            return;
-          }
-          if (selectedCV?.userId === uid) {
-            closeAllModals();
-            return;
-          }
-          closeAllModals();
-          handleOpenProfile(uid, role);
-        }}
-        onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
-        signOut={async () => {
-          await supabase.auth.signOut();
-          // window.location.reload(); 
-        }}
-        onOpenMenu={() => setIsMobileMenuOpen(true)}
-      />
-
-      <MobileMenuDrawer
-        isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-        popularProfessions={professionStats}
-        popularCities={cityStats}
-        weeklyTrends={weeklyRisingStats}
-        jobFinders={jobFinders}
-        platformStats={platformStats}
-        popularCVs={popularCVs}
-        popularCompanies={popularCompanies}
-        onJobFinderClick={(cv) => {
-          handleCVClick(cv);
-          setIsMobileMenuOpen(false);
-        }}
-        onCVClick={(cv) => {
-          handleCVClick(cv);
-          setIsMobileMenuOpen(false);
-        }}
-        onCompanyClick={(company) => {
-          // handle company click
-          setIsMobileMenuOpen(false);
-        }}
-        onFilterApply={(type, value) => {
-          handleFilterUpdate(type, value);
-          setIsMobileMenuOpen(false);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        user={user}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenSavedCVs={() => {
-          setIsMobileMenuOpen(false);
-          setIsSavedCVsOpen(true);
-        }}
-        onLogout={async () => {
-          await supabase.auth.signOut();
-          setIsMobileMenuOpen(false);
-          // window.location.reload(); 
-        }}
-      />
-      {isJobSuccessOpen && (
-        <JobSuccessModal
-          onClose={() => setIsJobSuccessOpen(false)}
-        />
-      )}
-
-      {isSavedCVsOpen && user && (
-        <SavedCVsModal
-          userId={user.id}
-          onClose={() => setIsSavedCVsOpen(false)}
-          onOpenCV={(cvId) => {
-            setIsSavedCVsOpen(false); // Close list
-            handleViewSavedCV(cvId);
-          }}
-        />
-      )}
-      {isCVPromoOpen && (
-        <CVPromoModal
-          onClose={() => setIsCVPromoOpen(false)}
-          onCreateCV={() => {
-            setIsCVPromoOpen(false);
             setIsCVFormOpen(true);
           }}
+          onOpenCompanyProfile={() => {
+            if (!user) {
+              closeAllModals();
+              handleAuthOpen('signin', 'employer');
+              return;
+            }
+            if (isCompanyFormOpen) {
+              closeAllModals();
+              return;
+            }
+            closeAllModals();
+            fetchCompany();
+            setIsCompanyFormOpen(true);
+          }}
+          onOpenSettings={() => {
+            if (!user) {
+              closeAllModals();
+              handleAuthOpen('signin');
+              return;
+            }
+            closeAllModals();
+            setIsSettingsOpen(true);
+          }}
+          hasCV={!!currentUserCV}
+          userPhotoUrl={user?.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
+          notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
+          notifications={[
+            ...receivedRequests,
+            ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
+          ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+          onNotificationAction={handleRequestAction}
+          onMarkNotificationRead={markNotificationRead}
+          onMarkAllRead={markAllNotificationsRead}
+          onOpenProfile={(uid, role) => {
+            if (!user) {
+              closeAllModals();
+              handleAuthOpen('signin');
+              return;
+            }
+            if (uid === user.id && !currentUserCV) {
+              if (isCVPromoOpen) {
+                closeAllModals();
+                return;
+              }
+              closeAllModals();
+              setIsCVPromoOpen(true);
+              return;
+            }
+            if (selectedCV?.userId === uid) {
+              closeAllModals();
+              return;
+            }
+            closeAllModals();
+            handleOpenProfile(uid, role);
+          }}
+          onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
+          signOut={async () => {
+            await supabase.auth.signOut();
+            // window.location.reload(); 
+          }}
+          onOpenMenu={() => setIsMobileMenuOpen(true)}
         />
-      )}
+
+        <MobileMenuDrawer
+          isOpen={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
+          popularProfessions={professionStats}
+          popularCities={cityStats}
+          weeklyTrends={weeklyRisingStats}
+          jobFinders={jobFinders}
+          platformStats={platformStats}
+          popularCVs={popularCVs}
+          popularCompanies={popularCompanies}
+          onJobFinderClick={(cv) => {
+            handleCVClick(cv);
+            setIsMobileMenuOpen(false);
+          }}
+          onCVClick={(cv) => {
+            handleCVClick(cv);
+            setIsMobileMenuOpen(false);
+          }}
+          onCompanyClick={(company) => {
+            // handle company click
+            setIsMobileMenuOpen(false);
+          }}
+          onFilterApply={(type, value) => {
+            handleFilterUpdate(type, value);
+            setIsMobileMenuOpen(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          user={user}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenSavedCVs={() => {
+            setIsMobileMenuOpen(false);
+            setIsSavedCVsOpen(true);
+          }}
+          onLogout={async () => {
+            await supabase.auth.signOut();
+            setIsMobileMenuOpen(false);
+            // window.location.reload(); 
+          }}
+        />
+        {isJobSuccessOpen && (
+          <JobSuccessModal
+            onClose={() => setIsJobSuccessOpen(false)}
+          />
+        )}
+
+        {isSavedCVsOpen && user && (
+          <SavedCVsModal
+            userId={user.id}
+            onClose={() => setIsSavedCVsOpen(false)}
+            onOpenCV={(cvId) => {
+              setIsSavedCVsOpen(false); // Close list
+              handleViewSavedCV(cvId);
+            }}
+          />
+        )}
+        {isCVPromoOpen && (
+          <CVPromoModal
+            onClose={() => setIsCVPromoOpen(false)}
+            onCreateCV={() => {
+              setIsCVPromoOpen(false);
+              setIsCVFormOpen(true);
+            }}
+          />
+        )}
+      </React.Suspense>
     </div >
   );
 };

@@ -96,11 +96,23 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
         {/* Content */}
         <div className={`${embedded ? '' : mobile ? 'flex-1' : 'max-h-[290px]'} overflow-y-auto custom-scrollbar bg-gray-50/50 dark:bg-gray-800/50`}>
           {notifications.length === 0 ? (
-            <div className={`text-center flex flex-col items-center justify-center ${embedded ? 'py-20' : mobile ? 'h-full' : 'py-12'}`}>
-              <div className="w-16 h-16 bg-gray-50 dark:bg-gray-700/50 rounded-full flex items-center justify-center mb-4 border border-gray-100 dark:border-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg>
+            <div className={`text-center flex flex-col items-center justify-center px-6 ${embedded ? 'py-20' : mobile ? 'h-full flex-1' : 'py-12'}`}>
+              <div className="w-16 h-16 bg-[#1f6d78]/10 dark:bg-[#2dd4bf]/10 rounded-full flex items-center justify-center mb-5 shrink-0">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="text-[#1f6d78] dark:text-[#2dd4bf]"><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 9 3 12 0v-5" /></svg>
               </div>
-              <p className="text-gray-900 dark:text-white font-medium text-sm">{t('notif.empty')}</p>
+              <h4 className="text-gray-900 dark:text-white font-black text-[15px] mb-2">{t('notif.empty')}</h4>
+              {user?.user_metadata?.role === 'employer' ? (
+                <p className="text-gray-500 dark:text-gray-400 text-[13px] leading-relaxed max-w-[280px] mx-auto font-medium">
+                  Kaydettiğiniz adaylara iletişim isteği gönderdiğinizde, süreç buradan takip edilir. Yeni adayları keşfedin!
+                </p>
+              ) : (
+                <div className="text-gray-500 dark:text-gray-400 text-[12.5px] leading-relaxed max-w-[280px] mx-auto font-medium flex flex-col gap-2">
+                  <p>
+                    <span className="font-bold text-[#1f6d78] dark:text-[#2dd4bf]">Kartvizid'de işverenler ilan açmaz, doğrudan sizinle iletişime geçer.</span>
+                  </p>
+                  <p>Özgeçmişinizi güncel tutun ve ilk iş görüşmesi davetinizi bekleyin.</p>
+                </div>
+              )}
             </div>
           ) : (
             notifications.map((item) => {
@@ -194,7 +206,8 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
                 </div>
               );
             })
-          )}
+          )
+          }
         </div>
 
         {/* Footer - Hidden if embedded or mobile (mobile has close in header) */}

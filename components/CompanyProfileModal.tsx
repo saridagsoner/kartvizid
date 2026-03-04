@@ -11,6 +11,8 @@ interface CompanyProfileModalProps {
     onRevoke?: (requestId: string) => void;
 }
 
+import SEO from './SEO';
+
 const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onClose, requestStatus, requestId, onAction, onRevoke }) => {
     const { t } = useLanguage();
 
@@ -35,6 +37,11 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
 
     return (
         <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[84px] sm:pb-0 bg-black/60 backdrop-blur-xl animate-in fade-in duration-300">
+            <SEO
+                title={`${company.name} - Şirket Profili`}
+                description={company.description ? company.description.substring(0, 150) + '...' : `${company.name} şirketinin profilini inceleyin.`}
+                image={company.logoUrl}
+            />
             <div className="bg-white w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
 
                 {/* Header */}

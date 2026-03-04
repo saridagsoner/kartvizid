@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import { generatePrintableCV } from '../lib/generatePrintableCV';
 
 import { supabase } from '../lib/supabase';
+import SEO from './SEO';
 
 interface ProfileModalProps {
   cv: CV;
@@ -161,6 +162,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
 
   return (
     <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-white dark:bg-gray-900 sm:bg-black/60 sm:dark:bg-black/60 sm:backdrop-blur-xl animate-in slide-in-from-right sm:fade-in sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
+      <SEO
+        title={`${cv.name} - ${cv.profession}`}
+        description={cv.about ? cv.about.substring(0, 150) + '...' : `${cv.name} adlı kullanıcının özgeçmişini inceleyin.`}
+        image={cv.photoUrl}
+      />
       <div className="w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-gray-900 border-none sm:border border-gray-100 dark:border-gray-800">
         {/* Header */}
         <div className="p-4 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0 gap-4">
