@@ -16,6 +16,7 @@ type LegalSection =
 interface LegalModalProps {
     initialSection?: LegalSection;
     onClose: () => void;
+    onNavigate?: (section: LegalSection) => void;
 }
 
 export const LEGAL_CONTENT: Record<LegalSection, { title: string; content: React.ReactNode }> = {
@@ -174,7 +175,7 @@ export const LEGAL_CONTENT: Record<LegalSection, { title: string; content: React
     }
 };
 
-const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onClose }) => {
+const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onClose, onNavigate }) => {
     const [activeSection, setActiveSection] = useState<LegalSection>(initialSection);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -211,7 +212,10 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
                         {Object.entries(LEGAL_CONTENT).map(([key, data]) => (
                             <button
                                 key={key}
-                                onClick={() => setActiveSection(key as LegalSection)}
+                                onClick={() => {
+                                    if (onNavigate) onNavigate(key as LegalSection);
+                                    else setActiveSection(key as LegalSection);
+                                }}
                                 className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeSection === key
                                     ? 'bg-[#1f6d78] text-white shadow-md shadow-[#1f6d78]/20'
                                     : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
@@ -253,7 +257,10 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
                         {Object.entries(LEGAL_CONTENT).map(([key, data]) => (
                             <button
                                 key={key}
-                                onClick={() => setActiveSection(key as LegalSection)}
+                                onClick={() => {
+                                    if (onNavigate) onNavigate(key as LegalSection);
+                                    else setActiveSection(key as LegalSection);
+                                }}
                                 className={`px-4 py-2 rounded-full text-xs font-bold transition-all inline-block ${activeSection === key
                                     ? 'bg-[#1f6d78] text-white'
                                     : 'bg-white border border-gray-200 text-gray-500'

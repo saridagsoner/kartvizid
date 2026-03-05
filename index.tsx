@@ -14,6 +14,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 
 import { HelmetProvider } from 'react-helmet-async';
+import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
@@ -23,7 +24,9 @@ root.render(
         <LanguageProvider>
           <ToastProvider>
             <ThemeProvider>
-              <App />
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
             </ThemeProvider>
           </ToastProvider>
         </LanguageProvider>

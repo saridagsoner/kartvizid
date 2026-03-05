@@ -45,6 +45,7 @@ export interface CertificateEntry {
 
 export interface CV {
   id: string;
+  slug?: string;
   userId: string;
   name: string;
   profession: string;
@@ -186,6 +187,7 @@ export type UserRole = 'job_seeker' | 'employer';
 
 export interface Company {
   id: string;
+  slug?: string;
   userId: string;
   name: string;
   description?: string;

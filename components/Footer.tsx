@@ -1,18 +1,11 @@
 import React from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useToast } from '../context/ToastContext';
-
-import LegalModal, { LegalSection } from './LegalModal'; // Check path
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
     const { t } = useLanguage();
     const { showToast } = useToast();
-    const [legalSection, setLegalSection] = React.useState<LegalSection | null>(null);
-
-    const openLegal = (section: LegalSection) => (e: React.MouseEvent) => {
-        e.preventDefault();
-        setLegalSection(section);
-    };
 
     const handleAppClick = () => {
         showToast("Mobil uygulamamız çok yakında! Şimdilik web sitemizden devam edebilirsiniz.", "info");
@@ -53,11 +46,11 @@ const Footer = () => {
                     <div>
                         <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">{t('footer.usage')}</h3>
                         <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-500">
-                            <li><a href="#" onClick={openLegal('general')} className="hover:text-black dark:hover:text-white transition-colors">{t('footer.general_terms')}</a></li>
-                            <li><a href="#" onClick={openLegal('security')} className="hover:text-black transition-colors">{t('footer.security')}</a></li>
-                            <li><a href="#" onClick={openLegal('faq')} className="hover:text-black transition-colors">{t('footer.faq')}</a></li>
-                            <li><a href="#" onClick={openLegal('help')} className="hover:text-black transition-colors">{t('footer.help')}</a></li>
-                            <li><a href="#" onClick={openLegal('services')} className="hover:text-black transition-colors">{t('footer.services')}</a></li>
+                            <li><Link to="/kullanim-kosullari" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.general_terms')}</Link></li>
+                            <li><Link to="/guvenlik-ipuclari" className="hover:text-black transition-colors">{t('footer.security')}</Link></li>
+                            <li><Link to="/sikca-sorulan-sorular" className="hover:text-black transition-colors">{t('footer.faq')}</Link></li>
+                            <li><Link to="/yardim-merkezi" className="hover:text-black transition-colors">{t('footer.help')}</Link></li>
+                            <li><Link to="/hizmetlerimiz" className="hover:text-black transition-colors">{t('footer.services')}</Link></li>
                         </ul>
                     </div>
 
@@ -65,11 +58,11 @@ const Footer = () => {
                     <div>
                         <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">{t('footer.data_policy')}</h3>
                         <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-500">
-                            <li><a href="#" onClick={openLegal('privacy')} className="hover:text-black dark:hover:text-white transition-colors">Aydınlatma Metni</a></li>
-                            <li><a href="#" onClick={openLegal('cookie')} className="hover:text-black dark:hover:text-white transition-colors">{t('footer.cookie_policy')}</a></li>
-                            <li><a href="#" onClick={openLegal('kvkk')} className="hover:text-black dark:hover:text-white transition-colors">{t('footer.kvkk')}</a></li>
-                            <li><a href="#" onClick={openLegal('membership')} className="hover:text-black dark:hover:text-white transition-colors">{t('footer.membership_agreement')}</a></li>
-                            <li><a href="#" onClick={openLegal('data_form')} className="hover:text-black dark:hover:text-white transition-colors">{t('footer.data_owner_form')}</a></li>
+                            <li><Link to="/aydinlatma-metni" className="hover:text-black dark:hover:text-white transition-colors">Aydınlatma Metni</Link></li>
+                            <li><Link to="/cerez-politikasi" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.cookie_policy')}</Link></li>
+                            <li><Link to="/kvkk-aydinlatma" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.kvkk')}</Link></li>
+                            <li><Link to="/uyelik-sozlesmesi" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.membership_agreement')}</Link></li>
+                            <li><Link to="/veri-sahibi-basvuru-formu" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.data_owner_form')}</Link></li>
                         </ul>
                     </div>
 
@@ -100,13 +93,6 @@ const Footer = () => {
                     </p>
                 </div>
             </div>
-
-            {legalSection && (
-                <LegalModal
-                    initialSection={legalSection}
-                    onClose={() => setLegalSection(null)}
-                />
-            )}
         </footer>
     );
 };

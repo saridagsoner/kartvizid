@@ -1,0 +1,119 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
+import { Company } from '../types';
+
+const CompanyProfileModal = React.lazy(() => import('./CompanyProfileModal'));
+
+interface CompanyProfileRouteProps {
+    requestStatus?: string;
+    requestId?: string;
+    onAction?: (requestId: string, action: 'approved' | 'rejected') => void;
+    onRevoke?: (requestId: string) => void;
+}
+
+const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
+    requestStatus,
+    requestId,
+    onAction,
+    onRevoke
+}) => {
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [company, setCompany] = useState<Company | null>(location.state?.companyData || null);
+    const [loading, setLoading] = useState(!location.state?.companyData);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        // If the modal was accessed directly via URL, we fetch the Company
+        if (!company && id) {
+            const fetchCompany = async () => {
+                setLoading(true);
+                try {
+                    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id || '');
+                    const queryField = isUuid ? 'id' : 'slug';
+
+                    const { data, error: fetchError } = await supabase
+                        .from('companies')
+                        .select('*')
+                        .eq(queryField, id)
+                        .single();
+
+                    if (fetchError) throw fetchError;
+
+                    if (data) {
+                        setCompany({
+                            id: data.id,
+                            userId: data.user_id,
+                            name: data.company_name,
+                            industry: data.industry,
+                            city: data.city,
+                            district: data.district,
+                            country: data.country || 'Türkiye',
+                            address: data.address,
+                            website: data.website,
+                            description: data.description,
+                            logoUrl: data.logo_url
+                        });
+                    } else {
+                        setError('Şirket bulunamadı.');
+                    }
+                } catch (e) {
+                    console.error('Error fetching company for route:', e);
+                    setError('Şirket bilgileri yüklenirken bir hata oluştu.');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            fetchCompany();
+        }
+    }, [id, company]);
+
+    const handleClose = () => {
+        if (window.history.length > 2) {
+            navigate(-1);
+        } else {
+            navigate('/', { replace: true });
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 sm:backdrop-blur-xl animate-in fade-in duration-300">
+                <div className="w-16 h-16 border-4 border-[#1f6d78]/20 border-t-[#1f6d78] rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (error || !company) {
+        return (
+            <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 sm:backdrop-blur-xl animate-in fade-in duration-300">
+                <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
+                    <div className="text-4xl mb-4">😢</div>
+                    <h2 className="text-xl font-black text-gray-900 dark:text-white mb-2">Hata</h2>
+                    <p className="text-gray-500 mb-6 font-medium text-sm">{error || 'Bu şirket profili yayından kaldırılmış veya bulunamadı.'}</p>
+                    <button onClick={handleClose} className="w-full bg-[#1f6d78] text-white py-3 rounded-xl font-bold hover:opacity-90 transition-opacity">
+                        Ana Sayfaya Dön
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <CompanyProfileModal
+                company={company}
+                onClose={handleClose}
+                requestStatus={requestStatus}
+                requestId={requestId}
+                onAction={onAction}
+                onRevoke={onRevoke}
+            />
+        </React.Suspense>
+    );
+};
+
+export default CompanyProfileRoute;

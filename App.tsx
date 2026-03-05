@@ -1,5 +1,5 @@
-
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { CV, FilterState, ContactRequest, Company, NotificationItem } from './types';
 import { supabase } from './lib/supabase';
 import { useAuth } from './context/AuthContext';
@@ -32,6 +32,10 @@ const ResetPasswordModal = React.lazy(() => import('./components/ResetPasswordMo
 const CVPromoModal = React.lazy(() => import('./components/CVPromoModal'));
 const AuthModal = React.lazy(() => import('./components/AuthModal'));
 
+const CVProfileRoute = React.lazy(() => import('./components/CVProfileRoute'));
+const CompanyProfileRoute = React.lazy(() => import('./components/CompanyProfileRoute'));
+const LegalRoute = React.lazy(() => import('./components/LegalRoute'));
+
 const getFriendlyErrorMessage = (error: any): string => {
   const message = error.message || error.toString();
 
@@ -52,14 +56,14 @@ const getFriendlyErrorMessage = (error: any): string => {
 };
 
 const App: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const background = location.state && location.state.background;
   const { user } = useAuth();
   const { t } = useLanguage();
   const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [selectedCV, setSelectedCV] = useState<CV | null>(null);
-  const [isCVFormOpen, setIsCVFormOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [receivedRequests, setReceivedRequests] = useState<ContactRequest[]>([]);
   const [generalNotifications, setGeneralNotifications] = useState<NotificationItem[]>([]);
   const [sentRequests, setSentRequests] = useState<ContactRequest[]>([]);
@@ -71,14 +75,11 @@ const App: React.FC = () => {
 
   const [activeCompany, setActiveCompany] = useState<Company | null>(null);
 
-  const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
   const [popularCompanies, setPopularCompanies] = useState<any[]>([]);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 20;
-
-  const [selectedCompanyProfile, setSelectedCompanyProfile] = useState<Company | null>(null);
 
   const [activeFilters, setActiveFilters] = useState<FilterState>({
     profession: '',
@@ -104,7 +105,6 @@ const App: React.FC = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [authRole, setAuthRole] = useState<'job_seeker' | 'employer' | undefined>(undefined);
-  const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
   const [activeModalRequest, setActiveModalRequest] = useState<ContactRequest | null>(null);
   /* REMOVING DUPLICATE DECLARATION */
   const [activeModalRequestId, setActiveModalRequestId] = useState<string | null>(null);
@@ -141,7 +141,7 @@ const App: React.FC = () => {
     // Try to find in current list first
     const existing = cvList.find(c => c.id === cvId);
     if (existing) {
-      setSelectedCV(existing);
+      navigate(`/cv/${existing.slug || existing.id}`, { state: { cvData: existing } });
       return;
     }
 
@@ -163,7 +163,7 @@ const App: React.FC = () => {
         .single();
 
       if (error) throw error;
-      if (data) setSelectedCV(data);
+      if (data) navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data } });
     } catch (e) {
       console.error('Error fetching CV:', e);
       showToast('CV detayları alınamadı.', 'error');
@@ -261,7 +261,10 @@ const App: React.FC = () => {
     let isMounted = true;
     setActiveModalRequest(null); // Reset when profile changes
 
-    if (selectedCompanyProfile && user) {
+    const companyIdMatch = location.pathname.match(/^\/company\/(.+)$/);
+    const companyId = companyIdMatch ? companyIdMatch[1] : null;
+
+    if (companyId && user) {
       const checkRequest = async () => {
         // Fetch logic: Use explicit request ID if provided (from notification), otherwise fallback to User relationship
         let query = supabase.from('contact_requests').select('*');
@@ -270,9 +273,19 @@ const App: React.FC = () => {
           query = query.eq('id', activeModalRequestId);
         } else {
           // Fallback: Check if Company sent request to User
-          query = query
-            .eq('requester_id', selectedCompanyProfile.userId)
-            .eq('target_user_id', user.id);
+          // We need the company's user_id, but we only have its ID from the URL.
+          // Fetch the company first to get its user_id.
+          const { data: companyData } = await supabase.from('companies').select('user_id').eq('id', companyId).single();
+
+          if (companyData) {
+            query = query
+              .eq('requester_id', companyData.user_id)
+              .eq('target_user_id', user.id);
+          } else {
+            // Invalid company, skip
+            if (isMounted) setActiveModalRequest(null);
+            return;
+          }
         }
 
         const { data } = await query
@@ -286,14 +299,15 @@ const App: React.FC = () => {
         }
       };
       checkRequest();
+    } else {
+      if (isMounted) setActiveModalRequest(null); // Clear if not on a company route
     }
     return () => { isMounted = false; };
-  }, [selectedCompanyProfile, user, activeModalRequestId]);
+  }, [location.pathname, user, activeModalRequestId]);
 
   // Handle Incremented View
-  const handleCVClick = async (cv: CV) => {
-    setSelectedCV(cv);
-
+  const handleCVClick = (cv: CV) => {
+    navigate(`/cv/${cv.slug || cv.id}`, { state: { cvData: cv } });
     // Increment view ONLY if user is NOT the owner
     // If user is not logged in, we still count views (visitor views)
     if (!user || user.id !== cv.userId) {
@@ -303,7 +317,7 @@ const App: React.FC = () => {
       ));
 
       try {
-        await supabase.rpc('increment_cv_views', { target_cv_id: cv.id });
+        supabase.rpc('increment_cv_views', { target_cv_id: cv.id }); // Don't await, let it run in background
       } catch (err) {
         console.error('Failed to increment views:', err);
       }
@@ -517,6 +531,7 @@ const App: React.FC = () => {
 
       const mapped: CV[] = (data || []).map((item: any) => ({
         id: item.id,
+        slug: item.slug,
         userId: item.user_id,
         name: item.name || '',
         profession: item.profession || '',
@@ -604,6 +619,7 @@ const App: React.FC = () => {
 
       const mapped: CV[] = (data || []).map((item: any) => ({
         id: item.id,
+        slug: item.slug,
         userId: item.user_id,
         name: item.name || '',
         profession: item.profession || '',
@@ -652,19 +668,12 @@ const App: React.FC = () => {
         .eq('id', currentUserCV.id);
 
       if (error) throw error;
-
-      // Refresh lists
-      fetchCVs();
-      fetchJobFinders();
-
-      // Update local state and close modal
-      // Update local state and close modal
-      if (selectedCV?.id === currentUserCV.id) {
-        setSelectedCV(prev => prev ? { ...prev, workingStatus: 'active' } : null);
-        setSelectedCV(null); // Close profile immediately
-        setIsJobSuccessOpen(true); // Show success modal
-      }
-
+      showToast('İş bulma durumunuz başarıyla güncellendi.', 'success');
+      setIsJobSuccessOpen(true);
+      fetchCVs(); // Refresh the list
+      // Instead of forcing the active workingStatus in selectedCV or closing the profile,
+      // navigate home to reset view, or we can just stay and let real-time/refetch update it.
+      navigate('/', { replace: true });
     } catch (err) {
       console.error('Error updating status:', err);
       showToast('Bir hata oluştu.', 'error');
@@ -753,21 +762,24 @@ const App: React.FC = () => {
           .single();
 
         if (!error && data) {
-          const company: Company = {
-            id: data.id,
-            userId: data.user_id,
-            name: data.company_name,
-            description: data.description,
-            website: data.website,
-            industry: data.industry,
-            city: data.city,
-            district: data.district,
-            country: data.country,
-            address: data.address,
-            logoUrl: data.logo_url,
-            createdAt: data.created_at
-          };
-          setSelectedCompanyProfile(company);
+          navigate(`/company/${data.slug || data.id}`, {
+            state: {
+              companyData: {
+                id: data.id,
+                slug: data.slug,
+                userId: data.user_id,
+                name: data.company_name,
+                industry: data.industry,
+                city: data.city,
+                district: data.district,
+                country: data.country || 'Türkiye',
+                address: data.address,
+                website: data.website,
+                description: data.description,
+                logoUrl: data.logo_url
+              }
+            }
+          });
           if (requestId) setActiveModalRequestId(requestId);
           return true;
         }
@@ -778,47 +790,20 @@ const App: React.FC = () => {
       const openCV = async () => {
         const { data, error } = await supabase
           .from('cvs')
-          .select('*')
+          .select(`
+            *,
+            languageDetails:cv_languages(*),
+            educationDetails:cv_education(*),
+            workExperience:cv_work_experience(*),
+            internshipDetails:cv_internships(*),
+            certificates:cv_certificates(*),
+            references:cv_references(*)
+          `)
           .eq('user_id', userId)
           .single();
 
         if (!error && data) {
-          const cv: CV = {
-            id: data.id,
-            userId: data.user_id,
-            name: data.name || '',
-            profession: data.profession || '',
-            city: data.city || '',
-            district: data.district,
-            experienceYears: data.experience_years || 0,
-            language: data.language || '',
-            languageLevel: data.language_level,
-            photoUrl: data.photo_url || '',
-            salaryMin: data.salary_min || 0,
-            salaryMax: data.salary_max || 0,
-            about: data.about || '',
-            skills: data.skills || [],
-            education: data.education || '',
-            educationLevel: data.education_level || '',
-            graduationStatus: data.graduation_status || '',
-            workType: data.work_type || '',
-            employmentType: data.employment_type || '',
-            militaryStatus: data.military_status || '',
-            maritalStatus: data.marital_status || '',
-            disabilityStatus: data.disability_status || '',
-            noticePeriod: data.notice_period || '',
-            travelStatus: data.travel_status || '',
-            driverLicense: data.driver_license || [],
-            isNew: data.is_new,
-            views: data.views || 0,
-            email: data.email,
-            phone: data.phone,
-            isEmailPublic: data.is_email_public,
-            isPhonePublic: data.is_phone_public,
-            workingStatus: data.working_status,
-            references: data.references || []
-          };
-          setSelectedCV(cv);
+          navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data } });
           return true;
         }
         return false;
@@ -858,7 +843,7 @@ const App: React.FC = () => {
     // Check if user is employer and has no company profile
     if (user.user_metadata?.role === 'employer' && !activeCompany) {
       showToast('İletişime geçmek için lütfen önce iş veren profilinizi oluşturun.', 'warning');
-      setIsCompanyFormOpen(true);
+      navigate('/sirket-olustur', { state: { background: location } });
       return;
     }
 
@@ -1039,12 +1024,13 @@ const App: React.FC = () => {
         console.error('Error fetching CVs:', error);
       } else {
         // Map Supabase data to CV interface if field names match directly
-        // Note: Supabase returns snake_case, our types are camelCase. 
+        // Note: Supabase returns snake_case, our types are camelCase.
         // We might need a mapper or ensure our SQL schema matches types.
-        // Looking at schema: experience_years vs experienceYears. 
+        // Looking at schema: experience_years vs experienceYears.
         // Let's map it.
         const mappedData: CV[] = (data || []).map((item: any) => ({
           id: item.id,
+          slug: item.slug,
           userId: item.user_id,
           name: item.name || '',
           profession: item.profession || '',
@@ -1138,6 +1124,7 @@ const App: React.FC = () => {
         console.log('Company data fetched:', company);
         setActiveCompany({
           id: company.id,
+          slug: company.slug,
           userId: company.user_id,
           name: company.company_name,
           description: company.description,
@@ -1196,7 +1183,7 @@ const App: React.FC = () => {
       }
 
       if (error) throw error;
-      setIsCompanyFormOpen(false);
+      navigate('/');
       fetchCompany();
 
     } catch (error: any) {
@@ -1256,10 +1243,10 @@ const App: React.FC = () => {
         education_level: cvData.educationLevel,
         graduation_status: cvData.graduationStatus,
         work_type: cvData.workType,
-        employment_type: cvData.employmentType,
+        employmentType: cvData.employmentType,
         military_status: cvData.militaryStatus,
-        marital_status: cvData.maritalStatus,
-        disability_status: cvData.disabilityStatus,
+        maritalStatus: cvData.maritalStatus,
+        disabilityStatus: cvData.disabilityStatus,
         driver_license: cvData.driverLicense,
         travel_status: cvData.travelStatus,
         notice_period: cvData.noticePeriod,
@@ -1298,7 +1285,7 @@ const App: React.FC = () => {
 
       if (error) throw error;
 
-      setIsCVFormOpen(false);
+      navigate('/');
       fetchCVs();
     } catch (error: any) {
       console.error('Error saving CV:', error);
@@ -1400,15 +1387,12 @@ const App: React.FC = () => {
   };
 
   const closeAllModals = () => {
-    setIsCVFormOpen(false);
-    setIsSettingsOpen(false);
-    setIsCompanyFormOpen(false);
-    setIsNotificationsModalOpen(false);
-    setIsSavedCVsOpen(false);
     setIsAuthModalOpen(false);
-    setSelectedCV(null);
-    setSelectedCompanyProfile(null);
+    setIsJobSuccessOpen(false);
+    setIsSavedCVsOpen(false);
     setIsMobileMenuOpen(false);
+    setActiveFilterModal(null);
+    setIsResetPasswordOpen(false);
     setIsCVPromoOpen(false);
   };
 
@@ -1422,7 +1406,7 @@ const App: React.FC = () => {
       if (error) throw error;
 
       // Update local state by removing the handled request from the list (so it disappears from notification list)
-      // And update sentRequests if necessary? 
+      // And update sentRequests if necessary?
       // Actually receivedRequests are the ones being approved/rejected.
       setReceivedRequests(prev => prev.filter(req => req.id !== requestId));
 
@@ -1548,16 +1532,16 @@ const App: React.FC = () => {
         onSearch={setSearchQuery}
         onCreateCV={() => {
           closeAllModals();
-          setIsCVFormOpen(true);
+          navigate('/cv-olustur', { state: { background: location } });
         }}
         onOpenCompanyProfile={() => {
           closeAllModals();
           fetchCompany();
-          setIsCompanyFormOpen(true);
+          navigate('/sirket-olustur', { state: { background: location } });
         }}
         onOpenSettings={() => {
           closeAllModals();
-          setIsSettingsOpen(true);
+          navigate('/ayarlar', { state: { background: location } });
         }}
         hasCV={!!currentUserCV}
         userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
@@ -1578,7 +1562,7 @@ const App: React.FC = () => {
         }}
         onViewAll={() => {
           closeAllModals();
-          setIsNotificationsModalOpen(true);
+          navigate('/bildirimler', { state: { background: location } });
         }}
 
         onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
@@ -1594,19 +1578,7 @@ const App: React.FC = () => {
 
       {/* ... previous modals ... */}
 
-      {isNotificationsModalOpen && (
-        <NotificationsModal
-          onClose={() => setIsNotificationsModalOpen(false)}
-          notifications={[
-            ...receivedRequests,
-            ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
-          ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-          onAction={handleRequestAction}
-          onMarkRead={markNotificationRead}
-          onMarkAllRead={markAllNotificationsRead}
-          onOpenProfile={handleOpenProfile}
-        />
-      )}
+      {/* Notifications Model moved to Routes below */}
 
       {isResetPasswordOpen && (
         <ResetPasswordModal onClose={() => setIsResetPasswordOpen(false)} />
@@ -1799,7 +1771,7 @@ const App: React.FC = () => {
               popularCVs={popularCVs}
               popularCompanies={popularCompanies}
               onCVClick={handleCVClick}
-              onCompanyClick={(company) => setSelectedCompanyProfile(company)}
+              onCompanyClick={(company) => navigate(`/company/${company.slug || company.id}`, { state: { companyData: company } })}
               loading={loading}
             />
           </aside>
@@ -1808,96 +1780,256 @@ const App: React.FC = () => {
         </div>
       </div>
 
+
       <Footer />
-
-
-
-      {
-        selectedCV && (
-          <ProfileModal
-            cv={selectedCV}
-            onClose={() => setSelectedCV(null)}
-            requestStatus={sentRequests.find(r => r.target_user_id === selectedCV.userId)?.status || 'none'}
-            onRequestAccess={() => handleSendRequest(selectedCV.userId)}
-            onCancelRequest={() => handleCancelRequest(selectedCV.userId)}
-            onJobFound={handleJobFound}
-          />
-        )
-      }
-      {
-        isCVFormOpen && (
-          <CVFormModal
-            onClose={() => setIsCVFormOpen(false)}
-            onSubmit={handleCreateCV}
-            initialData={currentUserCV || (user?.user_metadata ? {
-              name: user.user_metadata.full_name || '',
-              profession: user.user_metadata.profession || '',
-              city: user.user_metadata.city || '',
-              experienceYears: user.user_metadata.experience_years ? Number(user.user_metadata.experience_years) : 0,
-              experienceMonths: user.user_metadata.experience_months ? Number(user.user_metadata.experience_months) : 0,
-              email: user.email || ''
-            } : undefined) as Partial<CV>}
-            availableCities={availableCities}
-          />
-        )
-      }
-      {
-        isCompanyFormOpen && (
-          <CompanyFormModal
-            onClose={() => setIsCompanyFormOpen(false)}
-            onSubmit={handleCompanySubmit}
-            initialData={activeCompany || undefined}
-            availableCities={availableCities}
-          />
-        )
-      }
-      {
-        selectedCompanyProfile && (
-          <CompanyProfileModal
-            company={selectedCompanyProfile}
-            onClose={() => { setSelectedCompanyProfile(null); setActiveModalRequestId(null); }}
-            requestStatus={activeModalRequest?.status}
-            requestId={activeModalRequest?.id}
-            onAction={async (id, action) => {
-              await handleRequestAction(id, action);
-              // Update local modal state immediately
-              setActiveModalRequest(prev => prev ? { ...prev, status: action } : null);
-            }}
-            onRevoke={async (id) => {
-              await handleRequestAction(id, 'rejected');
-              // Update local modal state immediately
-              setActiveModalRequest(prev => prev ? { ...prev, status: 'rejected' } : null);
-            }}
-          />
-        )
-      }
-      {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
+      {/* Local Modals have moved into <Routes> below */}
 
       {/* Mobile Bottom Navigation - Visible for all users */}
       <MobileBottomNav
         user={user}
-        isProfileOpen={isCVPromoOpen || (!!user && !!selectedCV && selectedCV.userId === user.id)}
-        isCreateOpen={isCVFormOpen || isCompanyFormOpen}
-        isHomeView={!selectedCV && !isCVFormOpen && !isSettingsOpen && !isCompanyFormOpen && !selectedCompanyProfile && !isNotificationsModalOpen && !isSavedCVsOpen && !isCVPromoOpen}
+        isProfileOpen={isCVPromoOpen || location.pathname.startsWith('/cv/')}
+        isCreateOpen={location.pathname === '/cv-olustur' || location.pathname === '/sirket-olustur'}
+        isHomeView={!location.pathname.startsWith('/cv/') && !location.pathname.startsWith('/company/') && location.pathname !== '/cv-olustur' && location.pathname !== '/ayarlar' && location.pathname !== '/sirket-olustur' && location.pathname !== '/bildirimler' && !isSavedCVsOpen && !isCVPromoOpen}
+        onGoHome={() => {
+          navigate('/', { replace: true });
+          closeAllModals(); // Ensure all modals are closed
+          setSearchQuery('');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          setIsMobileMenuOpen(false);
+        }}
+        onSearch={(val) => {
+          setSearchQuery(val);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onCreateCV={() => {
+          if (!user) {
+            closeAllModals();
+            handleAuthOpen('signin');
+            return;
+          }
+          if (location.pathname === '/cv-olustur') {
+            closeAllModals();
+            return;
+          }
+          closeAllModals();
+          navigate('/cv-olustur', { state: { background: location } });
+        }}
+        onOpenCompanyProfile={() => {
+          if (!user) {
+            closeAllModals();
+            handleAuthOpen('signin', 'employer');
+            return;
+          }
+          if (location.pathname === '/sirket-olustur') {
+            closeAllModals();
+            return;
+          }
+          closeAllModals();
+          fetchCompany();
+          navigate('/sirket-olustur', { state: { background: location } });
+        }}
+        onOpenSettings={() => {
+          if (!user) {
+            closeAllModals();
+            handleAuthOpen('signin');
+            return;
+          }
+          closeAllModals();
+          navigate('/ayarlar', { state: { background: location } });
+        }}
+        hasCV={!!currentUserCV}
+        userPhotoUrl={user?.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
+        notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
+        notifications={[
+          ...receivedRequests,
+          ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
+        ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+        onNotificationAction={handleRequestAction}
+        onMarkNotificationRead={markNotificationRead}
+        onMarkAllRead={markAllNotificationsRead}
+        onOpenProfile={(uid, role) => {
+          if (!user) {
+            closeAllModals();
+            handleAuthOpen('signin');
+            return;
+          }
+          if (uid === user.id && !currentUserCV) {
+            if (isCVPromoOpen) {
+              closeAllModals();
+              return;
+            }
+            closeAllModals();
+            setIsCVPromoOpen(true);
+            return;
+          }
+          // Check if already on the profile page
+          if (location.pathname === `/cv/${uid}` || location.pathname === `/company/${uid}`) {
+            closeAllModals();
+            return;
+          }
+          closeAllModals();
+          handleOpenProfile(uid, role);
+        }}
+        onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
+        signOut={async () => {
+          await supabase.auth.signOut();
+          // window.location.reload();
+        }}
+        onOpenMenu={() => setIsMobileMenuOpen(true)}
       />
-      <React.Suspense fallback={null}>
-        {
-          selectedCV && (
-            <ProfileModal
-              cv={selectedCV}
-              onClose={() => setSelectedCV(null)}
-              requestStatus={sentRequests.find(r => r.target_user_id === selectedCV.userId)?.status || 'none'}
-              onRequestAccess={() => handleSendRequest(selectedCV.userId)}
-              onCancelRequest={() => handleCancelRequest(selectedCV.userId)}
-              onJobFound={handleJobFound}
-            />
-          )
-        }
-        {
-          isCVFormOpen && (
+
+      <MobileMenuDrawer
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        popularProfessions={professionStats}
+        popularCities={cityStats}
+        weeklyTrends={weeklyRisingStats}
+        jobFinders={jobFinders}
+        platformStats={platformStats}
+        popularCVs={popularCVs}
+        popularCompanies={popularCompanies}
+        onJobFinderClick={(cv) => {
+          handleCVClick(cv);
+          setIsMobileMenuOpen(false);
+        }}
+        onCVClick={(cv) => {
+          handleCVClick(cv);
+          setIsMobileMenuOpen(false);
+        }}
+        onCompanyClick={(company) => {
+          navigate(`/company/${company.slug || company.id}`, { state: { companyData: company } });
+          setIsMobileMenuOpen(false);
+        }}
+        onFilterApply={(type, value) => {
+          handleFilterUpdate(type, value);
+          setIsMobileMenuOpen(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        user={user}
+        onOpenSettings={() => {
+          setIsMobileMenuOpen(false);
+          navigate('/ayarlar', { state: { background: location } });
+        }}
+        onOpenSavedCVs={() => {
+          setIsMobileMenuOpen(false);
+          setIsSavedCVsOpen(true);
+        }}
+        onLogout={async () => {
+          await supabase.auth.signOut();
+          setIsMobileMenuOpen(false);
+          // window.location.reload();
+        }}
+      />
+      {isJobSuccessOpen && (
+        <JobSuccessModal
+          onClose={() => setIsJobSuccessOpen(false)}
+        />
+      )}
+
+      {isSavedCVsOpen && user && (
+        <SavedCVsModal
+          userId={user.id}
+          onClose={() => setIsSavedCVsOpen(false)}
+          onOpenCV={(cvId) => {
+            setIsSavedCVsOpen(false); // Close list
+            handleViewSavedCV(cvId);
+          }}
+        />
+      )}
+      {isCVPromoOpen && (
+        <CVPromoModal
+          onClose={() => setIsCVPromoOpen(false)}
+          onCreateCV={() => {
+            setIsCVPromoOpen(false);
+            navigate('/cv-olustur', { state: { background: location } });
+          }}
+        />
+      )}
+
+      <Routes location={background || location}>
+        <Route path="/cv/:id" element={
+          <CVProfileRoute
+            sentRequests={sentRequests}
+            handleSendRequest={handleSendRequest}
+            handleCancelRequest={handleCancelRequest}
+            handleJobFound={handleJobFound}
+          />
+        } />
+        <Route path="/company/:id" element={
+          <CompanyProfileRoute
+            requestStatus={activeModalRequest?.status}
+            requestId={activeModalRequestId} // Use activeModalRequestId here
+            onAction={async (id, action) => {
+              await handleRequestAction(id, action);
+              setActiveModalRequest(prev => prev ? { ...prev, status: action } : null);
+            }}
+            onRevoke={async (id) => {
+              await handleRequestAction(id, 'rejected');
+              setActiveModalRequest(prev => prev ? { ...prev, status: 'rejected' } : null);
+            }}
+          />
+        } />
+        <Route path="/kullanim-kosullari" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <LegalRoute section="general" />
+          </React.Suspense>
+        } />
+        <Route path="/guvenlik-ipuclari" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <LegalRoute section="security" />
+          </React.Suspense>
+        } />
+        <Route path="/sikca-sorulan-sorular" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <LegalRoute section="faq" />
+          </React.Suspense>
+        } />
+        <Route path="/yardim-merkezi" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <LegalRoute section="help" />
+          </React.Suspense>
+        } />
+        <Route path="/hizmetlerimiz" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <LegalRoute section="services" />
+          </React.Suspense>
+        } />
+        <Route path="/aydinlatma-metni" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <LegalRoute section="privacy" />
+          </React.Suspense>
+        } />
+        <Route path="/cerez-politikasi" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <LegalRoute section="cookie" />
+          </React.Suspense>
+        } />
+        <Route path="/kvkk-aydinlatma" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <LegalRoute section="kvkk" />
+          </React.Suspense>
+        } />
+        <Route path="/uyelik-sozlesmesi" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <LegalRoute section="membership" />
+          </React.Suspense>
+        } />
+        <Route path="/veri-sahibi-basvuru-formu" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <LegalRoute section="data_form" />
+          </React.Suspense>
+        } />
+        <Route path="/cv-olustur" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
             <CVFormModal
-              onClose={() => setIsCVFormOpen(false)}
-              onSubmit={handleCreateCV}
+              onClose={() => {
+                if (window.history.length > 2) navigate(-1);
+                else navigate('/', { replace: true });
+              }}
+              onSubmit={async (data) => {
+                await handleCreateCV(data);
+                navigate('/');
+              }}
               initialData={currentUserCV || (user?.user_metadata ? {
                 name: user.user_metadata.full_name || '',
                 profession: user.user_metadata.profession || '',
@@ -1908,206 +2040,123 @@ const App: React.FC = () => {
               } : undefined) as Partial<CV>}
               availableCities={availableCities}
             />
-          )
-        }
-        {
-          isCompanyFormOpen && (
+          </React.Suspense>
+        } />
+        <Route path="/sirket-olustur" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
             <CompanyFormModal
-              onClose={() => setIsCompanyFormOpen(false)}
-              onSubmit={handleCompanySubmit}
+              onClose={() => {
+                if (window.history.length > 2) navigate(-1);
+                else navigate('/', { replace: true });
+              }}
+              onSubmit={async (data) => {
+                await handleCompanySubmit(data);
+                navigate('/');
+              }}
               initialData={activeCompany || undefined}
               availableCities={availableCities}
             />
-          )
-        }
-        {
-          selectedCompanyProfile && (
-            <CompanyProfileModal
-              company={selectedCompanyProfile}
-              onClose={() => { setSelectedCompanyProfile(null); setActiveModalRequestId(null); }}
-              requestStatus={activeModalRequest?.status}
-              requestId={activeModalRequest?.id}
-              onAction={async (id, action) => {
-                await handleRequestAction(id, action);
-                // Update local modal state immediately
-                setActiveModalRequest(prev => prev ? { ...prev, status: action } : null);
+          </React.Suspense>
+        } />
+        <Route path="/ayarlar" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <SettingsModal onClose={() => {
+              if (window.history.length > 2) navigate(-1);
+              else navigate('/', { replace: true });
+            }} />
+          </React.Suspense>
+        } />
+        <Route path="/bildirimler" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <NotificationsModal
+              onClose={() => {
+                if (window.history.length > 2) navigate(-1);
+                else navigate('/', { replace: true });
               }}
-              onRevoke={async (id) => {
-                await handleRequestAction(id, 'rejected');
-                // Update local modal state immediately
-                setActiveModalRequest(prev => prev ? { ...prev, status: 'rejected' } : null);
-              }}
+              notifications={[
+                ...receivedRequests,
+                ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
+              ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+              onAction={handleRequestAction}
+              onMarkRead={markNotificationRead}
+              onMarkAllRead={markAllNotificationsRead}
+              onOpenProfile={handleOpenProfile}
             />
-          )
-        }
-        {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
+          </React.Suspense>
+        } />
+      </Routes>
 
-        {/* Mobile Bottom Navigation - Visible for all users */}
-        <MobileBottomNav
-          user={user}
-          isProfileOpen={isCVPromoOpen || (!!user && !!selectedCV && selectedCV.userId === user.id)}
-          isCreateOpen={isCVFormOpen || isCompanyFormOpen}
-          isHomeView={!selectedCV && !isCVFormOpen && !isSettingsOpen && !isCompanyFormOpen && !selectedCompanyProfile && !isNotificationsModalOpen && !isSavedCVsOpen && !isCVPromoOpen}
-          onGoHome={() => {
-            setSelectedCV(null);
-            setIsCVFormOpen(false);
-            setIsSettingsOpen(false);
-            setIsCompanyFormOpen(false);
-            setSelectedCompanyProfile(null);
-            setIsNotificationsModalOpen(false);
-            setIsSavedCVsOpen(false);
-            setIsCVPromoOpen(false);
-            setSearchQuery('');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            setIsMobileMenuOpen(false);
-          }}
-          onSearch={(val) => {
-            setSearchQuery(val);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          onCreateCV={() => {
-            if (!user) {
-              closeAllModals();
-              handleAuthOpen('signin');
-              return;
-            }
-            if (isCVFormOpen) {
-              closeAllModals();
-              return;
-            }
-            closeAllModals();
-            setIsCVFormOpen(true);
-          }}
-          onOpenCompanyProfile={() => {
-            if (!user) {
-              closeAllModals();
-              handleAuthOpen('signin', 'employer');
-              return;
-            }
-            if (isCompanyFormOpen) {
-              closeAllModals();
-              return;
-            }
-            closeAllModals();
-            fetchCompany();
-            setIsCompanyFormOpen(true);
-          }}
-          onOpenSettings={() => {
-            if (!user) {
-              closeAllModals();
-              handleAuthOpen('signin');
-              return;
-            }
-            closeAllModals();
-            setIsSettingsOpen(true);
-          }}
-          hasCV={!!currentUserCV}
-          userPhotoUrl={user?.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
-          notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
-          notifications={[
-            ...receivedRequests,
-            ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
-          ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-          onNotificationAction={handleRequestAction}
-          onMarkNotificationRead={markNotificationRead}
-          onMarkAllRead={markAllNotificationsRead}
-          onOpenProfile={(uid, role) => {
-            if (!user) {
-              closeAllModals();
-              handleAuthOpen('signin');
-              return;
-            }
-            if (uid === user.id && !currentUserCV) {
-              if (isCVPromoOpen) {
-                closeAllModals();
-                return;
-              }
-              closeAllModals();
-              setIsCVPromoOpen(true);
-              return;
-            }
-            if (selectedCV?.userId === uid) {
-              closeAllModals();
-              return;
-            }
-            closeAllModals();
-            handleOpenProfile(uid, role);
-          }}
-          onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
-          signOut={async () => {
-            await supabase.auth.signOut();
-            // window.location.reload(); 
-          }}
-          onOpenMenu={() => setIsMobileMenuOpen(true)}
-        />
-
-        <MobileMenuDrawer
-          isOpen={isMobileMenuOpen}
-          onClose={() => setIsMobileMenuOpen(false)}
-          popularProfessions={professionStats}
-          popularCities={cityStats}
-          weeklyTrends={weeklyRisingStats}
-          jobFinders={jobFinders}
-          platformStats={platformStats}
-          popularCVs={popularCVs}
-          popularCompanies={popularCompanies}
-          onJobFinderClick={(cv) => {
-            handleCVClick(cv);
-            setIsMobileMenuOpen(false);
-          }}
-          onCVClick={(cv) => {
-            handleCVClick(cv);
-            setIsMobileMenuOpen(false);
-          }}
-          onCompanyClick={(company) => {
-            // handle company click
-            setIsMobileMenuOpen(false);
-          }}
-          onFilterApply={(type, value) => {
-            handleFilterUpdate(type, value);
-            setIsMobileMenuOpen(false);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          user={user}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          onOpenSavedCVs={() => {
-            setIsMobileMenuOpen(false);
-            setIsSavedCVsOpen(true);
-          }}
-          onLogout={async () => {
-            await supabase.auth.signOut();
-            setIsMobileMenuOpen(false);
-            // window.location.reload(); 
-          }}
-        />
-        {isJobSuccessOpen && (
-          <JobSuccessModal
-            onClose={() => setIsJobSuccessOpen(false)}
-          />
-        )}
-
-        {isSavedCVsOpen && user && (
-          <SavedCVsModal
-            userId={user.id}
-            onClose={() => setIsSavedCVsOpen(false)}
-            onOpenCV={(cvId) => {
-              setIsSavedCVsOpen(false); // Close list
-              handleViewSavedCV(cvId);
-            }}
-          />
-        )}
-        {isCVPromoOpen && (
-          <CVPromoModal
-            onClose={() => setIsCVPromoOpen(false)}
-            onCreateCV={() => {
-              setIsCVPromoOpen(false);
-              setIsCVFormOpen(true);
-            }}
-          />
-        )}
-      </React.Suspense>
-    </div >
+      {/* Foreground Modals */}
+      {background && (
+        <Routes>
+          <Route path="/cv-olustur" element={
+            <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+              <CVFormModal
+                onClose={() => {
+                  if (window.history.length > 2) navigate(-1);
+                  else navigate('/', { replace: true });
+                }}
+                onSubmit={async (data) => {
+                  await handleCreateCV(data);
+                  navigate('/');
+                }}
+                initialData={currentUserCV || (user?.user_metadata ? {
+                  name: user.user_metadata.full_name || '',
+                  profession: user.user_metadata.profession || '',
+                  city: user.user_metadata.city || '',
+                  experienceYears: user.user_metadata.experience_years ? Number(user.user_metadata.experience_years) : 0,
+                  experienceMonths: user.user_metadata.experience_months ? Number(user.user_metadata.experience_months) : 0,
+                  email: user.email || ''
+                } : undefined) as Partial<CV>}
+                availableCities={availableCities}
+              />
+            </React.Suspense>
+          } />
+          <Route path="/sirket-olustur" element={
+            <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+              <CompanyFormModal
+                onClose={() => {
+                  if (window.history.length > 2) navigate(-1);
+                  else navigate('/', { replace: true });
+                }}
+                onSubmit={async (data) => {
+                  await handleCompanySubmit(data);
+                  navigate('/');
+                }}
+                initialData={activeCompany || undefined}
+                availableCities={availableCities}
+              />
+            </React.Suspense>
+          } />
+          <Route path="/ayarlar" element={
+            <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+              <SettingsModal onClose={() => {
+                if (window.history.length > 2) navigate(-1);
+                else navigate('/', { replace: true });
+              }} />
+            </React.Suspense>
+          } />
+          <Route path="/bildirimler" element={
+            <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+              <NotificationsModal
+                onClose={() => {
+                  if (window.history.length > 2) navigate(-1);
+                  else navigate('/', { replace: true });
+                }}
+                notifications={[
+                  ...receivedRequests,
+                  ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
+                ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+                onAction={handleRequestAction}
+                onMarkRead={markNotificationRead}
+                onMarkAllRead={markAllNotificationsRead}
+                onOpenProfile={handleOpenProfile}
+              />
+            </React.Suspense>
+          } />
+        </Routes>
+      )}
+    </div>
   );
 };
-
 export default App;

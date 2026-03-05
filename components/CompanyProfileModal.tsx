@@ -36,7 +36,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
     );
 
     return (
-        <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[84px] sm:pb-0 bg-black/60 backdrop-blur-xl animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[84px] sm:pb-0 bg-black/30 dark:bg-black/60 backdrop-blur-xl animate-in fade-in duration-300">
             <SEO
                 title={`${company.name} - Şirket Profili`}
                 description={company.description ? company.description.substring(0, 150) + '...' : `${company.name} şirketinin profilini inceleyin.`}

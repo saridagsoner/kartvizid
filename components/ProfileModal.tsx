@@ -161,7 +161,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   );
 
   return (
-    <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-white dark:bg-gray-900 sm:bg-black/60 sm:dark:bg-black/60 sm:backdrop-blur-xl animate-in slide-in-from-right sm:fade-in sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 sm:backdrop-blur-xl animate-in slide-in-from-right sm:fade-in sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
       <SEO
         title={`${cv.name} - ${cv.profession}`}
         description={cv.about ? cv.about.substring(0, 150) + '...' : `${cv.name} adlı kullanıcının özgeçmişini inceleyin.`}
