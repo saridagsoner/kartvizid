@@ -198,10 +198,10 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
     }, [onClose]);
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md  fade-in ">
             <div
                 ref={containerRef}
-                className="bg-white w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex overflow-hidden animate-in zoom-in-95 duration-300"
+                className="bg-white w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex overflow-hidden  zoom-in-95 "
             >
                 {/* Sidebar Navigation */}
                 <div className="w-64 bg-gray-50 border-r border-gray-100 flex flex-col hidden md:flex">
@@ -236,7 +236,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
                         </h2>
                         <button
                             onClick={onClose}
-                            className="w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-all shadow-sm active:scale-90"
+                            className="w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-all shadow-sm active:"
                         >
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>

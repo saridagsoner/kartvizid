@@ -17,8 +17,8 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
   );
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl animate-in fade-in duration-300">
-      <div className="bg-white w-full max-w-[500px] rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl  fade-in ">
+      <div className="bg-white w-full max-w-[500px] rounded-[2.5rem] shadow-2xl overflow-hidden  zoom-in-95 ">
         <div className="p-8 border-b border-gray-100 flex justify-between items-center">
           <h2 className="text-xl font-black text-black tracking-tight">{title}</h2>
           <button
@@ -31,7 +31,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
 
         <div className="px-8 pt-6 pb-2">
           <div className="relative group">
-            <svg className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30 group-focus-within:opacity-100 transition-opacity" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3">
+            <svg className="absolute left-4 top-1/2 -/2 opacity-30 group-focus-within:opacity-100 transition-opacity" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>

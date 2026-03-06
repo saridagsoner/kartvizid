@@ -30,8 +30,8 @@ const KVKKApprovalModal: React.FC<KVKKApprovalModalProps> = ({ onApprove, onCanc
     }, []);
 
     return createPortal(
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white w-full max-w-2xl h-[80vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300 border border-gray-100">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-md  fade-in ">
+            <div className="bg-white w-full max-w-2xl h-[80vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden  zoom-in-95  border border-gray-100">
 
                 {/* Header */}
                 <div className="p-6 border-b border-gray-100 bg-white items-center flex justify-between shrink-0">
@@ -96,7 +96,7 @@ const KVKKApprovalModal: React.FC<KVKKApprovalModalProps> = ({ onApprove, onCanc
                     <button
                         onClick={onApprove}
                         // disabled={!canApprove}
-                        className={`flex-[2] py-4 rounded-xl text-white font-black uppercase tracking-widest text-xs transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 ${canApprove
+                        className={`flex-[2] py-4 rounded-xl text-white font-black uppercase tracking-widest text-xs transition-all shadow-lg active: flex items-center justify-center gap-2 ${canApprove
                                 ? 'bg-[#1f6d78] hover:bg-[#155e68] cursor-pointer'
                                 : 'bg-gray-300 cursor-not-allowed opacity-70'
                             }`}

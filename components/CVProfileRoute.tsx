@@ -68,13 +68,9 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
     }, [id, cv]);
 
     const handleClose = () => {
-        // If there's background state, we can go back safely
-        // Otherwise we redirect to home so we don't exit the app
-        if (window.history.length > 2) {
-            navigate(-1);
-        } else {
-            navigate('/', { replace: true });
-        }
+        // Use a standard push instead of replace to ensure browser simulators
+        // properly detect the URL change and update their simulated address bars.
+        navigate('/');
     };
 
     if (loading) {

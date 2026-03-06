@@ -24,10 +24,10 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
     }, [onClose]);
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md  fade-in ">
             <div
                 ref={containerRef}
-                className="bg-white w-full max-w-4xl max-h-[90vh] rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300 relative"
+                className="bg-white w-full max-w-4xl max-h-[90vh] rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden  zoom-in-95  relative"
             >
                 {/* Header */}
                 <div className="p-8 pb-4 flex justify-between items-center z-10 sticky top-0 bg-white/95 backdrop-blur-xl border-b border-gray-100">
@@ -48,7 +48,7 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-all shadow-sm active:scale-90"
+                        className="w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-all shadow-sm active:"
                     >
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -77,7 +77,7 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                         {/* Feature 1 */}
                         <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100 hover:border-[#1f6d78]/30 transition-colors group">
-                            <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#1f6d78] mb-6 group-hover:scale-110 transition-transform">
+                            <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#1f6d78] mb-6 group-hover: transition-transform">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
@@ -91,7 +91,7 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
 
                         {/* Feature 2 */}
                         <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100 hover:border-[#1f6d78]/30 transition-colors group">
-                            <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#1f6d78] mb-6 group-hover:scale-110 transition-transform">
+                            <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#1f6d78] mb-6 group-hover: transition-transform">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                     <circle cx="12" cy="12" r="3"></circle>
@@ -105,7 +105,7 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
 
                         {/* Feature 3 */}
                         <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100 hover:border-[#1f6d78]/30 transition-colors group">
-                            <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#1f6d78] mb-6 group-hover:scale-110 transition-transform">
+                            <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#1f6d78] mb-6 group-hover: transition-transform">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
                                 </svg>
@@ -118,7 +118,7 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
 
                         {/* Feature 4 */}
                         <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100 hover:border-[#1f6d78]/30 transition-colors group">
-                            <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#1f6d78] mb-6 group-hover:scale-110 transition-transform">
+                            <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#1f6d78] mb-6 group-hover: transition-transform">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
                                     <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>

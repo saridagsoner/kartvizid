@@ -66,11 +66,11 @@ const ModalDropdown: React.FC<{
           placeholder={isOpen ? t('filter.search_placeholder_dropdown') : placeholder}
           onFocus={() => setIsOpen(true)}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className={`w-[111.11%] h-[46px] sm:h-[53.33px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.9] px-5 sm:px-6 py-0 placeholder:text-gray-400 ${value && !isOpen ? 'text-black dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}
+          className={`w-[111.11%] h-[46px] sm:h-[53.33px] bg-transparent outline-none font-bold text-[16px] origin-top-left [0.9] px-5 sm:px-6 py-0 placeholder:text-gray-400 ${value && !isOpen ? 'text-black dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}
         />
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-[#1f6d78] transition-colors">
+        <div className="absolute right-4 top-1/2 -/2 pointer-events-none text-gray-400 group-focus-within:text-[#1f6d78] transition-colors">
           <svg
-            className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+            className={`transition-transform  ${isOpen ? 'rotate-180' : ''}`}
             width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
           >
             <polyline points="6 9 12 15 18 9"></polyline>
@@ -79,7 +79,7 @@ const ModalDropdown: React.FC<{
       </div>
 
       {isOpen && (
-        <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl border border-gray-100 dark:border-gray-700 py-3 z-[170] animate-in slide-in-from-top-2 duration-200">
+        <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl border border-gray-100 dark:border-gray-700 py-3 z-[170]  slide-in-from-top-2 ">
           <div className="max-h-[250px] overflow-y-auto custom-scrollbar">
             {!searchTerm && (
               <button
@@ -180,8 +180,8 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
   const SelectionPill: React.FC<{ label: string; active: boolean; onClick: () => void }> = ({ label, active, onClick }) => (
     <button
       onClick={onClick}
-      className={`px-4 py-2.5 sm:px-6 sm:py-3.5 rounded-full text-[10px] sm:text-xs font-bold border transition-all duration-300 ${active
-        ? 'bg-[#1f6d78] border-[#1f6d78] text-white shadow-lg scale-105'
+      className={`px-4 py-2.5 sm:px-6 sm:py-3.5 rounded-full text-[10px] sm:text-xs font-bold border transition-all  ${active
+        ? 'bg-[#1f6d78] border-[#1f6d78] text-white shadow-lg '
         : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-[#1f6d78] dark:hover:border-[#1f6d78] hover:bg-gray-50 dark:hover:bg-gray-700'
         }`}
     >
@@ -234,8 +234,8 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
   };
 
   return (
-    <div className="fixed inset-0 z-[160] flex items-center justify-center sm:p-4 bg-black/30 backdrop-blur-md animate-in fade-in duration-300">
-      <div className="bg-white dark:bg-gray-900 w-full h-full sm:h-auto sm:max-w-[900px] sm:max-h-[90vh] rounded-none sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[160] flex items-center justify-center sm:p-4 bg-black/30 backdrop-blur-md  fade-in ">
+      <div className="bg-white dark:bg-gray-900 w-full h-full sm:h-auto sm:max-w-[900px] sm:max-h-[90vh] rounded-none sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden  zoom-in-95 ">
 
         {/* Header */}
         <div className="p-5 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10">
@@ -245,7 +245,7 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xl sm:text-2xl text-black dark:text-white hover:bg-[#1f6d78] hover:text-white transition-all shadow-sm active:scale-90"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xl sm:text-2xl text-black dark:text-white hover:bg-[#1f6d78] hover:text-white transition-all shadow-sm active:"
           >
             ×
           </button>
@@ -315,9 +315,9 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
                     placeholder={t('filter.salary_min')}
                     value={filters.salaryMin}
                     onChange={e => handleSalaryChange('salaryMin', e.target.value)}
-                    className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-6 sm:px-7 py-0 placeholder:text-gray-400 dark:text-white"
+                    className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left [0.85] px-6 sm:px-7 py-0 placeholder:text-gray-400 dark:text-white"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[10px]">₺</span>
+                  <span className="absolute right-4 top-1/2 -/2 text-gray-400 font-bold text-[10px]">₺</span>
                 </div>
                 <div className="w-4 h-0.5 bg-gray-300 rounded-full shrink-0"></div>
                 <div className="flex-1 relative h-[42px] sm:h-[48px] rounded-full overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:border-[#1f6d78] focus-within:ring-4 focus-within:ring-[#1f6d78]/5 transition-all">
@@ -327,9 +327,9 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
                     placeholder={t('filter.salary_max')}
                     value={filters.salaryMax}
                     onChange={e => handleSalaryChange('salaryMax', e.target.value)}
-                    className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left scale-[0.85] px-6 sm:px-7 py-0 placeholder:text-gray-400 dark:text-white"
+                    className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left [0.85] px-6 sm:px-7 py-0 placeholder:text-gray-400 dark:text-white"
                   />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[10px]">₺</span>
+                  <span className="absolute right-4 top-1/2 -/2 text-gray-400 font-bold text-[10px]">₺</span>
                 </div>
               </div>
             </FilterSection>
@@ -376,13 +376,13 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
         <div className="p-5 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-4 sm:gap-6">
           <button
             onClick={clearFilters}
-            className="flex-1 max-w-[140px] sm:max-w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-400 py-3 sm:py-5 rounded-full font-bold text-[10px] sm:text-xs uppercase tracking-tight hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] hover:border-[#1f6d78] dark:hover:border-[#2dd4bf] transition-all active:scale-95 shadow-sm"
+            className="flex-1 max-w-[140px] sm:max-w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-400 py-3 sm:py-5 rounded-full font-bold text-[10px] sm:text-xs uppercase tracking-tight hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] hover:border-[#1f6d78] dark:hover:border-[#2dd4bf] transition-all active: shadow-sm"
           >
             {t('filters.reset')}
           </button>
           <button
             onClick={() => onApply(filters)}
-            className="flex-[2] bg-[#1f6d78] text-white py-3 sm:py-5 rounded-full font-bold text-xs sm:text-base uppercase tracking-tight hover:bg-[#155e68] transition-all shadow-xl active:scale-[0.98]"
+            className="flex-[2] bg-[#1f6d78] text-white py-3 sm:py-5 rounded-full font-bold text-xs sm:text-base uppercase tracking-tight hover:bg-[#155e68] transition-all shadow-xl active:[0.98]"
           >
             {t('filter.apply')}
           </button>

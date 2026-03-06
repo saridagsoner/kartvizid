@@ -4,6 +4,7 @@ import NotificationDropdown from './NotificationDropdown';
 import UserMenuDropdown from './UserMenuDropdown';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { Link } from 'react-router-dom';
 import AuthModal from './AuthModal';
 
 
@@ -68,7 +69,11 @@ const Navbar: React.FC<NavbarProps & {
 
             {/* Left Section: Logo */}
             <div className="lg:w-[290px] shrink-0 flex items-center">
-              <div className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
+              <Link to="/" onClick={() => {
+                if (window.location.pathname === '/') {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }} className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
                 <div className="flex items-center text-[#2b2b2b] dark:text-white text-[28px] md:text-[36px] font-bold tracking-tight rounded-font leading-none">
                   <span>Kartvizi</span>
                   <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
@@ -76,7 +81,7 @@ const Navbar: React.FC<NavbarProps & {
                 <span className="block text-[10px] sm:text-[12px] font-semibold text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
                   dijital cv & doğru eşleşme
                 </span>
-              </div>
+              </Link>
             </div>
 
             {/* Center Section: Search Bar */}

@@ -106,7 +106,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-0 sm:p-4 pb-[84px] sm:pb-0 bg-black/60 backdrop-blur-xl">
-            <div className="bg-white dark:bg-gray-900 w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in slide-in-from-bottom-10 duration-500">
+            <div className="bg-white dark:bg-gray-900 w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden  slide-in-from-bottom-10 ">
 
                 {/* Header */}
                 <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
@@ -116,7 +116,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-2xl text-black dark:text-white hover:bg-[#1f6d78] hover:text-white transition-all active:scale-90"
+                        className="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-2xl text-black dark:text-white hover:bg-[#1f6d78] hover:text-white transition-all active:"
                     >
                         ×
                     </button>
@@ -161,7 +161,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                                 fill="none"
                                                 stroke="currentColor"
                                                 strokeWidth="2"
-                                                className="text-black group-hover:scale-110 transition-transform duration-300"
+                                                className="text-black group-hover: transition-transform "
                                             >
                                                 <path d="M3 21h18M5 21V7l8-4 8 4v14M8 21v-4h8v4" />
                                             </svg>
@@ -172,7 +172,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                     {/* Loading Overlay */}
                                     {uploading && (
                                         <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10">
-                                            <div className="animate-spin w-6 h-6 border-2 border-[#1f6d78] border-t-transparent rounded-full"></div>
+                                            <div className=" w-6 h-6 border-2 border-[#1f6d78] border-t-transparent rounded-full"></div>
                                         </div>
                                     )}
                                 </div>
@@ -285,7 +285,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                 <div className="p-6 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-5 sticky bottom-0 z-10 shrink-0">
                     <button
                         onClick={onClose}
-                        className="flex-1 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-black dark:text-white py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm"
+                        className="flex-1 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-black dark:text-white py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-[#1f6d78] transition-all active: shadow-sm"
                     >
                         {t('form.cancel')}
                     </button>
@@ -319,7 +319,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
 
                             onSubmit(formData);
                         }}
-                        className="flex-[2] bg-[#1f6d78] text-white py-5 rounded-full font-black text-base uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-xl active:scale-[0.98]"
+                        className="flex-[2] bg-[#1f6d78] text-white py-5 rounded-full font-black text-base uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-xl active:[0.98]"
                     >
                         {t('company.save')}
                     </button>
@@ -328,8 +328,8 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
 
             {/* Warning / Error Overlay */}
             {showWarning.show && (
-                <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6 animate-in fade-in duration-200">
-                    <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl scale-100 animate-in zoom-in-95 duration-200 text-center relative overflow-hidden">
+                <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6  fade-in ">
+                    <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl   zoom-in-95  text-center relative overflow-hidden">
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
                         <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-xl relative z-10">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -346,7 +346,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                         </p>
                         <button
                             onClick={() => setShowWarning({ show: false, message: '' })}
-                            className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active:scale-95 relative z-10"
+                            className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active: relative z-10"
                         >
                             Tamam
                         </button>

@@ -82,7 +82,7 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
                 {/* Logo */}
                 <div className="w-10 h-10 rounded-xl border border-gray-100 dark:border-gray-600 overflow-hidden shrink-0 bg-white dark:bg-gray-700 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all group-hover:scale-105">
                   {company.logoUrl ? (
-                    <img src={company.logoUrl} alt={company.name} className="w-full h-full object-cover" />
+                    <img src={company.logoUrl} alt={company.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   ) : (
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
                       <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>

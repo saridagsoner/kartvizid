@@ -67,10 +67,10 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
     }, [onClose]);
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md  fade-in ">
             <div
                 ref={containerRef}
-                className="bg-white w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300"
+                className="bg-white w-full max-w-4xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden  zoom-in-95 "
             >
                 {/* Header (Preserved as requested) */}
                 <div className="p-8 pb-6 flex justify-between items-center z-10 sticky top-0 bg-white/90 backdrop-blur-xl border-b border-gray-100">
@@ -84,7 +84,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-all shadow-sm active:scale-90"
+                        className="w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-all shadow-sm active:"
                     >
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -116,7 +116,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
                     {/* Comparison / Philosophy */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                         <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-gray-200/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-gray-200/50 rounded-full blur-3xl -/2 /2"></div>
                             <h4 className="text-lg font-black text-gray-400 mb-2">Eski Yöntem</h4>
                             <p className="text-gray-500 text-sm font-medium mb-6">Klasik Kariyer Siteleri</p>
                             <ul className="space-y-3">
@@ -136,7 +136,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
                         </div>
 
                         <div className="bg-[#1f6d78] rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-[#1f6d78]/20 group">
-                            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
+                            <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -/2 /2"></div>
                             <h4 className="text-lg font-black text-white mb-2">Kartvizid Yöntemi</h4>
                             <p className="text-white/70 text-sm font-medium mb-6">Değer Gören Adaylar</p>
                             <ul className="space-y-3">
@@ -178,7 +178,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
                     <div className="text-center pt-8 border-t border-gray-100">
                         <button
                             onClick={onClose}
-                            className="bg-black text-white px-10 py-4 rounded-full text-sm font-bold hover:bg-gray-900 transition-all active:scale-95 shadow-lg"
+                            className="bg-black text-white px-10 py-4 rounded-full text-sm font-bold hover:bg-gray-900 transition-all active: shadow-lg"
                         >
                             Hemen Profilini Oluştur
                         </button>

@@ -36,13 +36,13 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
     );
 
     return (
-        <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[84px] sm:pb-0 bg-black/30 dark:bg-black/60 backdrop-blur-xl animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[84px] sm:pb-0 bg-black/30 dark:bg-black/60 backdrop-blur-xl  fade-in ">
             <SEO
                 title={`${company.name} - Şirket Profili`}
                 description={company.description ? company.description.substring(0, 150) + '...' : `${company.name} şirketinin profilini inceleyin.`}
                 image={company.logoUrl}
             />
-            <div className="bg-white w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="bg-white w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden  zoom-in-95 ">
 
                 {/* Header */}
                 <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10 shrink-0">
@@ -52,7 +52,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-2xl text-black hover:bg-[#1f6d78] hover:text-white transition-all active:scale-90 shadow-sm"
+                        className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-2xl text-black hover:bg-[#1f6d78] hover:text-white transition-all active: shadow-sm"
                     >
                         ×
                     </button>
@@ -130,13 +130,13 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                             <>
                                 <button
                                     onClick={() => onAction(requestId, 'approved')}
-                                    className="bg-black text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl active:scale-95"
+                                    className="bg-black text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl active:"
                                 >
                                     {t('profile.approve_request')}
                                 </button>
                                 <button
                                     onClick={() => onAction(requestId, 'rejected')}
-                                    className="bg-white text-black border border-gray-200 px-8 py-3 rounded-full font-bold text-sm hover:bg-gray-100 transition-all active:scale-95"
+                                    className="bg-white text-black border border-gray-200 px-8 py-3 rounded-full font-bold text-sm hover:bg-gray-100 transition-all active:"
                                 >
                                     {t('profile.reject_request')}
                                 </button>
@@ -155,7 +155,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
 
                                 <button
                                     onClick={() => onRevoke(requestId)}
-                                    className="bg-white border text-red-600 border-red-100 px-8 py-3 rounded-full font-bold text-xs hover:bg-red-50 hover:border-red-200 transition-all shadow-sm active:scale-95 min-w-[200px] flex items-center justify-center gap-2"
+                                    className="bg-white border text-red-600 border-red-100 px-8 py-3 rounded-full font-bold text-xs hover:bg-red-50 hover:border-red-200 transition-all shadow-sm active: min-w-[200px] flex items-center justify-center gap-2"
                                 >
                                     {t('profile.hide_contact')}
                                 </button>
@@ -175,7 +175,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                                 {onAction && requestId && (
                                     <button
                                         onClick={() => onAction(requestId, 'approved')}
-                                        className="bg-[#1f6d78] text-white px-12 py-3.5 rounded-full font-black text-sm hover:bg-[#16555e] transition-all shadow-lg hover:shadow-[#1f6d78]/30 active:scale-95 w-full sm:w-auto min-w-[200px]"
+                                        className="bg-[#1f6d78] text-white px-12 py-3.5 rounded-full font-black text-sm hover:bg-[#16555e] transition-all shadow-lg hover:shadow-[#1f6d78]/30 active: w-full sm:w-auto min-w-[200px]"
                                     >
                                         {t('profile.undo_reject')}
                                     </button>

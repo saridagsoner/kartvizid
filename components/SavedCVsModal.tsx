@@ -66,12 +66,12 @@ const SavedCVsModal: React.FC<SavedCVsModalProps> = ({ onClose, onOpenCV, userId
         <div className="fixed inset-0 z-[100] flex sm:items-center sm:justify-center p-4 pb-[84px] sm:pb-0">
             {/* Blurred Backdrop */}
             <div
-                className="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-md transition-all duration-300"
+                className="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-md transition-all "
                 onClick={onClose}
             />
 
             {/* Modal Content */}
-            <div className="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden max-h-[85vh] flex flex-col animate-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-gray-700 overflow-hidden max-h-[85vh] flex flex-col  zoom-in-95 ">
 
                 {/* Header */}
                 <div className="px-6 py-5 border-b border-gray-50 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 sticky top-0 z-10">

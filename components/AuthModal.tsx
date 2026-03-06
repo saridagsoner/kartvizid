@@ -92,7 +92,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[140] flex flex-col justify-end sm:justify-center items-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-black/50 sm:backdrop-blur-sm animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 sm:fade-in duration-200">
+        <div className="fixed inset-0 z-[140] flex flex-col justify-end sm:justify-center items-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-black/50 sm:backdrop-blur-sm  slide-in-from-bottom sm:slide-in-from-bottom-0 sm:fade-in ">
             <div className="bg-white dark:bg-gray-900 w-full h-full max-h-[100dvh] sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-none sm:shadow-2xl relative flex flex-col rounded-none sm:rounded-3xl overflow-hidden sm:border sm:border-gray-100 dark:border-gray-800">
 
                 {/* Close Button */}
@@ -164,7 +164,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] focus:outline-none transition-colors"
+                                            className="absolute right-4 top-1/2 -/2 text-gray-400 hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] focus:outline-none transition-colors"
                                         >
                                             {showPassword ? (
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -230,7 +230,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full bg-[#1f6d78] dark:bg-[#2dd4bf] text-white dark:text-gray-900 font-black py-4 rounded-2xl hover:bg-[#155e68] dark:hover:bg-teal-300 shadow-xl shadow-[#1f6d78]/20 dark:shadow-[#2dd4bf]/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[15px] uppercase tracking-widest leading-none mt-6 mb-2`}
+                            className={`w-full bg-[#1f6d78] dark:bg-[#2dd4bf] text-white dark:text-gray-900 font-black py-4 rounded-2xl hover:bg-[#155e68] dark:hover:bg-teal-300 shadow-xl shadow-[#1f6d78]/20 dark:shadow-[#2dd4bf]/20 active:[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[15px] uppercase tracking-widest leading-none mt-6 mb-2`}
                         >
                             {loading ? 'İşleniyor...' : (mode === 'signin' ? 'Giriş Yap' : (mode === 'reset' ? 'Sıfırlama Linki Gönder' : 'Kayıt Ol'))}
                         </button>
@@ -261,9 +261,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
                     {/* Success Overlay for SIGNUP */}
                     {showSuccess && (
-                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-800 animate-in fade-in duration-300">
+                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-800  fade-in ">
                             <div className="text-center p-8 w-full">
-                                <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl animate-in zoom-in-50 duration-500">
+                                <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl  zoom-in-50 ">
                                     ✉️
                                 </div>
                                 <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">
@@ -274,7 +274,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                 </p>
                                 <button
                                     onClick={onClose}
-                                    className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-[#155e68] transition-all shadow-xl shadow-[#1f6d78]/20 active:scale-95"
+                                    className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-[#155e68] transition-all shadow-xl shadow-[#1f6d78]/20 active:"
                                 >
                                     Tamam
                                 </button>
@@ -284,9 +284,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
                     {/* Success Overlay for RESET PASSWORD */}
                     {showResetSuccess && (
-                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-800 animate-in fade-in duration-300">
+                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-800  fade-in ">
                             <div className="text-center p-8 w-full">
-                                <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl animate-in zoom-in-50 duration-500">
+                                <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl  zoom-in-50 ">
                                     📨
                                 </div>
                                 <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">
@@ -297,7 +297,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                 </p>
                                 <button
                                     onClick={() => { setShowResetSuccess(false); setMode('signin'); }}
-                                    className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-[#155e68] transition-all shadow-xl shadow-[#1f6d78]/20 active:scale-95"
+                                    className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-[#155e68] transition-all shadow-xl shadow-[#1f6d78]/20 active:"
                                 >
                                     Giriş Yap
                                 </button>

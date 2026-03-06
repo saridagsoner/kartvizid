@@ -141,7 +141,7 @@ const App: React.FC = () => {
     // Try to find in current list first
     const existing = cvList.find(c => c.id === cvId);
     if (existing) {
-      navigate(`/cv/${existing.slug || existing.id}`, { state: { cvData: existing } });
+      navigate(`/cv/${existing.slug || existing.id}`, { state: { cvData: existing, background: location } });
       return;
     }
 
@@ -163,7 +163,7 @@ const App: React.FC = () => {
         .single();
 
       if (error) throw error;
-      if (data) navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data } });
+      if (data) navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data, background: location } });
     } catch (e) {
       console.error('Error fetching CV:', e);
       showToast('CV detayları alınamadı.', 'error');
@@ -307,7 +307,7 @@ const App: React.FC = () => {
 
   // Handle Incremented View
   const handleCVClick = (cv: CV) => {
-    navigate(`/cv/${cv.slug || cv.id}`, { state: { cvData: cv } });
+    navigate(`/cv/${cv.slug || cv.id}`, { state: { cvData: cv, background: location } });
     // Increment view ONLY if user is NOT the owner
     // If user is not logged in, we still count views (visitor views)
     if (!user || user.id !== cv.userId) {
@@ -777,7 +777,8 @@ const App: React.FC = () => {
                 website: data.website,
                 description: data.description,
                 logoUrl: data.logo_url
-              }
+              },
+              background: location
             }
           });
           if (requestId) setActiveModalRequestId(requestId);
@@ -803,7 +804,7 @@ const App: React.FC = () => {
           .single();
 
         if (!error && data) {
-          navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data } });
+          navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data, background: location } });
           return true;
         }
         return false;
@@ -1183,7 +1184,7 @@ const App: React.FC = () => {
       }
 
       if (error) throw error;
-      navigate('/');
+      navigate('/', { replace: true, state: {} });
       fetchCompany();
 
     } catch (error: any) {
@@ -1285,7 +1286,7 @@ const App: React.FC = () => {
 
       if (error) throw error;
 
-      navigate('/');
+      navigate('/', { replace: true, state: {} });
       fetchCVs();
     } catch (error: any) {
       console.error('Error saving CV:', error);
@@ -1585,9 +1586,9 @@ const App: React.FC = () => {
       )}
 
 
-      <div className="flex-1 flex justify-center pt-24 px-2 md:px-6">
+      <div className="flex-1 flex justify-center pt-[68px] md:pt-[84px] px-2 md:px-6">
         <div className="max-w-[1440px] w-full flex items-start gap-6 pb-12">
-          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-24 h-fit pb-4">
+          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[84px] h-fit pb-4">
             <SidebarLeft
               popularProfessions={professionStats}
               popularCities={cityStats}
@@ -1604,7 +1605,7 @@ const App: React.FC = () => {
 
           <section className="flex-1 min-w-0 flex flex-col gap-2 sm:gap-4">
             {/* Mobile Search Bar + Filter Toggle */}
-            <div className="block sm:hidden w-full mb-0 -mt-4">
+            <div className="block sm:hidden w-full mb-0">
               <div className="flex items-center gap-2">
                 <div className="relative flex-1">
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${isSearchFocused ? 'text-[#1f6d78] dark:text-[#2dd4bf]' : 'text-gray-500'
@@ -1771,7 +1772,7 @@ const App: React.FC = () => {
               popularCVs={popularCVs}
               popularCompanies={popularCompanies}
               onCVClick={handleCVClick}
-              onCompanyClick={(company) => navigate(`/company/${company.slug || company.id}`, { state: { companyData: company } })}
+              onCompanyClick={(company) => navigate(`/company/${company.slug || company.id}`, { state: { companyData: company, background: location } })}
               loading={loading}
             />
           </aside>
@@ -1791,7 +1792,7 @@ const App: React.FC = () => {
         isCreateOpen={location.pathname === '/cv-olustur' || location.pathname === '/sirket-olustur'}
         isHomeView={!location.pathname.startsWith('/cv/') && !location.pathname.startsWith('/company/') && location.pathname !== '/cv-olustur' && location.pathname !== '/ayarlar' && location.pathname !== '/sirket-olustur' && location.pathname !== '/bildirimler' && !isSavedCVsOpen && !isCVPromoOpen}
         onGoHome={() => {
-          navigate('/', { replace: true });
+          navigate('/', { replace: true, state: {} });
           closeAllModals(); // Ensure all modals are closed
           setSearchQuery('');
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1897,7 +1898,7 @@ const App: React.FC = () => {
           setIsMobileMenuOpen(false);
         }}
         onCompanyClick={(company) => {
-          navigate(`/company/${company.slug || company.id}`, { state: { companyData: company } });
+          navigate(`/company/${company.slug || company.id}`, { state: { companyData: company, background: location } });
           setIsMobileMenuOpen(false);
         }}
         onFilterApply={(type, value) => {
@@ -1946,7 +1947,7 @@ const App: React.FC = () => {
         />
       )}
 
-      <Routes location={background || location}>
+      <Routes>
         <Route path="/cv/:id" element={
           <CVProfileRoute
             sentRequests={sentRequests}
@@ -2022,13 +2023,10 @@ const App: React.FC = () => {
         <Route path="/cv-olustur" element={
           <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
             <CVFormModal
-              onClose={() => {
-                if (window.history.length > 2) navigate(-1);
-                else navigate('/', { replace: true });
-              }}
+              onClose={() => navigate('/', { replace: true, state: {} })}
               onSubmit={async (data) => {
                 await handleCreateCV(data);
-                navigate('/');
+                navigate('/', { replace: true, state: {} });
               }}
               initialData={currentUserCV || (user?.user_metadata ? {
                 name: user.user_metadata.full_name || '',
@@ -2045,13 +2043,10 @@ const App: React.FC = () => {
         <Route path="/sirket-olustur" element={
           <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
             <CompanyFormModal
-              onClose={() => {
-                if (window.history.length > 2) navigate(-1);
-                else navigate('/', { replace: true });
-              }}
+              onClose={() => navigate('/', { replace: true, state: {} })}
               onSubmit={async (data) => {
                 await handleCompanySubmit(data);
-                navigate('/');
+                navigate('/', { replace: true, state: {} });
               }}
               initialData={activeCompany || undefined}
               availableCities={availableCities}
@@ -2060,19 +2055,13 @@ const App: React.FC = () => {
         } />
         <Route path="/ayarlar" element={
           <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
-            <SettingsModal onClose={() => {
-              if (window.history.length > 2) navigate(-1);
-              else navigate('/', { replace: true });
-            }} />
+            <SettingsModal onClose={() => navigate('/', { replace: true, state: {} })} />
           </React.Suspense>
         } />
         <Route path="/bildirimler" element={
           <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
             <NotificationsModal
-              onClose={() => {
-                if (window.history.length > 2) navigate(-1);
-                else navigate('/', { replace: true });
-              }}
+              onClose={() => navigate('/', { replace: true, state: {} })}
               notifications={[
                 ...receivedRequests,
                 ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
@@ -2086,76 +2075,6 @@ const App: React.FC = () => {
         } />
       </Routes>
 
-      {/* Foreground Modals */}
-      {background && (
-        <Routes>
-          <Route path="/cv-olustur" element={
-            <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
-              <CVFormModal
-                onClose={() => {
-                  if (window.history.length > 2) navigate(-1);
-                  else navigate('/', { replace: true });
-                }}
-                onSubmit={async (data) => {
-                  await handleCreateCV(data);
-                  navigate('/');
-                }}
-                initialData={currentUserCV || (user?.user_metadata ? {
-                  name: user.user_metadata.full_name || '',
-                  profession: user.user_metadata.profession || '',
-                  city: user.user_metadata.city || '',
-                  experienceYears: user.user_metadata.experience_years ? Number(user.user_metadata.experience_years) : 0,
-                  experienceMonths: user.user_metadata.experience_months ? Number(user.user_metadata.experience_months) : 0,
-                  email: user.email || ''
-                } : undefined) as Partial<CV>}
-                availableCities={availableCities}
-              />
-            </React.Suspense>
-          } />
-          <Route path="/sirket-olustur" element={
-            <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
-              <CompanyFormModal
-                onClose={() => {
-                  if (window.history.length > 2) navigate(-1);
-                  else navigate('/', { replace: true });
-                }}
-                onSubmit={async (data) => {
-                  await handleCompanySubmit(data);
-                  navigate('/');
-                }}
-                initialData={activeCompany || undefined}
-                availableCities={availableCities}
-              />
-            </React.Suspense>
-          } />
-          <Route path="/ayarlar" element={
-            <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
-              <SettingsModal onClose={() => {
-                if (window.history.length > 2) navigate(-1);
-                else navigate('/', { replace: true });
-              }} />
-            </React.Suspense>
-          } />
-          <Route path="/bildirimler" element={
-            <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
-              <NotificationsModal
-                onClose={() => {
-                  if (window.history.length > 2) navigate(-1);
-                  else navigate('/', { replace: true });
-                }}
-                notifications={[
-                  ...receivedRequests,
-                  ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
-                ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-                onAction={handleRequestAction}
-                onMarkRead={markNotificationRead}
-                onMarkAllRead={markAllNotificationsRead}
-                onOpenProfile={handleOpenProfile}
-              />
-            </React.Suspense>
-          } />
-        </Routes>
-      )}
     </div>
   );
 };

@@ -33,9 +33,9 @@ const JobSuccessModal: React.FC<JobSuccessModalProps> = ({ onClose }) => {
     }, []);
 
     return (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/50 backdrop-blur-[6px] animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/50 backdrop-blur-[6px]  fade-in ">
             {/* Modal Container - Smaller max-w-xl (rectangular card shape) */}
-            <div className="bg-white dark:bg-gray-900 rounded-[1.5rem] w-full max-w-xl relative shadow-2xl animate-in zoom-in-95 overflow-hidden">
+            <div className="bg-white dark:bg-gray-900 rounded-[1.5rem] w-full max-w-xl relative shadow-2xl  zoom-in-95 overflow-hidden">
 
                 {/* Inner Dashed Border - Brand Color */}
                 <div className="absolute inset-3 border-2 border-dashed border-[#1f6d78]/30 rounded-2xl pointer-events-none"></div>
@@ -52,10 +52,10 @@ const JobSuccessModal: React.FC<JobSuccessModalProps> = ({ onClose }) => {
 
                     {/* Content - Handwriting/Elegant Font Style */}
                     {/* Logo Replacement */}
-                    <div className="mb-6 scale-125">
+                    <div className="mb-6 ">
                         <div className="flex items-center text-[#2b2b2b] dark:text-white text-[32px] sm:text-[40px] font-bold tracking-tight rounded-font leading-none">
                             <span>Kartvizi</span>
-                            <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
+                            <span className="inline-block ml-1 transform rotate-[12deg] origin-center [-1px] text-[#1f6d78] font-black">d</span>
                         </div>
                     </div>
 

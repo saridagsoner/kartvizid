@@ -161,7 +161,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   );
 
   return (
-    <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 sm:backdrop-blur-xl animate-in slide-in-from-right sm:fade-in sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 sm:backdrop-blur-xl  slide-in-from-right sm:fade-in sm:slide-in-from-bottom-0 sm:zoom-in-95 ">
       <SEO
         title={`${cv.name} - ${cv.profession}`}
         description={cv.about ? cv.about.substring(0, 150) + '...' : `${cv.name} adlı kullanıcının özgeçmişini inceleyin.`}
@@ -172,7 +172,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
         <div className="p-4 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0 gap-4">
           <button
             onClick={onClose}
-            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors active:scale-95 sm:order-2"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors active: sm:order-2"
           >
             <span className="sr-only">Kapat</span>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="block sm:hidden">
@@ -529,7 +529,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           {isOwner && cv.workingStatus !== 'active' && (
             <button
               onClick={onJobFound}
-              className="flex-[1.5] bg-[#1f6d78] text-white py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-sm uppercase tracking-wider sm:tracking-widest hover:bg-[#155e68] transition-all active:scale-95 shadow-md sm:shadow-lg shadow-[#1f6d78]/20"
+              className="flex-[1.5] bg-[#1f6d78] text-white py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-sm uppercase tracking-wider sm:tracking-widest hover:bg-[#155e68] transition-all active: shadow-md sm:shadow-lg shadow-[#1f6d78]/20"
             >
               {t('profile.job_found')}
             </button>
@@ -539,13 +539,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             <>
               <button
                 onClick={handleDownload}
-                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-sm sm:shadow-xl"
+                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active: shadow-sm sm:shadow-xl"
               >
                 {t('profile.download_cv')}
               </button>
               <button
                 onClick={handleShare}
-                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-sm sm:shadow-xl"
+                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active: shadow-sm sm:shadow-xl"
               >
                 {t('profile.share_cv')}
               </button>
@@ -561,7 +561,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                     }
                     onRequestAccess?.();
                   }}
-                  className={`flex-[2] py-4 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest transition-all shadow-md sm:shadow-xl active:scale-[0.98] group ${isPending
+                  className={`flex-[2] py-4 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest transition-all shadow-md sm:shadow-xl active:[0.98] group ${isPending
                     ? 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-600 hover:shadow-none'
                     : 'bg-[#1f6d78] text-white hover:bg-[#155e68]'
                     }`}
@@ -611,7 +611,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                       showToast('İşlem başarısız.', 'error');
                     }
                   }}
-                  className={`w-12 h-12 sm:w-16 sm:h-auto rounded-full flex items-center justify-center border transition-all active:scale-95 shadow-xl ${isSaved
+                  className={`w-12 h-12 sm:w-16 sm:h-auto rounded-full flex items-center justify-center border transition-all active: shadow-xl ${isSaved
                     ? 'bg-white border-[#1f6d78] text-[#1f6d78]'
                     : 'bg-white border-gray-200 text-gray-400 hover:text-[#1f6d78] hover:border-[#1f6d78]'
                     }`}
@@ -630,8 +630,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
 
       {/* Warning / Success Overlay */}
       {showWarning.show && (
-        <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6 animate-in fade-in duration-200 rounded-[3rem]">
-          <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl scale-100 animate-in zoom-in-95 duration-200 text-center relative overflow-hidden">
+        <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6  fade-in  rounded-[3rem]">
+          <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl   zoom-in-95  text-center relative overflow-hidden">
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
             <div className="w-16 h-16 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-sm relative z-10">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -646,7 +646,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             </p>
             <button
               onClick={() => setShowWarning({ show: false, message: '' })}
-              className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active:scale-95 relative z-10"
+              className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active: relative z-10"
             >
               Tamam
             </button>
@@ -657,8 +657,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       {/* Role Warning Modal - Centered & Themed */}
       {
         showRoleWarning && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in duration-200 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-gray-800 animate-in zoom-in-95 duration-200 relative">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6  fade-in  bg-black/50 backdrop-blur-sm">
+            <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-gray-800  zoom-in-95  relative">
 
               {/* Close Button */}
               <button
@@ -685,7 +685,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
 
               <button
                 onClick={() => setShowRoleWarning(false)}
-                className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20"
+                className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-[#155e68] transition-all active: shadow-lg shadow-[#1f6d78]/20"
               >
                 Anladım
               </button>

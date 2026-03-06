@@ -88,10 +88,10 @@ const TipsModal: React.FC<TipsModalProps> = ({ onClose }) => {
     }, [onClose]);
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md  fade-in ">
             <div
                 ref={containerRef}
-                className="bg-white w-full max-w-2xl max-h-[85vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-300"
+                className="bg-white w-full max-w-2xl max-h-[85vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden  zoom-in-95 "
             >
                 {/* Header */}
                 <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
@@ -110,7 +110,7 @@ const TipsModal: React.FC<TipsModalProps> = ({ onClose }) => {
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-xl text-gray-400 hover:bg-[#1f6d78] hover:text-white transition-all shadow-sm active:scale-90"
+                        className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-xl text-gray-400 hover:bg-[#1f6d78] hover:text-white transition-all shadow-sm active:"
                     >
                         ×
                     </button>
@@ -122,9 +122,9 @@ const TipsModal: React.FC<TipsModalProps> = ({ onClose }) => {
                         {TIPS.map((tip, index) => (
                             <div
                                 key={index}
-                                className="group p-6 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-white hover:border-[#1f6d78]/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                                className="group p-6 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-white hover:border-[#1f6d78]/10 hover:shadow-lg transition-all  hover:-"
                             >
-                                <div className="mb-4 text-black group-hover:scale-110 transition-transform duration-300">
+                                <div className="mb-4 text-black group-hover: transition-transform ">
                                     {tip.icon}
                                 </div>
                                 <h3 className="font-bold text-black text-sm mb-2">{tip.title}</h3>
@@ -138,7 +138,7 @@ const TipsModal: React.FC<TipsModalProps> = ({ onClose }) => {
                     <div className="mt-8 flex flex-col items-center gap-4">
                         <button
                             onClick={onClose}
-                            className="bg-[#1f6d78] text-white px-10 py-4 rounded-full text-sm font-bold hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20"
+                            className="bg-[#1f6d78] text-white px-10 py-4 rounded-full text-sm font-bold hover:bg-[#155e68] transition-all active: shadow-lg shadow-[#1f6d78]/20"
                         >
                             Profili Düzenle
                         </button>

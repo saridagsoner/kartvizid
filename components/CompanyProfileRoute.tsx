@@ -72,11 +72,7 @@ const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
     }, [id, company]);
 
     const handleClose = () => {
-        if (window.history.length > 2) {
-            navigate(-1);
-        } else {
-            navigate('/', { replace: true });
-        }
+        navigate('/');
     };
 
     if (loading) {

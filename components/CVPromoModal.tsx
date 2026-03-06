@@ -10,7 +10,7 @@ const CVPromoModal: React.FC<CVPromoModalProps> = ({ onClose, onCreateCV }) => {
     const { t } = useLanguage();
 
     return (
-        <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col animate-in slide-in-from-bottom duration-300">
+        <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col  slide-in-from-bottom ">
             {/* Close Button */}
             <div className="absolute top-4 right-4 z-10">
                 <button
@@ -82,7 +82,7 @@ const CVPromoModal: React.FC<CVPromoModalProps> = ({ onClose, onCreateCV }) => {
                 {/* CTA Button */}
                 <button
                     onClick={onCreateCV}
-                    className="w-full max-w-xs bg-[#1f6d78] text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-[#1f6d78]/20 hover:bg-[#165a63] transform hover:scale-[1.02] active:scale-95 transition-all"
+                    className="w-full max-w-xs bg-[#1f6d78] text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-[#1f6d78]/20 hover:bg-[#165a63] transform hover:[1.02] active: transition-all"
                 >
                     Şimdi CV Oluştur
                 </button>
