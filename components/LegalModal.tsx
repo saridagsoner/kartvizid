@@ -11,7 +11,8 @@ type LegalSection =
     | 'cookie'
     | 'kvkk'
     | 'membership'
-    | 'data_form';
+    | 'data_form'
+    | 'iletisim';
 
 interface LegalModalProps {
     initialSection?: LegalSection;
@@ -77,6 +78,23 @@ export const LEGAL_CONTENT: Record<LegalSection, { title: string; content: React
                     <p className="text-[#1f6d78]">destek@kartvizid.com</p>
                 </div>
                 <p>Teknik sorunlar, hesap erişim problemleri veya kötüye kullanım bildirimleri için lütfen yukarıdaki adresten bizimle iletişime geçin. Talepleriniz en geç 24 saat içinde yanıtlanacaktır.</p>
+            </div>
+        )
+    },
+    iletisim: {
+        title: "İletişim",
+        content: (
+            <div className="space-y-4">
+                <p>Bizimle iletişime geçmek için aşağıdaki kanalları kullanabilirsiniz.</p>
+                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                    <p className="font-bold text-gray-900 dark:text-white">E-posta</p>
+                    <p className="text-[#1f6d78] dark:text-[#2dd4bf]"><a href="mailto:iletisim@kartvizid.com">iletisim@kartvizid.com</a></p>
+                </div>
+                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                    <p className="font-bold text-gray-900 dark:text-white">Destek ve Yardım</p>
+                    <p className="text-[#1f6d78] dark:text-[#2dd4bf]"><a href="mailto:destek@kartvizid.com">destek@kartvizid.com</a></p>
+                </div>
+                <p>Tüm soru, görüş ve önerileriniz için e-posta yoluyla bize 7/24 ulaşabilirsiniz. Talepleriniz en kısa sürede ekibimiz tarafından değerlendirilerek geri dönüş sağlanacaktır.</p>
             </div>
         )
     },

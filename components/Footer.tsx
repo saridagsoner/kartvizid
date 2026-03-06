@@ -51,6 +51,7 @@ const Footer = () => {
                             <li><Link to="/sikca-sorulan-sorular" className="hover:text-black transition-colors">{t('footer.faq')}</Link></li>
                             <li><Link to="/yardim-merkezi" className="hover:text-black transition-colors">{t('footer.help')}</Link></li>
                             <li><Link to="/hizmetlerimiz" className="hover:text-black transition-colors">{t('footer.services')}</Link></li>
+                            <li><Link to="/iletisim" className="hover:text-black dark:hover:text-white transition-colors">İletişim</Link></li>
                         </ul>
                     </div>
 

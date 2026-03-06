@@ -2020,6 +2020,11 @@ const App: React.FC = () => {
             <LegalRoute section="data_form" />
           </React.Suspense>
         } />
+        <Route path="/iletisim" element={
+          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+            <LegalRoute section="iletisim" />
+          </React.Suspense>
+        } />
         <Route path="/cv-olustur" element={
           <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
             <CVFormModal

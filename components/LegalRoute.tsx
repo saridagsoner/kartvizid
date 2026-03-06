@@ -12,7 +12,8 @@ export const LEGAL_ROUTE_MAP: Record<LegalSection, string> = {
     cookie: '/cerez-politikasi',
     kvkk: '/kvkk-aydinlatma',
     membership: '/uyelik-sozlesmesi',
-    data_form: '/veri-sahibi-basvuru-formu'
+    data_form: '/veri-sahibi-basvuru-formu',
+    iletisim: '/iletisim'
 };
 
 interface LegalRouteProps {
