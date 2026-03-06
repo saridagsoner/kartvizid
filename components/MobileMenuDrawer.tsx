@@ -311,7 +311,8 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                             { label: 'Güvenlik İpuçları', key: 'security' },
                             { label: 'Sıkça Sorulan Sorular', key: 'faq' },
                             { label: 'Yardım Merkezi', key: 'help' },
-                            { label: 'Hizmetlerimiz', key: 'services' }
+                            { label: 'Hizmetlerimiz', key: 'services' },
+                            { label: 'İletişim', key: 'iletisim' }
                         ].map((item, idx) => (
                             <button
                                 key={idx}
