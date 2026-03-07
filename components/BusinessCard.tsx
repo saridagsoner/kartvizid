@@ -14,9 +14,9 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
       onClick={onClick}
       className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-[2.5rem] p-3 sm:p-6 border border-gray-200 dark:border-gray-700 card-hover cursor-pointer relative animate-fade-in shadow-md"
     >
-      <div className="flex flex-row items-start gap-2.5 sm:gap-8">
+      <div className="flex flex-row items-start gap-3.5 sm:gap-8">
         <div className="relative shrink-0">
-          <div className="w-14 h-[60px] sm:w-24 sm:h-28 rounded-lg sm:rounded-[1.75rem] border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm group bg-gray-50 dark:bg-gray-700">
+          <div className="w-[60px] h-[64px] sm:w-24 sm:h-28 rounded-lg sm:rounded-[1.75rem] border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm group bg-gray-50 dark:bg-gray-700">
             {cv.photoUrl ? (
               <img
                 src={cv.photoUrl}
@@ -35,7 +35,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
         <div className="flex-1 min-w-0 pt-0 sm:pt-1 flex flex-col gap-0 sm:gap-2">
           <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tight leading-normal sm:leading-normal line-clamp-1">
+              <h3 className="text-base sm:text-2xl font-bold sm:font-black text-black dark:text-white tracking-tight leading-normal sm:leading-normal line-clamp-1">
                 {cv.name}
               </h3>
               {/* Mobile Only Icons Inline - REMOVED per request */}
@@ -61,10 +61,10 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
             </div>
           </div>
 
-          <p className="text-sm sm:text-base text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1">{cv.profession}</p>
+          <p className="text-sm sm:text-base text-[#1f6d78] dark:text-[#2dd4bf] font-medium sm:font-bold tracking-tight line-clamp-1">{cv.profession}</p>
 
           {/* Details Section with Simple Icons - Restored on Mobile */}
-          <div className="mt-1 sm:mt-0 flex flex-nowrap items-center gap-x-2 sm:gap-x-6 gap-y-1 text-[10px] sm:text-[13px] text-gray-500 dark:text-gray-400 font-bold overflow-hidden">
+          <div className="mt-1 sm:mt-0 flex flex-nowrap items-center gap-x-2 sm:gap-x-6 gap-y-1 text-[10px] sm:text-[13px] text-gray-500 dark:text-gray-400 font-medium sm:font-bold overflow-hidden">
             <span className="flex items-center gap-1.5 whitespace-nowrap shrink-0">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 dark:text-gray-400 sm:w-[14px] sm:h-[14px]">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -92,7 +92,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
 
         {/* Action Button - Mobile Minimal - Right Side Centered */}
         <div className="flex sm:hidden items-center self-center shrink-0 ml-1">
-          <button className="bg-gray-50 dark:bg-gray-700 text-[#1f6d78] dark:text-[#2dd4bf] px-3 py-1.5 rounded-full font-bold text-[9px] uppercase tracking-wider hover:bg-[#1f6d78] hover:text-white transition-colors">
+          <button className="bg-white dark:bg-gray-800 border-[0.5px] border-gray-200 dark:border-gray-600 text-[#1f6d78] dark:text-[#2dd4bf] px-3 py-1.5 rounded-full font-bold text-[9px] uppercase tracking-wider hover:bg-[#1f6d78] hover:text-white transition-colors">
             {t('card.view')}
           </button>
         </div>

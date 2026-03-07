@@ -78,7 +78,7 @@ const Navbar: React.FC<NavbarProps & {
                   <span>Kartvizi</span>
                   <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                 </div>
-                <span className="block text-[10px] sm:text-[12px] font-semibold text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
+                <span className="block text-[10px] sm:text-[12px] font-medium text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
                   dijital cv & doğru eşleşme
                 </span>
               </Link>
@@ -112,7 +112,7 @@ const Navbar: React.FC<NavbarProps & {
                     e.currentTarget.blur();
                   }
                 }}
-                className="w-full bg-[#F0F2F5] dark:bg-gray-700 hover:bg-[#E8EAED] dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all outline-none rounded-lg px-12 py-2.5 text-[16px] lg:text-sm text-gray-800 dark:text-gray-100 border border-transparent focus:border-[#1f6d78]/20 shadow-sm placeholder-gray-500 dark:placeholder-gray-400"
+                className="w-full bg-[#F0F2F5] dark:bg-gray-700 hover:bg-[#E8EAED] dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all outline-none rounded-lg px-12 py-2.5 text-[16px] lg:text-sm font-light text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:border-[#1f6d78]/20 shadow-sm placeholder-gray-500 dark:placeholder-gray-400 placeholder:font-light"
               />
             </div>
 

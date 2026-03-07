@@ -89,7 +89,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     return (
         <>
             {/* Fixed Bottom Bar */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg z-[150] sm:hidden pb-safe">
+            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg z-[150] sm:hidden pb-safe border-t-[0.5px] border-gray-200/60 dark:border-gray-800/60 shadow-[0_-1px_3px_rgba(0,0,0,0.02)]">
                 <div className="flex items-center justify-around h-16 px-2 pb-2">
                     {/* Menu Button (Replaces Home) */}
                     <button
@@ -113,10 +113,10 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     {/* Notifications Button */}
                     <button
                         onClick={() => toggleTab('notifications')}
-                        className={`relative flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isNotifActive ? 'text-[#1f6d78]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
+                        className={`relative flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isNotifActive ? 'text-black dark:text-white' : 'text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white'}`}
                     >
-                        <div className={`h-8 flex items-center justify-center ${isNotifActive ? 'text-[#1f6d78]' : 'text-gray-500 dark:text-gray-400'}`}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill={isNotifActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                        <div className={`h-8 flex items-center justify-center ${isNotifActive ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill={isNotifActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
                                 <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
                             </svg>
@@ -143,10 +143,10 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                 }
                             }
                         }}
-                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isCreateActiveTab ? 'text-[#1f6d78]' : 'text-[#1f6d78] opacity-80 hover:opacity-100'}`}
+                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isCreateActiveTab ? 'text-black dark:text-white' : 'text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white'}`}
                     >
-                        <div className={`h-8 flex items-center justify-center ${isCreateActiveTab ? 'text-[#1f6d78]' : 'text-[#1f6d78]'}`}>
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                        <div className={`h-8 flex items-center justify-center ${isCreateActiveTab ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
@@ -164,23 +164,23 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                 if (onOpenProfile) onOpenProfile(user.id, user.user_metadata?.role);
                             }
                         }}
-                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isProfileActiveTab ? 'text-[#1f6d78]' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
+                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isProfileActiveTab ? 'text-black dark:text-white' : 'text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white'}`}
                     >
-                        <div className={`h-8 flex flex-col items-center justify-center ${isProfileActiveTab ? 'text-[#1f6d78]' : 'text-gray-500 dark:text-gray-400'}`}>
+                        <div className={`h-8 flex flex-col items-center justify-center ${isProfileActiveTab ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>
                             {userPhotoUrl ? (
-                                <div className={`w-6 h-6 rounded-full overflow-hidden border ${isProfileActiveTab ? 'border-[#1f6d78]' : 'border-gray-200'}`}>
+                                <div className={`w-6 h-6 rounded-full overflow-hidden border ${isProfileActiveTab ? 'border-black dark:border-white' : 'border-gray-200'}`}>
                                     <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
                                 </div>
                             ) : (
                                 <div>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill={isProfileActiveTab ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill={isProfileActiveTab ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2z" />
                                         <circle cx="12" cy="7" r="4" />
                                     </svg>
                                 </div>
                             )}
                         </div>
-                        <span className={`text-[10px] font-medium leading-none ${isProfileActiveTab ? 'text-[#1f6d78]' : 'text-gray-500 dark:text-gray-400'}`}>Profil</span>
+                        <span className={`text-[10px] font-medium leading-none ${isProfileActiveTab ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>Profil</span>
                     </button>
                 </div>
             </div>

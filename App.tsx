@@ -1605,7 +1605,7 @@ const App: React.FC = () => {
 
           <section className="flex-1 min-w-0 flex flex-col gap-2 sm:gap-4">
             {/* Mobile Search Bar + Filter Toggle */}
-            <div className="block sm:hidden w-full mb-0">
+            <div className="block sm:hidden w-full mb-0 mt-2">
               <div className="flex items-center gap-2">
                 <div className="relative flex-1">
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${isSearchFocused ? 'text-[#1f6d78] dark:text-[#2dd4bf]' : 'text-gray-500'
@@ -1622,7 +1622,7 @@ const App: React.FC = () => {
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
                     placeholder={isSearchFocused ? 'Meslek, Şehir, İsim veya Unvan Ara' : t('nav.search_placeholder')}
-                    className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg pl-11 pr-4 py-2.5 h-11 sm:h-11 font-light tracking-tighter outline-none appearance-none focus:outline-none focus:border-gray-400 dark:focus:border-gray-500 focus:ring-0 transition-all placeholder:text-gray-400/80 text-[16px]"
+                    className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-full pl-11 pr-4 h-[46px] font-medium tracking-tight outline-none appearance-none focus:bg-white dark:focus:bg-gray-800 focus:border-[1.5px] focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-0 transition-all placeholder:text-gray-400/90 text-[15px] sm:text-[16px] text-gray-900 dark:text-white"
                   />
                 </div>
 
@@ -1633,7 +1633,7 @@ const App: React.FC = () => {
             {/* Mobile Header (Kartvizidler + Sort) */}
             <div className="flex sm:hidden items-center justify-between px-2 mt-1.5 mb-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-xs font-bold text-[#1f6d78] tracking-wide ml-1">
+                <h2 className="text-xs font-medium text-black dark:text-gray-100 tracking-wide ml-1">
                   Kartvizid Listesi
                 </h2>
                 <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
@@ -1643,8 +1643,8 @@ const App: React.FC = () => {
                 onClick={() => setActiveFilterModal('advanced')}
                 className="flex items-center gap-1.5 hover:opacity-80 transition-opacity active:scale-95 mr-1"
               >
-                <span className="text-xs font-bold tracking-wide text-[#1f6d78] dark:text-[#2dd4bf]">Filtre</span>
-                <svg className="text-gray-400 dark:text-gray-500" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <span className="text-xs font-medium tracking-wide text-black dark:text-gray-100">Filtre</span>
+                <svg className="text-gray-400 dark:text-gray-500" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="4" y1="8" x2="20" y2="8" />
                   <circle cx="16" cy="8" r="2" fill="white" className="dark:fill-gray-900" />
                   <line x1="4" y1="16" x2="20" y2="16" />
@@ -1698,7 +1698,7 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-4">
               {currentItems.length > 0 ? (
                 currentItems.map(cv => {
                   const request = sentRequests.find(r => r.target_user_id === cv.userId);

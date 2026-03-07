@@ -36,7 +36,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ value, onChange, minimal = 
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`flex items-center gap-2 ${minimal
-                    ? 'text-xs font-bold text-gray-400 dark:text-gray-500'
+                    ? 'text-xs font-medium text-gray-400 dark:text-gray-500'
                     : `bg-white dark:bg-gray-800 border ${isOpen ? 'border-[#1f6d78] shadow-md' : 'border-gray-200 dark:border-gray-700'} rounded-full px-2.5 py-1 sm:px-5 sm:py-2 text-[10px] sm:text-xs font-bold text-gray-800 dark:text-white transition-all hover:border-[#1f6d78] dark:hover:border-[#1f6d78] active:scale-95`
                     }`}
             >
