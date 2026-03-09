@@ -136,18 +136,18 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   };
 
   const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
-    <div className="mb-4 sm:mb-6 mt-6 sm:mt-10 first:mt-0">
-      <h3 className="text-xs sm:text-sm font-black text-black dark:text-white uppercase tracking-[0.15em] border-l-4 border-[#1f6d78] pl-3">{title}</h3>
-      {subtitle && <p className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase mt-1 ml-4">{subtitle}</p>}
+    <div className="mb-3 sm:mb-6 mt-5 sm:mt-10 first:mt-0">
+      <h3 className="text-[12px] sm:text-lg font-black text-black dark:text-white uppercase tracking-[0.2em] border-l-4 border-[#1f6d78] pl-3 leading-none">{title}</h3>
+      {subtitle && <p className="text-[8px] sm:text-[10px] text-gray-400 font-bold uppercase mt-1 ml-4">{subtitle}</p>}
     </div>
   );
 
   const InfoTag = ({ label, value, icon }: { label: string, value: string | number | undefined, icon?: string }) => (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</span>
-      <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full px-3 py-2 sm:px-5 sm:py-3 flex items-center gap-2 sm:gap-3">
-        {icon && <span className="text-xs sm:text-sm">{icon}</span>}
-        <span className="text-xs sm:text-sm font-bold text-black dark:text-gray-100">
+    <div className="flex flex-col gap-0.5">
+      <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">{label}</span>
+      <div className="flex items-center gap-2 sm:gap-3 px-1 py-0.5">
+        {icon && <span className="text-[10px] sm:text-sm">{icon}</span>}
+        <span className="text-xs sm:text-base font-bold text-gray-700 dark:text-gray-300">
           {typeof value === 'string' ? resolveValue(value) : (value || '-')}
         </span>
       </div>
@@ -161,7 +161,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   );
 
   return (
-    <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 sm:backdrop-blur-xl  slide-in-from-right sm:fade-in sm:slide-in-from-bottom-0 sm:zoom-in-95 ">
+    <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 ">
       <SEO
         title={`${cv.name} - ${cv.profession}`}
         description={cv.about ? cv.about.substring(0, 150) + '...' : `${cv.name} adlı kullanıcının özgeçmişini inceleyin.`}
@@ -182,8 +182,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           </button>
 
           <div className="flex-1 sm:order-1 text-center sm:text-left">
-            <h2 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tighter truncate">{t('profile.cv_title')}</h2>
-            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{t('profile.cv_subtitle')}</p>
+            <h2 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tight truncate">{t('profile.cv_title')}</h2>
+            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em] opacity-80">{t('profile.cv_subtitle')}</p>
           </div>
 
           <div className="w-10 sm:hidden"></div> {/* Spacer for centering title on mobile */}
@@ -195,108 +195,79 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           {/* Bölüm 1: Temel Bilgiler */}
           <section>
             <SectionTitle title={t('profile.basic_info')} />
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-row gap-5 sm:gap-8 items-center sm:items-start">
+            <div className="flex flex-col gap-6 pt-4">
+              <div className="flex flex-row gap-4 sm:gap-8 items-start">
                 <div className="shrink-0">
-                  <div className="w-28 h-36 sm:w-32 sm:h-44 rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 dark:border-gray-700 overflow-hidden shadow-xl bg-gray-50 dark:bg-gray-800">
+                  <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-3 mb-1.5 block">FOTOĞRAF</span>
+                  <div className="w-20 h-28 sm:w-32 sm:h-44 rounded-xl sm:rounded-[2.5rem] border border-gray-100 dark:border-gray-700 overflow-hidden shadow-xl bg-gray-50 dark:bg-gray-800 mt-2.5">
                     <img src={cv.photoUrl} alt={cv.name} className="w-full h-full object-cover" />
                   </div>
                 </div>
-                <div className="flex-1 space-y-4">
+                <div className="flex-1 grid grid-cols-2 gap-x-3 gap-y-4 min-w-0">
                   <InfoTag label={t('form.fullname')} value={cv.name} />
+                  <InfoTag label={t('form.city')} value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} />
                   <InfoTag label={t('form.profession')} value={cv.profession} />
+                  <InfoTag label={t('form.experience')} value={`${cv.experienceYears} Yıl${cv.experienceMonths ? ' ' + cv.experienceMonths + ' Ay' : ''}`} />
+                  {cv.birthDate && <InfoTag label="Doğum Tarihi" value={cv.birthDate} />}
+                  {(cv.personalDetails?.maritalStatus || cv.maritalStatus) && (
+                    <InfoTag label={t('form.marital')} value={cv.personalDetails?.maritalStatus || cv.maritalStatus} />
+                  )}
                 </div>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <InfoTag label={t('form.city')} value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} />
-                <InfoTag label={t('form.experience')} value={`${cv.experienceYears} Yıl${cv.experienceMonths ? ' ' + cv.experienceMonths + ' Ay' : ''} Deneyim`} />
-                {cv.birthDate && <InfoTag label="Doğum Tarihi" value={cv.birthDate} />}
-              </div>
             </div>
+          </section>
 
-
-            <div className="mt-8 bg-gray-50 dark:bg-gray-800 rounded-[2rem] p-6 border border-gray-100 dark:border-gray-700 flex items-center justify-between">
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">{t('form.work_status')}</span>
-              <div className="flex gap-2">
-                {/* Working Status Display */}
-                {(() => {
-                  const statusMap: Record<string, string> = { active: t('form.working'), passive: t('form.not_working'), open: t('form.job_seeking') };
-                  const currentStatus = cv.workingStatus || 'open';
-                  const label = statusMap[currentStatus] || t('form.job_seeking');
-                  return (
-                    <span className={`px-6 py-3 rounded-full text-xs font-black uppercase tracking-wider ${currentStatus === 'open' ? 'bg-[#1f6d78] text-white shadow-lg shadow-[#1f6d78]/20' :
-                      currentStatus === 'active' ? 'bg-black text-white' : 'bg-gray-200 text-gray-500'
-                      }`}>
-                      {label}
-                    </span>
-                  );
-                })()}
-              </div>
+          {/* Bölüm 5: Hakkında (Moved) */}
+          <section>
+            <SectionTitle title={t('profile.about')} />
+            <div className="px-1 text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 leading-relaxed pt-2">
+              {cv.about || 'Kullanıcı henüz kendini tanıtan bir yazı eklememiş.'}
             </div>
-
           </section>
 
           {/* Bölüm 2: İş Tercihleri */}
           <section>
             <SectionTitle title={t('profile.work_pref')} />
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.work_model')} & {t('form.employment_type')}</label>
-                  <div className="flex flex-wrap gap-2">
-                    <ValuePill label={cv.workType || 'Ofis'} />
-                    <ValuePill label={cv.employmentType || 'Tam Zamanlı'} />
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.salary_exp')}</label>
-                  <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full px-6 py-3 flex items-center justify-between">
-                    <span className="text-sm font-black text-black dark:text-gray-100">
-                      {cv.salaryMin.toLocaleString('tr-TR')}₺ - {cv.salaryMax.toLocaleString('tr-TR')}₺
-                    </span>
-                    <span className="text-[10px] font-black text-gray-400 uppercase">{t('form.monthly_net') || 'Aylık Net'}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Tercih Edilen Şehir</label>
-                <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full px-6 py-3 flex items-center">
-                  <span className="text-sm font-black text-black dark:text-gray-100">
-                    {cv.preferredCity || '-'}
+            <div className="grid grid-cols-2 gap-x-3 gap-y-4 pt-4">
+              <InfoTag label={t('form.work_status')} value={(() => {
+                const statusMap: Record<string, string> = { active: t('form.working'), passive: t('form.not_working'), open: t('form.job_seeking') };
+                const currentStatus = cv.workingStatus || 'open';
+                return (
+                  <span className={`text-xs sm:text-base font-bold ${currentStatus === 'passive' ? 'text-gray-400' : 'text-black dark:text-white'}`}>
+                    {statusMap[currentStatus] || t('form.job_seeking')}
                   </span>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">Tercih Edilen Alanlar</label>
-                <div className="flex flex-wrap gap-2">
-                  {cv.preferredRoles && cv.preferredRoles.length > 0 ? cv.preferredRoles.map(role => (
-                    <ValuePill key={role} label={role} />
-                  )) : <span className="text-sm font-bold text-gray-400 italic">-</span>}
-                </div>
-              </div>
+                );
+              })()} />
+              <InfoTag label={t('form.salary_exp')} value={`${cv.salaryMin.toLocaleString('tr-TR')}₺ - ${cv.salaryMax.toLocaleString('tr-TR')}₺`} />
+              <InfoTag label={t('form.work_model')} value={cv.workType || 'Ofis'} />
+              <InfoTag label={t('form.employment_type')} value={cv.employmentType || 'Tam Zamanlı'} />
+              <InfoTag label="Tercih Edilen Şehir" value={cv.preferredCity || '-'} />
+              <InfoTag label="Tercih Edilen Alanlar" value={cv.preferredRoles?.length ? cv.preferredRoles.join(', ') : '-'} />
             </div>
-
           </section>
 
           {/* Bölüm 2.5: İş Deneyimi (New) */}
           <section>
             <SectionTitle title={t('profile.work_exp')} />
             {cv.workExperience && cv.workExperience.length > 0 ? (
-              <div className="space-y-4">
-                {cv.workExperience.map((work) => (
-                  <div key={work.id} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                      <h4 className="font-black text-black dark:text-gray-100 text-sm">{work.role}</h4>
-                      <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">{work.company}</p>
+              <div className="space-y-6 pt-4">
+                {cv.workExperience.map((work, idx) => (
+                  <React.Fragment key={work.id}>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-4">
+                      <div className="col-span-2 sm:col-span-1">
+                        <InfoTag label="POZİSYON" value={work.role} />
+                      </div>
+                      <div className="col-span-2 sm:col-span-1">
+                        <InfoTag label="ŞİRKET" value={work.company} />
+                      </div>
+                      <div className="col-span-2">
+                        <InfoTag label="ÇALIŞMA DÖNEMİ" value={`${work.startDate} - ${work.isCurrent ? t('common.ongoing') : work.endDate}`} />
+                      </div>
                     </div>
-                    <div className="bg-white dark:bg-gray-700 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-600 text-[10px] font-black uppercase text-gray-400 dark:text-gray-300 whitespace-nowrap">
-                      {work.startDate} - {work.isCurrent ? t('common.ongoing') : work.endDate}
-                    </div>
-                  </div>
+                    {idx !== cv.workExperience.length - 1 && (
+                      <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 my-2" />
+                    )}
+                  </React.Fragment>
                 ))}
               </div>
             ) : (
@@ -308,17 +279,24 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           <section>
             <SectionTitle title="Staj Deneyimi" />
             {cv.internshipDetails && cv.internshipDetails.length > 0 ? (
-              <div className="space-y-4">
-                {cv.internshipDetails.map((intern) => (
-                  <div key={intern.id} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                      <h4 className="font-black text-black dark:text-gray-100 text-sm">{intern.role}</h4>
-                      <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">{intern.company}</p>
+              <div className="space-y-6 pt-4">
+                {cv.internshipDetails.map((intern, idx) => (
+                  <React.Fragment key={intern.id}>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-4">
+                      <div className="col-span-2 sm:col-span-1">
+                        <InfoTag label="STAJ POZİSYONU" value={intern.role} />
+                      </div>
+                      <div className="col-span-2 sm:col-span-1">
+                        <InfoTag label="ŞİRKET" value={intern.company} />
+                      </div>
+                      <div className="col-span-2">
+                        <InfoTag label="STAJ DÖNEMİ" value={`${intern.startDate} - ${intern.isCurrent ? (t('common.ongoing') || 'Devam Ediyor') : intern.endDate}`} />
+                      </div>
                     </div>
-                    <div className="bg-white dark:bg-gray-700 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-600 text-[10px] font-black uppercase text-gray-400 dark:text-gray-300 whitespace-nowrap">
-                      {intern.startDate} - {intern.isCurrent ? (t('common.ongoing') || 'Devam Ediyor') : intern.endDate}
-                    </div>
-                  </div>
+                    {idx !== cv.internshipDetails.length - 1 && (
+                      <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 my-2" />
+                    )}
+                  </React.Fragment>
                 ))}
               </div>
             ) : (
@@ -332,79 +310,108 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             <div className="space-y-8">
 
               {/* Education List */}
-              <div className="space-y-4">
-                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.education_info')}</label>
+              <div className="space-y-6 pt-4">
                 {cv.educationDetails && cv.educationDetails.length > 0 ? (
-                  <div className="grid grid-cols-1 gap-4">
-                    {cv.educationDetails.map((edu) => (
-                      <div key={edu.id} className="bg-gray-50 dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 flex items-center justify-between">
-                        <div>
-                          <h4 className="font-bold text-sm text-black dark:text-gray-100">{edu.university}</h4>
-                          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{edu.department} ({resolveValue(edu.level)})</p>
+                  <div className="space-y-6">
+                    {cv.educationDetails.map((edu, idx) => (
+                      <React.Fragment key={edu.id}>
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-4">
+                          <div className="col-span-2 sm:col-span-1">
+                            <InfoTag label="ÜNİVERSİTE" value={edu.university} />
+                          </div>
+                          <div className="col-span-2 sm:col-span-1">
+                            <InfoTag label="BÖLÜM" value={`${edu.department} (${resolveValue(edu.level)})`} />
+                          </div>
+                          <div className="col-span-2">
+                            <InfoTag label="DURUM" value={edu.status || resolveValue(edu.level)} />
+                          </div>
                         </div>
-                        <span className="bg-[#1f6d78] text-white text-[9px] font-bold px-3 py-1.5 rounded-full">{edu.status || resolveValue(edu.level)}</span>
-                      </div>
+                        {idx !== cv.educationDetails.length - 1 && (
+                          <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 my-2" />
+                        )}
+                      </React.Fragment>
                     ))}
                   </div>
                 ) : (
                   // Fallback to legacy
-                  <div className="bg-gray-50 p-5 rounded-2xl border border-gray-100">
-                    <h4 className="font-bold text-sm text-black">{cv.education}</h4>
-                    <p className="text-xs font-medium text-gray-500">{resolveValue(cv.educationLevel)} - {resolveValue(cv.graduationStatus)}</p>
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-4 pt-4">
+                    <div className="col-span-2 sm:col-span-1">
+                      <InfoTag label="ÜNİVERSİTE" value={cv.education || '-'} />
+                    </div>
+                    <div className="col-span-2 sm:col-span-1">
+                      <InfoTag label="DERECE / DURUM" value={`${resolveValue(cv.educationLevel)} - ${resolveValue(cv.graduationStatus)}`} />
+                    </div>
                   </div>
                 )}
               </div>
 
               {/* Languages List */}
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.languages')}</label>
-                <div className="flex flex-wrap gap-2">
+              <div className="space-y-4">
+                <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 mb-6" />
+                <label className="text-[10px] font-black text-black dark:text-gray-100 uppercase tracking-widest ml-1 block mb-2">{t('form.languages')}</label>
+                <div className="flex flex-wrap gap-x-6 gap-y-4 pt-2">
                   {cv.languageDetails && cv.languageDetails.length > 0 ? (
                     cv.languageDetails.map(lang => (
-                      <div key={lang.id} className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-5 py-2.5 flex items-center gap-2">
-                        <span className="text-xs font-bold text-black dark:text-gray-100">{resolveValue(lang.language)}</span>
-                        <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                        <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">{resolveValue(lang.level)}</span>
+                      <div key={lang.id} className="min-w-[120px]">
+                        <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">{resolveValue(lang.language)}</span>
+                        <span className="text-sm sm:text-base font-bold text-black dark:text-white">
+                          {(() => {
+                            const val = resolveValue(lang.level) || '';
+                            return val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
+                          })()}
+                        </span>
                       </div>
                     ))
                   ) : (
-                    <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-5 py-2.5 flex items-center gap-2">
-                      <span className="text-xs font-bold text-black dark:text-gray-100">{resolveValue(cv.language)}</span>
-                      <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                      <span className="text-[10px] font-bold text-gray-500 uppercase">{resolveValue(cv.languageLevel)}</span>
+                    <div className="min-w-[120px]">
+                      <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">{resolveValue(cv.language)}</span>
+                      <span className="text-sm sm:text-base font-bold text-black dark:text-white">
+                        {(() => {
+                          const val = resolveValue(cv.languageLevel) || '';
+                          return val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
+                        })()}
+                      </span>
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.skills')}</label>
+                <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 mb-6" />
+                <label className="text-[10px] font-black text-black dark:text-gray-100 uppercase tracking-widest ml-1 block mb-2">{t('form.skills')}</label>
                 {cv.skills && cv.skills.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-x-4 gap-y-3 pt-2">
                     {cv.skills.map((skill, idx) => (
-                      <span key={idx} className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-black dark:text-gray-100 text-[11px] font-bold px-5 py-2.5 rounded-full uppercase tracking-tight">
-                        {skill}
+                      <span key={idx} className="text-gray-500 dark:text-gray-400 text-[11px] sm:text-sm font-bold uppercase tracking-tight">
+                        {skill}{idx !== cv.skills.length - 1 ? <span className="text-gray-300 dark:text-gray-700 mx-2">•</span> : ''}
                       </span>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm font-bold text-gray-400 italic">Henüz uzmanlık alanı eklenmemiş.</p>
+                  <p className="text-sm sm:text-base font-bold text-gray-400">Henüz uzmanlık alanı eklenmemiş.</p>
                 )}
               </div>
 
-              {/* Certificates - NEW SECTION */}
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-1">{t('form.certificates')}</label>
+                <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 mb-6" />
+                <label className="text-[10px] font-black text-black dark:text-gray-100 uppercase tracking-widest ml-1 block mb-2">{t('form.certificates')}</label>
                 {cv.certificates && cv.certificates.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-col gap-y-5 pt-2">
                     {cv.certificates.map((cert) => (
-                      <span key={cert.id} className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-black dark:text-gray-100 text-[11px] font-bold px-5 py-2.5 rounded-full uppercase tracking-tight">
-                        {cert.name} {cert.issuer && <span className="text-gray-400 font-medium ml-1">({cert.issuer})</span>}
-                      </span>
+                      <div key={cert.id} className="flex flex-col gap-0.5">
+                        <span className="text-gray-500 dark:text-gray-400 text-[11px] sm:text-sm font-bold uppercase tracking-tight">
+                          {cert.name}
+                        </span>
+                        {cert.issuer && (
+                          <span className="text-gray-400 dark:text-gray-500 text-[10px] sm:text-xs font-medium">
+                            ({cert.issuer})
+                          </span>
+                        )}
+                      </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm font-bold text-gray-400 italic">Henüz sertifika veya kurs eklenmemiş.</p>
+                  <p className="text-sm sm:text-base font-bold text-gray-400">Henüz sertifika veya kurs eklenmemiş.</p>
                 )}
               </div>
             </div>
@@ -413,34 +420,33 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           {/* Bölüm 4: Kişisel Detaylar */}
           <section>
             <SectionTitle title={t('profile.personal')} />
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {cv.militaryStatus && <InfoTag label={t('form.military')} value={resolveValue(cv.militaryStatus)} />}
-              <InfoTag label={t('form.marital')} value={resolveValue(cv.maritalStatus)} />
+            <div className="grid grid-cols-2 gap-x-3 gap-y-6 pt-4">
+              {cv.militaryStatus && (
+                <div className="col-span-2">
+                  <InfoTag label={t('form.military')} value={resolveValue(cv.militaryStatus)} />
+                  <div className="w-24 h-0.5 bg-gray-100 dark:bg-gray-800 rounded-full my-4 opacity-50" />
+                </div>
+              )}
+
               <InfoTag label={t('form.travel')} value={resolveValue(cv.travelStatus)} />
               <InfoTag label={t('form.disability')} value={resolveValue(cv.disabilityStatus)} />
               <InfoTag label={t('form.start_date')} value={resolveValue(cv.noticePeriod)} />
+
               <div className="flex flex-col gap-1.5">
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('form.driving_license')}</span>
-                <div className="flex flex-wrap gap-1.5">
+                <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('form.driving_license')}</span>
+                <div className="flex flex-wrap gap-x-4 gap-y-2 pt-1 px-1">
                   {cv.driverLicense && cv.driverLicense.length > 0 ? (
-                    cv.driverLicense.map(l => (
-                      <div key={l} className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-full px-5 py-3 flex items-center justify-center">
-                        <span className="text-xs sm:text-sm font-bold text-black dark:text-gray-100">{l}</span>
-                      </div>
+                    cv.driverLicense.map((l, idx) => (
+                      <span key={l} className="text-xs sm:text-base font-bold text-black dark:text-white uppercase">
+                        {l}{idx !== cv.driverLicense.length - 1 ? <span className="text-gray-300 dark:text-gray-700 mx-2">•</span> : ''}
+                      </span>
                     ))
-                  ) : <span className="text-sm font-bold text-gray-400 italic bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-700 border rounded-full px-4 py-2 w-full">{t('common.none')}</span>}
+                  ) : <span className="text-sm sm:text-base font-bold text-gray-400">{t('common.none')}</span>}
                 </div>
               </div>
             </div>
           </section>
 
-          {/* Bölüm 5: Hakkında */}
-          <section>
-            <SectionTitle title={t('profile.about')} />
-            <div className="p-8 bg-gray-50 dark:bg-gray-800 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 italic text-gray-700 dark:text-gray-300 leading-relaxed text-sm font-medium">
-              "{cv.about || 'Kullanıcı henüz kendini tanıtan bir yazı eklememiş.'}"
-            </div>
-          </section>
 
           {/* Bölüm 6: Referanslar */}
           <section>
@@ -469,7 +475,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 ))}
               </div>
             ) : (
-              <p className="text-sm font-bold text-gray-400 italic">Henüz referans eklenmemiş.</p>
+              <p className="text-sm sm:text-base font-bold text-gray-400">Henüz referans eklenmemiş.</p>
             )}
           </section>
 
@@ -629,30 +635,32 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       </div >
 
       {/* Warning / Success Overlay */}
-      {showWarning.show && (
-        <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6  fade-in  rounded-[3rem]">
-          <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl   zoom-in-95  text-center relative overflow-hidden">
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
-            <div className="w-16 h-16 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-sm relative z-10">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
+      {
+        showWarning.show && (
+          <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6  fade-in  rounded-[3rem]">
+            <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl   zoom-in-95  text-center relative overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+              <div className="w-16 h-16 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-sm relative z-10">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
+                Başarılı
+              </h3>
+              <p className="text-sm font-bold text-gray-500 mb-8 leading-relaxed relative z-10">
+                {showWarning.message}
+              </p>
+              <button
+                onClick={() => setShowWarning({ show: false, message: '' })}
+                className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active: relative z-10"
+              >
+                Tamam
+              </button>
             </div>
-            <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
-              Başarılı
-            </h3>
-            <p className="text-sm font-bold text-gray-500 mb-8 leading-relaxed relative z-10">
-              {showWarning.message}
-            </p>
-            <button
-              onClick={() => setShowWarning({ show: false, message: '' })}
-              className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active: relative z-10"
-            >
-              Tamam
-            </button>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Role Warning Modal - Centered & Themed */}
       {

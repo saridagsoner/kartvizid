@@ -1525,6 +1525,26 @@ const App: React.FC = () => {
     fetchApprovedCount();
   }, []); // Run once on mount or consider polling if needed
 
+  const isMyProfileOpen = useMemo(() => {
+    if (isCVPromoOpen) return true;
+
+    // Check CV
+    const cvMatch = location.pathname.match(/^\/cv\/(.+)$/);
+    if (cvMatch && currentUserCV) {
+      const slugOrId = cvMatch[1];
+      return slugOrId === currentUserCV.id || slugOrId === currentUserCV.slug;
+    }
+
+    // Check Company
+    const companyMatch = location.pathname.match(/^\/company\/(.+)$/);
+    if (companyMatch && activeCompany) {
+      const slugOrId = companyMatch[1];
+      return slugOrId === activeCompany.id || slugOrId === activeCompany.slug;
+    }
+
+    return false;
+  }, [location.pathname, currentUserCV, activeCompany, isCVPromoOpen]);
+
   return (
     <div className="min-h-screen flex flex-col bg-white sm:bg-[#F0F2F5] dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
 
@@ -1788,9 +1808,9 @@ const App: React.FC = () => {
       {/* Mobile Bottom Navigation - Visible for all users */}
       <MobileBottomNav
         user={user}
-        isProfileOpen={isCVPromoOpen || location.pathname.startsWith('/cv/')}
+        isProfileOpen={isMyProfileOpen}
         isCreateOpen={location.pathname === '/cv-olustur' || location.pathname === '/sirket-olustur'}
-        isHomeView={!location.pathname.startsWith('/cv/') && !location.pathname.startsWith('/company/') && location.pathname !== '/cv-olustur' && location.pathname !== '/ayarlar' && location.pathname !== '/sirket-olustur' && location.pathname !== '/bildirimler' && !isSavedCVsOpen && !isCVPromoOpen}
+        isHomeView={!isMyProfileOpen && location.pathname !== '/cv-olustur' && location.pathname !== '/ayarlar' && location.pathname !== '/sirket-olustur' && location.pathname !== '/bildirimler' && !isSavedCVsOpen}
         onGoHome={() => {
           navigate('/', { replace: true, state: {} });
           closeAllModals(); // Ensure all modals are closed

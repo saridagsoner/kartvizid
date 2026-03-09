@@ -75,7 +75,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
 
     if (loading) {
         return (
-            <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 sm:backdrop-blur-xl animate-in fade-in duration-300">
+            <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 ">
                 <div className="w-16 h-16 border-4 border-[#1f6d78]/20 border-t-[#1f6d78] rounded-full animate-spin"></div>
             </div>
         );
@@ -83,7 +83,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
 
     if (error || !cv) {
         return (
-            <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 sm:backdrop-blur-xl animate-in fade-in duration-300">
+            <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 ">
                 <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
                     <div className="text-4xl mb-4">😢</div>
                     <h2 className="text-xl font-black text-gray-900 dark:text-white mb-2">Hata</h2>
@@ -97,7 +97,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
     }
 
     return (
-        <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+        <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-transparent"></div>}>
             <ProfileModal
                 cv={cv}
                 onClose={handleClose}
