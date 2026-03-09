@@ -3,21 +3,22 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { CV, ContactRequest } from '../types';
 
-// We lazy load the modal so it stays optimized
-const ProfileModal = React.lazy(() => import('./ProfileModal'));
+import ProfileModal from './ProfileModal';
 
 interface CVProfileRouteProps {
     sentRequests: ContactRequest[];
     handleSendRequest: (userId: string) => void;
     handleCancelRequest: (userId: string) => void;
     handleJobFound?: () => void;
+    onClose?: () => void;
 }
 
 const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
     sentRequests,
     handleSendRequest,
     handleCancelRequest,
-    handleJobFound
+    handleJobFound,
+    onClose
 }) => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -68,6 +69,10 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
     }, [id, cv]);
 
     const handleClose = () => {
+        if (onClose) {
+            onClose();
+            return;
+        }
         // Use a standard push instead of replace to ensure browser simulators
         // properly detect the URL change and update their simulated address bars.
         navigate('/');
@@ -97,16 +102,14 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
     }
 
     return (
-        <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-transparent"></div>}>
-            <ProfileModal
-                cv={cv}
-                onClose={handleClose}
-                requestStatus={sentRequests.find(r => r.target_user_id === cv.userId)?.status || 'none'}
-                onRequestAccess={() => handleSendRequest(cv.userId)}
-                onCancelRequest={() => handleCancelRequest(cv.userId)}
-                onJobFound={handleJobFound}
-            />
-        </React.Suspense>
+        <ProfileModal
+            cv={cv}
+            onClose={handleClose}
+            requestStatus={sentRequests.find(r => r.target_user_id === cv.userId)?.status || 'none'}
+            onRequestAccess={() => handleSendRequest(cv.userId)}
+            onCancelRequest={() => handleCancelRequest(cv.userId)}
+            onJobFound={handleJobFound}
+        />
     );
 };
 

@@ -18,22 +18,23 @@ import MobileBottomNav from './components/MobileBottomNav';
 import MobileMenuDrawer from './components/MobileMenuDrawer';
 import { BusinessCardSkeleton } from './components/Skeleton';
 
-// Lazy loaded modals and heavy components
-const ProfileModal = React.lazy(() => import('./components/ProfileModal'));
-const CompanyProfileModal = React.lazy(() => import('./components/CompanyProfileModal'));
-const CVFormModal = React.lazy(() => import('./components/CVFormModal'));
-const SettingsModal = React.lazy(() => import('./components/SettingsModal'));
-const CompanyFormModal = React.lazy(() => import('./components/CompanyFormModal'));
-const NotificationsModal = React.lazy(() => import('./components/NotificationsModal'));
+// Core components and modals (direct import for instant navigation)
+import ProfileModal from './components/ProfileModal';
+import CompanyProfileModal from './components/CompanyProfileModal';
+import CVFormModal from './components/CVFormModal';
+import SettingsModal from './components/SettingsModal';
+import CompanyFormModal from './components/CompanyFormModal';
+import NotificationsModal from './components/NotificationsModal';
+import CVProfileRoute from './components/CVProfileRoute';
+import CompanyProfileRoute from './components/CompanyProfileRoute';
+
+// Lazy loaded auxiliary modals
 const JobSuccessModal = React.lazy(() => import('./components/JobSuccessModal'));
 const SavedCVsModal = React.lazy(() => import('./components/SavedCVsModal'));
 const AdvancedFilterModal = React.lazy(() => import('./components/AdvancedFilterModal'));
 const ResetPasswordModal = React.lazy(() => import('./components/ResetPasswordModal'));
 const CVPromoModal = React.lazy(() => import('./components/CVPromoModal'));
 const AuthModal = React.lazy(() => import('./components/AuthModal'));
-
-const CVProfileRoute = React.lazy(() => import('./components/CVProfileRoute'));
-const CompanyProfileRoute = React.lazy(() => import('./components/CompanyProfileRoute'));
 const LegalRoute = React.lazy(() => import('./components/LegalRoute'));
 
 const getFriendlyErrorMessage = (error: any): string => {
@@ -141,7 +142,7 @@ const App: React.FC = () => {
     // Try to find in current list first
     const existing = cvList.find(c => c.id === cvId);
     if (existing) {
-      navigate(`/cv/${existing.slug || existing.id}`, { state: { cvData: existing, background: location } });
+      navigate(`/cv/${existing.slug || existing.id}`, { state: { cvData: existing, background: background || location } });
       return;
     }
 
@@ -163,7 +164,7 @@ const App: React.FC = () => {
         .single();
 
       if (error) throw error;
-      if (data) navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data, background: location } });
+      if (data) navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data, background: background || location } });
     } catch (e) {
       console.error('Error fetching CV:', e);
       showToast('CV detayları alınamadı.', 'error');
@@ -307,7 +308,7 @@ const App: React.FC = () => {
 
   // Handle Incremented View
   const handleCVClick = (cv: CV) => {
-    navigate(`/cv/${cv.slug || cv.id}`, { state: { cvData: cv, background: location } });
+    navigate(`/cv/${cv.slug || cv.id}`, { state: { cvData: cv, background: background || location } });
     // Increment view ONLY if user is NOT the owner
     // If user is not logged in, we still count views (visitor views)
     if (!user || user.id !== cv.userId) {
@@ -778,7 +779,7 @@ const App: React.FC = () => {
                 description: data.description,
                 logoUrl: data.logo_url
               },
-              background: location
+              background: background || location
             }
           });
           if (requestId) setActiveModalRequestId(requestId);
@@ -804,7 +805,7 @@ const App: React.FC = () => {
           .single();
 
         if (!error && data) {
-          navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data, background: location } });
+          navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data, background: background || location } });
           return true;
         }
         return false;
@@ -844,7 +845,7 @@ const App: React.FC = () => {
     // Check if user is employer and has no company profile
     if (user.user_metadata?.role === 'employer' && !activeCompany) {
       showToast('İletişime geçmek için lütfen önce iş veren profilinizi oluşturun.', 'warning');
-      navigate('/sirket-olustur', { state: { background: location } });
+      navigate('/sirket-olustur', { state: { background: background || location } });
       return;
     }
 
@@ -1552,17 +1553,14 @@ const App: React.FC = () => {
       <Navbar
         onSearch={setSearchQuery}
         onCreateCV={() => {
-          closeAllModals();
-          navigate('/cv-olustur', { state: { background: location } });
+          navigate('/cv-olustur', { state: { background: background || location } });
         }}
         onOpenCompanyProfile={() => {
-          closeAllModals();
           fetchCompany();
-          navigate('/sirket-olustur', { state: { background: location } });
+          navigate('/sirket-olustur', { state: { background: background || location } });
         }}
         onOpenSettings={() => {
-          closeAllModals();
-          navigate('/ayarlar', { state: { background: location } });
+          navigate('/ayarlar', { state: { background: background || location } });
         }}
         hasCV={!!currentUserCV}
         userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
@@ -1578,12 +1576,10 @@ const App: React.FC = () => {
         onMarkAllRead={markAllNotificationsRead}
 
         onOpenProfile={(uid, role) => {
-          closeAllModals();
           handleOpenProfile(uid, role);
         }}
         onViewAll={() => {
-          closeAllModals();
-          navigate('/bildirimler', { state: { background: location } });
+          navigate('/bildirimler', { state: { background: background || location } });
         }}
 
         onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
@@ -1792,7 +1788,7 @@ const App: React.FC = () => {
               popularCVs={popularCVs}
               popularCompanies={popularCompanies}
               onCVClick={handleCVClick}
-              onCompanyClick={(company) => navigate(`/company/${company.slug || company.id}`, { state: { companyData: company, background: location } })}
+              onCompanyClick={(company) => navigate(`/company/${company.slug || company.id}`, { state: { companyData: company, background: background || location } })}
               loading={loading}
             />
           </aside>
@@ -1812,7 +1808,7 @@ const App: React.FC = () => {
         isCreateOpen={location.pathname === '/cv-olustur' || location.pathname === '/sirket-olustur'}
         isHomeView={!isMyProfileOpen && location.pathname !== '/cv-olustur' && location.pathname !== '/ayarlar' && location.pathname !== '/sirket-olustur' && location.pathname !== '/bildirimler' && !isSavedCVsOpen}
         onGoHome={() => {
-          navigate('/', { replace: true, state: {} });
+          navigate('/', { state: {} });
           closeAllModals(); // Ensure all modals are closed
           setSearchQuery('');
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1824,39 +1820,40 @@ const App: React.FC = () => {
         }}
         onCreateCV={() => {
           if (!user) {
-            closeAllModals();
             handleAuthOpen('signin');
             return;
           }
           if (location.pathname === '/cv-olustur') {
+            navigate('/', { replace: true });
             closeAllModals();
             return;
           }
-          closeAllModals();
-          navigate('/cv-olustur', { state: { background: location } });
+          navigate('/cv-olustur', { state: { background: background || location } });
         }}
         onOpenCompanyProfile={() => {
           if (!user) {
-            closeAllModals();
             handleAuthOpen('signin', 'employer');
             return;
           }
           if (location.pathname === '/sirket-olustur') {
+            navigate('/', { replace: true });
             closeAllModals();
             return;
           }
-          closeAllModals();
           fetchCompany();
-          navigate('/sirket-olustur', { state: { background: location } });
+          navigate('/sirket-olustur', { state: { background: background || location } });
         }}
         onOpenSettings={() => {
           if (!user) {
-            closeAllModals();
             handleAuthOpen('signin');
             return;
           }
-          closeAllModals();
-          navigate('/ayarlar', { state: { background: location } });
+          if (location.pathname === '/ayarlar') {
+            navigate('/', { replace: true });
+            closeAllModals();
+            return;
+          }
+          navigate('/ayarlar', { state: { background: background || location } });
         }}
         hasCV={!!currentUserCV}
         userPhotoUrl={user?.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
@@ -1870,15 +1867,16 @@ const App: React.FC = () => {
         onMarkAllRead={markAllNotificationsRead}
         onOpenProfile={(uid, role) => {
           if (!user) {
-            closeAllModals();
             handleAuthOpen('signin');
             return;
           }
           if (uid === user.id && !currentUserCV) {
             if (isCVPromoOpen) {
+              navigate('/', { replace: true });
               closeAllModals();
               return;
             }
+            navigate('/', { replace: true });
             closeAllModals();
             setIsCVPromoOpen(true);
             return;
@@ -1888,7 +1886,6 @@ const App: React.FC = () => {
             closeAllModals();
             return;
           }
-          closeAllModals();
           handleOpenProfile(uid, role);
         }}
         onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
@@ -1918,7 +1915,7 @@ const App: React.FC = () => {
           setIsMobileMenuOpen(false);
         }}
         onCompanyClick={(company) => {
-          navigate(`/company/${company.slug || company.id}`, { state: { companyData: company, background: location } });
+          navigate(`/company/${company.slug || company.id}`, { state: { companyData: company, background: background || location } });
           setIsMobileMenuOpen(false);
         }}
         onFilterApply={(type, value) => {
@@ -1929,7 +1926,7 @@ const App: React.FC = () => {
         user={user}
         onOpenSettings={() => {
           setIsMobileMenuOpen(false);
-          navigate('/ayarlar', { state: { background: location } });
+          navigate('/ayarlar', { state: { background: background || location } });
         }}
         onOpenSavedCVs={() => {
           setIsMobileMenuOpen(false);
@@ -1962,7 +1959,7 @@ const App: React.FC = () => {
           onClose={() => setIsCVPromoOpen(false)}
           onCreateCV={() => {
             setIsCVPromoOpen(false);
-            navigate('/cv-olustur', { state: { background: location } });
+            navigate('/cv-olustur', { state: { background: background || location } });
           }}
         />
       )}
@@ -1970,6 +1967,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/cv/:id" element={
           <CVProfileRoute
+            onClose={() => navigate('/', { replace: true, state: {} })}
             sentRequests={sentRequests}
             handleSendRequest={handleSendRequest}
             handleCancelRequest={handleCancelRequest}
@@ -1980,6 +1978,7 @@ const App: React.FC = () => {
           <CompanyProfileRoute
             requestStatus={activeModalRequest?.status}
             requestId={activeModalRequestId} // Use activeModalRequestId here
+            onClose={() => navigate('/', { replace: true, state: {} })}
             onAction={async (id, action) => {
               await handleRequestAction(id, action);
               setActiveModalRequest(prev => prev ? { ...prev, status: action } : null);
@@ -1991,112 +1990,104 @@ const App: React.FC = () => {
           />
         } />
         <Route path="/kullanim-kosullari" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+          <React.Suspense fallback={null}>
             <LegalRoute section="general" />
           </React.Suspense>
         } />
         <Route path="/guvenlik-ipuclari" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+          <React.Suspense fallback={null}>
             <LegalRoute section="security" />
           </React.Suspense>
         } />
         <Route path="/sikca-sorulan-sorular" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+          <React.Suspense fallback={null}>
             <LegalRoute section="faq" />
           </React.Suspense>
         } />
         <Route path="/yardim-merkezi" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+          <React.Suspense fallback={null}>
             <LegalRoute section="help" />
           </React.Suspense>
         } />
         <Route path="/hizmetlerimiz" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+          <React.Suspense fallback={null}>
             <LegalRoute section="services" />
           </React.Suspense>
         } />
         <Route path="/aydinlatma-metni" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+          <React.Suspense fallback={null}>
             <LegalRoute section="privacy" />
           </React.Suspense>
         } />
         <Route path="/cerez-politikasi" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+          <React.Suspense fallback={null}>
             <LegalRoute section="cookie" />
           </React.Suspense>
         } />
         <Route path="/kvkk-aydinlatma" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+          <React.Suspense fallback={null}>
             <LegalRoute section="kvkk" />
           </React.Suspense>
         } />
         <Route path="/uyelik-sozlesmesi" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+          <React.Suspense fallback={null}>
             <LegalRoute section="membership" />
           </React.Suspense>
         } />
         <Route path="/veri-sahibi-basvuru-formu" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+          <React.Suspense fallback={null}>
             <LegalRoute section="data_form" />
           </React.Suspense>
         } />
         <Route path="/iletisim" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
+          <React.Suspense fallback={null}>
             <LegalRoute section="iletisim" />
           </React.Suspense>
         } />
         <Route path="/cv-olustur" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
-            <CVFormModal
-              onClose={() => navigate('/', { replace: true, state: {} })}
-              onSubmit={async (data) => {
-                await handleCreateCV(data);
-                navigate('/', { replace: true, state: {} });
-              }}
-              initialData={currentUserCV || (user?.user_metadata ? {
-                name: user.user_metadata.full_name || '',
-                profession: user.user_metadata.profession || '',
-                city: user.user_metadata.city || '',
-                experienceYears: user.user_metadata.experience_years ? Number(user.user_metadata.experience_years) : 0,
-                experienceMonths: user.user_metadata.experience_months ? Number(user.user_metadata.experience_months) : 0,
-                email: user.email || ''
-              } : undefined) as Partial<CV>}
-              availableCities={availableCities}
-            />
-          </React.Suspense>
+          <CVFormModal
+            onClose={() => navigate('/', { replace: true, state: {} })}
+            onSubmit={async (data) => {
+              await handleCreateCV(data);
+              navigate('/', { replace: true, state: {} });
+            }}
+            initialData={currentUserCV || (user?.user_metadata ? {
+              name: user.user_metadata.full_name || '',
+              profession: user.user_metadata.profession || '',
+              city: user.user_metadata.city || '',
+              experienceYears: user.user_metadata.experience_years ? Number(user.user_metadata.experience_years) : 0,
+              experienceMonths: user.user_metadata.experience_months ? Number(user.user_metadata.experience_months) : 0,
+              email: user.email || ''
+            } : undefined) as Partial<CV>}
+            availableCities={availableCities}
+          />
         } />
         <Route path="/sirket-olustur" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
-            <CompanyFormModal
-              onClose={() => navigate('/', { replace: true, state: {} })}
-              onSubmit={async (data) => {
-                await handleCompanySubmit(data);
-                navigate('/', { replace: true, state: {} });
-              }}
-              initialData={activeCompany || undefined}
-              availableCities={availableCities}
-            />
-          </React.Suspense>
+          <CompanyFormModal
+            onClose={() => navigate('/', { replace: true, state: {} })}
+            onSubmit={async (data) => {
+              await handleCompanySubmit(data);
+              navigate('/', { replace: true, state: {} });
+            }}
+            initialData={activeCompany || undefined}
+            availableCities={availableCities}
+          />
         } />
         <Route path="/ayarlar" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
-            <SettingsModal onClose={() => navigate('/', { replace: true, state: {} })} />
-          </React.Suspense>
+          <SettingsModal onClose={() => navigate('/', { replace: true, state: {} })} />
         } />
         <Route path="/bildirimler" element={
-          <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-black/10 backdrop-blur-sm"></div>}>
-            <NotificationsModal
-              onClose={() => navigate('/', { replace: true, state: {} })}
-              notifications={[
-                ...receivedRequests,
-                ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
-              ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-              onAction={handleRequestAction}
-              onMarkRead={markNotificationRead}
-              onMarkAllRead={markAllNotificationsRead}
-              onOpenProfile={handleOpenProfile}
-            />
-          </React.Suspense>
+          <NotificationsModal
+            onClose={() => navigate('/', { replace: true, state: {} })}
+            notifications={[
+              ...receivedRequests,
+              ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
+            ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+            onAction={handleRequestAction}
+            onMarkRead={markNotificationRead}
+            onMarkAllRead={markAllNotificationsRead}
+            onOpenProfile={handleOpenProfile}
+          />
         } />
       </Routes>
 

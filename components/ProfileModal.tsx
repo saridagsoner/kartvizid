@@ -169,24 +169,26 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       />
       <div className="w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-gray-900 border-none sm:border border-gray-100 dark:border-gray-800">
         {/* Header */}
-        <div className="p-4 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0 gap-4">
-          <button
-            onClick={onClose}
-            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors active: sm:order-2"
-          >
-            <span className="sr-only">Kapat</span>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="block sm:hidden">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-            <span className="hidden sm:block text-2xl leading-none">×</span>
-          </button>
+        <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-gray-900 shrink-0">
+          <div className="p-4 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 gap-4">
+            <button
+              onClick={onClose}
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all active:scale-95 sm:order-2"
+            >
+              <span className="sr-only">Kapat</span>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="block sm:hidden">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+              <span className="hidden sm:block text-2xl leading-none">×</span>
+            </button>
 
-          <div className="flex-1 sm:order-1 text-center sm:text-left">
-            <h2 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tight truncate">{t('profile.cv_title')}</h2>
-            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em] opacity-80">{t('profile.cv_subtitle')}</p>
+            <div className="flex-1 sm:order-1 text-center sm:text-left">
+              <h2 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tight truncate">{t('profile.cv_title')}</h2>
+              <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em] opacity-80">{t('profile.cv_subtitle')}</p>
+            </div>
+
+            <div className="w-10 sm:hidden"></div> {/* Spacer for centering title on mobile */}
           </div>
-
-          <div className="w-10 sm:hidden"></div> {/* Spacer for centering title on mobile */}
         </div>
 
         {/* Modal Body */}
@@ -238,7 +240,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   </span>
                 );
               })()} />
-              <InfoTag label={t('form.salary_exp')} value={`${cv.salaryMin.toLocaleString('tr-TR')}₺ - ${cv.salaryMax.toLocaleString('tr-TR')}₺`} />
+              <InfoTag label={t('form.salary_exp')} value={`${(cv.salaryMin || 0).toLocaleString('tr-TR')}₺ - ${(cv.salaryMax || 0).toLocaleString('tr-TR')}₺`} />
               <InfoTag label={t('form.work_model')} value={cv.workType || 'Ofis'} />
               <InfoTag label={t('form.employment_type')} value={cv.employmentType || 'Tam Zamanlı'} />
               <InfoTag label="Tercih Edilen Şehir" value={cv.preferredCity || '-'} />

@@ -36,26 +36,29 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
     );
 
     return (
-        <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[84px] sm:pb-0 bg-black/30 dark:bg-black/60 ">
+        <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-black/30 dark:bg-black/60 ">
             <SEO
                 title={`${company.name} - Şirket Profili`}
                 description={company.description ? company.description.substring(0, 150) + '...' : `${company.name} şirketinin profilini inceleyin.`}
                 image={company.logoUrl}
             />
-            <div className="bg-white w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden ">
+            <div className="bg-white dark:bg-gray-900 w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden border-none sm:border border-gray-100 dark:border-gray-800">
 
                 {/* Header */}
-                <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10 shrink-0">
-                    <div>
-                        <h2 className="text-2xl font-black text-black tracking-tighter">{t('profile.company_title')}</h2>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">{t('profile.company_subtitle')}</p>
+                <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-gray-900 shrink-0">
+                    <div className="p-4 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 gap-4">
+                        <div className="flex-1 text-center sm:text-left">
+                            <h2 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tight truncate">{t('profile.company_title')}</h2>
+                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em] opacity-80">{t('profile.company_subtitle')}</p>
+                        </div>
+                        <button
+                            onClick={onClose}
+                            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all active:scale-95 sm:order-2"
+                        >
+                            <span className="sr-only">Kapat</span>
+                            <span className="text-2xl leading-none">×</span>
+                        </button>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-2xl text-black hover:bg-[#1f6d78] hover:text-white transition-all active: shadow-sm"
-                    >
-                        ×
-                    </button>
                 </div>
 
                 {/* Modal Body */}

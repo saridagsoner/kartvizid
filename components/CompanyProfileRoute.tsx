@@ -3,20 +3,22 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Company } from '../types';
 
-const CompanyProfileModal = React.lazy(() => import('./CompanyProfileModal'));
+import CompanyProfileModal from './CompanyProfileModal';
 
 interface CompanyProfileRouteProps {
     requestStatus?: string;
     requestId?: string;
     onAction?: (requestId: string, action: 'approved' | 'rejected') => void;
     onRevoke?: (requestId: string) => void;
+    onClose?: () => void;
 }
 
 const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
     requestStatus,
     requestId,
     onAction,
-    onRevoke
+    onRevoke,
+    onClose
 }) => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -72,6 +74,10 @@ const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
     }, [id, company]);
 
     const handleClose = () => {
+        if (onClose) {
+            onClose();
+            return;
+        }
         navigate('/');
     };
 
@@ -99,16 +105,14 @@ const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
     }
 
     return (
-        <React.Suspense fallback={<div className="fixed inset-0 z-[130] bg-transparent"></div>}>
-            <CompanyProfileModal
-                company={company}
-                onClose={handleClose}
-                requestStatus={requestStatus}
-                requestId={requestId}
-                onAction={onAction}
-                onRevoke={onRevoke}
-            />
-        </React.Suspense>
+        <CompanyProfileModal
+            company={company}
+            onClose={handleClose}
+            requestStatus={requestStatus}
+            requestId={requestId}
+            onAction={onAction}
+            onRevoke={onRevoke}
+        />
     );
 };
 
