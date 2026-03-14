@@ -106,7 +106,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-0 sm:p-4 pb-[84px] sm:pb-0 bg-black/60 backdrop-blur-xl">
-            <div className="bg-white dark:bg-gray-900 w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden  slide-in-from-bottom-10 ">
+            <div className="bg-white dark:bg-gray-900 w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden">
 
                 {/* Header */}
                 <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">

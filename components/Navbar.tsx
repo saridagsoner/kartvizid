@@ -163,10 +163,7 @@ const Navbar: React.FC<NavbarProps & {
                       }}
                       className="w-10 h-10 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center text-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group"
                     >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                      </svg>
+                      <i className="fi fi-rr-bell text-xl translate-y-[1px]"></i>
                       {notificationCount > 0 && (
                         <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 border-2 border-white rounded-full text-[9px] text-white flex items-center justify-center font-bold shadow-sm">
                           {notificationCount}
@@ -198,12 +195,10 @@ const Navbar: React.FC<NavbarProps & {
                       {userPhotoUrl ? (
                         <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center">
                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                           </svg>
-                        </div>
                       )}
                     </button>
                     {isProfileOpen && <UserMenuDropdown onClose={() => setIsProfileOpen(false)} onLogout={signOut} onOpenSettings={onOpenSettings} onOpenSavedCVs={onOpenSavedCVs} onOpenProfile={onOpenProfile} />}

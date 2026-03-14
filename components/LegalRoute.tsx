@@ -25,11 +25,7 @@ const LegalRoute: React.FC<LegalRouteProps> = ({ section }) => {
     const location = useLocation();
 
     const handleClose = () => {
-        if (window.history.length > 2) {
-            navigate(-1);
-        } else {
-            navigate('/', { replace: true });
-        }
+        navigate('/', { replace: true });
     };
 
     const handleNavigate = (newSection: LegalSection) => {

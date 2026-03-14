@@ -52,7 +52,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             onClick={onClick}
             className="w-full text-left py-3 flex items-center gap-3 group"
         >
-            <div className="text-gray-700 dark:text-gray-300 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors flex items-center justify-center shrink-0 w-6">
+            <div className="text-gray-900 dark:text-gray-100 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors flex items-center justify-center shrink-0 w-6">
                 {icon}
             </div>
             <span className="text-[15px] font-black text-gray-900 dark:text-gray-100 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors rounded-font tracking-tight">
@@ -465,7 +465,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                         <MenuItem
                             label="Öne Çıkan Şehirler"
                             onClick={() => setActiveCategory('cities')}
-                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>}
+                            icon={<i className="fi fi-rr-marker"></i>}
                         />
                         <MenuItem
                             label="En Çok Görüntülenenler"

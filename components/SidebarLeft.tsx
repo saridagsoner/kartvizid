@@ -10,10 +10,11 @@ interface SidebarLeftProps {
   weeklyTrends: Array<{ label: string; growth: number }>;
   platformStats: Array<{ label: string; value: string }>;
   jobFinders?: CV[];
+  onCVClick?: (cv: CV) => void;
   loading?: boolean;
 }
 
-const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCities, platformStats, jobFinders = [], loading = false }) => {
+const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCities, platformStats, jobFinders = [], onCVClick, loading = false }) => {
   const { t } = useLanguage();
   return (
     <div className="flex flex-col gap-5 h-fit">
@@ -38,7 +39,11 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
           ) : jobFinders.length > 0 ? (
             <div className="space-y-4">
               {jobFinders.slice(0, 5).map((cv) => (
-                <div key={cv.id} className="flex items-center gap-3 group cursor-pointer animate-fade-in bg-[#1f6d78] dark:bg-[#155e68] p-1.5 rounded-xl border border-[#1f6d78] dark:border-[#155e68] hover:bg-white dark:hover:bg-gray-700 hover:text-black dark:hover:text-white hover:border-gray-200 dark:hover:border-gray-600 transition-all">
+                <div
+                  key={cv.id}
+                  onClick={() => onCVClick?.(cv)}
+                  className="flex items-center gap-3 group cursor-pointer animate-fade-in bg-[#1f6d78] dark:bg-[#155e68] p-1.5 rounded-xl border border-[#1f6d78] dark:border-[#155e68] hover:bg-white dark:hover:bg-gray-700 hover:text-black dark:hover:text-white hover:border-gray-200 dark:hover:border-gray-600 transition-all"
+                >
                   <div className="w-8 h-8 rounded-full border border-gray-200 overflow-hidden shrink-0">
                     <img src={cv.photoUrl} alt={cv.name} className="w-full h-full object-cover" />
                   </div>

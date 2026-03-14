@@ -9,19 +9,24 @@ interface BusinessCardProps {
 
 const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
   const { t } = useLanguage();
+
   return (
     <div
       onClick={onClick}
-      className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-[2.5rem] p-3 sm:p-6 border border-gray-200 dark:border-gray-700 card-hover cursor-pointer relative animate-fade-in shadow-md"
+      className="bg-transparent sm:bg-white dark:sm:bg-gray-800 pl-1.5 pr-4 py-4 sm:p-8 cursor-pointer relative transition-all duration-200 hover:bg-gray-50/50 dark:hover:bg-white/[0.02] sm:hover:shadow-md group sm:border sm:border-gray-100 sm:dark:border-gray-700 sm:rounded-[35px]"
     >
-      <div className="flex flex-row items-start gap-3.5 sm:gap-8">
+      {/* Offset Divider Line - Mobile Only */}
+      <div className="absolute bottom-0 right-0 left-[74px] border-b border-gray-200/80 dark:border-gray-700/60 sm:hidden" />
+
+      <div className="flex items-start gap-4 sm:gap-10">
+        {/* Photo Section */}
         <div className="relative shrink-0">
-          <div className="w-[60px] h-[64px] sm:w-24 sm:h-28 rounded-lg sm:rounded-[1.75rem] border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm group bg-gray-50 dark:bg-gray-700">
+          <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-lg sm:rounded-3xl overflow-hidden bg-gray-50 dark:bg-gray-800 shadow-sm sm:border sm:border-gray-100 dark:sm:border-gray-700">
             {cv.photoUrl ? (
               <img
                 src={cv.photoUrl}
                 alt={cv.name}
-                className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
+                className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-2xl">
@@ -31,77 +36,52 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
           </div>
         </div>
 
-        {/* Info Section */}
-        <div className="flex-1 min-w-0 pt-0 sm:pt-1 flex flex-col gap-0 sm:gap-2">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-4">
-            <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-2xl font-bold sm:font-black text-black dark:text-white tracking-tight leading-normal sm:leading-normal line-clamp-1">
+        {/* Main Content Layout */}
+        <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* Info Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-col gap-0.5 sm:gap-1.5">
+              <h3 className="text-[15px] sm:text-[22px] font-bold text-black dark:text-white tracking-tight leading-tight line-clamp-1">
                 {cv.name}
               </h3>
-              {/* Mobile Only Icons Inline - REMOVED per request */}
-            </div>
 
-            <div className="hidden sm:flex items-center gap-2 ml-4 self-center">
-              {cv.isEmailPublic && (
-                <div
-                  className="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 transition-colors"
-                  title={t('card.email_visible')}
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+              <p className="text-[13px] sm:text-[18px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1">
+                {cv.profession}
+              </p>
+
+              <div className="flex flex-row items-center flex-wrap gap-2.5 sm:gap-6 mt-0.5 sm:mt-1">
+                <div className="flex items-center gap-1.5 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold sm:font-bold">
+                  <i className="fi fi-rr-marker"></i>
+                  <span className="lowercase first-letter:uppercase">{cv.city}</span>
                 </div>
-              )}
-              {cv.isPhonePublic && (
-                <div
-                  className="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 transition-colors"
-                  title={t('card.phone_visible')}
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.05 12.05 0 0 0 .57 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.05 12.05 0 0 0 2.81.57A2 2 0 0 1 22 16.92z"></path></svg>
+
+                <div className="flex items-center gap-1.5 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold sm:font-bold">
+                  <i className="fi fi-rr-briefcase"></i>
+                  {cv.experienceYears} yıl deneyim
+                </div>
+              </div>
+
+              {cv.about && (
+                <div className="hidden sm:block mt-3">
+                  <p className="text-[14px] text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed italic opacity-90">
+                    {cv.about.replace(/^"|"$/g, '').replace(/^"|"$/g, '')}
+                  </p>
                 </div>
               )}
             </div>
           </div>
 
-          <p className="text-sm sm:text-base text-[#1f6d78] dark:text-[#2dd4bf] font-medium sm:font-bold tracking-tight line-clamp-1">{cv.profession}</p>
-
-          {/* Details Section with Simple Icons - Restored on Mobile */}
-          <div className="mt-1 sm:mt-0 flex flex-nowrap items-center gap-x-2 sm:gap-x-6 gap-y-1 text-[10px] sm:text-[13px] text-gray-500 dark:text-gray-400 font-medium sm:font-bold overflow-hidden">
-            <span className="flex items-center gap-1.5 whitespace-nowrap shrink-0">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 dark:text-gray-400 sm:w-[14px] sm:h-[14px]">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-              {cv.city}
-            </span>
-
-            <span className="flex items-center gap-1.5 whitespace-nowrap shrink min-w-0">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500 dark:text-gray-400 sm:w-[14px] sm:h-[14px] shrink-0">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-              </svg>
-              <span>{cv.experienceYears} Yıl{cv.experienceMonths ? ` ${cv.experienceMonths} Ay` : ''} Deneyim</span>
-            </span>
-          </div>
-
-          {/* Summary Section - HIDDEN ON MOBILE */}
-          <div className="hidden sm:block mt-2 sm:mt-3">
-            <p className="text-[9px] sm:text-[13px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed line-clamp-2">
-              "{cv.about}"
-            </p>
+          {/* Desktop Action Button - Vertically Centered */}
+          <div className="hidden sm:block shrink-0">
+            <button className="bg-white dark:bg-gray-800 border-[0.5px] border-[#1f6d78] text-[#1f6d78] px-8 py-3 rounded-full font-black text-xs hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-sm uppercase tracking-widest whitespace-nowrap">
+              {t('card.view')}
+            </button>
           </div>
         </div>
 
-        {/* Action Button - Mobile Minimal - Right Side Centered */}
-        <div className="flex sm:hidden items-center self-center shrink-0 ml-1">
-          <button className="bg-white dark:bg-gray-800 border-[0.5px] border-gray-200 dark:border-gray-600 text-[#1f6d78] dark:text-[#2dd4bf] px-3 py-1.5 rounded-full font-bold text-[9px] uppercase tracking-wider hover:bg-[#1f6d78] hover:text-white transition-colors">
-            {t('card.view')}
-          </button>
-        </div>
-
-        {/* Action Button - Desktop Standard */}
-        <div className="hidden sm:flex items-center self-center sm:self-center shrink-0 ml-auto sm:ml-0">
-          <button className="bg-white dark:bg-gray-800 border-[0.5px] border-[#1f6d78] text-[#1f6d78] px-8 py-3 rounded-full font-black text-xs hover:bg-[#1f6d78] hover:text-white hover:border-[#1f6d78] dark:hover:border-[#1f6d78] transition-all active:scale-95 shadow-sm uppercase tracking-widest">
-            {t('card.view')}
-          </button>
+        {/* Mobile Right Arrow */}
+        <div className="shrink-0 self-center flex sm:hidden items-center text-gray-400 dark:text-gray-500">
+          <i className="fi fi-rr-angle-small-right text-2xl"></i>
         </div>
       </div>
     </div>

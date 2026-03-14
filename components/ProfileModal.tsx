@@ -146,7 +146,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
     <div className="flex flex-col gap-0.5">
       <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">{label}</span>
       <div className="flex items-center gap-2 sm:gap-3 px-1 py-0.5">
-        {icon && <span className="text-[10px] sm:text-sm">{icon}</span>}
+        {icon && (
+          <span className="text-[10px] sm:text-sm text-gray-400 dark:text-gray-500">
+            {icon.startsWith('fi ') ? <i className={icon}></i> : icon}
+          </span>
+        )}
         <span className="text-xs sm:text-base font-bold text-gray-700 dark:text-gray-300">
           {typeof value === 'string' ? resolveValue(value) : (value || '-')}
         </span>
@@ -209,7 +213,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   <InfoTag label={t('form.fullname')} value={cv.name} />
                   <InfoTag label={t('form.city')} value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} />
                   <InfoTag label={t('form.profession')} value={cv.profession} />
-                  <InfoTag label={t('form.experience')} value={`${cv.experienceYears} Yıl${cv.experienceMonths ? ' ' + cv.experienceMonths + ' Ay' : ''}`} />
+                  <InfoTag label={t('form.experience')} value={`${cv.experienceYears} Yıl${cv.experienceMonths ? ' ' + cv.experienceMonths + ' Ay' : ''}`} icon="fi fi-rr-briefcase" />
                   {cv.birthDate && <InfoTag label="Doğum Tarihi" value={cv.birthDate} />}
                   {(cv.personalDetails?.maritalStatus || cv.maritalStatus) && (
                     <InfoTag label={t('form.marital')} value={cv.personalDetails?.maritalStatus || cv.maritalStatus} />
@@ -639,8 +643,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       {/* Warning / Success Overlay */}
       {
         showWarning.show && (
-          <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6  fade-in  rounded-[3rem]">
-            <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl   zoom-in-95  text-center relative overflow-hidden">
+          <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6 rounded-[3rem]">
+            <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl text-center relative overflow-hidden">
               <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
               <div className="w-16 h-16 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-sm relative z-10">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -667,8 +671,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       {/* Role Warning Modal - Centered & Themed */}
       {
         showRoleWarning && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6  fade-in  bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-gray-800  zoom-in-95  relative">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
+            <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-gray-800 relative">
 
               {/* Close Button */}
               <button

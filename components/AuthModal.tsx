@@ -92,7 +92,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[140] flex flex-col justify-end sm:justify-center items-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-black/50 sm:backdrop-blur-sm  slide-in-from-bottom sm:slide-in-from-bottom-0 sm:fade-in ">
+        <div className="fixed inset-0 z-[140] flex flex-col justify-end sm:justify-center items-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-black/50 sm:backdrop-blur-sm">
             <div className="bg-white dark:bg-gray-900 w-full h-full max-h-[100dvh] sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-none sm:shadow-2xl relative flex flex-col rounded-none sm:rounded-3xl overflow-hidden sm:border sm:border-gray-100 dark:border-gray-800">
 
                 {/* Close Button */}
@@ -261,9 +261,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
                     {/* Success Overlay for SIGNUP */}
                     {showSuccess && (
-                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-800  fade-in ">
+                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-800">
                             <div className="text-center p-8 w-full">
-                                <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl  zoom-in-50 ">
+                                <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
                                     ✉️
                                 </div>
                                 <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">
@@ -284,9 +284,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
                     {/* Success Overlay for RESET PASSWORD */}
                     {showResetSuccess && (
-                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-800  fade-in ">
+                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-800">
                             <div className="text-center p-8 w-full">
-                                <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl  zoom-in-50 ">
+                                <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
                                     📨
                                 </div>
                                 <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">

@@ -30,7 +30,7 @@ const NotificationsModal: React.FC<NotificationsModalProps> = ({
             />
 
             {/* Modal Content */}
-            <div className="relative w-full h-full sm:h-auto sm:max-h-[80vh] sm:max-w-lg bg-white dark:bg-gray-800 rounded-none sm:rounded-3xl shadow-none sm:shadow-2xl border-0 sm:border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col  slide-in-from-bottom sm:zoom-in-95 ">
+            <div className="relative w-full h-full sm:h-auto sm:max-h-[80vh] sm:max-w-lg bg-white dark:bg-gray-800 rounded-none sm:rounded-3xl shadow-none sm:shadow-2xl border-0 sm:border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col">
 
                 {/* Header */}
                 <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 sticky top-0 z-10 shrink-0">

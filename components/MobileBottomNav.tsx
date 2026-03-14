@@ -81,8 +81,8 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     const isFirstButtonHome = !isHomeView || hasActiveBottomTab;
 
     const renderHomeIcon = () => (
-        <div className="h-8 group-active:scale-95 transition-transform flex items-center justify-center">
-            <span className="inline-block transform rotate-[12deg] origin-center text-[#1f6d78] font-black text-2xl leading-none rounded-font tracking-tight">d</span>
+        <div className="h-8 flex items-center justify-center group-active:scale-95 transition-transform">
+            <span className="inline-block transform rotate-[12deg] origin-center text-[#1f6d78] font-black text-[21px] leading-none rounded-font tracking-tight">d</span>
         </div>
     );
 
@@ -90,8 +90,8 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         <>
             {/* Fixed Bottom Bar */}
             <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg z-[150] sm:hidden pb-safe border-t-[0.5px] border-gray-200/60 dark:border-gray-800/60 shadow-[0_-1px_3px_rgba(0,0,0,0.02)]">
-                <div className="flex items-center justify-around h-16 px-2 pb-2">
-                    {/* Menu Button (Replaces Home) */}
+                <div className="flex items-center justify-around h-16 px-2 pb-1.5">
+                    {/* Menu Button (Replaces Home) - Back to First Position */}
                     <button
                         onClick={() => {
                             if (isFirstButtonHome) {
@@ -116,10 +116,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         className={`relative flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isNotifActive ? 'text-black dark:text-white' : 'text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white'}`}
                     >
                         <div className={`h-8 flex items-center justify-center ${isNotifActive ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill={isNotifActive ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-                                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-                            </svg>
+                            <i className={`fi ${isNotifActive ? 'fi-sr-bell' : 'fi-rr-bell'} text-[20.5px] leading-none`}></i>
                         </div>
                         <span className="text-[10px] font-medium leading-none">Bildirim</span>
                         {notificationCount > 0 && (
@@ -146,10 +143,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isCreateActiveTab ? 'text-black dark:text-white' : 'text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white'}`}
                     >
                         <div className={`h-8 flex items-center justify-center ${isCreateActiveTab ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
+                            <i className={`fi ${isCreateActiveTab ? 'fi-sr-add' : 'fi-rr-add'} text-[20.5px] leading-none`}></i>
                         </div>
                         <span className="text-[10px] font-medium leading-none text-center">Oluştur</span>
                     </button>
@@ -166,18 +160,13 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         }}
                         className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isProfileActiveTab ? 'text-black dark:text-white' : 'text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white'}`}
                     >
-                        <div className={`h-8 flex flex-col items-center justify-center ${isProfileActiveTab ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>
+                        <div className={`h-8 flex items-center justify-center ${isProfileActiveTab ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>
                             {userPhotoUrl ? (
                                 <div className={`w-6 h-6 rounded-full overflow-hidden border ${isProfileActiveTab ? 'border-black dark:border-white' : 'border-gray-200'}`}>
                                     <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
                                 </div>
                             ) : (
-                                <div>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill={isProfileActiveTab ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2z" />
-                                        <circle cx="12" cy="7" r="4" />
-                                    </svg>
-                                </div>
+                                <i className={`fi ${isProfileActiveTab ? 'fi-sr-circle-user' : 'fi-rr-circle-user'} text-[20.5px] leading-none`}></i>
                             )}
                         </div>
                         <span className={`text-[10px] font-medium leading-none ${isProfileActiveTab ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>Profil</span>
@@ -191,7 +180,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             {/* Bottom Sheets Overlay Background*/}
             {(activeTab === 'notifications' || activeTab === 'profile' || activeTab === 'search' || activeTab === 'create') && (
                 <div
-                    className="fixed inset-0 bg-black/20 z-[90] sm:hidden animate-in fade-in duration-200"
+                    className="fixed inset-0 bg-black/20 z-[90] sm:hidden"
                     onClick={() => setActiveTab(null)}
                 />
             )}
@@ -209,7 +198,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         mobile={true}
                     />
                 ) : (
-                    <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 animate-in slide-in-from-bottom duration-300 flex flex-col sm:hidden">
+                    <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col sm:hidden">
                         {/* Close Button Only */}
                         <div className="absolute top-4 right-4 z-10">
                             <button onClick={() => setActiveTab(null)} className="p-2 bg-gray-100/50 dark:bg-gray-800/50 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 backdrop-blur-sm transition-colors">
@@ -272,7 +261,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             )}
             {/* Create Sheet - Full Screen (Unauthenticated) */}
             {activeTab === 'create' && !user && (
-                <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 animate-in slide-in-from-bottom duration-300 flex flex-col sm:hidden pb-[84px]">
+                <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col sm:hidden pb-[84px]">
                     {/* Close Button Only */}
                     <div className="absolute top-4 right-4 z-10">
                         <button onClick={() => setActiveTab(null)} className="p-2 bg-gray-100/50 dark:bg-gray-800/50 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 backdrop-blur-sm transition-colors">
@@ -335,7 +324,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 
             {/* Profile Sheet - Full Screen (Unauthenticated) */}
             {activeTab === 'profile' && !user && (
-                <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 animate-in slide-in-from-bottom duration-300 flex flex-col sm:hidden pb-[84px]">
+                <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col sm:hidden pb-[84px]">
                     {/* Close Button Only (No Header Text) */}
                     <div className="absolute top-4 right-4 z-10">
                         <button onClick={() => setActiveTab(null)} className="p-2 bg-gray-100/50 dark:bg-gray-800/50 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 backdrop-blur-sm transition-colors">

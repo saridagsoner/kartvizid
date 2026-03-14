@@ -40,7 +40,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ value, onChange, minimal = 
                     : `bg-white dark:bg-gray-800 border ${isOpen ? 'border-[#1f6d78] shadow-md' : 'border-gray-200 dark:border-gray-700'} rounded-full px-2.5 py-1 sm:px-5 sm:py-2 text-[10px] sm:text-xs font-bold text-gray-800 dark:text-white transition-all hover:border-[#1f6d78] dark:hover:border-[#1f6d78] active:scale-95`
                     }`}
             >
-                <span>{activeLabel}</span>
+                {!minimal && <span>{activeLabel}</span>}
                 <svg
                     className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
                     width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"

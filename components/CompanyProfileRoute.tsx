@@ -78,7 +78,7 @@ const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
             onClose();
             return;
         }
-        navigate('/');
+        navigate('/', { replace: true });
     };
 
     if (loading) {

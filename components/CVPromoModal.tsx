@@ -10,7 +10,7 @@ const CVPromoModal: React.FC<CVPromoModalProps> = ({ onClose, onCreateCV }) => {
     const { t } = useLanguage();
 
     return (
-        <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col  slide-in-from-bottom ">
+        <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col">
             {/* Close Button */}
             <div className="absolute top-4 right-4 z-10">
                 <button

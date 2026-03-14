@@ -24,33 +24,50 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
     const navigate = useNavigate();
     const location = useLocation();
     const [cv, setCv] = useState<CV | null>(location.state?.cvData || null);
-    const [loading, setLoading] = useState(!location.state?.cvData);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Synchronize state with location state or reset when ID changes
+    useEffect(() => {
+        if (location.state?.cvData) {
+            setCv(location.state.cvData);
+            setLoading(false);
+            setError(null);
+        } else if (id) {
+            // Only clear and fetch if we don't have the data in state
+            // and we are navigating to a NEW id or direct match
+            setCv(null);
+            setError(null);
+        }
+    }, [id, location.state?.cvData]);
 
     useEffect(() => {
         // If the modal was accessed directly via URL, we need to fetch the CV
         if (!cv && id) {
             const fetchCV = async () => {
                 setLoading(true);
+                const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+                const queryField = isUuid ? 'id' : 'slug';
                 try {
-                    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-                    const queryField = isUuid ? 'id' : 'slug';
-
+                    console.log(`Fetching CV with ${queryField}: ${id}`);
                     const { data, error: fetchError } = await supabase
                         .from('cvs')
                         .select(`
               *,
-              languageDetails:cv_languages(*),
-              educationDetails:cv_education(*),
-              workExperience:cv_work_experience(*),
-              internshipDetails:cv_internships(*),
-              certificates:cv_certificates(*),
-              references:cv_references(*)
+              languageDetails:language_details,
+              educationDetails:education_details,
+              workExperience:work_experience,
+              internshipDetails:internship_details,
+              certificates,
+              references
             `)
                         .eq(queryField, id)
                         .single();
 
-                    if (fetchError) throw fetchError;
+                    if (fetchError) {
+                        console.error('Supabase fetch error:', fetchError);
+                        throw fetchError;
+                    }
                     if (data) {
                         setCv(data as CV);
                     } else {
@@ -58,7 +75,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
                     }
                 } catch (e) {
                     console.error('Error fetching CV for route:', e);
-                    setError('CV yüklenirken bir hata oluştu.');
+                    setError(`CV yüklenirken bir hata oluştu [${queryField}]: ${(e as any)?.message || e}`);
                 } finally {
                     setLoading(false);
                 }
@@ -75,7 +92,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
         }
         // Use a standard push instead of replace to ensure browser simulators
         // properly detect the URL change and update their simulated address bars.
-        navigate('/');
+        navigate('/', { replace: true });
     };
 
     if (loading) {

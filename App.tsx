@@ -153,12 +153,12 @@ const App: React.FC = () => {
         .from('cvs')
         .select(`
           *,
-          languageDetails:cv_languages(*),
-          educationDetails:cv_education(*),
-          workExperience:cv_work_experience(*),
-          internshipDetails:cv_internships(*),
-          certificates:cv_certificates(*),
-          references:cv_references(*)
+          languageDetails:language_details,
+          educationDetails:education_details,
+          workExperience:work_experience,
+          internshipDetails:internship_details,
+          certificates,
+          references
         `)
         .eq('id', cvId)
         .single();
@@ -186,8 +186,6 @@ const App: React.FC = () => {
         fetchCompany();
       }
       fetchSentRequests();
-      fetchSentRequests();
-      fetchReceivedRequests();
       fetchReceivedRequests();
       fetchGeneralNotifications();
       fixOldNotifications(); // Auto-fix legacy notifications
@@ -789,24 +787,35 @@ const App: React.FC = () => {
       };
 
       // Helper to open CV
-      const openCV = async () => {
-        const { data, error } = await supabase
-          .from('cvs')
-          .select(`
-            *,
-            languageDetails:cv_languages(*),
-            educationDetails:cv_education(*),
-            workExperience:cv_work_experience(*),
-            internshipDetails:cv_internships(*),
-            certificates:cv_certificates(*),
-            references:cv_references(*)
-          `)
-          .eq('user_id', userId)
-          .single();
+      const openCV = async (queryField: string, id: string) => {
+        try {
+          console.log(`Fetching CV with ${queryField}: ${id}`);
+          const { data, error: fetchError } = await supabase
+            .from('cvs')
+            .select(`
+              *,
+              languageDetails:language_details,
+              educationDetails:education_details,
+              workExperience:work_experience,
+              internshipDetails:internship_details,
+              certificates,
+              references
+            `)
+            .eq(queryField, id)
+            .single();
 
-        if (!error && data) {
-          navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data, background: background || location } });
-          return true;
+          if (fetchError) {
+            console.error('Supabase fetch error:', fetchError);
+            throw fetchError;
+          }
+
+          if (data) {
+            navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data as CV, background: background || location } });
+            return true;
+          }
+        } catch (e) {
+          console.error('Error in openCV:', e);
+          showToast(`CV yüklenirken bir hata oluştu [${queryField}]: ${(e as any)?.message || e}`, 'error');
         }
         return false;
       };
@@ -814,13 +823,13 @@ const App: React.FC = () => {
       // Smart Logic: Try based on role, then fallback
       if (role === 'employer') {
         found = await openCompany();
-        if (!found) found = await openCV(); // Fallback
+        if (!found) found = await openCV('user_id', userId); // Fallback
       } else if (role === 'job_seeker') {
-        found = await openCV();
+        found = await openCV('user_id', userId);
         if (!found) found = await openCompany(); // Fallback
       } else {
         // No role known, try both
-        found = await openCV();
+        found = await openCV('user_id', userId);
         if (!found) found = await openCompany();
       }
 
@@ -1611,6 +1620,7 @@ const App: React.FC = () => {
               weeklyTrends={weeklyRisingStats}
               platformStats={platformStats}
               jobFinders={jobFinders}
+              onCVClick={handleCVClick}
               loading={loading}
             />
           </aside>
@@ -1638,7 +1648,7 @@ const App: React.FC = () => {
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
                     placeholder={isSearchFocused ? 'Meslek, Şehir, İsim veya Unvan Ara' : t('nav.search_placeholder')}
-                    className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-full pl-11 pr-4 h-[46px] font-medium tracking-tight outline-none appearance-none focus:bg-white dark:focus:bg-gray-800 focus:border-[1.5px] focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-0 transition-all placeholder:text-gray-400/90 text-[15px] sm:text-[16px] text-gray-900 dark:text-white"
+                    className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-full pl-11 pr-4 h-[42px] font-medium tracking-tight outline-none appearance-none focus:bg-white dark:focus:bg-gray-800 focus:border-[1.5px] focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-0 transition-all placeholder:text-gray-400/90 text-[13px] sm:text-[16px] text-gray-900 dark:text-white"
                   />
                 </div>
 
@@ -1649,8 +1659,8 @@ const App: React.FC = () => {
             {/* Mobile Header (Kartvizidler + Sort) */}
             <div className="flex sm:hidden items-center justify-between px-2 mt-1.5 mb-1">
               <div className="flex items-center gap-2">
-                <h2 className="text-xs font-medium text-black dark:text-gray-100 tracking-wide ml-1">
-                  Kartvizid Listesi
+                <h2 className="text-sm font-semibold text-[#1f6d78] dark:text-[#2dd4bf] tracking-tight ml-1">
+                  Kartvizidler
                 </h2>
                 <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
               </div>
@@ -1659,7 +1669,7 @@ const App: React.FC = () => {
                 onClick={() => setActiveFilterModal('advanced')}
                 className="flex items-center gap-1.5 hover:opacity-80 transition-opacity active:scale-95 mr-1"
               >
-                <span className="text-xs font-medium tracking-wide text-black dark:text-gray-100">Filtre</span>
+                <span className="text-sm font-semibold tracking-tight text-[#1f6d78] dark:text-[#2dd4bf]">Filtre</span>
                 <svg className="text-gray-400 dark:text-gray-500" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="4" y1="8" x2="20" y2="8" />
                   <circle cx="16" cy="8" r="2" fill="white" className="dark:fill-gray-900" />
@@ -1714,7 +1724,9 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:gap-5">
+              {/* Mobile Top Divider for first card */}
+              <div className="block sm:hidden w-full border-t border-gray-200/80 dark:border-gray-700/60 mb-0" />
               {currentItems.length > 0 ? (
                 currentItems.map(cv => {
                   const request = sentRequests.find(r => r.target_user_id === cv.userId);
@@ -1757,7 +1769,7 @@ const App: React.FC = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentPage === 1
+                  className={`px - 4 py - 2 rounded - full text - sm font - bold transition - all ${currentPage === 1
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-transparent'
                     : 'bg-white text-black border border-gray-200 hover:bg-black hover:text-white hover:border-black shadow-sm'
                     } `}
@@ -1772,7 +1784,7 @@ const App: React.FC = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${currentPage === totalPages
+                  className={`px - 4 py - 2 rounded - full text - sm font - bold transition - all ${currentPage === totalPages
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-transparent'
                     : 'bg-white text-[#1f6d78] border border-[#1f6d78] hover:bg-[#1f6d78] hover:text-white shadow-sm'
                     } `}
@@ -1806,9 +1818,9 @@ const App: React.FC = () => {
         user={user}
         isProfileOpen={isMyProfileOpen}
         isCreateOpen={location.pathname === '/cv-olustur' || location.pathname === '/sirket-olustur'}
-        isHomeView={!isMyProfileOpen && location.pathname !== '/cv-olustur' && location.pathname !== '/ayarlar' && location.pathname !== '/sirket-olustur' && location.pathname !== '/bildirimler' && !isSavedCVsOpen}
+        isHomeView={!isMyProfileOpen && !location.pathname.startsWith('/cv/') && !location.pathname.startsWith('/company/') && location.pathname !== '/cv-olustur' && location.pathname !== '/ayarlar' && location.pathname !== '/sirket-olustur' && location.pathname !== '/bildirimler' && !isSavedCVsOpen}
         onGoHome={() => {
-          navigate('/', { state: {} });
+          navigate('/', { replace: true, state: {} });
           closeAllModals(); // Ensure all modals are closed
           setSearchQuery('');
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1967,7 +1979,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/cv/:id" element={
           <CVProfileRoute
-            onClose={() => navigate('/', { replace: true, state: {} })}
+            onClose={() => navigate('/', { replace: true })}
             sentRequests={sentRequests}
             handleSendRequest={handleSendRequest}
             handleCancelRequest={handleCancelRequest}
@@ -1978,7 +1990,7 @@ const App: React.FC = () => {
           <CompanyProfileRoute
             requestStatus={activeModalRequest?.status}
             requestId={activeModalRequestId} // Use activeModalRequestId here
-            onClose={() => navigate('/', { replace: true, state: {} })}
+            onClose={() => navigate('/', { replace: true })}
             onAction={async (id, action) => {
               await handleRequestAction(id, action);
               setActiveModalRequest(prev => prev ? { ...prev, status: action } : null);
@@ -2046,10 +2058,10 @@ const App: React.FC = () => {
         } />
         <Route path="/cv-olustur" element={
           <CVFormModal
-            onClose={() => navigate('/', { replace: true, state: {} })}
+            onClose={() => navigate('/', { replace: true })}
             onSubmit={async (data) => {
               await handleCreateCV(data);
-              navigate('/', { replace: true, state: {} });
+              navigate('/', { replace: true });
             }}
             initialData={currentUserCV || (user?.user_metadata ? {
               name: user.user_metadata.full_name || '',
@@ -2064,21 +2076,21 @@ const App: React.FC = () => {
         } />
         <Route path="/sirket-olustur" element={
           <CompanyFormModal
-            onClose={() => navigate('/', { replace: true, state: {} })}
+            onClose={() => navigate('/', { replace: true })}
             onSubmit={async (data) => {
               await handleCompanySubmit(data);
-              navigate('/', { replace: true, state: {} });
+              navigate('/', { replace: true });
             }}
             initialData={activeCompany || undefined}
             availableCities={availableCities}
           />
         } />
         <Route path="/ayarlar" element={
-          <SettingsModal onClose={() => navigate('/', { replace: true, state: {} })} />
+          <SettingsModal onClose={() => navigate('/', { replace: true })} />
         } />
         <Route path="/bildirimler" element={
           <NotificationsModal
-            onClose={() => navigate('/', { replace: true, state: {} })}
+            onClose={() => navigate('/', { replace: true })}
             notifications={[
               ...receivedRequests,
               ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
