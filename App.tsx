@@ -77,6 +77,8 @@ const App: React.FC = () => {
   const [activeCompany, setActiveCompany] = useState<Company | null>(null);
 
   const [popularCompanies, setPopularCompanies] = useState<any[]>([]);
+  const [viewMode, setViewMode] = useState<'cvs' | 'employers'>('cvs');
+  const [companyList, setCompanyList] = useState<any[]>([]);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -178,6 +180,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     fetchCVs();
+    fetchAllCompanies();
     fetchPopularCVs();
     fetchJobFinders();
     fetchPopularCompanies();
@@ -1024,6 +1027,40 @@ const App: React.FC = () => {
     }
   };
 
+  const fetchAllCompanies = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('companies')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching companies:', error);
+      } else {
+        const mapped = (data || []).map((c: any) => ({
+          id: c.id,
+          name: c.company_name,
+          logoUrl: c.logo_url,
+          userId: c.user_id,
+          description: c.description,
+          city: c.city,
+          district: c.district,
+          country: c.country,
+          address: c.address,
+          industry: c.industry,
+          website: c.website,
+          slug: c.slug
+        }));
+        setCompanyList(mapped);
+      }
+    } catch (err) {
+      console.error('Error fetching companies:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchCVs = async () => {
     try {
       setLoading(true);
@@ -1648,8 +1685,19 @@ const App: React.FC = () => {
                     onFocus={() => setIsSearchFocused(true)}
                     onBlur={() => setIsSearchFocused(false)}
                     placeholder={isSearchFocused ? 'Meslek, Şehir, İsim veya Unvan Ara' : t('nav.search_placeholder')}
-                    className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-full pl-11 pr-4 h-[42px] font-medium tracking-tight outline-none appearance-none focus:bg-white dark:focus:bg-gray-800 focus:border-[1.5px] focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-0 transition-all placeholder:text-gray-400/90 text-[13px] sm:text-[16px] text-gray-900 dark:text-white"
+                    className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-full pl-11 pr-12 h-[42px] font-medium tracking-tight outline-none appearance-none focus:bg-white dark:focus:bg-gray-800 focus:border-[1.5px] focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-0 transition-all placeholder:text-gray-400/90 text-[13px] sm:text-[16px] text-gray-900 dark:text-white"
                   />
+                  <button
+                    onClick={() => setActiveFilterModal('advanced')}
+                    className="absolute right-1 text-xs top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors active:scale-95 z-20"
+                  >
+                    <svg className="text-[#1f6d78] dark:text-[#2dd4bf]" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="4" y1="8" x2="20" y2="8" />
+                      <circle cx="16" cy="8" r="2" fill="white" className="dark:fill-gray-900" />
+                      <line x1="4" y1="16" x2="20" y2="16" />
+                      <circle cx="8" cy="16" r="2" fill="white" className="dark:fill-gray-900" />
+                    </svg>
+                  </button>
                 </div>
 
 
@@ -1657,26 +1705,27 @@ const App: React.FC = () => {
             </div>
 
             {/* Mobile Header (Kartvizidler + Sort) */}
-            <div className="flex sm:hidden items-center justify-between px-2 mt-1.5 mb-1">
-              <div className="flex items-center gap-2">
-                <h2 className="text-sm font-semibold text-[#1f6d78] dark:text-[#2dd4bf] tracking-tight ml-1">
-                  Kartvizidler
-                </h2>
-                <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
+            <div className="flex sm:hidden items-center justify-between px-2 mt-1 mb-0">
+              <div className="flex items-center gap-3 ml-1">
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setViewMode('cvs')}
+                    className={`text-[13px] font-semibold tracking-tight transition-all pb-0.5 border-b-2 ${viewMode === 'cvs' ? 'text-[#1f6d78] dark:text-[#2dd4bf] border-[#1f6d78] dark:border-[#2dd4bf]' : 'text-gray-400 dark:text-gray-500 border-transparent'}`}
+                  >
+                    İş Arayanlar
+                  </button>
+                  {viewMode === 'cvs' && <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />}
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setViewMode('employers')}
+                    className={`text-[13px] font-semibold tracking-tight transition-all pb-0.5 border-b-2 ${viewMode === 'employers' ? 'text-[#1f6d78] dark:text-[#2dd4bf] border-[#1f6d78] dark:border-[#2dd4bf]' : 'text-gray-400 dark:text-gray-500 border-transparent'}`}
+                  >
+                    İş Verenler
+                  </button>
+                  {viewMode === 'employers' && <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />}
+                </div>
               </div>
-
-              <button
-                onClick={() => setActiveFilterModal('advanced')}
-                className="flex items-center gap-1.5 hover:opacity-80 transition-opacity active:scale-95 mr-1"
-              >
-                <span className="text-sm font-semibold tracking-tight text-[#1f6d78] dark:text-[#2dd4bf]">Filtre</span>
-                <svg className="text-gray-400 dark:text-gray-500" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="4" y1="8" x2="20" y2="8" />
-                  <circle cx="16" cy="8" r="2" fill="white" className="dark:fill-gray-900" />
-                  <line x1="4" y1="16" x2="20" y2="16" />
-                  <circle cx="8" cy="16" r="2" fill="white" className="dark:fill-gray-900" />
-                </svg>
-              </button>
             </div>
 
             <div className="hidden sm:block">
@@ -1724,42 +1773,102 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:gap-5">
-              {/* Mobile Top Divider for first card */}
-              <div className="block sm:hidden w-full border-t border-gray-200/80 dark:border-gray-700/60 mb-0" />
-              {currentItems.length > 0 ? (
-                currentItems.map(cv => {
-                  const request = sentRequests.find(r => r.target_user_id === cv.userId);
-                  const status = request ? request.status : 'none';
+              <div className="flex flex-col sm:gap-5">
+              {/* Mobile Offset Divider for the first item */}
+              <div className="block sm:hidden border-t border-gray-200/80 dark:border-gray-700/60 ml-[74px]" />
+              
+              {viewMode === 'cvs' ? (
+                currentItems.length > 0 ? (
+                  currentItems.map(cv => {
+                    const request = sentRequests.find(r => r.target_user_id === cv.userId);
+                    const status = request ? request.status : 'none';
 
-                  return (
-                    <BusinessCard
-                      key={cv.id}
-                      cv={cv}
-                      onClick={() => handleCVClick(cv)}
-                    />
-                  );
-                })
-              ) : loading ? (
-                <>
-                  <BusinessCardSkeleton />
-                  <BusinessCardSkeleton />
-                  <BusinessCardSkeleton />
-                  <BusinessCardSkeleton />
-                  <BusinessCardSkeleton />
-                </>
+                    return (
+                      <BusinessCard
+                        key={cv.id}
+                        cv={cv}
+                        onClick={() => handleCVClick(cv)}
+                      />
+                    );
+                  })
+                ) : loading ? (
+                  <>
+                    <BusinessCardSkeleton />
+                    <BusinessCardSkeleton />
+                    <BusinessCardSkeleton />
+                    <BusinessCardSkeleton />
+                    <BusinessCardSkeleton />
+                  </>
+                ) : (
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-16 text-center border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
+                    <p className="text-gray-800 dark:text-white font-bold">{t('feed.no_results')}</p>
+                    <button onClick={() => {
+                      setSortBy('default');
+                      setActiveFilters({
+                        profession: '', city: '', experience: '', language: '', languageLevel: '', salaryMin: '', salaryMax: '',
+                        skills: [], workType: '', employmentType: '', educationLevel: '', graduationStatus: '',
+                        militaryStatus: '', maritalStatus: '', disabilityStatus: '', noticePeriod: '', travelStatus: '', driverLicenses: []
+                      });
+                    }} className="mt-4 text-blue-500 font-bold hover:underline">{t('feed.reset_filters')}</button>
+                  </div>
+                )
               ) : (
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-16 text-center border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
-                  <p className="text-gray-800 dark:text-white font-bold">{t('feed.no_results')}</p>
-                  <button onClick={() => {
-                    setSortBy('default');
-                    setActiveFilters({
-                      profession: '', city: '', experience: '', language: '', languageLevel: '', salaryMin: '', salaryMax: '',
-                      skills: [], workType: '', employmentType: '', educationLevel: '', graduationStatus: '',
-                      militaryStatus: '', maritalStatus: '', disabilityStatus: '', noticePeriod: '', travelStatus: '', driverLicenses: []
-                    });
-                  }} className="mt-4 text-blue-500 font-bold hover:underline">{t('feed.reset_filters')}</button>
-                </div>
+                /* Employers View */
+                companyList.filter(c => 
+                  c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  (c.industry && c.industry.toLowerCase().includes(searchQuery.toLowerCase()))
+                ).length > 0 ? (
+                  companyList.filter(c => 
+                    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (c.industry && c.industry.toLowerCase().includes(searchQuery.toLowerCase()))
+                  ).map(company => (
+                    <div
+                      key={company.id}
+                      onClick={() => handleOpenProfile(company.userId, 'employer')}
+                      className="flex items-center gap-4 sm:gap-10 pl-1.5 pr-4 py-4 sm:p-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-750 transition-colors sm:border sm:rounded-[35px] sm:mb-4"
+                    >
+                      <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-lg sm:rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 bg-white dark:bg-gray-700 flex items-center justify-center shadow-sm">
+                        {company.logoUrl ? (
+                          <img src={company.logoUrl} alt={company.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                            <path d="M9 22v-4h6v4"></path>
+                            <path d="M8 6h.01"></path>
+                            <path d="M16 6h.01"></path>
+                            <path d="M12 6h.01"></path>
+                          </svg>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col gap-0.5 sm:gap-1.5">
+                          <h3 className="text-[15px] sm:text-[22px] font-bold text-black dark:text-white tracking-tight leading-tight line-clamp-1">
+                            {company.name}
+                          </h3>
+                          <p className="text-[13px] sm:text-[18px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1">
+                            {company.industry}
+                          </p>
+                          <div className="flex items-center gap-1.5 mt-0.5 sm:mt-1 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold">
+                            <i className="fi fi-rr-marker"></i>
+                            <span className="lowercase first-letter:uppercase">{company.city}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-gray-400">
+                        <i className="fi fi-rr-angle-small-right text-2xl"></i>
+                      </div>
+                    </div>
+                  ))
+                ) : loading ? (
+                  <>
+                    <BusinessCardSkeleton />
+                    <BusinessCardSkeleton />
+                  </>
+                ) : (
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-16 text-center border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
+                    <p className="text-gray-800 dark:text-white font-bold">İş veren bulunamadı.</p>
+                  </div>
+                )
               )}
             </div>
 

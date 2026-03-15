@@ -19,24 +19,30 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
     console.log('CompanyProfileModal Rendered:', { companyId: company.id, userId: company.userId, requestStatus, requestId });
 
     const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
-        <div className="mb-6 mt-10 first:mt-0">
-            <h3 className="text-sm font-black text-black uppercase tracking-[0.15em] border-l-4 border-[#1f6d78] pl-3">{title}</h3>
-            {subtitle && <p className="text-[10px] text-gray-400 font-bold uppercase mt-1 ml-4">{subtitle}</p>}
+        <div className="mb-3 sm:mb-6 mt-5 sm:mt-10 first:mt-0">
+            <h3 className="text-[12px] sm:text-lg font-black text-black dark:text-white uppercase tracking-[0.2em] border-l-4 border-[#1f6d78] pl-3 leading-none">{title}</h3>
+            {subtitle && <p className="text-[8px] sm:text-[10px] text-gray-400 font-bold uppercase mt-1 ml-4">{subtitle}</p>}
         </div>
     );
 
     const InfoTag = ({ label, value, icon }: { label: string, value: string | undefined, icon?: string }) => (
-        <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</span>
-            <div className="bg-gray-50 border border-gray-100 rounded-full px-5 py-3 flex items-center gap-3">
-                {icon && <span className="text-sm">{icon}</span>}
-                <span className="text-sm font-bold text-black">{value || '-'}</span>
+        <div className="flex flex-col gap-0.5">
+            <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">{label}</span>
+            <div className="flex items-center gap-2 sm:gap-3 px-1 py-0.5">
+                {icon && (
+                    <span className="text-[10px] sm:text-sm text-gray-400 dark:text-gray-500">
+                        {icon.startsWith('fi ') ? <i className={icon}></i> : icon}
+                    </span>
+                )}
+                <span className="text-xs sm:text-base font-bold text-gray-700 dark:text-gray-300">
+                    {value || '-'}
+                </span>
             </div>
         </div>
     );
 
     return (
-        <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-black/30 dark:bg-black/60 ">
+        <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 ">
             <SEO
                 title={`${company.name} - Şirket Profili`}
                 description={company.description ? company.description.substring(0, 150) + '...' : `${company.name} şirketinin profilini inceleyin.`}
@@ -47,34 +53,38 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                 {/* Header */}
                 <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-gray-900 shrink-0">
                     <div className="p-4 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 gap-4">
-                        <div className="flex-1 text-center sm:text-left">
-                            <h2 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tight truncate">{t('profile.company_title')}</h2>
-                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em] opacity-80">{t('profile.company_subtitle')}</p>
-                        </div>
                         <button
                             onClick={onClose}
                             className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all active:scale-95 sm:order-2"
                         >
                             <span className="sr-only">Kapat</span>
-                            <span className="text-2xl leading-none">×</span>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="block sm:hidden">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                            <span className="hidden sm:block text-2xl leading-none">×</span>
                         </button>
+                        <div className="flex-1 sm:order-1 text-center sm:text-left">
+                            <h2 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tight truncate">{t('profile.company_title')}</h2>
+                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em] opacity-80">{t('profile.company_subtitle')}</p>
+                        </div>
+                        <div className="w-10 sm:hidden"></div>
                     </div>
                 </div>
 
                 {/* Modal Body */}
-                <div className="flex-1 overflow-y-auto p-10 custom-scrollbar space-y-12 bg-white">
-
-
+                <div className="flex-1 overflow-y-auto p-5 sm:p-10 custom-scrollbar space-y-8 sm:space-y-12 bg-white dark:bg-gray-900">
                     {/* Bölüm 1: Kurumsal Kimlik */}
                     <section>
                         <SectionTitle title={t('company.identity')} />
-                        <div className="flex flex-col md:flex-row gap-10 items-center md:items-start">
-                            <div className="shrink-0">
-                                <div className="w-32 h-32 rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-xl bg-gray-50 flex items-center justify-center">
+                        <div className="flex flex-col gap-8 pt-4">
+                            {/* Centered Logo Section */}
+                            <div className="flex flex-col items-center">
+                                <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1.5 block">LOGO</span>
+                                <div className="w-32 h-32 rounded-[2.5rem] border border-gray-100 dark:border-gray-700 overflow-hidden shadow-xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center shrink-0">
                                     {company.logoUrl ? (
                                         <img src={company.logoUrl} alt={company.name} className="w-full h-full object-cover" />
                                     ) : (
-                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-300">
+                                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-300 dark:text-gray-600">
                                             <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
                                             <path d="M9 22v-4h6v4"></path>
                                             <path d="M8 6h.01"></path>
@@ -90,24 +100,30 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                                     )}
                                 </div>
                             </div>
+
                             <div className="flex-1 w-full space-y-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-x-3 gap-y-4 min-w-0">
                                     <InfoTag label={t('company.name')} value={company.name} />
                                     <InfoTag label={t('company.industry')} value={company.industry} />
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <InfoTag label={t('form.city')} value={company.city} icon="📍" />
                                     <InfoTag label={t('form.district')} value={company.district} icon="🏙️" />
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <InfoTag label={t('company.country')} value={company.country} icon="🌍" />
                                     {company.website && (
-                                        <div className="flex flex-col gap-1.5">
-                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Web Sitesi</span>
-                                            <a href={company.website} target="_blank" rel="noopener noreferrer" className="bg-gray-50 border border-gray-100 rounded-full px-5 py-3 flex items-center gap-3 hover:bg-[#1f6d78] hover:text-white transition-all group">
-                                                <span className="text-sm">🌐</span>
-                                                <span className="text-sm font-bold text-[#1f6d78] group-hover:text-white truncate">{company.website}</span>
-                                            </a>
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">Web Sitesi</span>
+                                            {(() => {
+                                                const ensureProtocol = (url: string) => {
+                                                    if (!url) return '';
+                                                    return url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+                                                };
+                                                const safeUrl = ensureProtocol(company.website);
+                                                return (
+                                                    <a href={safeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 sm:gap-3 px-1 py-0.5 hover:opacity-70 transition-all group">
+                                                        <span className="text-[10px] sm:text-sm text-[#1f6d78] dark:text-[#2dd4bf]">🌐</span>
+                                                        <span className="text-xs sm:text-base font-bold text-[#1f6d78] dark:text-[#2dd4bf] truncate">{company.website}</span>
+                                                    </a>
+                                                );
+                                            })()}
                                         </div>
                                     )}
                                 </div>
@@ -119,7 +135,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                     {/* Bölüm 2: Hakkında */}
                     <section>
                         <SectionTitle title={t('company.about_section')} />
-                        <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 italic text-gray-700 leading-relaxed text-sm font-medium">
+                        <div className="px-1 text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 leading-relaxed pt-2">
                             "{company.description || 'Şirket hakkında bilgi girilmemiş.'}"
                         </div>
                     </section>
@@ -128,22 +144,22 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
 
                 {/* Footer Actions */}
                 {(requestStatus === 'pending' || requestStatus === 'approved' || requestStatus === 'rejected') && (
-                    <div className="p-6 border-t border-gray-100 bg-gray-50 shrink-0 flex justify-end gap-3 z-20">
+                    <div className="pt-3 px-3 pb-2 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-2 sm:gap-5 sticky bottom-0 z-10 shrink-0">
                         {requestStatus === 'pending' && onAction && requestId && (
-                            <>
+                            <div className="flex-1 flex gap-2 sm:gap-4">
                                 <button
                                     onClick={() => onAction(requestId, 'approved')}
-                                    className="bg-black text-white px-8 py-3 rounded-full font-bold text-sm hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl active:"
+                                    className="flex-1 bg-[#1f6d78] text-white py-3 sm:py-4 rounded-xl font-black text-[10px] sm:text-sm uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active:scale-95"
                                 >
                                     {t('profile.approve_request')}
                                 </button>
                                 <button
                                     onClick={() => onAction(requestId, 'rejected')}
-                                    className="bg-white text-black border border-gray-200 px-8 py-3 rounded-full font-bold text-sm hover:bg-gray-100 transition-all active:"
+                                    className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-black dark:text-white py-3 sm:py-4 rounded-xl font-black text-[10px] sm:text-sm uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95"
                                 >
                                     {t('profile.reject_request')}
                                 </button>
-                            </>
+                            </div>
                         )}
                         {requestStatus === 'approved' && onRevoke && requestId && (
                             <div className="w-full flex flex-col items-center text-center gap-4 py-2">
@@ -158,7 +174,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
 
                                 <button
                                     onClick={() => onRevoke(requestId)}
-                                    className="bg-white border text-red-600 border-red-100 px-8 py-3 rounded-full font-bold text-xs hover:bg-red-50 hover:border-red-200 transition-all shadow-sm active: min-w-[200px] flex items-center justify-center gap-2"
+                                    className="bg-white dark:bg-gray-900 border text-red-600 border-red-100 dark:border-red-900/30 px-8 py-3 rounded-xl font-bold text-xs hover:bg-red-50 dark:hover:bg-red-900/10 transition-all shadow-sm active: min-w-[200px]"
                                 >
                                     {t('profile.hide_contact')}
                                 </button>
@@ -167,8 +183,8 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                         {requestStatus === 'rejected' && (
                             <div className="w-full flex flex-col items-center text-center gap-4 py-2">
                                 <div className="flex flex-col items-center gap-1">
-                                    <span className="text-[#1f6d78] font-bold text-sm flex items-center gap-2">
-                                        ⚠️ <span className="underline decoration-gray-300 underline-offset-4">{company.name}</span> {t('profile.rejected_msg')}
+                                    <span className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold text-sm flex items-center gap-2">
+                                        ⚠️ <span className="underline decoration-gray-300 dark:decoration-gray-700 underline-offset-4">{company.name}</span> {t('profile.rejected_msg')}
                                     </span>
                                     <span className="text-gray-400 text-[10px] font-medium">
                                         Fikrinizi değiştirdiyseniz isteği tekrar onaylayabilirsiniz.
@@ -178,7 +194,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                                 {onAction && requestId && (
                                     <button
                                         onClick={() => onAction(requestId, 'approved')}
-                                        className="bg-[#1f6d78] text-white px-12 py-3.5 rounded-full font-black text-sm hover:bg-[#16555e] transition-all shadow-lg hover:shadow-[#1f6d78]/30 active: w-full sm:w-auto min-w-[200px]"
+                                        className="bg-[#1f6d78] text-white px-12 py-3.5 rounded-xl font-black text-sm hover:bg-[#16555e] transition-all shadow-lg active:scale-95 w-full sm:w-auto min-w-[200px]"
                                     >
                                         {t('profile.undo_reject')}
                                     </button>
