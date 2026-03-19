@@ -24,6 +24,7 @@ interface NavbarProps {
   onMarkNotificationRead?: (id: string) => void;
   onMarkAllRead?: () => void;
   onOpenProfile?: (userId: string, role?: string) => void;
+  onOpenMenu?: () => void;
 }
 
 const Navbar: React.FC<NavbarProps & {
@@ -35,7 +36,7 @@ const Navbar: React.FC<NavbarProps & {
   onOpenSavedCVs?: () => void;
 }> = ({
   onSearch, onCreateCV, onOpenCompanyProfile, onOpenSettings, hasCV, userPhotoUrl, notificationCount = 0, notifications = [], onNotificationAction, onMarkNotificationRead,
-  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole, onMarkAllRead, onOpenProfile, onOpenSavedCVs
+  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole, onMarkAllRead, onOpenProfile, onOpenSavedCVs, onOpenMenu
 }) => {
     const { user, loading, signOut } = useAuth();
     const { t } = useLanguage();
@@ -64,21 +65,34 @@ const Navbar: React.FC<NavbarProps & {
 
     return (
       <>
-        <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 z-50 flex items-center justify-center transition-colors duration-300">
+        <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-black border-b border-gray-100 dark:border-white/5 z-50 flex items-center justify-center transition-colors duration-300">
           <div className="max-w-[1440px] w-full px-4 md:px-6 flex items-center justify-between h-full gap-2 md:gap-0">
 
-            {/* Left Section: Logo */}
-            <div className="lg:w-[290px] shrink-0 flex items-center">
+            {/* Left Section: Logo & Mobile Menu */}
+            <div className="lg:w-[290px] shrink-0 flex items-center gap-1">
+              {/* Mobile Menu Button */}
+              <button
+                onClick={onOpenMenu}
+                className="sm:hidden p-2 -ml-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors active:scale-95 flex items-center justify-center translate-y-[2px]"
+                title="Menü"
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+              </button>
+
               <Link to="/" onClick={() => {
                 if (window.location.pathname === '/') {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }} className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
-                <div className="flex items-center text-[#2b2b2b] dark:text-white text-[28px] md:text-[36px] font-bold tracking-tight rounded-font leading-none">
+                <div className="flex items-center text-[#2b2b2b] dark:text-white text-[27px] md:text-[36px] font-bold tracking-tight rounded-font leading-none">
                   <span>Kartvizi</span>
                   <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                 </div>
-                <span className="block text-[10px] sm:text-[12px] font-medium text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
+                <span className="hidden sm:block text-[12px] font-medium text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
                   dijital cv & doğru eşleşme
                 </span>
               </Link>
@@ -87,20 +101,7 @@ const Navbar: React.FC<NavbarProps & {
             {/* Center Section: Search Bar */}
             <div className="flex-1 relative group px-2 lg:px-0 hidden md:block">
               <div className="absolute left-6 lg:left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="opacity-100 transition-opacity text-gray-500 dark:text-gray-400"
-                >
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
+                <i className="fi fi-br-search text-gray-500 dark:text-gray-400 text-sm"></i>
               </div>
               <input
                 type="text"
@@ -119,9 +120,9 @@ const Navbar: React.FC<NavbarProps & {
             {/* Right Section: Actions */}
             <div className={`${loading ? 'flex' : user ? 'hidden sm:flex' : 'flex'} md:w-[330px] shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto lg:ml-0`}>
               {loading ? (
-                <div className="flex items-center gap-3 opacity-50">
-                  <div className="w-20 md:w-28 h-9 md:h-10 bg-gray-100 dark:bg-gray-700 animate-pulse rounded-xl"></div>
-                  <div className="w-24 md:w-32 h-9 md:h-10 bg-gray-100 dark:bg-gray-700 animate-pulse rounded-xl"></div>
+                <div className="flex items-center gap-6 opacity-50 pr-4">
+                  <div className="w-16 md:w-20 h-5 bg-gray-100 dark:bg-gray-700 animate-pulse rounded-full"></div>
+                  <div className="w-16 md:w-20 h-5 bg-gray-100 dark:bg-gray-700 animate-pulse rounded-full"></div>
                 </div>
               ) : user ? (
                 <>
@@ -205,18 +206,18 @@ const Navbar: React.FC<NavbarProps & {
                   </div>
                 </>
               ) : (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 md:gap-4 mr-2 md:mr-4">
                   <button
-                    onClick={() => onOpenAuth('signin', 'employer')}
-                    className="bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold text-xs md:text-sm px-3 md:px-6 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
+                    onClick={() => onOpenAuth('signin')}
+                    className="px-4 md:px-6 py-1.5 md:py-2 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf]/40 rounded-full font-bold text-[13px] md:text-[15px] transition-all hover:bg-[#1f6d78]/5 dark:hover:bg-[#2dd4bf]/5 active:scale-95 whitespace-nowrap"
                   >
-                    {t('nav.employer')}
+                    Giriş Yap
                   </button>
                   <button
-                    onClick={() => onOpenAuth('signin', 'job_seeker')}
-                    className="bg-[#1f6d78] text-white px-3 md:px-6 py-2 rounded-xl font-bold text-xs md:text-sm hover:bg-[#155e68] transition-all active:scale-95 shadow-sm whitespace-nowrap"
+                    onClick={() => onOpenAuth('signup')}
+                    className="px-4 md:px-6 py-1.5 md:py-2 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf]/40 rounded-full font-bold text-[13px] md:text-[15px] transition-all hover:bg-[#1f6d78]/5 dark:hover:bg-[#2dd4bf]/5 active:scale-95 whitespace-nowrap"
                   >
-                    {t('nav.job_seeker')}
+                    Kayıt Ol
                   </button>
                 </div>
               )}

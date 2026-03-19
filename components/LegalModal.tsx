@@ -216,10 +216,10 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
     }, [onClose]);
 
     return createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md  fade-in ">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
             <div
                 ref={containerRef}
-                className="bg-white w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex overflow-hidden  zoom-in-95 "
+                className="bg-white w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex overflow-hidden"
             >
                 {/* Sidebar Navigation */}
                 <div className="w-64 bg-gray-50 border-r border-gray-100 flex flex-col hidden md:flex">

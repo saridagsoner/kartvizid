@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import SearchableSelect from './SearchableSelect';
 import { TURKEY_LOCATIONS } from '../locations';
+import { useLanguage } from '../context/LanguageContext';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -10,26 +11,24 @@ interface AuthModalProps {
     initialRole?: 'job_seeker' | 'employer';
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'signin', initialRole = 'job_seeker' }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'signin', initialRole }) => {
+    const { t } = useLanguage();
     const [mode, setMode] = useState<'signin' | 'signup' | 'reset'>(initialMode);
+    const [selectedRole, setSelectedRole] = useState<'job_seeker' | 'employer' | 'shop' | null>(initialRole || null);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [showResetSuccess, setShowResetSuccess] = useState(false); // Success for reset email sent
+    const [showResetSuccess, setShowResetSuccess] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
-
     const [error, setError] = useState<string | null>(null);
-    const [isEmployer, setIsEmployer] = useState(initialRole === 'employer');
     const [showPassword, setShowPassword] = useState(false);
-
-
 
     useEffect(() => {
         if (isOpen) {
             setMode(initialMode);
-            setIsEmployer(initialRole === 'employer');
-            if (mode === 'signin') {
+            setSelectedRole(initialRole || null);
+            if (initialMode === 'signin') {
                 const savedEmail = localStorage.getItem('rememberedEmail');
                 if (savedEmail) {
                     setEmail(savedEmail);
@@ -41,31 +40,31 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (mode === 'signup' && !selectedRole) {
+            setError(t('auth.error_select_role') || 'Lütfen bir hesap türü seçin.');
+            return;
+        }
         setLoading(true);
         setError(null);
 
         try {
             if (mode === 'reset') {
-                // Password Reset Logic
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
                     redirectTo: `${window.location.origin}/#reset-password`,
                 });
                 if (error) throw error;
                 setShowResetSuccess(true);
-
             } else if (mode === 'signup') {
-                const { error, data } = await supabase.auth.signUp({
+                const { error } = await supabase.auth.signUp({
                     email,
                     password,
                     options: {
                         data: {
-                            role: isEmployer ? 'employer' : 'job_seeker'
+                            role: selectedRole
                         }
                     }
                 });
                 if (error) throw error;
-
-                // Always show success message for email verification
                 setShowSuccess(true);
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
@@ -79,7 +78,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 } else {
                     localStorage.removeItem('rememberedEmail');
                 }
-
                 onClose();
             }
         } catch (err: any) {
@@ -92,9 +90,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[140] flex flex-col justify-end sm:justify-center items-center sm:p-4 bg-white dark:bg-gray-900 sm:bg-black/50 sm:backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-900 w-full h-full max-h-[100dvh] sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-none sm:shadow-2xl relative flex flex-col rounded-none sm:rounded-3xl overflow-hidden sm:border sm:border-gray-100 dark:border-gray-800">
-
+        <div className="fixed inset-0 z-[140] flex flex-col justify-end sm:justify-center items-center sm:p-4 bg-white dark:bg-black sm:bg-black/50 sm:backdrop-blur-sm">
+            <div className="bg-white dark:bg-black w-full h-full max-h-[100dvh] sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-none sm:shadow-2xl relative flex flex-col rounded-none sm:rounded-3xl overflow-hidden sm:border sm:border-gray-100 dark:border-white/10">
+                
                 {/* Close Button */}
                 <button
                     onClick={onClose}
@@ -106,177 +104,152 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                     </svg>
                 </button>
 
-                {/* Scrollable Content Area */}
-                <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar p-6 sm:p-10 pt-12 sm:pt-10 w-full pb-[100px] sm:pb-8 relative z-10">
+                <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar p-6 sm:p-10 pt-28 sm:pt-24 w-full pb-[100px] sm:pb-8 relative z-10">
                     <div className="text-center mb-8 px-2">
                         <h2 className="text-[28px] sm:text-[32px] font-black text-gray-900 dark:text-white mb-3 leading-tight tracking-tight">
-                            {mode === 'reset'
-                                ? 'Şifremi Unuttum'
-                                : (isEmployer
-                                    ? (mode === 'signin' ? 'İş Veren Girişi' : 'İş Veren Kaydı')
-                                    : (mode === 'signin' ? 'İş Arayan Girişi' : 'Hesap Oluştur')
-                                )
-                            }
+                            {mode === 'reset' ? t('auth.forgot_password') : (mode === 'signin' ? t('auth.signin_title') : t('auth.signup_title'))}
                         </h2>
                         <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-[0.15em] mx-auto max-w-[280px] sm:max-w-sm">
-                            {mode === 'reset'
-                                ? 'Şifrenizi sıfırlamak için e-posta adresinizi girin.'
-                                : (isEmployer
-                                    ? 'Firma profilinizi yönetmek için giriş yapın.'
-                                    : 'Kariyerinizde yeni bir sayfa açmak için hemen giriş yapın.'
-                                )
-                            }
+                            {mode === 'signup' ? t('auth.signup_desc') || 'Size uygun olan hesap türünü seçin aramıza katılın.' : t('auth.signin_desc') || 'Sisteme giriş yapmak için bilgilerinizi girin.'}
                         </p>
                     </div>
 
-                    <form id="auth-form" onSubmit={handleSubmit} className="flex flex-col gap-5 flex-1 w-full max-w-sm mx-auto">
-                        {error && (
-                            <div className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-[11px] sm:text-sm p-3.5 rounded-2xl font-bold border border-red-100 dark:border-red-500/20 text-center">
-                                {error}
+                    {mode === 'signup' && !selectedRole ? (
+                        <div className="space-y-8 max-w-sm mx-auto w-full mt-12">
+                            {[
+                                { id: 'job_seeker', title: t('auth.job_seeker_title'), desc: t('auth.job_seeker_desc'), icon: 'fi-rr-user' },
+                                { id: 'employer', title: t('auth.employer_title'), desc: t('auth.employer_desc'), icon: 'fi-rr-building' }
+                            ].map((role) => (
+                                <button
+                                    key={role.id}
+                                    onClick={() => setSelectedRole(role.id as any)}
+                                    className="w-full flex items-center gap-4 p-4 bg-white dark:bg-gray-800 border-2 border-black dark:border-white rounded-2xl transition-all group text-left shadow-sm active:scale-[0.98]"
+                                >
+                                    <div className="w-12 h-12 flex items-center justify-center text-2xl text-[#1f6d78] dark:text-[#2dd4bf] group-hover:scale-110 transition-transform">
+                                        <i className={`fi ${role.icon}`}></i>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-black text-[#1f6d78] dark:text-[#2dd4bf] text-base leading-tight">{role.title}</h3>
+                                        <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-0.5">{role.desc}</p>
+                                    </div>
+                                </button>
+                            ))}
+                            
+                             <div className="flex flex-row items-center justify-center gap-1.5 pt-6">
+                                <p className="text-[13.5px] text-gray-500 dark:text-gray-400 font-bold">{t('auth.have_account')}</p>
+                                <button
+                                    onClick={() => { setMode('signin'); setSelectedRole(null); }}
+                                    className="text-[13.5px] font-black text-[#1f6d78] dark:text-[#2dd4bf] hover:text-[#155e68] dark:hover:text-white transition-colors"
+                                >
+                                    {t('auth.signin_btn')}
+                                </button>
                             </div>
-                        )}
+                        </div>
+                    ) : (
+                        <form id="auth-form" onSubmit={handleSubmit} className="flex flex-col gap-5 flex-1 w-full max-w-sm mx-auto">
+                            {selectedRole && mode === 'signup' && (
+                                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-2xl mb-2 border border-dashed border-gray-200 dark:border-gray-700">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setSelectedRole(null)}
+                                        className="w-8 h-8 rounded-full bg-white dark:bg-black flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors shadow-sm"
+                                    >
+                                        <i className="fi fi-rr-arrow-small-left text-xl"></i>
+                                    </button>
+                                    <div>
+                                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">{t('auth.selected_type') || 'Seçilen Tür'}</p>
+                                        <h4 className="text-sm font-black text-gray-800 dark:text-white leading-none">
+                                            {selectedRole === 'job_seeker' ? t('nav.job_seeker') : selectedRole === 'employer' ? t('nav.employer') : t('nav.service_provider')}
+                                        </h4>
+                                    </div>
+                                </div>
+                            )}
 
-                        <div className={`flex flex-col gap-4 ${(mode === 'signin' || mode === 'reset') ? 'my-auto' : ''}`}>
+                            {error && (
+                                <div className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-[11px] sm:text-sm p-3.5 rounded-2xl font-bold border border-red-100 dark:border-red-500/20 text-center">
+                                    {error}
+                                </div>
+                            )}
+
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest ml-1 pl-1">E-posta</label>
+                                <label className="text-[10px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest ml-1 pl-1">{t('auth.email_label')}</label>
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="w-full bg-gray-50 dark:bg-gray-800/50 border-2 border-transparent focus:bg-white dark:focus:bg-gray-800 focus:border-[#1f6d78]/30 dark:focus:border-[#2dd4bf]/30 rounded-2xl px-5 py-4 text-[15px] sm:text-base text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-[#1f6d78]/10 transition-all placeholder:text-gray-400 placeholder:font-medium shadow-sm"
+                                    className="w-full bg-gray-50 dark:bg-black/50 border-2 border-transparent focus:bg-white dark:focus:bg-black focus:border-[#1f6d78]/30 dark:focus:border-[#2dd4bf]/30 rounded-2xl px-5 py-4 text-[15px] text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-[#1f6d78]/10 transition-all placeholder:text-gray-400"
                                     placeholder="ornek@email.com"
                                 />
                             </div>
 
                             {mode !== 'reset' && (
-                                <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest ml-1 pl-1">Şifre</label>
+                                 <div className="space-y-1.5">
+                                    <label className="text-[10px] font-black text-gray-700 dark:text-gray-300 uppercase tracking-widest ml-1 pl-1">{t('auth.password_label')}</label>
                                     <div className="relative">
                                         <input
                                             type={showPassword ? "text" : "password"}
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             required
-                                            className="w-full bg-gray-50 dark:bg-gray-800/50 border-2 border-transparent focus:bg-white dark:focus:bg-gray-800 focus:border-[#1f6d78]/30 dark:focus:border-[#2dd4bf]/30 rounded-2xl px-5 py-4 text-[15px] sm:text-base text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-[#1f6d78]/10 transition-all placeholder:text-gray-400 placeholder:font-medium shadow-sm pr-12"
+                                            className="w-full bg-gray-50 dark:bg-black/50 border-2 border-transparent focus:bg-white dark:focus:bg-black focus:border-[#1f6d78]/30 dark:focus:border-[#2dd4bf]/30 rounded-2xl px-5 py-4 text-[15px] text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-[#1f6d78]/10 transition-all placeholder:text-gray-400 pr-12"
                                             placeholder="••••••••"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-4 top-1/2 -/2 text-gray-400 hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] focus:outline-none transition-colors"
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#1f6d78] transition-colors"
                                         >
-                                            {showPassword ? (
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                                                    <circle cx="12" cy="12" r="3" />
-                                                </svg>
-                                            ) : (
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
-                                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
-                                                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
-                                                    <line x1="2" y1="2" x2="22" y2="22" />
-                                                </svg>
-                                            )}
+                                            <i className={`fi ${showPassword ? 'fi-rr-eye-crossed' : 'fi-rr-eye'} text-lg`}></i>
                                         </button>
                                     </div>
-
-                                    {mode === 'signin' && (
-                                        <div className="flex justify-end mt-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => { setMode('reset'); setError(null); }}
-                                                className="text-[11px] font-black text-[#1f6d78] dark:text-[#2dd4bf] hover:text-[#155e68] dark:hover:text-white transition-colors"
-                                            >
-                                                Şifremi Unuttum?
-                                            </button>
+                                     {mode === 'signin' && (
+                                        <div className="flex justify-end mt-1">
+                                            <button type="button" onClick={() => setMode('reset')} className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-wide">{t('auth.forgot_password')}?</button>
                                         </div>
                                     )}
                                 </div>
                             )}
 
-                            {mode === 'signin' && (
-                                <div className="flex items-center gap-3 px-2 mt-1">
-                                    <input
-                                        type="checkbox"
-                                        id="rememberMe"
-                                        checked={rememberMe}
-                                        onChange={(e) => setRememberMe(e.target.checked)}
-                                        className="w-4 h-4 rounded-md border-gray-300 dark:border-gray-600 text-[#1f6d78] focus:ring-[#1f6d78] focus:ring-offset-0 cursor-pointer accent-[#1f6d78] dark:bg-gray-800"
-                                    />
-                                    <label htmlFor="rememberMe" className="text-sm font-bold text-gray-600 dark:text-gray-300 cursor-pointer select-none">
-                                        Beni Hatırla
-                                    </label>
-                                </div>
-                            )}
-                        </div>
+                             <button
+                                 type="submit"
+                                 disabled={loading}
+                                 className="w-full bg-[#1f6d78] dark:bg-[#2dd4bf] text-white dark:text-gray-900 font-black py-4 rounded-2xl hover:bg-[#155e68] shadow-xl shadow-[#1f6d78]/10 active:scale-[0.98] transition-all disabled:opacity-50 mt-4 uppercase tracking-widest text-sm"
+                             >
+                                 {loading ? t('common.processing') || 'İşleniyor...' : (mode === 'signin' ? t('auth.signin_btn') : (mode === 'signup' ? t('auth.signup_btn') : t('auth.send_reset_link') || 'Sıfırlama Linki Gönder'))}
+                             </button>
 
-                        {!initialRole && mode === 'signup' && (
-                            <div className="flex items-center gap-3 px-2 mt-1">
-                                <input
-                                    type="checkbox"
-                                    id="isEmployer"
-                                    checked={isEmployer}
-                                    onChange={(e) => setIsEmployer(e.target.checked)}
-                                    className="w-4 h-4 rounded-md border-gray-300 dark:border-gray-600 text-[#1f6d78] focus:ring-[#1f6d78] focus:ring-offset-0 cursor-pointer accent-[#1f6d78] dark:bg-gray-800"
-                                />
-                                <label htmlFor="isEmployer" className="text-sm font-bold text-gray-600 dark:text-gray-300 cursor-pointer select-none">
-                                    İşveren Hesabı Oluştur (Firma Profili)
-                                </label>
+                             <div className="flex items-center justify-center gap-1.5 pt-4">
+                                <p className="text-[13px] text-gray-500 font-bold">{mode === 'signin' ? t('auth.no_account') : t('auth.have_account')}</p>
+                                <button
+                                    type="button"
+                                    onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); if (mode === 'signin') setSelectedRole(null); }}
+                                    className="text-[13px] font-black text-[#1f6d78] dark:text-[#2dd4bf]"
+                                >
+                                    {mode === 'signin' ? t('auth.signup_now') : t('auth.signin_btn')}
+                                </button>
                             </div>
-                        )}
-
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className={`w-full bg-[#1f6d78] dark:bg-[#2dd4bf] text-white dark:text-gray-900 font-black py-4 rounded-2xl hover:bg-[#155e68] dark:hover:bg-teal-300 shadow-xl shadow-[#1f6d78]/20 dark:shadow-[#2dd4bf]/20 active:[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[15px] uppercase tracking-widest leading-none mt-6 mb-2`}
-                        >
-                            {loading ? 'İşleniyor...' : (mode === 'signin' ? 'Giriş Yap' : (mode === 'reset' ? 'Sıfırlama Linki Gönder' : 'Kayıt Ol'))}
-                        </button>
-
-                        <div className="flex flex-row flex-wrap items-center justify-center gap-1.5 pt-4 pb-6 sm:pb-2">
-                            <p className="text-[13.5px] text-gray-500 dark:text-gray-400 font-bold">
-                                {mode === 'signin'
-                                    ? 'Hesabın yok mu?'
-                                    : (mode === 'reset' ? 'Giriş ekranına dön:' : 'Zaten hesabın var mı?')
-                                }
-                            </p>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    if (mode === 'signin') {
-                                        setMode('signup');
-                                    } else if (mode === 'signup' || mode === 'reset') {
-                                        setMode('signin');
-                                    }
-                                    setError(null);
-                                }}
-                                className="text-[13.5px] font-black text-[#1f6d78] dark:text-[#2dd4bf] hover:text-[#155e68] dark:hover:text-white transition-colors"
-                            >
-                                {mode === 'signin' ? 'Hemen Kayıt Ol' : 'Giriş Yap'}
-                            </button>
-                        </div>
-                    </form>
+                        </form>
+                    )}
 
                     {/* Success Overlay for SIGNUP */}
                     {showSuccess && (
-                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white dark:bg-gray-800">
+                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white dark:bg-black">
                             <div className="text-center p-8 w-full">
                                 <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
                                     ✉️
                                 </div>
-                                <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">
-                                    Kayıt Başarılı!
+                                 <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">
+                                    {t('auth.success_signup')}
                                 </h3>
                                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8 leading-relaxed max-w-xs mx-auto">
-                                    Lütfen e-posta adresinizi doğrulayın. Hesabınızı aktifleştirmek için mail kutunuzu kontrol edin.
+                                    {t('auth.success_signup_desc')}
                                 </p>
                                 <button
                                     onClick={onClose}
                                     className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-[#155e68] transition-all shadow-xl shadow-[#1f6d78]/20 active:"
                                 >
-                                    Tamam
+                                    {t('common.done') || 'Tamam'}
                                 </button>
                             </div>
                         </div>
@@ -289,17 +262,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                 <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
                                     📨
                                 </div>
-                                <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">
-                                    E-posta Gönderildi!
+                                 <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">
+                                    {t('auth.reset_sent') || 'E-posta Gönderildi!'}
                                 </h3>
                                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8 leading-relaxed max-w-xs mx-auto">
-                                    Şifre sıfırlama talimatlarını içeren bir e-posta gönderdik. Lütfen gelen kutunuzu kontrol edin.
+                                    {t('auth.reset_sent_desc') || 'Şifre sıfırlama talimatlarını içeren bir e-posta gönderdik. Lütfen gelen kutunuzu kontrol edin.'}
                                 </p>
                                 <button
                                     onClick={() => { setShowResetSuccess(false); setMode('signin'); }}
                                     className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-[#155e68] transition-all shadow-xl shadow-[#1f6d78]/20 active:"
                                 >
-                                    Giriş Yap
+                                    {t('auth.signin_btn')}
                                 </button>
                             </div>
                         </div>

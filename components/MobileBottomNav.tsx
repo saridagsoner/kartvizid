@@ -3,15 +3,13 @@ import { ContactRequest, NotificationItem } from '../types';
 import NotificationDropdown from './NotificationDropdown';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-
-// Rebuild verified
+import SearchOverlay from './SearchOverlay';
+import { CV } from '../types';
 
 interface MobileBottomNavProps {
-    user: any;
     onSearch: (query: string) => void;
     onCreateCV: () => void;
     onOpenCompanyProfile?: () => void;
-    hasCV?: boolean;
     userPhotoUrl?: string;
     notificationCount?: number;
     notifications?: (ContactRequest | NotificationItem)[];
@@ -21,19 +19,19 @@ interface MobileBottomNavProps {
     onOpenProfile?: (userId: string, role?: string) => void;
     onOpenAuth: (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => void;
     signOut: () => void;
-    onOpenMenu?: () => void;
     isHomeView?: boolean;
     onGoHome?: () => void;
     isCreateOpen?: boolean;
     isProfileOpen?: boolean;
+    cvList?: CV[];
+    onOpenFilter?: () => void;
+    onOpenMenu?: () => void;
 }
 
 const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
-    user,
     onSearch,
     onCreateCV,
     onOpenCompanyProfile,
-    hasCV,
     userPhotoUrl,
     notificationCount = 0,
     notifications = [],
@@ -42,95 +40,78 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     onMarkAllRead,
     onOpenProfile,
     onOpenAuth,
-    signOut,
-    onOpenMenu,
     isHomeView = true,
     onGoHome,
     isCreateOpen = false,
-    isProfileOpen = false
+    isProfileOpen = false,
+    cvList = [],
+    onOpenFilter
 }) => {
+    const { user } = useAuth();
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState<'home' | 'notifications' | 'profile' | 'search' | 'create' | null>(null);
     const isEmployer = user?.user_metadata?.role === 'employer';
-    const [query, setQuery] = useState('');
-    const { t } = useLanguage();
 
-    // Close sheets when clicking outside or navigating
+    // Close sheets when navigating away from home
     useEffect(() => {
-        const handleScroll = () => {
-            // Optional: Hide/Show logic on scroll could go here
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+        if (!isHomeView && activeTab !== null) {
+            setActiveTab(null);
+        }
+    }, [isHomeView, activeTab]);
 
     const toggleTab = (tab: 'notifications' | 'profile' | 'search' | 'create') => {
         if (activeTab === tab) {
             setActiveTab(null);
         } else {
-            if (onGoHome) onGoHome();
             setActiveTab(tab);
         }
     };
 
+    const isSearchActive = activeTab === 'search';
     const isNotifActive = activeTab === 'notifications';
     const isCreateActiveTab = isCreateOpen || activeTab === 'create';
     const isProfileActiveTab = isProfileOpen || activeTab === 'profile';
-    const hasActiveBottomTab = isNotifActive || isCreateActiveTab || isProfileActiveTab;
-
-    // First button (Menu/Kartvizid) becomes Home if NOT on home OR if ANY bottom tab is active
-    const isFirstButtonHome = !isHomeView || hasActiveBottomTab;
-
-    const renderHomeIcon = () => (
-        <div className="h-8 flex items-center justify-center group-active:scale-95 transition-transform">
-            <span className="inline-block transform rotate-[12deg] origin-center text-[#1f6d78] font-black text-[21px] leading-none rounded-font tracking-tight">d</span>
-        </div>
-    );
+    const hasActiveBottomTab = isSearchActive || isNotifActive || isCreateActiveTab || isProfileActiveTab;
 
     return (
         <>
             {/* Fixed Bottom Bar */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg z-[150] sm:hidden pb-safe border-t-[0.5px] border-gray-200/60 dark:border-gray-800/60 shadow-[0_-1px_3px_rgba(0,0,0,0.02)]">
-                <div className="flex items-center justify-around h-16 px-2 pb-1.5">
-                    {/* Menu Button (Replaces Home) - Back to First Position */}
+            <div className="fixed bottom-0 left-0 right-0 z-[100] sm:hidden">
+                <div className="bg-white/95 dark:bg-black/95 backdrop-blur-xl border-t border-gray-100 dark:border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.3)] flex items-center justify-between px-2 pb-safe h-[72px]">
+                    {/* Home Button */}
                     <button
                         onClick={() => {
-                            if (isFirstButtonHome) {
-                                setActiveTab(null);
-                                if (onGoHome) onGoHome();
-                            } else if (onOpenMenu) {
-                                setActiveTab(null);
-                                onOpenMenu();
-                            }
+                            setActiveTab(null);
+                            if (onGoHome) onGoHome();
                         }}
-                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 group transition-transform duration-200 active:scale-90`}
+                        className={`flex flex-col items-center justify-center py-1 relative flex-1 transition-transform duration-200 active:scale-90`}
                     >
-                        {renderHomeIcon()}
-                        <span className="text-[10px] font-medium text-[#1f6d78] leading-none">
-                            {isFirstButtonHome ? 'Ana Sayfa' : 'Kartvizid'}
+                        <div className="flex items-center justify-center text-black dark:text-white translate-y-[2px]">
+                            <i className={`fi ${isHomeView && !hasActiveBottomTab ? 'fi-sr-home' : 'fi-rr-home'} text-[22px]`}></i>
+                        </div>
+                        <span className="text-[10px] font-black mt-1 transition-colors text-black dark:text-white">
+                            {t('menu.home')}
+                        </span>
+                    </button>
+                    
+                    {/* Search Button */}
+                    <button
+                        onClick={() => toggleTab('search')}
+                        className={`flex flex-col items-center justify-center py-1 relative flex-1 transition-transform duration-200 active:scale-90`}
+                    >
+                        <div className="flex items-center justify-center text-black dark:text-white translate-y-[2px]">
+                            <i className={`fi ${isSearchActive ? 'fi-sr-search' : 'fi-rr-search'} text-[22px]`}></i>
+                        </div>
+                        <span className="text-[10px] font-black mt-1 transition-colors text-black dark:text-white">
+                            {t('menu.search')}
                         </span>
                     </button>
 
-                    {/* Notifications Button */}
-                    <button
-                        onClick={() => toggleTab('notifications')}
-                        className={`relative flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isNotifActive ? 'text-black dark:text-white' : 'text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white'}`}
-                    >
-                        <div className={`h-8 flex items-center justify-center ${isNotifActive ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>
-                            <i className={`fi ${isNotifActive ? 'fi-sr-bell' : 'fi-rr-bell'} text-[20.5px] leading-none`}></i>
-                        </div>
-                        <span className="text-[10px] font-medium leading-none">Bildirim</span>
-                        {notificationCount > 0 && (
-                            <span className="absolute top-2 right-4 w-3.5 h-3.5 bg-red-500 border-2 border-white rounded-full text-[8px] text-white flex items-center justify-center font-bold">
-                                {notificationCount}
-                            </span>
-                        )}
-                    </button>
-
                     {/* Main Action Button (Create/Edit) */}
-                    <button
+                   <button
                         onClick={() => {
                             if (!user) {
-                                toggleTab('create');
+                                onOpenAuth('signup');
                             } else {
                                 setActiveTab(null);
                                 if (isEmployer && onOpenCompanyProfile) {
@@ -140,252 +121,95 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                 }
                             }
                         }}
-                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isCreateActiveTab ? 'text-black dark:text-white' : 'text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white'}`}
+                        className={`flex flex-col items-center justify-center py-1 relative flex-1 transition-transform duration-200 active:scale-90`}
                     >
-                        <div className={`h-8 flex items-center justify-center ${isCreateActiveTab ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>
-                            <i className={`fi ${isCreateActiveTab ? 'fi-sr-add' : 'fi-rr-add'} text-[20.5px] leading-none`}></i>
+                        <div className={`flex items-center justify-center text-black dark:text-white transition-all ${isCreateActiveTab ? 'scale-110' : ''} translate-y-[2px]`}>
+                            <i className={`fi ${isCreateActiveTab ? 'fi-sr-add' : 'fi-rr-add'} text-[22px]`}></i>
                         </div>
-                        <span className="text-[10px] font-medium leading-none text-center">Oluştur</span>
+                        <span className="text-[10px] font-black mt-1 transition-colors text-black dark:text-white">
+                            {t('menu.create')}
+                        </span>
+                    </button>
+
+                    {/* Notifications Button */}
+                    <button
+                        onClick={() => {
+                            if (!user) {
+                                onOpenAuth('signup');
+                            } else {
+                                toggleTab('notifications');
+                            }
+                        }}
+                        className={`flex flex-col items-center justify-center py-1 relative flex-1 transition-transform duration-200 active:scale-90`}
+                    >
+                        <div className="flex items-center justify-center text-black dark:text-white translate-y-[2px]">
+                            <i className={`fi ${isNotifActive ? 'fi-sr-bell' : 'fi-rr-bell'} text-[22px]`}></i>
+                        </div>
+                        <span className="text-[10px] font-black mt-1 transition-colors text-black dark:text-white">
+                            {t('menu.notifications')}
+                        </span>
+                        {notificationCount > 0 && (
+                            <span className="absolute top-1.5 right-2 w-4 h-4 bg-red-500 border-2 border-white dark:border-black rounded-full text-[8px] text-white flex items-center justify-center font-black">
+                                {notificationCount}
+                            </span>
+                        )}
                     </button>
 
                     {/* Profile Button */}
                     <button
                         onClick={() => {
                             if (!user) {
-                                toggleTab('profile');
+                                onOpenAuth('signup');
                             } else {
                                 setActiveTab(null);
                                 if (onOpenProfile) onOpenProfile(user.id, user.user_metadata?.role);
                             }
                         }}
-                        className={`flex flex-col items-center justify-center w-16 h-full space-y-0.5 transition-transform duration-200 active:scale-90 ${isProfileActiveTab ? 'text-black dark:text-white' : 'text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white'}`}
+                        className={`flex flex-col items-center justify-center py-1 relative flex-1 transition-transform duration-200 active:scale-90`}
                     >
-                        <div className={`h-8 flex items-center justify-center ${isProfileActiveTab ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>
+                        <div className="flex items-center justify-center text-black dark:text-white translate-y-[2px]">
                             {userPhotoUrl ? (
-                                <div className={`w-6 h-6 rounded-full overflow-hidden border ${isProfileActiveTab ? 'border-black dark:border-white' : 'border-gray-200'}`}>
+                                <div className={`w-7 h-7 rounded-full overflow-hidden border-2 ${isProfileActiveTab ? 'border-black dark:border-white' : 'border-transparent'}`}>
                                     <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
                                 </div>
                             ) : (
-                                <i className={`fi ${isProfileActiveTab ? 'fi-sr-circle-user' : 'fi-rr-circle-user'} text-[20.5px] leading-none`}></i>
+                                <i className={`fi ${isProfileActiveTab ? 'fi-sr-circle-user' : 'fi-rr-circle-user'} text-[22px]`}></i>
                             )}
                         </div>
-                        <span className={`text-[10px] font-medium leading-none ${isProfileActiveTab ? 'text-black dark:text-white' : 'text-black/70 dark:text-white/70'}`}>Profil</span>
+                        <span className="text-[10px] font-black mt-1 transition-colors text-black dark:text-white">
+                            {t('menu.profile')}
+                        </span>
                     </button>
                 </div>
             </div>
 
-            {/* Search Overlay - Shows at Top (Covering Header) */}
-
-
-            {/* Bottom Sheets Overlay Background*/}
-            {(activeTab === 'notifications' || activeTab === 'profile' || activeTab === 'search' || activeTab === 'create') && (
-                <div
-                    className="fixed inset-0 bg-black/20 z-[90] sm:hidden"
-                    onClick={() => setActiveTab(null)}
+            {/* Overlays */}
+            {activeTab === 'search' && (
+                <SearchOverlay 
+                    onClose={() => setActiveTab(null)}
+                    cvList={cvList || []}
+                    onOpenProfile={onOpenProfile || (() => {})}
+                    onOpenFilter={onOpenFilter}
                 />
             )}
 
-            {/* Notifications Sheet - Full Screen */}
-            {activeTab === 'notifications' && (
-                user ? (
+            {isNotifActive && user && (
+                <>
+                    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[80] sm:hidden" onClick={() => setActiveTab(null)} />
                     <NotificationDropdown
                         onClose={() => setActiveTab(null)}
                         notifications={notifications}
-                        onAction={onNotificationAction || (() => { })}
+                        onAction={onNotificationAction || (() => {})}
                         onMarkRead={onMarkNotificationRead}
                         onMarkAllRead={onMarkAllRead}
                         onOpenProfile={onOpenProfile}
                         mobile={true}
                     />
-                ) : (
-                    <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col sm:hidden">
-                        {/* Close Button Only */}
-                        <div className="absolute top-4 right-4 z-10">
-                            <button onClick={() => setActiveTab(null)} className="p-2 bg-gray-100/50 dark:bg-gray-800/50 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 backdrop-blur-sm transition-colors">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                            </button>
-                        </div>
-
-                        {/* Marketing Content */}
-                        <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col justify-center items-center">
-                            <h3 className="text-[32px] leading-tight font-black text-gray-900 dark:text-white mb-10 rounded-font tracking-tight text-center">
-                                Kariyeriniz İçin Ağ<br />Kurun
-                            </h3>
-
-                            <div className="space-y-6 mb-10 w-full text-center">
-                                <div className="w-full flex flex-col items-center">
-                                    <h4 className="font-bold text-[#1f6d78] dark:text-[#2dd4bf] mb-2 text-xl">
-                                        İş Arayanlar İçin
-                                    </h4>
-                                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed max-w-[280px]">
-                                        Potansiyel iş verenlerin size direkt ulaşmasını ve teklifleriyle kariyerinizi ileri taşımasını sağlayın.
-                                    </p>
-                                </div>
-
-                                <div className="w-full flex flex-col items-center">
-                                    <h4 className="font-bold text-[#1f6d78] dark:text-[#2dd4bf] mb-2 text-xl">
-                                        İş Verenler İçin
-                                    </h4>
-                                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed max-w-[280px]">
-                                        Açık pozisyonlarınız için en uygun adaylarla hemen iletişime geçin ve güvenilir bir iletişim ağı oluşturun.
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="w-full flex flex-col gap-3">
-                                <button
-                                    onClick={() => {
-                                        setActiveTab(null);
-                                        onOpenAuth('signup', 'job_seeker');
-                                    }}
-                                    className="w-full bg-[#1f6d78] text-white font-bold py-3.5 rounded-xl hover:bg-[#155e68] active:scale-[0.98] transition-all shadow-lg shadow-[#1f6d78]/20"
-                                >
-                                    Hemen CV Oluştur
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setActiveTab(null);
-                                        onOpenAuth('signup', 'employer');
-                                    }}
-                                    className="w-full bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold py-3.5 rounded-xl active:scale-[0.98] transition-all"
-                                >
-                                    Firma Profili Oluştur
-                                </button>
-                                <p className="mt-2 text-[13px] text-center text-gray-500 pb-2">
-                                    Zaten üye misin? <button onClick={() => { setActiveTab(null); onOpenAuth('signin'); }} className="font-bold text-gray-900 dark:text-white hover:underline underline-offset-2">Giriş Yap</button>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                )
-            )}
-            {/* Create Sheet - Full Screen (Unauthenticated) */}
-            {activeTab === 'create' && !user && (
-                <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col sm:hidden pb-[84px]">
-                    {/* Close Button Only */}
-                    <div className="absolute top-4 right-4 z-10">
-                        <button onClick={() => setActiveTab(null)} className="p-2 bg-gray-100/50 dark:bg-gray-800/50 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 backdrop-blur-sm transition-colors">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                        </button>
-                    </div>
-
-                    {/* Marketing Content */}
-                    <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col justify-center">
-                        <h3 className="text-2xl sm:text-3xl leading-tight font-black text-gray-900 dark:text-white mb-6 rounded-font tracking-tight text-center mt-6">
-                            Dijital Kimliğinizi<br />Oluşturun
-                        </h3>
-
-                        <div className="space-y-3 mb-6">
-                            <div className="px-2 py-2 rounded-2xl border border-transparent">
-                                <h4 className="font-bold text-[#1f6d78] dark:text-[#2dd4bf] mb-1 text-base sm:text-lg">
-                                    İş Arayanlar İçin
-                                </h4>
-                                <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed">
-                                    Hemen ücretsiz bir CV oluşturun ve yeteneklerinizi on binlerce iş verene kolayca sergileyin.
-                                </p>
-                            </div>
-
-                            <div className="px-2 py-2 rounded-2xl border border-transparent">
-                                <h4 className="font-bold text-[#1f6d78] dark:text-[#2dd4bf] mb-1 text-base sm:text-lg">
-                                    İş Verenler İçin
-                                </h4>
-                                <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed">
-                                    Firma profilinizi saniyeler içinde kurun ve aradığınız o mükemmel yeteneği hemen bulmaya başlayın.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-2.5">
-                            <button
-                                onClick={() => {
-                                    setActiveTab(null);
-                                    onOpenAuth('signup', 'job_seeker');
-                                }}
-                                className="w-full bg-[#1f6d78] text-white font-bold py-3 sm:py-3.5 rounded-xl hover:bg-[#155e68] active:scale-[0.98] transition-all shadow-lg shadow-[#1f6d78]/20 text-sm sm:text-base"
-                            >
-                                Hemen CV Oluştur
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setActiveTab(null);
-                                    onOpenAuth('signup', 'employer');
-                                }}
-                                className="w-full bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold py-3 sm:py-3.5 rounded-xl active:scale-[0.98] transition-all text-sm sm:text-base"
-                            >
-                                Firma Profili Oluştur
-                            </button>
-                            <p className="mt-4 text-[13px] text-center text-gray-500">
-                                Zaten üye misin? <button onClick={() => { setActiveTab(null); onOpenAuth('signin'); }} className="font-bold text-gray-900 dark:text-white hover:underline underline-offset-2 transition-colors">Giriş Yap</button>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Profile Sheet - Full Screen (Unauthenticated) */}
-            {activeTab === 'profile' && !user && (
-                <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col sm:hidden pb-[84px]">
-                    {/* Close Button Only (No Header Text) */}
-                    <div className="absolute top-4 right-4 z-10">
-                        <button onClick={() => setActiveTab(null)} className="p-2 bg-gray-100/50 dark:bg-gray-800/50 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 backdrop-blur-sm transition-colors">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                        </button>
-                    </div>
-
-                    {/* Marketing Content */}
-                    <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col justify-center">
-                        <h3 className="text-2xl sm:text-3xl leading-tight font-black text-gray-900 dark:text-white mb-6 rounded-font tracking-tight text-center mt-6">
-                            Kartvizid.com'a Katıl
-                        </h3>
-
-                        <div className="space-y-3 mb-6">
-                            <div className="px-2 py-2 rounded-2xl border border-transparent">
-                                <h4 className="font-bold text-[#1f6d78] dark:text-[#2dd4bf] mb-1 text-base sm:text-lg">
-                                    İş Arayanlar İçin
-                                </h4>
-                                <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed">
-                                    Ücretsiz CV'nizi oluşturun ve Kartvizid sizin yerinize çalışsın. Siz tatildeyken, uyurken veya başka işlerle ilgilenirken bile CV'niz iş verenler tarafından görüntülenebilir ve <strong>sürpriz iş teklifleri</strong> alabilirsiniz. CV'nizi PDF olarak indirin, QR kod ile her yerde paylaşın!
-                                </p>
-                            </div>
-
-                            <div className="px-2 py-2 rounded-2xl border border-transparent">
-                                <h4 className="font-bold text-[#1f6d78] dark:text-[#2dd4bf] mb-1 text-base sm:text-lg">
-                                    İş Verenler İçin
-                                </h4>
-                                <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed">
-                                    Aradığınız o "kusursuz" yeteneği on binlerce CV arasından saniyeler içinde filtreleyin. <strong>Gelecekteki çalışanlarınızı kaydedin</strong>, CV'lerini tek tıkla cihazınıza indirin ve anında iletişime geçin. Doğru yeteneği bulmak hiç bu kadar kolay olmamıştı!
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="w-full flex flex-col gap-2.5">
-                            <button
-                                onClick={() => {
-                                    setActiveTab(null);
-                                    onOpenAuth('signup', 'job_seeker');
-                                }}
-                                className="w-full bg-[#1f6d78] text-white font-bold py-3 sm:py-3.5 rounded-xl hover:bg-[#155e68] active:scale-[0.98] transition-all shadow-lg shadow-[#1f6d78]/20 text-sm sm:text-base"
-                            >
-                                Ücretsiz CV Oluştur, Keşfedil
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setActiveTab(null);
-                                    onOpenAuth('signup', 'employer');
-                                }}
-                                className="w-full bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf] font-bold py-3 sm:py-3.5 rounded-xl active:scale-[0.98] transition-all text-sm sm:text-base"
-                            >
-                                İş Veren Profilini Aç
-                            </button>
-                            <p className="mt-4 text-[13px] text-center text-gray-500">
-                                Zaten üye misin? <button onClick={() => { setActiveTab(null); onOpenAuth('signin'); }} className="font-bold text-gray-900 dark:text-white hover:underline underline-offset-2 transition-colors">Giriş Yap</button>
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                </>
             )}
         </>
     );
 };
 
 export default MobileBottomNav;
+

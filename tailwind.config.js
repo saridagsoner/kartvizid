@@ -11,10 +11,13 @@ export default {
     theme: {
         extend: {
             colors: {
+                gray: {
+                    900: '#000000',
+                },
                 dark: {
-                    bg: '#111827', // Gray-900
-                    card: '#1F2937', // Gray-800 
-                    border: '#374151', // Gray-700
+                    bg: '#000000', // Pure Black
+                    card: '#111827', // Gray-900 (previously bg)
+                    border: '#1F2937', // Gray-800
                     text: '#F9FAFB', // Gray-50
                     muted: '#9CA3AF', // Gray-400
                 }

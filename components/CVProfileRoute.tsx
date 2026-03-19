@@ -69,7 +69,46 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
                         throw fetchError;
                     }
                     if (data) {
-                        setCv(data as CV);
+                        const mapped: CV = {
+                            id: data.id,
+                            slug: data.slug,
+                            userId: data.user_id,
+                            name: data.name || '',
+                            profession: data.profession || '',
+                            city: data.city || '',
+                            experienceYears: data.experience_years || 0,
+                            language: data.language || '',
+                            languageLevel: data.language_level || '',
+                            photoUrl: data.photo_url || '',
+                            salaryMin: data.salary_min || 0,
+                            salaryMax: data.salary_max || 0,
+                            about: data.about || '',
+                            skills: data.skills || [],
+                            education: data.education || '',
+                            educationLevel: data.education_level || '',
+                            graduationStatus: data.graduation_status || '',
+                            workType: data.work_type || '',
+                            employmentType: data.employment_type || '',
+                            militaryStatus: data.military_status || '',
+                            maritalStatus: data.marital_status || '',
+                            disabilityStatus: data.disability_status || '',
+                            noticePeriod: data.notice_period || '',
+                            travelStatus: data.travel_status || '',
+                            driverLicense: data.driver_license || [],
+                            views: data.views || 0,
+                            email: data.email,
+                            phone: data.phone,
+                            isEmailPublic: data.is_email_public,
+                            isPhonePublic: data.is_phone_public,
+                            workingStatus: data.working_status,
+                            references: data.references || [],
+                            educationDetails: data.educationDetails || [],
+                            workExperience: data.workExperience || [],
+                            internshipDetails: data.internshipDetails || [],
+                            languageDetails: data.languageDetails || [],
+                            certificates: data.certificates || []
+                        };
+                        setCv(mapped);
                     } else {
                         setError('CV bulunamadı.');
                     }
@@ -97,7 +136,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
 
     if (loading) {
         return (
-            <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 ">
+            <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 ">
                 <div className="w-16 h-16 border-4 border-[#1f6d78]/20 border-t-[#1f6d78] rounded-full animate-spin"></div>
             </div>
         );
@@ -105,7 +144,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
 
     if (error || !cv) {
         return (
-            <div className="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 ">
+            <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 ">
                 <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
                     <div className="text-4xl mb-4">😢</div>
                     <h2 className="text-xl font-black text-gray-900 dark:text-white mb-2">Hata</h2>

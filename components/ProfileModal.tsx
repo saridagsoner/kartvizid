@@ -24,7 +24,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   const [showRoleWarning, setShowRoleWarning] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [showWarning, setShowWarning] = useState<{ show: boolean, message: string }>({ show: false, message: '' });
-  const isOwner = user?.id === cv.userId;
+  const isOwner = user ? user.id === cv.userId : false;
 
   // Check if saved on mount
   React.useEffect(() => {
@@ -76,7 +76,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       } else {
         // Fallback for desktop: Copy to clipboard
         await navigator.clipboard.writeText(window.location.href);
-        setShowWarning({ show: true, message: 'Link başarıyla kopyalandı!' });
+        setShowWarning({ show: true, message: t('common.link_copied') });
       }
     } catch (err) {
       console.log('Share canceled or not supported');
@@ -165,21 +165,21 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
   );
 
   return (
-    <div className="fixed inset-0 z-[130] flex sm:items-center sm:justify-center sm:p-4 pb-[64px] sm:pb-0 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 ">
+    <div className="fixed top-0 left-0 right-0 bottom-16 z-[250] flex sm:items-center sm:justify-center sm:p-4 bg-white dark:bg-black sm:bg-black/30 sm:dark:bg-black/60">
       <SEO
         title={`${cv.name} - ${cv.profession}`}
         description={cv.about ? cv.about.substring(0, 150) + '...' : `${cv.name} adlı kullanıcının özgeçmişini inceleyin.`}
         image={cv.photoUrl}
       />
-      <div className="w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-gray-900 border-none sm:border border-gray-100 dark:border-gray-800">
+      <div className="w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-black border-none sm:border border-gray-100 dark:border-white/10">
         {/* Header */}
-        <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-gray-900 shrink-0">
-          <div className="p-4 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 gap-4">
+        <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-black shrink-0">
+          <div className="p-4 sm:p-8 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-white dark:bg-black gap-4">
             <button
               onClick={onClose}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all active:scale-95 sm:order-2"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all active:scale-95 sm:order-2"
             >
-              <span className="sr-only">Kapat</span>
+              <span className="sr-only">{t('profile.close')}</span>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="block sm:hidden">
                 <path d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
@@ -187,8 +187,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             </button>
 
             <div className="flex-1 sm:order-1 text-center sm:text-left">
-              <h2 className="text-base sm:text-2xl font-black text-black dark:text-white tracking-tight truncate">{t('profile.cv_title')}</h2>
-              <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em] opacity-80">{t('profile.cv_subtitle')}</p>
+              <h2 className="text-[19px] sm:text-2xl font-black text-black dark:text-white tracking-tight truncate">{t('profile.cv_title')}</h2>
             </div>
 
             <div className="w-10 sm:hidden"></div> {/* Spacer for centering title on mobile */}
@@ -196,7 +195,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
         </div>
 
         {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-10 custom-scrollbar space-y-8 sm:space-y-12 bg-white dark:bg-gray-900">
+        <div className="flex-1 overflow-y-auto p-5 sm:p-10 custom-scrollbar space-y-8 sm:space-y-12 bg-white dark:bg-black">
 
           {/* Bölüm 1: Temel Bilgiler */}
           <section>
@@ -204,8 +203,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             <div className="flex flex-col gap-6 pt-4">
               <div className="flex flex-row gap-4 sm:gap-8 items-start">
                 <div className="shrink-0">
-                  <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-3 mb-1.5 block">FOTOĞRAF</span>
-                  <div className="w-20 h-28 sm:w-32 sm:h-44 rounded-xl sm:rounded-[2.5rem] border border-gray-100 dark:border-gray-700 overflow-hidden shadow-xl bg-gray-50 dark:bg-gray-800 mt-2.5">
+                  <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-3 mb-1.5 block">{t('company.logo')}</span>
+                  <div className="w-20 h-28 sm:w-32 sm:h-44 rounded-xl sm:rounded-[2.5rem] border border-gray-100 dark:border-white/10 overflow-hidden shadow-xl bg-gray-50 dark:bg-gray-900 mt-2.5">
                     <img src={cv.photoUrl} alt={cv.name} className="w-full h-full object-cover" />
                   </div>
                 </div>
@@ -213,8 +212,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   <InfoTag label={t('form.fullname')} value={cv.name} />
                   <InfoTag label={t('form.city')} value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} />
                   <InfoTag label={t('form.profession')} value={cv.profession} />
-                  <InfoTag label={t('form.experience')} value={`${cv.experienceYears} Yıl${cv.experienceMonths ? ' ' + cv.experienceMonths + ' Ay' : ''}`} icon="fi fi-rr-briefcase" />
-                  {cv.birthDate && <InfoTag label="Doğum Tarihi" value={cv.birthDate} />}
+                  <InfoTag label={t('form.experience')} value={`${cv.experienceYears} ${t('common.year')}${cv.experienceMonths ? ' ' + cv.experienceMonths + ' ' + t('common.month') : ''}`} icon="fi fi-rr-briefcase" />
+                  {cv.birthDate && <InfoTag label={t('form.birth_date')} value={cv.birthDate} />}
                   {(cv.personalDetails?.maritalStatus || cv.maritalStatus) && (
                     <InfoTag label={t('form.marital')} value={cv.personalDetails?.maritalStatus || cv.maritalStatus} />
                   )}
@@ -227,7 +226,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           <section>
             <SectionTitle title={t('profile.about')} />
             <div className="px-1 text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 leading-relaxed pt-2">
-              {cv.about || 'Kullanıcı henüz kendini tanıtan bir yazı eklememiş.'}
+              {cv.about || t('errors.no_about')}
             </div>
           </section>
 
@@ -244,11 +243,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   </span>
                 );
               })()} />
-              <InfoTag label={t('form.salary_exp')} value={`${(cv.salaryMin || 0).toLocaleString('tr-TR')}₺ - ${(cv.salaryMax || 0).toLocaleString('tr-TR')}₺`} />
-              <InfoTag label={t('form.work_model')} value={cv.workType || 'Ofis'} />
-              <InfoTag label={t('form.employment_type')} value={cv.employmentType || 'Tam Zamanlı'} />
-              <InfoTag label="Tercih Edilen Şehir" value={cv.preferredCity || '-'} />
-              <InfoTag label="Tercih Edilen Alanlar" value={cv.preferredRoles?.length ? cv.preferredRoles.join(', ') : '-'} />
+               <InfoTag label={t('form.salary_exp')} value={`${(cv.salaryMin || 0).toLocaleString('tr-TR')}₺ - ${(cv.salaryMax || 0).toLocaleString('tr-TR')}₺`} />
+              <InfoTag label={t('form.work_model')} value={cv.workType || t('work.office')} />
+              <InfoTag label={t('form.employment_type')} value={cv.employmentType || t('emp.full_time')} />
+              <InfoTag label={t('form.preferred_city')} value={cv.preferredCity || '-'} />
+              <InfoTag label={t('form.preferred_roles')} value={cv.preferredRoles?.length ? cv.preferredRoles.join(', ') : '-'} />
             </div>
           </section>
 
@@ -261,13 +260,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   <React.Fragment key={work.id}>
                     <div className="grid grid-cols-2 gap-x-3 gap-y-4">
                       <div className="col-span-2 sm:col-span-1">
-                        <InfoTag label="POZİSYON" value={work.role} />
+                        <InfoTag label={t('form.position')} value={work.role} />
                       </div>
                       <div className="col-span-2 sm:col-span-1">
-                        <InfoTag label="ŞİRKET" value={work.company} />
+                        <InfoTag label={t('form.institution')} value={work.company} />
                       </div>
                       <div className="col-span-2">
-                        <InfoTag label="ÇALIŞMA DÖNEMİ" value={`${work.startDate} - ${work.isCurrent ? t('common.ongoing') : work.endDate}`} />
+                        <InfoTag label={t('form.work_period')} value={`${work.startDate} - ${work.isCurrent ? t('common.ongoing') : work.endDate}`} />
                       </div>
                     </div>
                     {idx !== cv.workExperience.length - 1 && (
@@ -277,26 +276,26 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 ))}
               </div>
             ) : (
-              <p className="text-sm font-bold text-gray-400 italic">Henüz iş deneyimi eklenmemiş.</p>
+              <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_exp')}</p>
             )}
           </section>
 
           {/* Bölüm 2.6: Staj Deneyimi */}
           <section>
-            <SectionTitle title="Staj Deneyimi" />
+            <SectionTitle title={t('form.internships')} />
             {cv.internshipDetails && cv.internshipDetails.length > 0 ? (
               <div className="space-y-6 pt-4">
                 {cv.internshipDetails.map((intern, idx) => (
                   <React.Fragment key={intern.id}>
                     <div className="grid grid-cols-2 gap-x-3 gap-y-4">
                       <div className="col-span-2 sm:col-span-1">
-                        <InfoTag label="STAJ POZİSYONU" value={intern.role} />
+                        <InfoTag label={t('form.intern_role')} value={intern.role} />
                       </div>
                       <div className="col-span-2 sm:col-span-1">
-                        <InfoTag label="ŞİRKET" value={intern.company} />
+                        <InfoTag label={t('form.institution')} value={intern.company} />
                       </div>
                       <div className="col-span-2">
-                        <InfoTag label="STAJ DÖNEMİ" value={`${intern.startDate} - ${intern.isCurrent ? (t('common.ongoing') || 'Devam Ediyor') : intern.endDate}`} />
+                        <InfoTag label={t('form.intern_period')} value={`${intern.startDate} - ${intern.isCurrent ? t('common.ongoing') : intern.endDate}`} />
                       </div>
                     </div>
                     {idx !== cv.internshipDetails.length - 1 && (
@@ -306,7 +305,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 ))}
               </div>
             ) : (
-              <p className="text-sm font-bold text-gray-400 italic">Henüz staj deneyimi eklenmemiş.</p>
+              <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_intern')}</p>
             )}
           </section>
 
@@ -323,13 +322,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                       <React.Fragment key={edu.id}>
                         <div className="grid grid-cols-2 gap-x-3 gap-y-4">
                           <div className="col-span-2 sm:col-span-1">
-                            <InfoTag label="ÜNİVERSİTE" value={edu.university} />
+                            <InfoTag label={t('form.university')} value={edu.university} />
                           </div>
                           <div className="col-span-2 sm:col-span-1">
-                            <InfoTag label="BÖLÜM" value={`${edu.department} (${resolveValue(edu.level)})`} />
+                            <InfoTag label={t('form.department')} value={`${edu.department} (${resolveValue(edu.level)})`} />
                           </div>
                           <div className="col-span-2">
-                            <InfoTag label="DURUM" value={edu.status || resolveValue(edu.level)} />
+                            <InfoTag label={t('form.status')} value={edu.status || resolveValue(edu.level)} />
                           </div>
                         </div>
                         {idx !== cv.educationDetails.length - 1 && (
@@ -342,10 +341,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   // Fallback to legacy
                   <div className="grid grid-cols-2 gap-x-3 gap-y-4 pt-4">
                     <div className="col-span-2 sm:col-span-1">
-                      <InfoTag label="ÜNİVERSİTE" value={cv.education || '-'} />
+                      <InfoTag label={t('form.university')} value={cv.education || '-'} />
                     </div>
                     <div className="col-span-2 sm:col-span-1">
-                      <InfoTag label="DERECE / DURUM" value={`${resolveValue(cv.educationLevel)} - ${resolveValue(cv.graduationStatus)}`} />
+                      <InfoTag label={t('form.status')} value={`${resolveValue(cv.educationLevel)} - ${resolveValue(cv.graduationStatus)}`} />
                     </div>
                   </div>
                 )}
@@ -394,7 +393,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm sm:text-base font-bold text-gray-400">Henüz uzmanlık alanı eklenmemiş.</p>
+                  <p className="text-sm sm:text-base font-bold text-gray-400">{t('form.no_skills')}</p>
                 )}
               </div>
 
@@ -417,7 +416,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm sm:text-base font-bold text-gray-400">Henüz sertifika veya kurs eklenmemiş.</p>
+                  <p className="text-sm sm:text-base font-bold text-gray-400">{t('errors.no_cert')}</p>
                 )}
               </div>
             </div>
@@ -460,10 +459,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             {cv.references && cv.references.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {cv.references.map((ref) => (
-                  <div key={ref.id} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-3xl border border-gray-200 dark:border-gray-700">
+                  <div key={ref.id} className="bg-gray-50 dark:bg-black p-6 rounded-3xl border border-gray-200 dark:border-white/10">
                     <h4 className="font-bold text-black dark:text-white text-sm">{ref.name}</h4>
                     <p className="text-xs text-gray-500 font-bold mt-1">{ref.role} @ {ref.company}</p>
-                    <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 space-y-2">
+                    <div className="mt-4 pt-4 border-t border-gray-100 dark:border-white/10 space-y-2">
                       {ref.email && (
                         <div className="flex items-center gap-2">
                           <span className="text-[10px] text-gray-400 font-bold">✉️</span>
@@ -481,7 +480,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 ))}
               </div>
             ) : (
-              <p className="text-sm sm:text-base font-bold text-gray-400">Henüz referans eklenmemiş.</p>
+              <p className="text-sm sm:text-base font-bold text-gray-400">{t('errors.no_ref')}</p>
             )}
           </section>
 
@@ -489,7 +488,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
           <section>
             <SectionTitle title={t('profile.contact')} />
             {(cv.email || cv.phone) ? (
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 border border-gray-100 dark:border-gray-700">
+              <div className="bg-gray-50 dark:bg-black rounded-2xl p-6 border border-gray-100 dark:border-white/10">
 
                 {/* Warning: If access not granted AND at least one field hidden AND NOT OWNER */}
                 {!hasAccess && !isOwner && (!cv.isEmailPublic || !cv.isPhonePublic) && (
@@ -504,7 +503,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 <div className="space-y-3">
                   {cv.email && (
                     <div className="flex items-center gap-3 text-sm font-bold text-gray-800 dark:text-gray-200">
-                      <div className="w-8 h-8 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 flex items-center justify-center shrink-0">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
                       </div>
                       {/* Show if Public OR Has Access OR Is Owner */}
@@ -517,7 +516,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   )}
                   {cv.phone && (
                     <div className="flex items-center gap-3 text-sm font-bold text-gray-800 dark:text-gray-200">
-                      <div className="w-8 h-8 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 flex items-center justify-center shrink-0">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.05 12.05 0 0 0 .57 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.05 12.05 0 0 0 2.81.57A2 2 0 0 1 22 16.92z"></path></svg>
                       </div>
                       {/* Show if Public OR Has Access OR Is Owner */}
@@ -531,13 +530,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 </div>
               </div>
             ) : (
-              <p className="text-sm font-bold text-gray-400 italic">İletişim bilgileri görüntülenemiyor.</p>
+              <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_contact')}</p>
             )}
           </section>
         </div>
 
         {/* Footer Actions */}
-        <div className="pt-3 px-3 pb-2 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-2 sm:gap-5 sticky bottom-0 z-10 shrink-0">
+        <div className="pt-3 px-3 pb-2 sm:p-8 border-t border-gray-100 dark:border-white/10 bg-white dark:bg-black flex gap-2 sm:gap-5 sticky bottom-0 z-10 shrink-0">
           {isOwner && cv.workingStatus !== 'active' && (
             <button
               onClick={onJobFound}
@@ -551,13 +550,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             <>
               <button
                 onClick={handleDownload}
-                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active: shadow-sm sm:shadow-xl"
+                className="flex-1 bg-white dark:bg-black border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active: shadow-sm sm:shadow-xl"
               >
                 {t('profile.download_cv')}
               </button>
               <button
                 onClick={handleShare}
-                className="flex-1 bg-white dark:bg-gray-800 border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active: shadow-sm sm:shadow-xl"
+                className="flex-1 bg-white dark:bg-black border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active: shadow-sm sm:shadow-xl"
               >
                 {t('profile.share_cv')}
               </button>
@@ -623,11 +622,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                       showToast('İşlem başarısız.', 'error');
                     }
                   }}
-                  className={`w-12 h-12 sm:w-16 sm:h-auto rounded-full flex items-center justify-center border transition-all active: shadow-xl ${isSaved
-                    ? 'bg-white border-[#1f6d78] text-[#1f6d78]'
-                    : 'bg-white border-gray-200 text-gray-400 hover:text-[#1f6d78] hover:border-[#1f6d78]'
+                    className={`w-12 h-12 sm:w-16 sm:h-auto rounded-full flex items-center justify-center border transition-all active: shadow-xl ${isSaved
+                    ? 'bg-white dark:bg-black border-[#1f6d78] text-[#1f6d78]'
+                    : 'bg-white dark:bg-black border-gray-200 dark:border-white/10 text-gray-400 hover:text-[#1f6d78] hover:border-[#1f6d78]'
                     }`}
-                  title={isSaved ? 'Kaydedilenlerden Çıkar' : 'CV\'yi Kaydet'}
+                  title={isSaved ? t('common.unsave') : t('common.save')}
                 >
                   <svg width="24" height="24" viewBox="0 0 24 24" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
@@ -652,7 +651,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 </svg>
               </div>
               <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
-                Başarılı
+                {t('common.success')}
               </h3>
               <p className="text-sm font-bold text-gray-500 mb-8 leading-relaxed relative z-10">
                 {showWarning.message}
@@ -661,7 +660,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                 onClick={() => setShowWarning({ show: false, message: '' })}
                 className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active: relative z-10"
               >
-                Tamam
+                {t('common.done')}
               </button>
             </div>
           </div>
@@ -672,12 +671,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
       {
         showRoleWarning && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white dark:bg-gray-900 rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-gray-800 relative">
+            <div className="bg-white dark:bg-black rounded-[2rem] p-8 max-w-sm w-full text-center shadow-2xl border border-gray-100 dark:border-white/10 relative">
 
               {/* Close Button */}
               <button
                 onClick={() => setShowRoleWarning(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               >
                 ✕
               </button>
@@ -690,18 +689,17 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
                   <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
               </div>
-
-              <h3 className="text-xl font-black text-black dark:text-white mb-3">İş Veren Hesabı Gerekli</h3>
+              <h3 className="text-xl font-black text-black dark:text-white mb-3">{t('errors.employer_required')}</h3>
 
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-                Başka bir iş arayanla iletişime geçmek için önce <span className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold">iş veren hesabı</span> oluşturmalısınız.
+                {t('errors.employer_desc')}
               </p>
 
               <button
                 onClick={() => setShowRoleWarning(false)}
                 className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-[#155e68] transition-all active: shadow-lg shadow-[#1f6d78]/20"
               >
-                Anladım
+                {t('common.got_it')}
               </button>
             </div>
           </div>

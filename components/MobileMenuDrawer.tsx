@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
 import { CV } from '../types';
 import { LEGAL_CONTENT, LegalSection } from './LegalModal';
 
@@ -13,14 +14,20 @@ interface MobileMenuDrawerProps {
     jobFinders: CV[];
     popularCVs: CV[]; // Most Viewed
     popularCompanies: any[]; // Employers
+    shops: any[]; // Hizmetler
     onJobFinderClick: (cv: CV) => void;
     onCVClick: (cv: CV) => void;
     onCompanyClick: (company: any) => void;
+    onShopClick: (shop: any) => void;
+    onShopsViewAll: () => void;
+    onEmployersViewAll: () => void;
     onFilterApply: (type: 'profession' | 'city', value: string) => void;
     user?: any; // To determine visibility of logged-in features
     onOpenSettings?: () => void;
     onOpenSavedCVs?: () => void;
     onLogout?: () => void;
+    onOpenAuth?: (mode: 'signin' | 'signup', role?: string) => void;
+    onGoHome: () => void;
 }
 
 const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
@@ -33,43 +40,66 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
     jobFinders,
     popularCVs,
     popularCompanies,
+    shops,
     onJobFinderClick,
     onCVClick,
     onCompanyClick,
+    onShopClick,
+    onShopsViewAll,
+    onEmployersViewAll,
     onFilterApply,
     user,
     onOpenSettings = () => { },
     onOpenSavedCVs = () => { },
-    onLogout = () => { }
+    onLogout = () => { },
+    onOpenAuth,
+    onGoHome
 }) => {
-    const { t } = useLanguage();
-    const [activeCategory, setActiveCategory] = useState<'about' | 'professions' | 'cities' | 'jobFinders' | 'stats' | 'companies' | 'mostViewed' | 'siteUsage' | 'dataPolicy' | 'mobileApp' | LegalSection | null>(null);
+    const { t, language, setLanguage } = useLanguage();
+    const { theme, toggleTheme } = useTheme();
+    const [activeCategory, setActiveCategory] = useState<'about' | 'professions' | 'cities' | 'jobFinders' | 'stats' | 'companies' | 'shops' | 'mostViewed' | 'siteUsage' | 'securityPrivacy' | 'dataPolicy' | 'mobileApp' | 'kartvizid' | 'premium' | 'settings' | LegalSection | null>(null);
+
+    // Reset state when drawer closes
+    React.useEffect(() => {
+        if (!isOpen) {
+            setActiveCategory(null);
+        }
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
-    const MenuItem = ({ label, onClick, icon }: { label: string, onClick: () => void, icon: React.ReactNode }) => (
+    const MenuItem = ({ label, onClick, icon, showChevron, isSubMenu }: { label: string, onClick: () => void, icon?: React.ReactNode, showChevron?: boolean, isSubMenu?: boolean }) => (
         <button
             onClick={onClick}
-            className="w-full text-left py-3 flex items-center gap-3 group"
+            className={`w-full text-left py-3.5 flex items-center justify-between group ${isSubMenu ? 'px-6 py-4' : ''}`}
         >
-            <div className="text-gray-900 dark:text-gray-100 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors flex items-center justify-center shrink-0 w-6">
-                {icon}
+            <div className="flex items-center gap-4 flex-1 min-w-0 pr-2">
+                {icon && (
+                    <div className="text-gray-900 dark:text-gray-100 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors flex items-center justify-center shrink-0 w-7 text-xl">
+                        {icon}
+                    </div>
+                )}
+                <span className={`${isSubMenu ? 'text-[16px]' : 'text-[17px]'} font-semibold text-gray-900 dark:text-gray-100 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors tracking-tight truncate`}>
+                    {label}
+                </span>
             </div>
-            <span className="text-[15px] font-black text-gray-900 dark:text-gray-100 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors rounded-font tracking-tight">
-                {label}
-            </span>
+            {showChevron && (
+                <div className="text-gray-400 dark:text-gray-600 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors shrink-0">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+                </div>
+            )}
         </button>
     );
 
     const PageHeader = ({ title, onBack }: { title: string, onBack: () => void }) => (
-        <div className="h-14 flex items-center justify-center relative border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0">
+        <div className="h-20 flex items-center justify-start relative bg-white dark:bg-gray-900 shrink-0 px-6">
             <button
                 onClick={onBack}
-                className="absolute left-4 p-2 -ml-2 text-gray-600 dark:text-gray-300"
+                className="mr-3 p-2 -ml-2 text-gray-900 dark:text-white"
             >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
             </button>
-            <h3 className="font-black text-[16px] xl:text-[16.5px] text-gray-900 dark:text-white rounded-font tracking-tight">{title}</h3>
+            <h3 className="font-black text-[22px] text-gray-900 dark:text-white tracking-tighter">{title}</h3>
         </div>
     );
 
@@ -201,8 +231,8 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                 }}
                                 className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                             >
-                                <span className="font-bold text-[14px] text-gray-700 dark:text-gray-300 rounded-font">{item.label}</span>
-                                <span className="text-[11px] font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{item.count}</span>
+                                <span className="font-semibold text-[16px] text-gray-700 dark:text-gray-300">{item.label}</span>
+                                <span className="text-[12px] font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-2.5 py-1 rounded-full">{item.count}</span>
                             </button>
                         ))}
                     </div>
@@ -221,8 +251,8 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                 }}
                                 className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                             >
-                                <span className="font-bold text-[14px] text-gray-700 dark:text-gray-300 rounded-font">{item.label}</span>
-                                <span className="text-[11px] font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{item.count}</span>
+                                <span className="font-semibold text-[16px] text-gray-700 dark:text-gray-300">{item.label}</span>
+                                <span className="text-[12px] font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-2.5 py-1 rounded-full">{item.count}</span>
                             </button>
                         ))}
                     </div>
@@ -243,8 +273,8 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                         <img src={cv.photoUrl || "https://picsum.photos/seed/user-placeholder/100/100"} alt={cv.name} className="w-full h-full object-cover" />
                                     </div>
                                     <div>
-                                        <h4 className="font-bold text-sm text-gray-900 dark:text-white truncate rounded-font">{cv.name}</h4>
-                                        <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate rounded-font">{cv.profession}</p>
+                                        <h4 className="font-semibold text-[15px] text-gray-900 dark:text-white truncate">{cv.name}</h4>
+                                        <p className="text-[12px] text-gray-500 dark:text-gray-400 truncate">{cv.profession}</p>
                                     </div>
                                 </div>
                             ))
@@ -261,8 +291,8 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                         <div className="flex flex-col">
                             {platformStats.map((stat, i) => (
                                 <div key={i} className="flex justify-between items-center py-3.5 border-b border-gray-100 dark:border-gray-800 last:border-0 px-4">
-                                    <span className="text-[14px] font-bold text-gray-700 dark:text-gray-300 rounded-font">{stat.label}</span>
-                                    <span className="text-[15px] font-black text-[#1f6d78] dark:text-[#2dd4bf] rounded-font">{stat.value}</span>
+                                    <span className="text-[16px] font-semibold text-gray-700 dark:text-gray-300">{stat.label}</span>
+                                    <span className="text-[16px] font-black text-[#1f6d78] dark:text-[#2dd4bf]">{stat.value}</span>
                                 </div>
                             ))}
                         </div>
@@ -272,33 +302,135 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             case 'companies':
                 title = t('sidebar.employers');
                 content = (
-                    <div className="flex flex-col">
-                        {popularCompanies.length > 0 ? (
-                            popularCompanies.map((company) => (
-                                <div
-                                    key={company.id}
-                                    onClick={() => { onCompanyClick(company); onClose(); }}
-                                    className="flex items-center gap-3 py-3.5 border-b border-gray-100 dark:border-gray-800 px-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
-                                >
-                                    <div className="w-9 h-9 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 bg-white dark:bg-gray-800 flex items-center justify-center p-0.5">
-                                        {company.logoUrl ? (
-                                            <img src={company.logoUrl} alt={company.name} className="w-full h-full object-cover rounded-lg" />
-                                        ) : (
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                                                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                                                <path d="M9 22v-4h6v4"></path>
-                                            </svg>
-                                        )}
+                    <div className="flex flex-col pb-10">
+                        {/* Premium Header - Professional/Corporate feel */}
+                        <div className="bg-white dark:bg-gray-900 px-6 py-12 text-center border-b border-gray-50 dark:border-gray-800">
+                            <div className="w-20 h-20 bg-[#1f6d78]/5 dark:bg-[#2dd4bf]/5 rounded-[30px] flex items-center justify-center mx-auto mb-6 border border-[#1f6d78]/10 group">
+                                <i className="fi fi-rr-briefcase text-4xl text-[#1f6d78] dark:text-[#2dd4bf] group-hover:scale-110 transition-transform"></i>
+                            </div>
+                            <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-4 tracking-tight leading-tight">
+                                Güçlü Kadrolar, <br /> Büyük Hedefler
+                            </h3>
+                            <p className="text-[13px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed max-w-xs mx-auto">
+                                Sektörün öncü firmalarıyla tanışın, kariyerinizde yeni bir kapı aralayın. Doğru yetenek, doğru şirketle burada buluşuyor.
+                            </p>
+                        </div>
+
+                        <div className="pt-6">
+                            {popularCompanies.length > 0 ? (
+                                <div className="flex flex-col">
+                                    <div className="px-6 mb-2">
+                                        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Öne Çıkan Şirketler</h4>
                                     </div>
-                                    <div className="min-w-0">
-                                        <p className="font-bold text-sm text-gray-900 dark:text-white truncate rounded-font">{company.name}</p>
-                                        <p className="text-[11px] text-gray-500 truncate rounded-font">{company.city || '-'}</p>
-                                    </div>
+                                    {popularCompanies.slice(0, 5).map((company) => (
+                                        <div
+                                            key={company.id}
+                                            onClick={() => { onCompanyClick(company); onClose(); }}
+                                            className="flex items-center gap-3 py-3.5 border-b border-gray-50 dark:border-gray-800 px-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                                        >
+                                            <div className="w-10 h-10 rounded-2xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] border border-gray-100 dark:border-gray-700 shrink-0">
+                                                {company.logoUrl ? (
+                                                    <img src={company.logoUrl} alt={company.name} className="w-full h-full object-cover rounded-2xl" />
+                                                ) : (
+                                                    <i className="fi fi-rr-briefcase text-xl"></i>
+                                                )}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="font-bold text-sm text-gray-900 dark:text-white truncate rounded-font">{company.name}</p>
+                                                <p className="text-[11px] text-gray-500 truncate rounded-font">{company.city || '-'}</p>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))
-                        ) : (
-                            <p className="text-sm text-gray-400 italic font-medium text-center py-8 rounded-font">{t('sidebar.no_data')}</p>
-                        )}
+                            ) : null}
+
+                            <div className="p-6 flex flex-col gap-4">
+                                <button
+                                    onClick={() => { onEmployersViewAll(); onClose(); }}
+                                    className="w-full py-4 bg-[#1f6d78] text-white rounded-[20px] font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-[#1f6d78]/20 transition-all hover:bg-[#155e68] active:scale-[0.98]"
+                                >
+                                    Tüm İş Verenleri Gör
+                                </button>
+                                
+                                <div className="relative flex items-center justify-center py-2">
+                                    <div className="absolute w-full border-t border-gray-100 dark:border-gray-800"></div>
+                                    <span className="relative px-3 bg-white dark:bg-gray-900 text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">veya</span>
+                                </div>
+
+                                <button
+                                    onClick={() => { onOpenAuth('signup', 'employer'); onClose(); }}
+                                    className="w-full py-4 bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border-2 border-[#1f6d78]/20 dark:border-[#2dd4bf]/20 rounded-[24px] font-black text-xs uppercase tracking-[0.15em] transition-all hover:bg-[#1f6d78]/5 active:scale-[0.98] flex items-center justify-center gap-3 shadow-sm"
+                                >
+                                    <i className="fi fi-rr-briefcase-arrow-right text-lg"></i>
+                                    İş Veren Kaydı Oluştur
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+                break;
+            case 'shops':
+                title = "Hizmetler";
+                content = (
+                    <div className="flex flex-col pb-10">
+                        {/* New Refined Header - White background, centered large title */}
+                        <div className="bg-white dark:bg-gray-900 px-6 py-12 text-center border-b border-gray-50 dark:border-gray-800">
+                            <div className="w-20 h-20 bg-[#1f6d78]/5 dark:bg-[#2dd4bf]/5 rounded-[30px] flex items-center justify-center mx-auto mb-6 border border-[#1f6d78]/10 group">
+                                <i className="fi fi-rr-shop text-4xl text-[#1f6d78] dark:text-[#2dd4bf] group-hover:scale-110 transition-transform"></i>
+                            </div>
+                            <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-4 tracking-tight leading-tight">
+                                Profesyonel <br /> Hizmet Keşfi
+                            </h3>
+                            <p className="text-[13px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed max-w-xs mx-auto">
+                                Ustalığını konuşturan uzmanlarla doğrudan iletişime geçin. Aracı yok, komisyon yok, sadece doğru eşleşme.
+                            </p>
+                        </div>
+                        
+                        <div className="pt-6">
+                            {shops.length > 0 ? (
+                                <div className="flex flex-col">
+                                    <div className="px-6 mb-2">
+                                        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Öne Çıkanlar</h4>
+                                    </div>
+                                    {shops.slice(0, 5).map((shop) => (
+                                        <div
+                                            key={shop.id}
+                                            onClick={() => { onShopClick(shop); onClose(); }}
+                                            className="flex items-center gap-3 py-3.5 border-b border-gray-50 dark:border-gray-800 px-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                                        >
+                                            <div className="w-10 h-10 rounded-2xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] border border-gray-100 dark:border-gray-700 shrink-0">
+                                                <i className="fi fi-rr-shop text-xl"></i>
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="font-bold text-sm text-gray-900 dark:text-white truncate rounded-font">{shop.name}</p>
+                                                <p className="text-[11px] text-gray-500 truncate rounded-font">{shop.category || 'Hizmet Sağlayıcı'}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : null}
+
+                            <div className="p-6 flex flex-col gap-4">
+                                <button
+                                    onClick={() => { onShopsViewAll(); onClose(); }}
+                                    className="w-full py-4 bg-[#1f6d78] text-white rounded-[20px] font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-[#1f6d78]/20 transition-all hover:bg-[#155e68] active:scale-[0.98]"
+                                >
+                                    Tüm Hizmetleri Keşfet
+                                </button>
+                                
+                                <div className="relative flex items-center justify-center py-2">
+                                    <div className="absolute w-full border-t border-gray-100 dark:border-gray-800"></div>
+                                    <span className="relative px-3 bg-white dark:bg-gray-900 text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">veya</span>
+                                </div>
+
+                                <button
+                                    onClick={() => { onClose(); onOpenAuth('signup', 'shop'); }}
+                                    className="w-full py-4 bg-white dark:bg-gray-800 border-2 border-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] rounded-[20px] font-black text-xs uppercase tracking-[0.2em] transition-all hover:border-[#1f6d78]/30"
+                                >
+                                    Hizmet Vermeye Başla
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 );
                 break;
@@ -319,8 +451,8 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                 onClick={() => setActiveCategory(item.key as LegalSection)}
                                 className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group"
                             >
-                                <span className="font-bold text-[14px] text-gray-700 dark:text-gray-300 rounded-font group-hover:text-[#1f6d78] transition-colors">{item.label}</span>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 group-hover:text-[#1f6d78] transition-colors"><path d="M9 18l6-6-6-6" /></svg>
+                                <span className="font-semibold text-[16px] text-gray-700 dark:text-gray-300 group-hover:text-[#1f6d78] transition-colors">{item.label}</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 group-hover:text-[#1f6d78] transition-colors"><path d="M9 18l6-6-6-6" /></svg>
                             </button>
                         ))}
                     </div>
@@ -342,8 +474,8 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                 onClick={() => setActiveCategory(item.key as LegalSection)}
                                 className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group"
                             >
-                                <span className="font-bold text-[14px] text-gray-700 dark:text-gray-300 rounded-font group-hover:text-[#1f6d78] transition-colors">{item.label}</span>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 group-hover:text-[#1f6d78] transition-colors"><path d="M9 18l6-6-6-6" /></svg>
+                                <span className="font-semibold text-[16px] text-gray-700 dark:text-gray-300 group-hover:text-[#1f6d78] transition-colors">{item.label}</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 group-hover:text-[#1f6d78] transition-colors"><path d="M9 18l6-6-6-6" /></svg>
                             </button>
                         ))}
                     </div>
@@ -358,6 +490,113 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                         </div>
                         <h3 className="text-[17px] font-bold text-gray-900 rounded-font leading-snug">İş fırsatlarını cebinizden takip edin</h3>
                         <p className="text-gray-500 text-[13px]">Yakında App Store ve Google Play'de!</p>
+                    </div>
+                );
+                break;
+            case 'kartvizid':
+                title = t('menu.kartvizid');
+                content = (
+                    <div className="flex flex-col">
+                        <MenuItem
+                            label="Kartvizid Nedir?"
+                            onClick={() => setActiveCategory('about')}
+                            showChevron={true}
+                            isSubMenu={true}
+                        />
+                        <MenuItem
+                            label="Kartvizid'te İş Bulanlar"
+                            onClick={() => setActiveCategory('jobFinders')}
+                            showChevron={true}
+                            isSubMenu={true}
+                        />
+                        <MenuItem
+                            label={t('sidebar.popular_professions')}
+                            onClick={() => setActiveCategory('professions')}
+                            showChevron={true}
+                            isSubMenu={true}
+                        />
+                        <MenuItem
+                            label={t('sidebar.featured_cities')}
+                            onClick={() => setActiveCategory('cities')}
+                            showChevron={true}
+                            isSubMenu={true}
+                        />
+                        <MenuItem
+                            label={t('sidebar.most_viewed')}
+                            onClick={() => setActiveCategory('mostViewed')}
+                            showChevron={true}
+                            isSubMenu={true}
+                        />
+                        <MenuItem
+                            label={t('sidebar.platform_stats')}
+                            onClick={() => setActiveCategory('stats')}
+                            showChevron={true}
+                            isSubMenu={true}
+                        />
+                    </div>
+                );
+                break;
+            case 'premium':
+                title = "Premium";
+                content = (
+                    <div className="flex flex-col p-8 items-center text-center space-y-6">
+                        <div className="w-24 h-24 bg-gradient-to-br from-[#1f6d78]/10 to-[#2dd4bf]/10 rounded-[32px] flex items-center justify-center text-[#1f6d78] border border-[#1f6d78]/20 shadow-inner">
+                            <i className="fi fi-rr-membership-vip text-5xl"></i>
+                        </div>
+                        <div className="space-y-3">
+                            <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Premium Özellikler Yakında!</h3>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-[280px] mx-auto">
+                                İş arama deneyiminizi bir üst seviyeye taşıyacak, size özel avantajlar ve öne çıkmanızı sağlayacak premium özellikler üzerinde çalışıyoruz.
+                            </p>
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-800/50 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 w-full">
+                            <p className="text-[#1f6d78] dark:text-[#2dd4bf] text-[13px] font-bold">
+                                Çok yakında iş arayanlar için devrim niteliğinde yeniliklerle burada olacağız.
+                            </p>
+                        </div>
+                    </div>
+                );
+                break;
+            case 'securityPrivacy':
+                title = "Güvenlik ve Gizlilik";
+                content = (
+                    <div className="flex flex-col p-6 pb-20 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                        <div className="flex flex-col items-center text-center space-y-4">
+                            <div className="w-20 h-20 bg-green-50 dark:bg-green-500/10 rounded-[28px] flex items-center justify-center text-green-600 dark:text-green-400 border border-green-100 dark:border-green-500/20 shadow-sm transition-transform duration-500 hover:scale-105">
+                                <i className="fi fi-rr-shield-check text-4xl"></i>
+                            </div>
+                            <div className="space-y-2">
+                                <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">Verileriniz Bizimle Güvende</h3>
+                                <p className="text-gray-500 dark:text-gray-400 text-[13.5px] leading-relaxed max-w-[280px] mx-auto">
+                                    Dijital dünyada güvenin ne kadar değerli olduğunu biliyoruz. Kartvizid olarak, kişisel bilgilerinizin korunmasını en büyük sorumluluğumuz olarak görüyoruz.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="grid gap-4">
+                            {[
+                                { icon: 'fi-rr-lock', title: 'Tam Veri Şifreleme', desc: 'Tüm bilgileriniz banka düzeyinde güvenlik protokolleri ile şifrelenir ve izinsiz erişimlere kapatılır.' },
+                                { icon: 'fi-rr-user-lock', title: 'Gizlilik Taahhüdü', desc: 'Verileriniz reklam amaçlı asla satılmaz ve izniniz olmadan üçüncü taraflarla paylaşılmaz.' },
+                                { icon: 'fi-rr-settings-sliders', title: 'Sizin Kontrolünüzde', desc: 'Hangi bilgilerinizi kimlerin göreceğine tamamen siz karar verirsiniz. Kontrol her zaman sizdedir.' },
+                                { icon: 'fi-rr-cloud-check', title: 'Güvenli Altyapı', desc: 'Sunucularımız 7/24 siber saldırılara karşı taranır ve modern güvenlik duvarları ile korunur.' }
+                            ].map((item, idx) => (
+                                <div key={idx} className="flex items-start space-x-4 p-4 transition-all duration-200">
+                                    <div className="flex-shrink-0 w-10 h-10 bg-gray-50 dark:bg-gray-800/50 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-400">
+                                        <i className={`fi ${item.icon} text-lg`}></i>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h4 className="text-[14.5px] font-bold text-gray-900 dark:text-gray-100 leading-none">{item.title}</h4>
+                                        <p className="text-[12.5px] text-gray-500 dark:text-gray-400 leading-relaxed font-medium">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 p-5 rounded-[24px] border border-[#1f6d78]/10 text-center">
+                            <p className="text-[#1f6d78] dark:text-[#2dd4bf] text-[13px] font-bold">
+                                Şeffaf, dürüst ve güvenli bir kariyer yolculuğu için buradayız.
+                            </p>
+                        </div>
                     </div>
                 );
                 break;
@@ -387,6 +626,72 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                     </div>
                 );
                 break;
+            case 'settings':
+                title = t('profile.settings');
+                content = (
+                    <div className="flex flex-col p-6 space-y-10 pb-20 bg-white dark:bg-gray-900">
+                        {/* Theme Section */}
+                        <section>
+                            <h3 className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 px-1">{t('account.appearance')}</h3>
+                            <div className="space-y-4">
+                                <button
+                                    onClick={toggleTheme}
+                                    className="w-full flex items-center justify-between py-5 border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/10 transition-all active:scale-[0.98] px-1"
+                                >
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-10 h-10 rounded-xl bg-transparent flex items-center justify-center text-gray-900 dark:text-white">
+                                            <i className={`fi ${theme === 'dark' ? 'fi-rr-moon' : 'fi-rr-sun'} text-xl`}></i>
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="text-[15px] font-bold text-gray-900 dark:text-gray-100">{theme === 'dark' ? t('account.dark') : t('account.light')}</p>
+                                            <p className="text-[11px] text-gray-400 dark:text-gray-500 font-medium">{t('settings.language_desc')}</p>
+                                        </div>
+                                    </div>
+                                    <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 border border-gray-200 dark:border-gray-700 ${theme === 'dark' ? 'bg-black' : 'bg-gray-100'}`}>
+                                        <div className={`w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform duration-300 ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`}></div>
+                                    </div>
+                                </button>
+                            </div>
+                        </section>
+
+                        {/* Language Section */}
+                        <section>
+                            <h3 className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 px-1">{t('settings.language')}</h3>
+                            <div className="grid grid-cols-1 gap-3">
+                                {[
+                                    { code: 'tr', label: 'Türkçe', flag: '🇹🇷' },
+                                    { code: 'en', label: 'English', flag: '🇬🇧' }
+                                ].map((lang) => (
+                                    <button
+                                        key={lang.code}
+                                        onClick={() => setLanguage(lang.code as any)}
+                                        className={`flex items-center justify-between p-5 rounded-2xl transition-all active:scale-[0.98] border-2 ${language === lang.code
+                                            ? 'bg-white dark:bg-gray-900 border-black dark:border-white text-black dark:text-white shadow-xl shadow-black/5 scale-[1.02]'
+                                            : 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-50 dark:border-gray-800/50'
+                                            }`}
+                                    >
+                                        <div className="flex items-center space-x-4">
+                                            <span className="text-2xl">{lang.flag}</span>
+                                            <span className="font-bold text-[15px] tracking-tight">{lang.label}</span>
+                                        </div>
+                                        {language === lang.code && (
+                                            <i className="fi fi-rr-check-circle text-lg text-black dark:text-white"></i>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        </section>
+
+                        <div className="pt-4 px-2">
+                            <p className="text-[11px] text-gray-400 dark:text-gray-600 font-medium text-center italic leading-relaxed">
+                                {language === 'tr' 
+                                    ? "Tercihleriniz cihazınıza yerel olarak kaydedilir ve her oturumda korunur."
+                                    : "Your preferences are saved locally on your device and maintained across sessions."}
+                            </p>
+                        </div>
+                    </div>
+                );
+                break;
             default:
                 // Check if it's a legal section
                 if (activeCategory && activeCategory in LEGAL_CONTENT) {
@@ -405,8 +710,17 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
         }
 
         return (
-            <div className="fixed inset-0 z-[200] bg-white dark:bg-gray-900 animate-in slide-in-from-right duration-300 flex flex-col">
-                <PageHeader title={title} onBack={() => setActiveCategory(null)} />
+            <div className="fixed inset-0 z-[200] bg-white dark:bg-gray-900 flex flex-col">
+                <PageHeader title={title} onBack={() => { 
+                    if (['professions', 'cities', 'mostViewed', 'stats', 'jobFinders', 'about'].includes(activeCategory as string)) {
+                        setActiveCategory('kartvizid');
+                    } else if (activeCategory === 'kartvizid') {
+                        setActiveCategory(null);
+                    } else {
+                        setActiveCategory(null);
+                        onClose();
+                    }
+                }} />
                 <div className="flex-1 overflow-y-auto custom-scrollbar">
                     {content}
                 </div>
@@ -421,14 +735,19 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 className="fixed inset-0 z-[150]"
                 onClick={() => !activeCategory && onClose()}
             >
-                <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"></div>
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
             </div>
 
-            {/* Main Menu Drawer */}
-            <div className={`fixed top-0 bottom-0 left-0 w-[75%] max-w-[280px] bg-white dark:bg-gray-900 z-[160] shadow-2xl animate-in slide-in-from-left duration-300 flex flex-col ${activeCategory ? 'hidden' : ''}`}>
+            <div className={`fixed top-0 bottom-0 left-0 w-[75%] max-w-[280px] bg-white dark:bg-gray-900 z-[160] shadow-2xl flex flex-col ${activeCategory ? 'hidden' : ''}`}>
                 {/* Header - Brand */}
-                <div className="h-[72px] flex flex-col justify-center px-6 border-b border-gray-100 dark:border-gray-800 shrink-0 bg-white dark:bg-gray-900 pb-2">
-                    <div className="flex flex-col w-max">
+                <div className="h-[72px] flex flex-col justify-center px-6 shrink-0 bg-white dark:bg-gray-900 pb-2">
+                    <div 
+                        className="flex flex-col w-max cursor-pointer active:scale-95 transition-transform"
+                        onClick={() => {
+                            onGoHome();
+                            onClose();
+                        }}
+                    >
                         <div className="flex items-center text-[#2b2b2b] dark:text-white text-[28px] font-extrabold rounded-font tracking-tight leading-none mb-0.5">
                             <span>Kartvizi</span>
                             <span className="inline-block transform rotate-[12deg] origin-center text-[#1f6d78] font-black w-[13px] ml-0.5 -mt-0.5">d</span>
@@ -443,39 +762,37 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 <div className="flex-1 overflow-y-auto px-5 pt-0 pb-4 custom-scrollbar">
                     <div className="flex flex-col space-y-1">
                         <MenuItem
-                            label="Kartvizid Nedir?"
-                            onClick={() => setActiveCategory('about')}
-                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="text-[#1f6d78] dark:text-[#2dd4bf]"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>}
-                        />
-                        <MenuItem
-                            label="Kartvizid'te İş Bulanlar"
-                            onClick={() => setActiveCategory('jobFinders')}
-                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>}
+                            label={t('menu.job_seekers')}
+                            onClick={() => {
+                                onGoHome();
+                                onClose();
+                            }}
+                            icon={<i className="fi fi-rr-ballot"></i>}
                         />
                         <MenuItem
                             label="İş Verenler"
-                            onClick={() => setActiveCategory('companies')}
-                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>}
+                            onClick={() => { onEmployersViewAll(); onClose(); }}
+                            icon={<i className="fi fi-rr-building"></i>}
                         />
                         <MenuItem
-                            label="Talep Gören Meslekler"
-                            onClick={() => setActiveCategory('professions')}
-                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>}
+                            label="Hizmetler"
+                            onClick={() => { onShopsViewAll(); onClose(); }}
+                            icon={<i className="fi fi-rr-shop"></i>}
                         />
                         <MenuItem
-                            label="Öne Çıkan Şehirler"
-                            onClick={() => setActiveCategory('cities')}
-                            icon={<i className="fi fi-rr-marker"></i>}
+                            label={t('menu.kartvizid')}
+                            onClick={() => setActiveCategory('kartvizid')}
+                            icon={<i className="fi fi-rr-document-signed"></i>}
                         />
                         <MenuItem
-                            label="En Çok Görüntülenenler"
-                            onClick={() => setActiveCategory('mostViewed')}
-                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path><line x1="12" y1="10" x2="12" y2="17"></line><line x1="10" y1="15" x2="14" y2="15"></line></svg>}
+                            label="Premium"
+                            onClick={() => setActiveCategory('premium')}
+                            icon={<i className="fi fi-rr-membership-vip"></i>}
                         />
                         <MenuItem
-                            label="Kartvizid İstatistikleri"
-                            onClick={() => setActiveCategory('stats')}
-                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>}
+                            label={t('profile.settings')}
+                            onClick={() => setActiveCategory('settings')}
+                            icon={<i className="fi fi-rr-settings"></i>}
                         />
 
                         <div className="my-3 border-t border-gray-100 dark:border-gray-800"></div>
@@ -483,17 +800,22 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                         <MenuItem
                             label="Site Kullanımı"
                             onClick={() => setActiveCategory('siteUsage')}
-                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>}
+                            icon={<i className="fi fi-rr-browser"></i>}
+                        />
+                        <MenuItem
+                            label="Güvenlik ve Gizlilik"
+                            onClick={() => setActiveCategory('securityPrivacy')}
+                            icon={<i className="fi fi-rr-shield-check"></i>}
                         />
                         <MenuItem
                             label="Veri Politikamız"
                             onClick={() => setActiveCategory('dataPolicy')}
-                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>}
+                            icon={<i className="fi fi-rr-lock"></i>}
                         />
                         <MenuItem
                             label="Mobil Uygulama"
                             onClick={() => setActiveCategory('mobileApp')}
-                            icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>}
+                            icon={<i className="fi fi-rr-mobile-button"></i>}
                         />
 
                         {user && (

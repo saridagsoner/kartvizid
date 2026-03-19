@@ -183,7 +183,7 @@ export interface TrendItem {
   growth: number;
 }
 
-export type UserRole = 'job_seeker' | 'employer';
+export type UserRole = 'job_seeker' | 'employer' | 'shop';
 
 export interface Company {
   id: string;

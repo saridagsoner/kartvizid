@@ -159,14 +159,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     const isEmployer = user?.user_metadata?.role === 'employer';
 
     return (
-        <div className="fixed inset-0 z-[250] flex items-center justify-center sm:p-4 bg-white sm:bg-black/60 sm:backdrop-blur-sm  fade-in ">
+        <div className="fixed inset-0 z-[250] flex items-center justify-center sm:p-4 bg-white sm:bg-black/60 sm:backdrop-blur-sm">
             {/* Fixed Height Layout */}
             <div className="bg-white w-full h-full sm:h-[600px] sm:max-h-[90vh] sm:max-w-2xl sm:rounded-[2rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden">
 
                 {/* Warning / Error Overlay */}
                 {showWarning.show && (
-                    <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6  fade-in ">
-                        <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl   zoom-in-95  text-center relative overflow-hidden">
+                    <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6">
+                        <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl text-center relative overflow-hidden">
                             <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
                             <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-xl relative z-10">
                                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -193,8 +193,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
                 {/* Custom Delete Confirmation Overlay */}
                 {showDeleteConfirm && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm p-6  fade-in ">
-                        <div className="bg-white border border-red-100 rounded-3xl p-8 w-full max-w-sm shadow-2xl   zoom-in-95  text-center">
+                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm p-6">
+                        <div className="bg-white border border-red-100 rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center">
                             <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-5 text-2xl">
                                 ⚠️
                             </div>
@@ -229,8 +229,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
                 {/* Account Deletion Success Overlay */}
                 {showDeleteSuccess && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/95 backdrop-blur-md p-6  fade-in ">
-                        <div className="bg-white border border-gray-100 rounded-3xl p-8 w-full max-w-sm shadow-2xl   zoom-in-95  text-center">
+                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/95 backdrop-blur-md p-6">
+                        <div className="bg-white border border-gray-100 rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center">
                             <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
                                 👋
                             </div>
@@ -303,7 +303,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                     <div className="flex-1 p-6 sm:p-8 overflow-y-auto custom-scrollbar">
 
                         {activeTab === 'general' && (
-                            <div className="space-y-8  slide-in-from-right-4 ">
+                            <div className="space-y-8">
                                 <div>
                                     <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2 mb-4">
                                         {t('account.appearance')}
@@ -384,7 +384,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                         )}
 
                         {activeTab === 'account' && (
-                            <div className="space-y-8  slide-in-from-right-4 ">
+                            <div className="space-y-8">
                                 <div>
                                     <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2 mb-4">
                                         {t('settings.account_summary')}
@@ -424,7 +424,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                         )}
 
                         {activeTab === 'security' && (
-                            <div className="space-y-8  slide-in-from-right-4 ">
+                            <div className="space-y-8">
                                 <div className="space-y-4">
                                     <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2">
                                         {t('settings.change_email')}
@@ -508,7 +508,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                         )}
 
                         {activeTab === 'notifications' && (
-                            <div className="space-y-8  slide-in-from-right-4 ">
+                            <div className="space-y-8">
                                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => toggleNotification('email')}>
                                     <div>
                                         <h4 className="font-bold text-sm text-black">{t('settings.notif_email_title')}</h4>

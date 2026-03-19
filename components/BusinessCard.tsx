@@ -13,15 +13,15 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className="bg-transparent sm:bg-white dark:sm:bg-gray-800 pl-1.5 pr-4 py-4 sm:p-8 cursor-pointer relative transition-all duration-200 hover:bg-gray-50/50 dark:hover:bg-white/[0.02] sm:hover:shadow-md group sm:border sm:border-gray-100 sm:dark:border-gray-700 sm:rounded-[35px]"
+      className="bg-transparent sm:bg-white dark:sm:bg-black pl-1.5 pr-4 py-4 sm:p-8 cursor-pointer relative transition-all duration-200 hover:bg-gray-50/50 dark:hover:bg-white/[0.02] sm:hover:shadow-md group sm:border sm:border-gray-100 dark:sm:border-white/10 sm:rounded-[35px]"
     >
       {/* Offset Divider Line - Mobile Only */}
-      <div className="absolute bottom-0 right-0 left-[74px] border-b border-gray-200/80 dark:border-gray-700/60 sm:hidden" />
+      <div className="absolute bottom-0 right-0 left-[74px] border-b border-gray-200/80 dark:border-white/15 sm:hidden" />
 
       <div className="flex items-start gap-4 sm:gap-10">
         {/* Photo Section */}
         <div className="relative shrink-0">
-          <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-lg sm:rounded-3xl overflow-hidden bg-gray-50 dark:bg-gray-800 shadow-sm sm:border sm:border-gray-100 dark:sm:border-gray-700">
+          <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-lg sm:rounded-3xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm sm:border sm:border-gray-100 dark:sm:border-white/10">
             {cv.photoUrl ? (
               <img
                 src={cv.photoUrl}
@@ -57,7 +57,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
 
                 <div className="flex items-center gap-1.5 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold sm:font-bold">
                   <i className="fi fi-rr-briefcase"></i>
-                  {cv.experienceYears} yıl deneyim
+                  {cv.experienceYears} {t('common.years_experience')}
                 </div>
               </div>
 
@@ -73,7 +73,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
 
           {/* Desktop Action Button - Vertically Centered */}
           <div className="hidden sm:block shrink-0">
-            <button className="bg-white dark:bg-gray-800 border-[0.5px] border-[#1f6d78] text-[#1f6d78] px-8 py-3 rounded-full font-black text-xs hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-sm uppercase tracking-widest whitespace-nowrap">
+            <button className="bg-white dark:bg-black border-[0.5px] border-[#1f6d78] text-[#1f6d78] px-8 py-3 rounded-full font-black text-xs hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-sm uppercase tracking-widest whitespace-nowrap">
               {t('card.view')}
             </button>
           </div>

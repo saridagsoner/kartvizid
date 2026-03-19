@@ -90,7 +90,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
             const { data } = supabase.storage.from('cv-photos').getPublicUrl(filePath);
             setFormData(prev => ({ ...prev, logoUrl: data.publicUrl }));
         } catch (error: any) {
-            setShowWarning({ show: true, message: 'Logo yüklenirken hata oluştu: ' + error.message });
+            setShowWarning({ show: true, message: t('errors.photo_upload_failed') + ': ' + error.message });
         } finally {
             setUploading(false);
             setTempImageSrc(null);
@@ -99,31 +99,31 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
 
     const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
         <div className="mb-6 mt-10 first:mt-0">
-            <h3 className="text-sm font-black text-black uppercase tracking-[0.15em] border-l-4 border-[#1f6d78] pl-3">{title}</h3>
+            <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-[0.15em] border-l-4 border-[#1f6d78] pl-3">{title}</h3>
             {subtitle && <p className="text-[10px] text-gray-400 font-bold uppercase mt-1 ml-4">{subtitle}</p>}
         </div>
     );
 
     return (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center p-0 sm:p-4 pb-[84px] sm:pb-0 bg-black/60 backdrop-blur-xl">
-            <div className="bg-white dark:bg-gray-900 w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-0 sm:p-4 pb-[84px] sm:pb-0 bg-white dark:bg-black sm:bg-black/60 sm:backdrop-blur-xl">
+            <div className="bg-white dark:bg-black w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden">
 
                 {/* Header */}
-                <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
+                <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-white dark:bg-black sticky top-0 z-10 shrink-0">
                     <div>
                         <h2 className="text-2xl font-black text-black dark:text-white tracking-tighter">{t('company.create_title')}</h2>
                         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">{t('company.create_subtitle')}</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-2xl text-black dark:text-white hover:bg-[#1f6d78] hover:text-white transition-all active:"
+                        className="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-2xl text-black dark:text-white hover:bg-[#1f6d78] hover:text-white transition-all active:"
                     >
                         ×
                     </button>
                 </div>
 
                 {/* Form Body */}
-                <div className="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar space-y-8 sm:space-y-12 bg-white dark:bg-gray-900">
+                <div className="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar space-y-8 sm:space-y-12 bg-white dark:bg-black">
 
                     {/* Bölüm 1: Temel Bilgiler */}
                     <section>
@@ -139,7 +139,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                 />
                                 <div
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="w-32 h-32 rounded-[2.5rem] border-2 border-dashed border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden relative shadow-sm"
+                                    className="w-32 h-32 rounded-[2.5rem] border-2 border-dashed border-gray-200 dark:border-white/20 bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden relative shadow-sm"
                                 >
                                     {formData.logoUrl ? (
                                         <>
@@ -187,8 +187,8 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                         type="text"
                                         value={formData.name}
                                         onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
-                                        placeholder="Örn: Acme A.Ş."
+                                        className="w-full bg-gray-50 dark:bg-gray-900 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-zinc-900 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
+                                        placeholder={t('company.name_placeholder')}
                                     />
                                 </div>
 
@@ -199,8 +199,8 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                             type="text"
                                             value={formData.industry}
                                             onChange={e => setFormData({ ...formData, industry: e.target.value })}
-                                            className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
-                                            placeholder="Örn: Teknoloji"
+                                            className="w-full bg-gray-50 dark:bg-gray-900 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-zinc-900 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
+                                            placeholder={t('company.industry_placeholder')}
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -209,7 +209,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                             type="url"
                                             value={formData.website}
                                             onChange={e => setFormData({ ...formData, website: e.target.value })}
-                                            className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
+                                            className="w-full bg-gray-50 dark:bg-gray-900 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-zinc-900 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
                                             placeholder="https://..."
                                         />
                                     </div>
@@ -236,7 +236,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                     value={formData.district || ''}
                                     onChange={(val) => setFormData({ ...formData, district: val })}
                                     options={formData.city ? TURKEY_LOCATIONS[formData.city] || [] : []}
-                                    placeholder={formData.city ? "İlçe Seçiniz" : "Önce Şehir Seçin"}
+                                    placeholder={formData.city ? t('company.district_placeholder') : t('company.city_first')}
                                     disabled={!formData.city}
                                 />
                             </div>
@@ -248,8 +248,8 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                     type="text"
                                     value={formData.country}
                                     onChange={e => setFormData({ ...formData, country: e.target.value })}
-                                    className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
-                                    placeholder="Türkiye"
+                                    className="w-full bg-gray-50 dark:bg-gray-900 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
+                                    placeholder={t('company.country_placeholder')}
                                 />
                             </div>
                             <div className="space-y-2">
@@ -258,8 +258,8 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                                     type="text"
                                     value={formData.address}
                                     onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                    className="w-full bg-gray-50 dark:bg-gray-800 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
-                                    placeholder="Mahalle, Cadde, Sokak No..."
+                                    className="w-full bg-gray-50 dark:bg-gray-900 border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 rounded-full px-6 py-3.5 outline-none transition-all text-sm font-bold text-gray-800 dark:text-gray-100"
+                                    placeholder={t('company.address_placeholder')}
                                 />
                             </div>
                         </div>
@@ -273,7 +273,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                             <textarea
                                 value={formData.description}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                className="w-full bg-gray-50 dark:bg-gray-800 rounded-[2rem] px-8 py-6 outline-none h-32 resize-none focus:bg-white dark:focus:bg-gray-700 focus:border-[#1f6d78]/10 border border-transparent transition-all font-medium text-sm leading-relaxed text-gray-800 dark:text-gray-100"
+                                className="w-full bg-gray-50 dark:bg-gray-900 rounded-[2rem] px-8 py-6 outline-none h-32 resize-none focus:bg-white dark:focus:bg-zinc-900 focus:border-[#1f6d78]/10 border border-transparent transition-all font-medium text-sm leading-relaxed text-gray-800 dark:text-gray-100"
                                 placeholder={t('company.about_placeholder')}
                             ></textarea>
                             <p className="text-[10px] text-gray-400 font-bold ml-4">{t('company.about_hint')}</p>
@@ -282,10 +282,10 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-6 sm:p-8 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex gap-5 sticky bottom-0 z-10 shrink-0">
+                <div className="p-6 sm:p-8 border-t border-gray-100 dark:border-white/10 bg-white dark:bg-black flex gap-5 sticky bottom-0 z-10 shrink-0">
                     <button
                         onClick={onClose}
-                        className="flex-1 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-black dark:text-white py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-[#1f6d78] transition-all active: shadow-sm"
+                        className="flex-1 bg-white dark:bg-black border-2 border-gray-100 dark:border-white/10 text-black dark:text-white py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-[#1f6d78] transition-all active: shadow-sm"
                     >
                         {t('form.cancel')}
                     </button>
@@ -293,27 +293,27 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                         onClick={() => {
                             // Validation
                             if (!formData.logoUrl) {
-                                setShowWarning({ show: true, message: 'Devam etmek için lütfen şirket logosu yükleyiniz. (Zorunlu)' });
+                                setShowWarning({ show: true, message: t('errors.logo_required') });
                                 return;
                             }
                             if (!formData.name?.trim()) {
-                                setShowWarning({ show: true, message: 'Lütfen şirket adı giriniz. (Zorunlu)' });
+                                setShowWarning({ show: true, message: t('errors.company_name_required') });
                                 return;
                             }
                             if (!formData.city) {
-                                setShowWarning({ show: true, message: 'Lütfen şehir seçiniz. (Zorunlu)' });
+                                setShowWarning({ show: true, message: t('errors.city_required') });
                                 return;
                             }
                             if (!formData.district) {
-                                setShowWarning({ show: true, message: 'Lütfen ilçe seçiniz. (Zorunlu)' });
+                                setShowWarning({ show: true, message: t('errors.district_required') });
                                 return;
                             }
                             if (!formData.industry) {
-                                setShowWarning({ show: true, message: 'Lütfen sektör giriniz. (Zorunlu)' });
+                                setShowWarning({ show: true, message: t('errors.industry_required') });
                                 return;
                             }
                             if (!formData.description?.trim()) {
-                                setShowWarning({ show: true, message: 'Lütfen hakkında yazısı ekleyiniz. (Zorunlu)' });
+                                setShowWarning({ show: true, message: t('errors.description_required') });
                                 return;
                             }
 
@@ -339,7 +339,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                             </svg>
                         </div>
                         <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
-                            Eksik Bilgiler Var
+                            {t('common.missing_info')}
                         </h3>
                         <p className="text-sm font-bold text-gray-500 mb-8 leading-relaxed relative z-10">
                             {showWarning.message}
@@ -348,7 +348,7 @@ const CompanyFormModal: React.FC<CompanyFormModalProps> = ({ onClose, onSubmit, 
                             onClick={() => setShowWarning({ show: false, message: '' })}
                             className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active: relative z-10"
                         >
-                            Tamam
+                            {t('common.done')}
                         </button>
                     </div>
                 </div>

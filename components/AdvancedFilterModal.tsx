@@ -234,7 +234,7 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
   };
 
   return (
-    <div className="fixed inset-0 z-[160] flex items-center justify-center sm:p-4 bg-black/30 backdrop-blur-md  fade-in ">
+    <div className="fixed inset-0 z-[400] flex items-center justify-center sm:p-4 bg-black/30 backdrop-blur-md  fade-in ">
       <div className="bg-white dark:bg-gray-900 w-full h-full sm:h-auto sm:max-w-[900px] sm:max-h-[90vh] rounded-none sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden  zoom-in-95 ">
 
         {/* Header */}

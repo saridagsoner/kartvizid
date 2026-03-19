@@ -43,7 +43,7 @@ const SortDropdown: React.FC<SortDropdownProps> = ({ value, onChange, minimal = 
                 {!minimal && <span>{activeLabel}</span>}
                 <svg
                     className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-                    width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+                    width="14.5" height="14.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"
                 >
                     <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>

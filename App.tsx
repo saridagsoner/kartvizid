@@ -27,6 +27,8 @@ import CompanyFormModal from './components/CompanyFormModal';
 import NotificationsModal from './components/NotificationsModal';
 import CVProfileRoute from './components/CVProfileRoute';
 import CompanyProfileRoute from './components/CompanyProfileRoute';
+import ShopCard from './components/ShopCard';
+import ShopProfileModal from './components/ShopProfileModal';
 
 // Lazy loaded auxiliary modals
 const JobSuccessModal = React.lazy(() => import('./components/JobSuccessModal'));
@@ -60,7 +62,7 @@ const App: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const background = location.state && location.state.background;
-  const { user } = useAuth();
+  const { user, signOut: authSignOut } = useAuth();
   const { t } = useLanguage();
   const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,8 +79,9 @@ const App: React.FC = () => {
   const [activeCompany, setActiveCompany] = useState<Company | null>(null);
 
   const [popularCompanies, setPopularCompanies] = useState<any[]>([]);
-  const [viewMode, setViewMode] = useState<'cvs' | 'employers'>('cvs');
+  const [viewMode, setViewMode] = useState<'cvs' | 'employers' | 'shops'>('cvs');
   const [companyList, setCompanyList] = useState<any[]>([]);
+  const [shopList, setShopList] = useState<any[]>([]);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -107,12 +110,16 @@ const App: React.FC = () => {
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
-  const [authRole, setAuthRole] = useState<'job_seeker' | 'employer' | undefined>(undefined);
+  const [authRole, setAuthRole] = useState<'job_seeker' | 'employer' | 'shop' | undefined>(undefined);
+  const [activeShop, setActiveShop] = useState<any | null>(null);
+  const [isShopProfileOpen, setIsShopProfileOpen] = useState(false);
   const [activeModalRequest, setActiveModalRequest] = useState<ContactRequest | null>(null);
   /* REMOVING DUPLICATE DECLARATION */
   const [activeModalRequestId, setActiveModalRequestId] = useState<string | null>(null);
   const [isJobSuccessOpen, setIsJobSuccessOpen] = useState(false);
   const [isSavedCVsOpen, setIsSavedCVsOpen] = useState(false);
+  const [showAllEmployers, setShowAllEmployers] = useState(false);
+  const [showAllShops, setShowAllShops] = useState(false);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFilterModal, setActiveFilterModal] = useState<'professions' | 'cities' | 'experience' | 'advanced' | null>(null);
@@ -129,10 +136,21 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleAuthOpen = (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer') => {
+  const handleAuthOpen = (mode: 'signin' | 'signup', role?: 'job_seeker' | 'employer' | 'shop') => {
     setAuthMode(mode);
     setAuthRole(role);
     setIsAuthModalOpen(true);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await authSignOut();
+      setIsMobileMenuOpen(false);
+      setIsAuthModalOpen(false);
+      showToast('Başarıyla çıkış yapıldı', 'success');
+    } catch (error) {
+      showToast(getFriendlyErrorMessage(error), 'error');
+    }
   };
 
 
@@ -176,17 +194,29 @@ const App: React.FC = () => {
   };
 
 
-
-
   useEffect(() => {
-    fetchCVs();
-    fetchAllCompanies();
-    fetchPopularCVs();
-    fetchJobFinders();
-    fetchPopularCompanies();
+    // Fetch initial data based on viewMode
+    if (viewMode === 'cvs') {
+      fetchCVs();
+    } else if (viewMode === 'employers') {
+      fetchAllCompanies();
+    } else if (viewMode === 'shops') {
+      fetchShops();
+    }
+    setCurrentPage(1);
+    setIsMobileMenuOpen(false);
+    setShowAllEmployers(false);
+    setShowAllShops(false);
+    fetchPopularCompanies(); // This is common for all views, or could be moved to a separate useEffect if it's truly independent
+    fetchPopularCVs(); // Also common
+    fetchJobFinders(); // Also common
+
     if (user) {
       if (user.user_metadata?.role === 'employer') {
         fetchCompany();
+      }
+      if (user.user_metadata?.role === 'shop') {
+        fetchShop();
       }
       fetchSentRequests();
       fetchReceivedRequests();
@@ -234,11 +264,23 @@ const App: React.FC = () => {
         supabase.removeChannel(requestsChannel);
         supabase.removeChannel(sentRequestsChannel);
       };
-
     } else {
       setActiveCompany(null);
     }
-  }, [user]);
+  }, [user, viewMode]); // Added viewMode to dependencies
+
+  // URL Sync for Dedicated Views
+  useEffect(() => {
+    if (location.pathname === '/hizmetler') {
+      setViewMode('shops');
+      // Ensure menu is closed when on a dedicated page
+      setIsMobileMenuOpen(false);
+    } else if (location.pathname === '/is-verenler') {
+      setViewMode('employers');
+    } else if (location.pathname === '/') {
+      setViewMode('cvs');
+    }
+  }, [location.pathname]);
 
   // Listen for custom "open-profile" event (triggered by NotificationDropdown)
   useEffect(() => {
@@ -789,6 +831,23 @@ const App: React.FC = () => {
         return false;
       };
 
+      // Helper to open Shop
+      const openShop = async () => {
+        const { data, error } = await supabase
+          .from('shops')
+          .select('*')
+          .eq('user_id', userId)
+          .single();
+
+        if (!error && data) {
+           setActiveShop(data);
+           setIsShopProfileOpen(true);
+           if (requestId) setActiveModalRequestId(requestId);
+           return true;
+        }
+        return false;
+      };
+
       // Helper to open CV
       const openCV = async (queryField: string, id: string) => {
         try {
@@ -826,14 +885,18 @@ const App: React.FC = () => {
       // Smart Logic: Try based on role, then fallback
       if (role === 'employer') {
         found = await openCompany();
-        if (!found) found = await openCV('user_id', userId); // Fallback
+        if (!found) found = await openCV('user_id', userId);
       } else if (role === 'job_seeker') {
         found = await openCV('user_id', userId);
-        if (!found) found = await openCompany(); // Fallback
+        if (!found) found = await openCompany();
+      } else if (role === 'shop') {
+        found = await openShop();
+        if (!found) found = await openCV('user_id', userId);
       } else {
-        // No role known, try both
+        // No role known, try all
         found = await openCV('user_id', userId);
         if (!found) found = await openCompany();
+        if (!found) found = await openShop();
       }
 
       if (!found) {
@@ -1027,6 +1090,40 @@ const App: React.FC = () => {
     }
   };
 
+  const fetchShops = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('shops')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setShopList(data || []);
+    } catch (err) {
+      console.error('Error fetching shops:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchShop = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('shops')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      if (data) setActiveCompany(data as any); // Reusing activeCompany state for now or we could add activeShop
+    } catch (err) {
+      console.error('Error fetching shop:', err);
+    }
+  };
+
   const fetchAllCompanies = async () => {
     try {
       setLoading(true);
@@ -1100,7 +1197,7 @@ const App: React.FC = () => {
           workType: item.work_type || '',
           employmentType: item.employment_type || '',
           militaryStatus: item.military_status || '',
-          maritalStatus: item.marital_status || '',
+          maritalStatus: item.maritalStatus || '',
           disabilityStatus: item.disability_status || '',
           driverLicense: item.driver_license || [],
           travelStatus: item.travel_status || '',
@@ -1114,7 +1211,7 @@ const App: React.FC = () => {
           isEmailPublic: item.is_email_public,
           isPhonePublic: item.is_phone_public,
           workingStatus: item.working_status || 'open',
-          references: item.references || [],
+          references: item.references,
           // Map new JSONB columns
           workExperience: item.work_experience || [],
           internshipDetails: item.internship_details || [],
@@ -1170,7 +1267,7 @@ const App: React.FC = () => {
       if (data && data.length > 0) {
         const company = data[0];
         console.log('Company data fetched:', company);
-        setActiveCompany({
+        const companyData = {
           id: company.id,
           slug: company.slug,
           userId: company.user_id,
@@ -1184,10 +1281,13 @@ const App: React.FC = () => {
           address: company.address,
           logoUrl: company.logo_url,
           createdAt: company.created_at
-        });
+        };
+        setActiveCompany(companyData);
+        return companyData;
       } else {
         console.log('No company data found for user');
         setActiveCompany(null);
+        return null;
       }
     } catch (error) {
       console.error('Error fetching company:', error);
@@ -1588,56 +1688,53 @@ const App: React.FC = () => {
       const slugOrId = companyMatch[1];
       return slugOrId === activeCompany.id || slugOrId === activeCompany.slug;
     }
-
     return false;
   }, [location.pathname, currentUserCV, activeCompany, isCVPromoOpen]);
 
   return (
     <div className="min-h-screen flex flex-col bg-white sm:bg-[#F0F2F5] dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
 
-
       <Navbar
-        onSearch={setSearchQuery}
-        onCreateCV={() => {
-          navigate('/cv-olustur', { state: { background: background || location } });
-        }}
-        onOpenCompanyProfile={() => {
-          fetchCompany();
-          navigate('/sirket-olustur', { state: { background: background || location } });
-        }}
-        onOpenSettings={() => {
-          navigate('/ayarlar', { state: { background: background || location } });
-        }}
-        hasCV={!!currentUserCV}
-        userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
-
-        // Notifications Props
-        notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
-        notifications={[
-          ...receivedRequests,
-          ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
-        ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-        onNotificationAction={handleRequestAction}
-        onMarkNotificationRead={markNotificationRead}
-        onMarkAllRead={markAllNotificationsRead}
-
-        onOpenProfile={(uid, role) => {
-          handleOpenProfile(uid, role);
-        }}
-        onViewAll={() => {
-          navigate('/bildirimler', { state: { background: background || location } });
-        }}
-
-        onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
-        isAuthModalOpen={isAuthModalOpen}
-        onCloseAuth={() => setIsAuthModalOpen(false)}
-        authMode={authMode}
-        authRole={authRole}
-        onOpenSavedCVs={() => {
-          closeAllModals();
-          handleOpenSavedCVs();
-        }}
-      />
+          onSearch={setSearchQuery}
+          onCreateCV={() => {
+            navigate('/cv-olustur', { state: { background: background || location } });
+          }}
+          onOpenCompanyProfile={() => {
+            if (user?.user_metadata?.role === 'employer') {
+              fetchCompany().then(company => {
+                if (company) {
+                  const companyData = company as any;
+                  navigate(`/company/${companyData.slug || companyData.id}`, { state: { companyData, background: background || location } });
+                }
+              });
+            }
+          }}
+          onOpenSettings={() => {
+            navigate('/ayarlar', { state: { background: background || location } });
+          }}
+          hasCV={!!currentUserCV}
+          userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
+          notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
+          notifications={[
+            ...receivedRequests,
+            ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
+          ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+          onNotificationAction={handleRequestAction}
+          onMarkNotificationRead={markNotificationRead}
+          onMarkAllRead={markAllNotificationsRead}
+          onOpenProfile={(uid, role) => {
+            handleOpenProfile(uid, role);
+          }}
+          onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
+          isAuthModalOpen={isAuthModalOpen}
+          onCloseAuth={() => setIsAuthModalOpen(false)}
+          authMode={authMode}
+          authRole={authRole}
+          onOpenSavedCVs={() => {
+            handleOpenSavedCVs();
+          }}
+          onOpenMenu={() => setIsMobileMenuOpen(true)}
+        />
 
       {/* ... previous modals ... */}
 
@@ -1667,16 +1764,13 @@ const App: React.FC = () => {
 
 
           <section className="flex-1 min-w-0 flex flex-col gap-2 sm:gap-4">
-            {/* Mobile Search Bar + Filter Toggle */}
-            <div className="block sm:hidden w-full mb-0 mt-2">
+            {/* Redundant Mobile Search Bar Hidden - Using Dedicated Search Overlay instead */}
+            <div className="hidden w-full mb-0 mt-2">
               <div className="flex items-center gap-2">
                 <div className="relative flex-1">
                   <div className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${isSearchFocused ? 'text-[#1f6d78] dark:text-[#2dd4bf]' : 'text-gray-500'
                     }`}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="11" cy="11" r="8"></circle>
-                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
+                    <i className="fi fi-br-search text-sm"></i>
                   </div>
                   <input
                     type="text"
@@ -1704,46 +1798,38 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* Mobile Header (Kartvizidler + Sort) */}
-            <div className="flex sm:hidden items-center justify-between px-2 mt-1 mb-0">
-              <div className="flex items-center gap-3 ml-1">
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => setViewMode('cvs')}
-                    className={`text-[13px] font-semibold tracking-tight transition-all pb-0.5 border-b-2 ${viewMode === 'cvs' ? 'text-[#1f6d78] dark:text-[#2dd4bf] border-[#1f6d78] dark:border-[#2dd4bf]' : 'text-gray-400 dark:text-gray-500 border-transparent'}`}
-                  >
-                    İş Arayanlar
-                  </button>
-                  {viewMode === 'cvs' && <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />}
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => setViewMode('employers')}
-                    className={`text-[13px] font-semibold tracking-tight transition-all pb-0.5 border-b-2 ${viewMode === 'employers' ? 'text-[#1f6d78] dark:text-[#2dd4bf] border-[#1f6d78] dark:border-[#2dd4bf]' : 'text-gray-400 dark:text-gray-500 border-transparent'}`}
-                  >
-                    İş Verenler
-                  </button>
-                  {viewMode === 'employers' && <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />}
+            {/* Mobile Header (View Mode Indicator) */}
+            <div className="flex sm:hidden items-center justify-between px-4 mt-0.5 mb-1.5 border-b border-gray-200/60 dark:border-white/20">
+                <div className="flex items-center gap-4 py-1.5">
+                  <div className="flex items-center gap-1">
+                    <div
+                      className="text-[17px] font-black tracking-tight text-black dark:text-white transition-all"
+                    >
+                      {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
+                    </div>
+                    <div className=""><SortDropdown value={sortBy} onChange={setSortBy} minimal={true} /></div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="hidden sm:block">
-              <Filters
-                currentFilters={activeFilters}
-                onChange={handleFilterUpdate}
-                availableProfessions={availableProfessions}
-                availableCities={availableCities}
-                activeModal={activeFilterModal}
-                onActiveModalChange={setActiveFilterModal}
-                mobileSort={
-                  <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest whitespace-nowrap">{t('feed.sort')}:</span>
-                    <SortDropdown value={sortBy} onChange={setSortBy} />
-                  </div>
-                }
-              />
-            </div>
+            {viewMode === 'cvs' && (
+              <div className="hidden sm:block">
+                <Filters
+                  currentFilters={activeFilters}
+                  onChange={handleFilterUpdate}
+                  availableProfessions={availableProfessions}
+                  availableCities={availableCities}
+                  activeModal={activeFilterModal}
+                  onActiveModalChange={setActiveFilterModal}
+                  mobileSort={
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest whitespace-nowrap">{t('feed.sort')}:</span>
+                      <SortDropdown value={sortBy} onChange={setSortBy} />
+                    </div>
+                  }
+                />
+              </div>
+            )}
 
             {/* Mobile Advanced Filter Modal */}
             {activeFilterModal === 'advanced' && (
@@ -1763,34 +1849,48 @@ const App: React.FC = () => {
               </div>
             )}
 
-            <div className="hidden sm:flex bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 px-4 py-2 sm:px-6 sm:py-3 mb-2 flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 shadow-sm transition-colors duration-300">
-              <h2 className="text-xs sm:text-sm font-bold text-[#1f6d78] dark:text-white">
-                {t('feed.list_title')} <span className="text-gray-400 dark:text-gray-500 font-normal ml-1">({filteredCVs.length} sonuç)</span>
-              </h2>
-              <div className="flex items-center gap-3 self-end sm:self-auto">
-                <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">{t('feed.sort')}:</span>
-                <SortDropdown value={sortBy} onChange={setSortBy} />
+            <div className="hidden sm:flex bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 px-4 pt-4 pb-0 sm:px-8 sm:pt-6 mb-2 flex-col sm:flex-row sm:items-baseline justify-between gap-3 sm:gap-0 shadow-sm transition-colors duration-300">
+              <div className="flex items-center gap-12 border-b border-gray-200 dark:border-white/20 w-full mb-[-1px]">
+                <div className="flex items-center gap-1">
+                  <div
+                    className={`${(viewMode === 'employers' || viewMode === 'shops') ? 'text-[22px] font-black' : 'text-[17px] font-black border-b-2 border-[#1f6d78] dark:border-[#2dd4bf] pb-3 -mb-px'} transition-all text-[#1f6d78] dark:text-[#2dd4bf]`}
+                  >
+                    {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
+                  </div>
+                  {viewMode === 'cvs' && <div className="pb-3"><SortDropdown value={sortBy} onChange={setSortBy} minimal={true} /></div>}
+                </div>
               </div>
             </div>
 
-              <div className="flex flex-col sm:gap-5">
-              {/* Mobile Offset Divider for the first item */}
-              <div className="block sm:hidden border-t border-gray-200/80 dark:border-gray-700/60 ml-[74px]" />
+              <div className="flex flex-col sm:gap-5 -mt-2 sm:mt-0">
               
               {viewMode === 'cvs' ? (
                 currentItems.length > 0 ? (
-                  currentItems.map(cv => {
-                    const request = sentRequests.find(r => r.target_user_id === cv.userId);
-                    const status = request ? request.status : 'none';
+                  <>
+                    {currentItems.map(cv => {
+                      const request = sentRequests.find(r => r.target_user_id === cv.userId);
+                      const status = request ? request.status : 'none';
 
-                    return (
-                      <BusinessCard
-                        key={cv.id}
-                        cv={cv}
-                        onClick={() => handleCVClick(cv)}
-                      />
-                    );
-                  })
+                      return (
+                        <BusinessCard
+                          key={cv.id}
+                          cv={cv}
+                          onClick={() => handleCVClick(cv)}
+                        />
+                      );
+                    })}
+
+                    {currentPage === totalPages && !loading && (
+                      <div className="mt-4 mb-8 text-center px-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <h3 className="text-[15px] font-black text-gray-900 dark:text-white mb-0.5 tracking-tight">
+                          {t('feed.end_title')}
+                        </h3>
+                        <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400">
+                          {t('feed.end_desc')}
+                        </p>
+                      </div>
+                    )}
+                  </>
                 ) : loading ? (
                   <>
                     <BusinessCardSkeleton />
@@ -1812,63 +1912,212 @@ const App: React.FC = () => {
                     }} className="mt-4 text-blue-500 font-bold hover:underline">{t('feed.reset_filters')}</button>
                   </div>
                 )
-              ) : (
+              ) : viewMode === 'employers' ? (
                 /* Employers View */
-                companyList.filter(c => 
-                  c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  (c.industry && c.industry.toLowerCase().includes(searchQuery.toLowerCase()))
-                ).length > 0 ? (
-                  companyList.filter(c => 
-                    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    (c.industry && c.industry.toLowerCase().includes(searchQuery.toLowerCase()))
-                  ).map(company => (
-                    <div
-                      key={company.id}
-                      onClick={() => handleOpenProfile(company.userId, 'employer')}
-                      className="flex items-center gap-4 sm:gap-10 pl-1.5 pr-4 py-4 sm:p-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-750 transition-colors sm:border sm:rounded-[35px] sm:mb-4"
-                    >
-                      <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-lg sm:rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 bg-white dark:bg-gray-700 flex items-center justify-center shadow-sm">
-                        {company.logoUrl ? (
-                          <img src={company.logoUrl} alt={company.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                            <path d="M9 22v-4h6v4"></path>
-                            <path d="M8 6h.01"></path>
-                            <path d="M16 6h.01"></path>
-                            <path d="M12 6h.01"></path>
-                          </svg>
-                        )}
+                <div className="flex flex-col gap-6">
+                  {/* Employer List Content */}
+
+                  {showAllEmployers || searchQuery.length > 0 ? (
+                    companyList.filter(c => 
+                      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      (c.industry && c.industry.toLowerCase().includes(searchQuery.toLowerCase()))
+                    ).length > 0 ? (
+                      companyList.filter(c => 
+                        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        (c.industry && c.industry.toLowerCase().includes(searchQuery.toLowerCase()))
+                      ).map(company => (
+                        <div
+                          key={company.id}
+                          onClick={() => handleOpenProfile(company.userId, 'employer')}
+                          className="flex items-center gap-4 sm:gap-10 pl-1.5 pr-4 py-4 sm:p-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-white/10 active:bg-gray-50 dark:active:bg-gray-750 transition-colors sm:border sm:rounded-[35px] sm:mb-4"
+                        >
+                          <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-lg sm:rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 bg-gray-50 dark:bg-gray-800 flex items-center justify-center shadow-sm sm:border sm:border-gray-100 dark:sm:border-gray-700">
+                            {company.logoUrl ? (
+                              <img src={company.logoUrl} alt={company.name} className="w-full h-full object-cover" />
+                            ) : (
+                               <i className="fi fi-rr-briefcase text-2xl sm:text-4xl text-gray-300 dark:text-gray-600"></i>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-col gap-0.5 sm:gap-1.5">
+                                <h3 className="text-[15px] sm:text-[22px] font-bold text-black dark:text-white tracking-tight leading-tight line-clamp-1">
+                                  {company.name}
+                                </h3>
+                                <p className="text-[13px] sm:text-[18px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1">
+                                  {company.industry}
+                                </p>
+                                <div className="flex items-center gap-1.5 mt-0.5 sm:mt-1 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold">
+                                  <i className="fi fi-rr-marker"></i>
+                                  <span className="lowercase first-letter:uppercase">{company.city}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Desktop Action Button */}
+                            <div className="hidden sm:block shrink-0">
+                              <button className="bg-white dark:bg-gray-800 border-[0.5px] border-[#1f6d78] text-[#1f6d78] px-8 py-3 rounded-full font-black text-xs hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-sm uppercase tracking-widest whitespace-nowrap">
+                                {t('card.view')}
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Mobile Right Arrow */}
+                          <div className="shrink-0 self-center flex sm:hidden items-center text-gray-400 dark:text-gray-500">
+                            <i className="fi fi-rr-angle-small-right text-2xl"></i>
+                          </div>
+                        </div>
+                      ))
+                    ) : loading ? (
+                      <>
+                        <BusinessCardSkeleton />
+                        <BusinessCardSkeleton />
+                      </>
+                    ) : (
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-16 text-center border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
+                        <p className="text-gray-800 dark:text-white font-bold">İş veren bulunamadı.</p>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-col gap-0.5 sm:gap-1.5">
-                          <h3 className="text-[15px] sm:text-[22px] font-bold text-black dark:text-white tracking-tight leading-tight line-clamp-1">
-                            {company.name}
-                          </h3>
-                          <p className="text-[13px] sm:text-[18px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1">
-                            {company.industry}
-                          </p>
-                          <div className="flex items-center gap-1.5 mt-0.5 sm:mt-1 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold">
-                            <i className="fi fi-rr-marker"></i>
-                            <span className="lowercase first-letter:uppercase">{company.city}</span>
+                    )
+                  ) : (
+                    <div className="flex flex-col gap-4">
+                      {/* Landing Section First (Flat Style) */}
+                      <div className="bg-white dark:bg-gray-900 py-6 sm:py-10 text-gray-900 dark:text-white overflow-hidden relative group transition-colors duration-300 px-4 sm:px-10">
+                        <div className="relative z-10 flex flex-col items-center">
+                          <div className="text-center">
+                            <h2 className="text-2xl sm:text-[42px] font-black mb-4 leading-[1.1] tracking-tight text-gray-900 dark:text-white">
+                              Geleceğin Yıldızlarını <br /> Ekibinize Katın!
+                            </h2>
+                            <p className="text-gray-500 dark:text-gray-400 text-[13px] sm:text-[17px] font-medium mb-10 max-w-lg leading-relaxed mx-auto">
+                              Doğru yeteneği bulmak hiç bu kadar kolay olmamıştı. Kartvizid'de şirket profilinizi oluşturun, ilanlarınızı yayınlayın ve doğrudan profesyonellere ulaşın.
+                            </p>
+                            
+                            <div className="flex flex-col items-center gap-5 w-full max-w-[400px] mx-auto">
+                              <button 
+                                onClick={() => {
+                                  if (!user) {
+                                    handleAuthOpen('signup', 'employer');
+                                  } else {
+                                    navigate('/sirket-olustur');
+                                  }
+                                }}
+                                className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white py-5 px-9 rounded-[2.2rem] transition-all hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-[0.98] shadow-xl shadow-black/5"
+                              >
+                                <div className="flex items-center gap-6">
+                                  <i className="fi fi-rr-building text-[29px] text-[#1f6d78] dark:text-[#2dd4bf]"></i>
+                                  <div className="text-left">
+                                    <h4 className="text-[17px] font-black text-[#1f6d78] dark:text-[#2dd4bf] leading-tight mb-1">İş Veren Kaydı Oluştur</h4>
+                                    <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-tight">Şirketinizi kaydedin ve aradığınız yetenekleri bulun</p>
+                                  </div>
+                                </div>
+                              </button>
+
+                              <button 
+                                onClick={() => setShowAllEmployers(true)}
+                                className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white py-5 px-9 rounded-[2.2rem] transition-all hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-[0.98] shadow-xl shadow-black/5"
+                              >
+                                <div className="flex items-center gap-6">
+                                  <i className="fi fi-rr-search-alt text-[29px] text-[#1f6d78] dark:text-[#2dd4bf]"></i>
+                                  <div className="text-left">
+                                    <h4 className="text-[17px] font-black text-[#1f6d78] dark:text-[#2dd4bf] leading-tight mb-1">İş Verenleri Keşfet</h4>
+                                    <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-tight">Sektörün öncü firmalarını inceleyin</p>
+                                  </div>
+                                </div>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                      <div className="text-gray-400">
-                        <i className="fi fi-rr-angle-small-right text-2xl"></i>
-                      </div>
                     </div>
-                  ))
-                ) : loading ? (
-                  <>
-                    <BusinessCardSkeleton />
-                    <BusinessCardSkeleton />
-                  </>
-                ) : (
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-16 text-center border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
-                    <p className="text-gray-800 dark:text-white font-bold">İş veren bulunamadı.</p>
-                  </div>
-                )
+                  )}
+                </div>
+              ) : (
+                /* Shops (Hizmetler) View */
+                <div className="flex flex-col gap-6">
+                  {/* Hizmetler List Content */}
+                  {showAllShops || searchQuery.length > 0 ? (
+                    shopList.filter(s => 
+                      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      (s.profession && s.profession.toLowerCase().includes(searchQuery.toLowerCase()))
+                    ).length > 0 ? (
+                      <div className="flex flex-col gap-4">
+                        {shopList.filter(s => 
+                          s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (s.profession && s.profession.toLowerCase().includes(searchQuery.toLowerCase()))
+                        ).map(shop => (
+                          <ShopCard
+                            key={shop.id}
+                            shop={shop}
+                            onClick={() => {
+                              setActiveShop(shop);
+                              setIsShopProfileOpen(true);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    ) : loading ? (
+                      <>
+                        <BusinessCardSkeleton />
+                        <BusinessCardSkeleton />
+                      </>
+                    ) : (
+                      <div className="pt-32 sm:pt-48 pb-24 sm:pb-32 flex flex-col items-center justify-center text-center px-6">
+                        <h3 className="text-xl sm:text-2xl font-black text-black dark:text-white mb-3">Henüz Kayıtlı Hizmet Yok</h3>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base max-w-sm leading-relaxed font-bold">
+                          Kartvizid'de hizmetler sayfası çok yakında dolmaya başlayacak. <br className="hidden sm:block" />İlk hizmet kapısını siz açabilirsiniz!
+                        </p>
+                        <button 
+                          onClick={() => handleAuthOpen('signup', 'shop')}
+                          className="mt-8 text-[#1f6d78] dark:text-[#2dd4bf] font-black hover:underline text-sm sm:text-base uppercase tracking-widest"
+                        >
+                          HEMEN HİZMET VERMEYE BAŞLA
+                        </button>
+                      </div>
+                    )
+                  ) : (
+                    /* Shops Landing / Explanation Section - Updated for Flat background */
+                    <div className="bg-white dark:bg-gray-900 py-6 sm:py-10 text-gray-900 dark:text-white overflow-hidden relative group transition-colors duration-300">
+                      <div className="relative z-10 flex flex-col sm:flex-row items-center gap-8">
+                        <div className="flex-1 text-center sm:text-left">
+                          <h2 className="text-3xl sm:text-[42px] font-black mb-6 leading-[1.1] tracking-tight text-gray-900 dark:text-white">
+                            Yeteneğini Kazanca <br /> Dönüştürme Vakti!
+                          </h2>
+                          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-[17px] font-medium mb-10 max-w-lg leading-relaxed">
+                            Kartvizid'de sadece iş arayanlar değil, kendi işinin patronu olan hizmet sağlayıcılar da kazanıyor. Ustalığını konuştur, profilini oluştur ve doğrudan müşterilerin seni bulmasını sağla.
+                          </p>
+                          <div className="flex flex-col sm:flex-row gap-5 items-center">
+                            <button 
+                              onClick={() => handleAuthOpen('signup', 'shop')}
+                              className="w-full sm:w-auto bg-white dark:bg-gray-800 border-2 border-black dark:border-white py-5 px-9 rounded-[2.2rem] transition-all hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-[0.98] shadow-xl shadow-black/5"
+                            >
+                              <div className="flex items-center gap-6">
+                                <i className="fi fi-rr-shop text-[29px] text-[#1f6d78] dark:text-[#2dd4bf]"></i>
+                                <div className="text-left">
+                                  <h4 className="text-[17px] font-black text-[#1f6d78] dark:text-[#2dd4bf] leading-tight mb-1">Hemen Hizmet Vermeye Başla</h4>
+                                  <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-tight">Yeteneklerinizi kazanca dönüştürün</p>
+                                </div>
+                              </div>
+                            </button>
+  
+                            <button 
+                              onClick={() => setShowAllShops(true)}
+                              className="w-full sm:w-auto bg-white dark:bg-gray-800 border-2 border-black dark:border-white py-5 px-9 rounded-[2.2rem] transition-all hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-[0.98] shadow-xl shadow-black/5"
+                            >
+                              <div className="flex items-center gap-6">
+                                <i className="fi fi-rr-search-heart text-[29px] text-[#1f6d78] dark:text-[#2dd4bf]"></i>
+                                <div className="text-left">
+                                  <h4 className="text-[17px] font-black text-[#1f6d78] dark:text-[#2dd4bf] leading-tight mb-1">Hizmetleri Keşfet</h4>
+                                  <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-tight">Sektördeki uzmanlara ulaşın</p>
+                                </div>
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Subtle Decorative Elements for White Background */}
+                      <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-[#1f6d78]/5 rounded-full blur-[100px] opacity-50"></div>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
 
@@ -1918,104 +2167,106 @@ const App: React.FC = () => {
         </div>
       </div>
 
-
-      <Footer />
-      {/* Local Modals have moved into <Routes> below */}
-
-      {/* Mobile Bottom Navigation - Visible for all users */}
-      <MobileBottomNav
-        user={user}
-        isProfileOpen={isMyProfileOpen}
-        isCreateOpen={location.pathname === '/cv-olustur' || location.pathname === '/sirket-olustur'}
-        isHomeView={!isMyProfileOpen && !location.pathname.startsWith('/cv/') && !location.pathname.startsWith('/company/') && location.pathname !== '/cv-olustur' && location.pathname !== '/ayarlar' && location.pathname !== '/sirket-olustur' && location.pathname !== '/bildirimler' && !isSavedCVsOpen}
-        onGoHome={() => {
-          navigate('/', { replace: true, state: {} });
-          closeAllModals(); // Ensure all modals are closed
-          setSearchQuery('');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          setIsMobileMenuOpen(false);
-        }}
-        onSearch={(val) => {
-          setSearchQuery(val);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onCreateCV={() => {
-          if (!user) {
-            handleAuthOpen('signin');
-            return;
-          }
-          if (location.pathname === '/cv-olustur') {
+      {/* Mobile Bottom Navigation - Visible for all users EXCEPT when auth is open */}
+      {!isAuthModalOpen && (
+        <MobileBottomNav
+          user={user}
+          cvList={cvList}
+          onOpenFilter={() => setActiveFilterModal('advanced')}
+          isProfileOpen={isMyProfileOpen}
+          isCreateOpen={location.pathname === '/cv-olustur' || location.pathname === '/sirket-olustur'}
+          isHomeView={!isMyProfileOpen && !location.pathname.startsWith('/cv/') && !location.pathname.startsWith('/company/') && !['/cv-olustur', '/ayarlar', '/sirket-olustur', '/bildirimler'].includes(location.pathname) && !isSavedCVsOpen}
+          onGoHome={() => {
             navigate('/', { replace: true });
-            closeAllModals();
-            return;
-          }
-          navigate('/cv-olustur', { state: { background: background || location } });
-        }}
-        onOpenCompanyProfile={() => {
-          if (!user) {
-            handleAuthOpen('signin', 'employer');
-            return;
-          }
-          if (location.pathname === '/sirket-olustur') {
-            navigate('/', { replace: true });
-            closeAllModals();
-            return;
-          }
-          fetchCompany();
-          navigate('/sirket-olustur', { state: { background: background || location } });
-        }}
-        onOpenSettings={() => {
-          if (!user) {
-            handleAuthOpen('signin');
-            return;
-          }
-          if (location.pathname === '/ayarlar') {
-            navigate('/', { replace: true });
-            closeAllModals();
-            return;
-          }
-          navigate('/ayarlar', { state: { background: background || location } });
-        }}
-        hasCV={!!currentUserCV}
-        userPhotoUrl={user?.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
-        notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
-        notifications={[
-          ...receivedRequests,
-          ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
-        ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-        onNotificationAction={handleRequestAction}
-        onMarkNotificationRead={markNotificationRead}
-        onMarkAllRead={markAllNotificationsRead}
-        onOpenProfile={(uid, role) => {
-          if (!user) {
-            handleAuthOpen('signin');
-            return;
-          }
-          if (uid === user.id && !currentUserCV) {
-            if (isCVPromoOpen) {
+            setViewMode('cvs');
+            closeAllModals(); // Ensure all modals are closed
+            setSearchQuery('');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onSearch={(val) => {
+            setSearchQuery(val);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onCreateCV={() => {
+            if (!user) {
+              handleAuthOpen('signin');
+              return;
+            }
+            if (location.pathname === '/cv-olustur') {
               navigate('/', { replace: true });
               closeAllModals();
               return;
             }
-            navigate('/', { replace: true });
-            closeAllModals();
-            setIsCVPromoOpen(true);
-            return;
-          }
-          // Check if already on the profile page
-          if (location.pathname === `/cv/${uid}` || location.pathname === `/company/${uid}`) {
-            closeAllModals();
-            return;
-          }
-          handleOpenProfile(uid, role);
-        }}
-        onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
-        signOut={async () => {
-          await supabase.auth.signOut();
-          // window.location.reload();
-        }}
-        onOpenMenu={() => setIsMobileMenuOpen(true)}
-      />
+            navigate('/cv-olustur', { state: { background: background || location } });
+          }}
+          onOpenCompanyProfile={() => {
+            if (!user) {
+              handleAuthOpen('signin', 'employer');
+              return;
+            }
+            if (location.pathname === '/sirket-olustur') {
+              navigate('/', { replace: true });
+              closeAllModals();
+              return;
+            }
+            fetchCompany();
+            navigate('/sirket-olustur', { state: { background: background || location } });
+          }}
+          onOpenSettings={() => {
+            if (!user) {
+              handleAuthOpen('signin');
+              return;
+            }
+            if (location.pathname === '/ayarlar') {
+              navigate('/', { replace: true });
+              closeAllModals();
+              return;
+            }
+            navigate('/ayarlar', { state: { background: background || location } });
+          }}
+          hasCV={!!currentUserCV}
+          userPhotoUrl={user?.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
+          notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
+          notifications={[
+            ...receivedRequests,
+            ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
+          ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+          onNotificationAction={handleRequestAction}
+          onMarkNotificationRead={markNotificationRead}
+          onMarkAllRead={markAllNotificationsRead}
+          onOpenProfile={(uid, role) => {
+            if (user && uid === user.id && !currentUserCV) {
+              if (isCVPromoOpen) {
+                navigate('/', { replace: true });
+                closeAllModals();
+                return;
+              }
+              navigate('/', { replace: true });
+              closeAllModals();
+              setIsCVPromoOpen(true);
+              return;
+            }
+            // Check if already on the profile page
+            if (location.pathname === `/cv/${uid}` || location.pathname === `/company/${uid}`) {
+              closeAllModals();
+              return;
+            }
+            handleOpenProfile(uid, role);
+          }}
+          onOpenNotifications={() => {
+            navigate('/bildirimler', { state: { background: background || location } });
+          }}
+          onOpenSavedCVs={() => {
+            setIsSavedCVsOpen(true);
+          }}
+          onOpenAuth={handleAuthOpen}
+          signOut={handleSignOut}
+        />
+      )}
+
+      <Footer />
+      {/* Local Modals have moved into <Routes> below */}
+
 
       <MobileMenuDrawer
         isOpen={isMobileMenuOpen}
@@ -2026,18 +2277,37 @@ const App: React.FC = () => {
         jobFinders={jobFinders}
         platformStats={platformStats}
         popularCVs={popularCVs}
-        popularCompanies={popularCompanies}
+        popularCompanies={companyList}
+        shops={shopList}
+        onOpenAuth={handleAuthOpen}
         onJobFinderClick={(cv) => {
-          handleCVClick(cv);
+          handleOpenProfile(cv.userId, 'job_seeker');
           setIsMobileMenuOpen(false);
         }}
         onCVClick={(cv) => {
-          handleCVClick(cv);
+          handleOpenProfile(cv.userId || cv.id, 'job_seeker');
           setIsMobileMenuOpen(false);
         }}
         onCompanyClick={(company) => {
           navigate(`/company/${company.slug || company.id}`, { state: { companyData: company, background: background || location } });
           setIsMobileMenuOpen(false);
+        }}
+        onShopClick={(shop) => {
+          setActiveShop(shop);
+          setIsShopProfileOpen(true);
+          setIsMobileMenuOpen(false);
+        }}
+        onShopsViewAll={() => {
+          setViewMode('shops');
+          navigate('/hizmetler');
+          setIsMobileMenuOpen(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onEmployersViewAll={() => {
+          setViewMode('employers');
+          navigate('/is-verenler'); // Custom route for employers if needed, or just handle viewMode
+          setIsMobileMenuOpen(false);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onFilterApply={(type, value) => {
           handleFilterUpdate(type, value);
@@ -2053,15 +2323,25 @@ const App: React.FC = () => {
           setIsMobileMenuOpen(false);
           setIsSavedCVsOpen(true);
         }}
-        onLogout={async () => {
-          await supabase.auth.signOut();
+        onLogout={handleSignOut}
+        onGoHome={() => {
+          navigate('/', { replace: true });
+          setViewMode('cvs');
           setIsMobileMenuOpen(false);
-          // window.location.reload();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
       {isJobSuccessOpen && (
         <JobSuccessModal
           onClose={() => setIsJobSuccessOpen(false)}
+        />
+      )}
+
+      {isShopProfileOpen && activeShop && (
+        <ShopProfileModal
+          shop={activeShop}
+          isOpen={isShopProfileOpen}
+          onClose={() => setIsShopProfileOpen(false)}
         />
       )}
 
@@ -2085,6 +2365,17 @@ const App: React.FC = () => {
         />
       )}
 
+      {isAuthModalOpen && (
+        <React.Suspense fallback={null}>
+          <AuthModal
+            isOpen={isAuthModalOpen}
+            onClose={() => setIsAuthModalOpen(false)}
+            initialMode={authMode}
+            initialRole={authRole as any}
+          />
+        </React.Suspense>
+      )}
+
       <Routes>
         <Route path="/cv/:id" element={
           <CVProfileRoute
@@ -2095,6 +2386,8 @@ const App: React.FC = () => {
             handleJobFound={handleJobFound}
           />
         } />
+        <Route path="/hizmetler" element={null} />
+        <Route path="/is-verenler" element={null} />
         <Route path="/company/:id" element={
           <CompanyProfileRoute
             requestStatus={activeModalRequest?.status}

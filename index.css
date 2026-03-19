@@ -16,11 +16,20 @@
         --text-secondary: #65676B;
     }
 
-    /* Mobile Background Override */
     @media (max-width: 640px) {
         :root {
             --bg-gray: #ffffff;
         }
+    }
+
+    .dark {
+        --bg-gray: #000000;
+        background-color: #000000;
+    }
+
+    .dark body {
+        background-color: #000000 !important;
+        color: #F9FAFB;
     }
 
     html {
@@ -46,6 +55,7 @@
 .rounded-font {
     font-family: 'Quicksand', sans-serif;
 }
+
 
 .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
