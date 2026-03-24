@@ -228,3 +228,28 @@ export interface SavedCV {
     experience_months?: number; // Add this if missing
   };
 }
+
+export interface Conversation {
+  id: string;
+  participant1_id: string;
+  participant2_id: string;
+  last_message?: string;
+  last_message_at?: string;
+  created_at: string;
+  unread_count?: number;
+  other_participant?: {
+    id: string;
+    full_name?: string;
+    avatar_url?: string;
+    role?: string;
+  };
+}
+
+export interface Message {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  content: string;
+  is_read: boolean;
+  created_at: string;
+}

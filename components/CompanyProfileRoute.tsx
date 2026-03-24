@@ -6,18 +6,10 @@ import { Company } from '../types';
 import CompanyProfileModal from './CompanyProfileModal';
 
 interface CompanyProfileRouteProps {
-    requestStatus?: string;
-    requestId?: string;
-    onAction?: (requestId: string, action: 'approved' | 'rejected') => void;
-    onRevoke?: (requestId: string) => void;
     onClose?: () => void;
 }
 
 const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
-    requestStatus,
-    requestId,
-    onAction,
-    onRevoke,
     onClose
 }) => {
     const { id } = useParams<{ id: string }>();
@@ -108,10 +100,6 @@ const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
         <CompanyProfileModal
             company={company}
             onClose={handleClose}
-            requestStatus={requestStatus}
-            requestId={requestId}
-            onAction={onAction}
-            onRevoke={onRevoke}
         />
     );
 };

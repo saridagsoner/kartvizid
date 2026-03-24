@@ -34,10 +34,10 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
             {/* Trigger Button */}
             <div
                 onClick={() => !disabled && setIsOpen(!isOpen)}
-                className={`w-full bg-gray-50 dark:bg-gray-800 border border-transparent rounded-full px-6 py-3.5 text-sm font-bold flex items-center justify-between cursor-pointer transition-all ${isOpen ? 'bg-white dark:bg-gray-700 border-[#1f6d78]/10 ring-2 ring-[#1f6d78]/5' : ''
-                    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white dark:hover:bg-gray-700 hover:border-[#1f6d78]/10'}`}
+                className={`w-full h-[38px] sm:h-[48px] bg-white dark:bg-black border border-black/10 dark:border-white/10 rounded-full px-6 sm:px-8 text-sm font-bold flex items-center justify-between cursor-pointer transition-all ${isOpen ? 'bg-white dark:bg-gray-700 border-[#1f6d78]/20 ring-4 ring-[#1f6d78]/5' : ''
+                    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 dark:hover:bg-gray-900'}`}
             >
-                <span className={value ? 'text-black dark:text-gray-100' : 'text-gray-400'}>
+                <span className={value ? 'text-gray-500 dark:text-gray-400' : 'text-gray-400'}>
                     {value || placeholder}
                 </span>
                 <svg
@@ -60,14 +60,14 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
                 <div className="absolute z-50 top-[110%] left-0 w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                     {/* Search Input */}
                     <div className="p-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
-                        <div className="relative h-[38px] overflow-hidden">
+                        <div className="relative h-[38px] overflow-hidden flex items-center">
                             <input
                                 type="text"
                                 autoFocus
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Ara..."
-                                className="w-[111.11%] h-[42.22px] bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-0 text-[16px] origin-top-left scale-[0.9] font-bold outline-none focus:border-[#1f6d78] transition-colors dark:text-white"
+                                className="w-full h-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-0 text-[16px] font-medium outline-none focus:border-[#1f6d78] transition-colors dark:text-white"
                                 onClick={(e) => e.stopPropagation()}
                             />
                             <svg

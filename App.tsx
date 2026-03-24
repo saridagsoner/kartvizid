@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { CV, FilterState, ContactRequest, Company, NotificationItem } from './types';
+import { CV, FilterState, ContactRequest, Company, NotificationItem, Conversation, Message } from './types';
 import { supabase } from './lib/supabase';
 import { useAuth } from './context/AuthContext';
 import { useLanguage } from './context/LanguageContext';
@@ -19,6 +19,7 @@ import MobileMenuDrawer from './components/MobileMenuDrawer';
 import { BusinessCardSkeleton } from './components/Skeleton';
 
 // Core components and modals (direct import for instant navigation)
+import MessagesModal from './components/MessagesModal';
 import ProfileModal from './components/ProfileModal';
 import CompanyProfileModal from './components/CompanyProfileModal';
 import CVFormModal from './components/CVFormModal';
@@ -67,9 +68,7 @@ const App: React.FC = () => {
   const { showToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [receivedRequests, setReceivedRequests] = useState<ContactRequest[]>([]);
   const [generalNotifications, setGeneralNotifications] = useState<NotificationItem[]>([]);
-  const [sentRequests, setSentRequests] = useState<ContactRequest[]>([]);
   const [cvList, setCvList] = useState<CV[]>([]);
   const [popularCVs, setPopularCVs] = useState<CV[]>([]);
   const [jobFinders, setJobFinders] = useState<CV[]>([]);
@@ -125,6 +124,12 @@ const App: React.FC = () => {
   const [activeFilterModal, setActiveFilterModal] = useState<'professions' | 'cities' | 'experience' | 'advanced' | null>(null);
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
   const [isCVPromoOpen, setIsCVPromoOpen] = useState(false);
+  const [isSimulatedLoading, setIsSimulatedLoading] = useState(false);
+  const [showEndMessage, setShowEndMessage] = useState(false);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [isMessagesOpen, setIsMessagesOpen] = useState(false);
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
 
   // Listen for Supabase PASSWORD_RECOVERY event
   useEffect(() => {
@@ -212,16 +217,35 @@ const App: React.FC = () => {
     fetchJobFinders(); // Also common
 
     if (user) {
+      // Handle OAuth pending role
+      const pendingRole = localStorage.getItem('pendingRole');
+      if (pendingRole && !user.user_metadata?.role) {
+        const updateRole = async () => {
+          try {
+            const { error } = await supabase.auth.updateUser({
+              data: { role: pendingRole }
+            });
+            if (error) throw error;
+            localStorage.removeItem('pendingRole');
+            showToast('Hesabınız başarıyla oluşturuldu', 'success');
+          } catch (err) {
+            console.error('Error updating OAuth role:', err);
+          }
+        };
+        updateRole();
+      } else if (pendingRole) {
+        localStorage.removeItem('pendingRole');
+      }
+
       if (user.user_metadata?.role === 'employer') {
         fetchCompany();
       }
       if (user.user_metadata?.role === 'shop') {
         fetchShop();
       }
-      fetchSentRequests();
-      fetchReceivedRequests();
       fetchGeneralNotifications();
       fixOldNotifications(); // Auto-fix legacy notifications
+      fetchConversations();
 
       // Realtime Subscriptions
       const notificationsChannel = supabase
@@ -241,20 +265,7 @@ const App: React.FC = () => {
           'postgres_changes',
           { event: '*', schema: 'public', table: 'contact_requests', filter: `target_user_id=eq.${user.id}` },
           () => {
-            fetchReceivedRequests();
             fetchGeneralNotifications(); // Trigger this to update statuses in notifications list
-          }
-        )
-        .subscribe();
-
-      // Also subscribe to SENT requests updates (e.g. when approved/rejected by other party)
-      const sentRequestsChannel = supabase
-        .channel('realtime-sent-requests')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public', table: 'contact_requests', filter: `requester_id=eq.${user.id}` },
-          () => {
-            fetchSentRequests();
           }
         )
         .subscribe();
@@ -262,7 +273,6 @@ const App: React.FC = () => {
       return () => {
         supabase.removeChannel(notificationsChannel);
         supabase.removeChannel(requestsChannel);
-        supabase.removeChannel(sentRequestsChannel);
       };
     } else {
       setActiveCompany(null);
@@ -368,20 +378,6 @@ const App: React.FC = () => {
     }
   };
 
-  const fetchSentRequests = async () => {
-    if (!user) return;
-    try {
-      const { data, error } = await supabase
-        .from('contact_requests')
-        .select('*')
-        .eq('requester_id', user.id);
-
-      if (error) throw error;
-      setSentRequests(data || []);
-    } catch (error) {
-      console.error('Error fetching sent requests:', error);
-    }
-  };
 
   const fetchGeneralNotifications = async () => {
     if (!user) return;
@@ -725,73 +721,6 @@ const App: React.FC = () => {
   };
 
 
-  const fetchReceivedRequests = async () => {
-    if (!user) return;
-    try {
-      // 1. Fetch pending requests
-      const { data: requestsData, error: requestsError } = await supabase
-        .from('contact_requests')
-        .select(`
-            *,
-            requester:profiles!requester_id (
-              id,
-              full_name,
-              role,
-              avatar_url,
-              companies (
-                company_name,
-                logo_url
-              ),
-              cvs (
-                name
-              )
-            )
-          `)
-        .eq('target_user_id', user.id)
-        .eq('status', 'pending');
-
-      if (requestsError) throw requestsError;
-
-      // MANUAL MERGE FIX: Fetch companies and cvs directly for requests too
-      if (requestsData && requestsData.length > 0) {
-        const requesterIds = requestsData
-          .map(r => r.requester_id)
-          .filter(id => id ? true : false);
-
-        const uniqueRequesterIds = Array.from(new Set(requesterIds));
-
-        if (uniqueRequesterIds.length > 0) {
-          const { data: companies } = await supabase
-            .from('companies')
-            .select('user_id, company_name, logo_url')
-            .in('user_id', uniqueRequesterIds);
-
-          const { data: cvs } = await supabase
-            .from('cvs')
-            .select('user_id, name, photo_url')
-            .in('user_id', uniqueRequesterIds);
-
-          requestsData.forEach(r => {
-            if (!r.requester && r.requester_id) {
-              r.requester = { id: r.requester_id };
-            }
-            if (r.requester) {
-              const co = companies?.find(c => c.user_id === r.requester_id);
-              const cv = cvs?.find(c => c.user_id === r.requester_id);
-
-              if (co) r.requester.companies = [co];
-              if (cv) r.requester.cvs = [cv];
-            }
-          });
-        }
-      }
-
-      setReceivedRequests(requestsData || []);
-
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
 
   const handleOpenProfile = async (userId: string, role?: string, requestId?: string) => {
     try {
@@ -910,174 +839,7 @@ const App: React.FC = () => {
   };
 
 
-  const handleSendRequest = async (targetUserId: string) => {
-    if (!user) {
-      handleAuthOpen('signup');
-      showToast('İletişim isteği göndermek için lütfen önce kayıt olun veya giriş yapın.', 'info');
-      return;
-    }
 
-    // Check if user is employer and has no company profile
-    if (user.user_metadata?.role === 'employer' && !activeCompany) {
-      showToast('İletişime geçmek için lütfen önce iş veren profilinizi oluşturun.', 'warning');
-      navigate('/sirket-olustur', { state: { background: background || location } });
-      return;
-    }
-
-    if (user.id === targetUserId) {
-      showToast('Kendi kendine iletişim isteği gönderemezsin.', 'info');
-      return;
-    }
-
-    // Optimistic update
-    const tempId = Math.random().toString();
-    const newRequest: ContactRequest = {
-      id: tempId,
-      requester_id: user.id,
-      target_user_id: targetUserId,
-      status: 'pending',
-      created_at: new Date().toISOString()
-    };
-
-    setSentRequests(prev => [...prev, newRequest]);
-
-    try {
-      // 1. Call Secure RPC to Create Request AND Notification
-      let senderName = user.user_metadata?.full_name || 'Bir Kullanıcı';
-      if (user.user_metadata?.role === 'employer' && activeCompany) {
-        senderName = activeCompany.name;
-      }
-
-      const { data, error } = await supabase.rpc('create_contact_request_secure', {
-        p_target_user_id: targetUserId,
-        p_sender_name: senderName
-      });
-
-      if (error) {
-        setSentRequests(prev => prev.filter(r => r.id !== tempId));
-        throw error;
-      }
-
-      // RPC returns { id: uuid, status: 'pending' }
-      const confirmedRequest = {
-        ...newRequest,
-        id: (data as any).id,
-        status: (data as any).status
-      };
-
-      setSentRequests(prev => prev.map(r => r.id === tempId ? confirmedRequest : r));
-      showToast('İletişim isteği gönderildi!', 'success');
-
-    } catch (error: any) {
-      console.error('Error sending request:', error);
-      showToast(getFriendlyErrorMessage(error), 'error');
-    }
-  };
-
-  const handleCancelRequest = async (targetUserId: string) => {
-    if (!user) return;
-
-    // Find local request to remove optimistically
-    const requestToRemove = sentRequests.find(r => r.target_user_id === targetUserId && r.status === 'pending');
-
-    // Optimistic update
-    if (requestToRemove) {
-      setSentRequests(prev => prev.filter(r => r.id !== requestToRemove.id));
-    } else {
-      // Even if local state is missing, try to delete from DB to sync
-    }
-
-    try {
-      // Use Secure RPC for cancellation to bypass RLS issues
-      const { error } = await supabase.rpc('cancel_contact_request_secure', {
-        p_target_user_id: targetUserId
-      });
-
-      if (error) {
-        if (requestToRemove) setSentRequests(prev => [...prev, requestToRemove]); // Revert
-        throw error;
-      }
-
-      showToast('İletişim isteği geri alındı.', 'info');
-    } catch (error) {
-      console.error('Error cancelling request:', error);
-      showToast('İstek geri alınırken bir hata oluştu.', 'error');
-    }
-  };
-
-  const handleRequestAction = async (requestId: string, action: 'approved' | 'rejected') => {
-    // 1. Determine request details (check local state first, then DB)
-    let relatedRequest = receivedRequests.find(r => r.id === requestId);
-
-    // IMPORTANT: If acting from "All Notifications" modal, local 'receivedRequests' might be empty or stale.
-    // So we MUST fetch it if missing to ensure we know who to notify.
-    if (!relatedRequest) {
-      try {
-        const { data: fetchedReq } = await supabase
-          .from('contact_requests')
-          .select('*')
-          .eq('id', requestId)
-          .single();
-        if (fetchedReq) relatedRequest = fetchedReq;
-      } catch (e) {
-        console.error('Error fetching request details for action:', e);
-      }
-    }
-
-    // Optimistic update: Update status instead of removing
-    setReceivedRequests(prev => prev.map(r => r.id === requestId ? { ...r, status: action } : r));
-    setGeneralNotifications(prev => prev.map(n => n.related_id === requestId ? { ...n, requestStatus: action } : n));
-
-    try {
-      // Identify self (the approver)
-      let approverName = 'Bir Kullanıcı';
-
-      // Determine correct name
-      if (activeCompany?.name) {
-        approverName = activeCompany.name;
-      } else if (currentUserCV?.name) {
-        approverName = currentUserCV.name;
-      } else if (user?.user_metadata?.full_name) {
-        approverName = user.user_metadata.full_name;
-      } else if (user?.email) {
-        approverName = user.email.split('@')[0];
-      }
-
-      // Try RPC first
-      const { error: rpcError } = await supabase.rpc('respond_to_request_secure', {
-        p_request_id: requestId,
-        p_action: action,
-        p_responder_name: approverName
-      });
-
-      if (rpcError) {
-        console.warn('RPC failed, trying direct update...', rpcError);
-
-        // Fallback: Direct Update (if RLS allows)
-        // Fallback: Direct Update (if RLS allows)
-        // Database Trigger 'on_contact_request_events' will handle the notification automatically.
-        const { error: directError } = await supabase
-          .from('contact_requests')
-          .update({ status: action, updated_at: new Date().toISOString() })
-          .eq('id', requestId);
-
-        if (directError) throw directError;
-      }
-
-      showToast(`İstek ${action === 'approved' ? 'onaylandı' : 'reddedildi'}.`, 'success');
-
-      // Refresh data to ensure sync
-      fetchReceivedRequests();
-
-    } catch (error: any) {
-      console.error('Error updating status:', error);
-      // Show specific error message for debugging
-      const errorMessage = error?.message || 'Bir hata oluştu.';
-      showToast(`Hata: ${errorMessage} `, 'error');
-      // Revert optimism if failed
-      fetchReceivedRequests();
-    }
-  };
 
 
 
@@ -1340,6 +1102,89 @@ const App: React.FC = () => {
     }
   };
 
+  const fetchConversations = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('conversations')
+        .select(`
+          *,
+          participant1:participant1_id(id, full_name, avatar_url, role),
+          participant2:participant2_id(id, full_name, avatar_url, role)
+        `)
+        .or(`participant1_id.eq.${user.id},participant2_id.eq.${user.id}`)
+        .order('last_message_at', { ascending: false });
+
+      if (error) throw error;
+
+      const mapped: Conversation[] = (data || []).map((conv: any) => {
+        const otherParticipant = conv.participant1_id === user.id ? conv.participant2 : conv.participant1;
+        return {
+          id: conv.id,
+          participant1_id: conv.participant1_id,
+          participant2_id: conv.participant2_id,
+          last_message: conv.last_message,
+          last_message_at: conv.last_message_at,
+          created_at: conv.created_at,
+          other_participant: otherParticipant ? {
+            id: otherParticipant.id,
+            full_name: otherParticipant.full_name,
+            avatar_url: otherParticipant.avatar_url,
+            role: otherParticipant.role
+          } : undefined
+        };
+      });
+
+      setConversations(mapped);
+      
+      const { count } = await supabase
+        .from('messages')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_read', false)
+        .neq('sender_id', user.id);
+      
+      setUnreadMessageCount(count || 0);
+
+    } catch (err) {
+      console.error('Error fetching conversations:', err);
+    }
+  };
+
+  const handleOpenChat = async (targetUserId: string) => {
+    if (!user) {
+      handleAuthOpen('signin');
+      return;
+    }
+
+    try {
+      let conv = conversations.find(c => 
+        (c.participant1_id === user.id && c.participant2_id === targetUserId) ||
+        (c.participant1_id === targetUserId && c.participant2_id === user.id)
+      );
+
+      if (!conv) {
+        const { data, error } = await supabase
+          .from('conversations')
+          .insert([
+            { participant1_id: user.id, participant2_id: targetUserId }
+          ])
+          .select()
+          .single();
+
+        if (error) throw error;
+        
+        await fetchConversations();
+        conv = { ...data, other_participant: { id: targetUserId } };
+      }
+
+      setActiveConversationId(conv.id);
+      setIsMessagesOpen(true);
+    } catch (err) {
+      console.error('Error opening chat:', err);
+      showToast('Sohbet başlatılamadı.', 'error');
+    }
+  };
+
   const handleCreateCV = async (cvData: Partial<CV>, consentGiven?: boolean) => {
     if (!user) {
       showToast('CV oluşturmak için giriş yapmalısınız.', 'error');
@@ -1506,16 +1351,35 @@ const App: React.FC = () => {
     return result;
   }, [cvList, searchQuery, activeFilters, sortBy]);
 
-  // Reset pagination when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, activeFilters, sortBy]);
-
   const totalPages = Math.ceil(filteredCVs.length / ITEMS_PER_PAGE);
   const currentItems = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredCVs.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredCVs, currentPage]);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+    setIsSimulatedLoading(false);
+    setShowEndMessage(false);
+  }, [searchQuery, activeFilters, sortBy]);
+
+  // Simulate searching more when reaching the end of the feed
+  useEffect(() => {
+    if (currentPage === totalPages && filteredCVs.length > 0 && !loading && !showEndMessage && !isSimulatedLoading) {
+      setIsSimulatedLoading(true);
+    }
+  }, [currentPage, totalPages, filteredCVs.length, loading, showEndMessage]);
+
+  useEffect(() => {
+    if (isSimulatedLoading) {
+      const timer = setTimeout(() => {
+        setIsSimulatedLoading(false);
+        setShowEndMessage(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isSimulatedLoading]);
 
   const availableProfessions = useMemo(() => {
     const allProfessions = cvList.flatMap(cv =>
@@ -1544,28 +1408,6 @@ const App: React.FC = () => {
     setIsCVPromoOpen(false);
   };
 
-  const handleRequestResponse = async (requestId: string, action: 'approved' | 'rejected') => {
-    try {
-      const { error } = await supabase
-        .from('contact_requests')
-        .update({ status: action })
-        .eq('id', requestId);
-
-      if (error) throw error;
-
-      // Update local state by removing the handled request from the list (so it disappears from notification list)
-      // And update sentRequests if necessary?
-      // Actually receivedRequests are the ones being approved/rejected.
-      setReceivedRequests(prev => prev.filter(req => req.id !== requestId));
-
-      showToast(action === 'approved' ? 'İstek onaylandı' : 'İstek reddedildi', 'success');
-
-      // Also invalidate visible cache if necessary? No need, local state updated.
-    } catch (error: any) {
-      console.error('Error updating request:', error);
-      showToast(getFriendlyErrorMessage(error), 'error');
-    }
-  };
 
   const professionStats = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -1714,12 +1556,8 @@ const App: React.FC = () => {
           }}
           hasCV={!!currentUserCV}
           userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
-          notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
-          notifications={[
-            ...receivedRequests,
-            ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
-          ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-          onNotificationAction={handleRequestAction}
+          notificationCount={generalNotifications.filter(n => !n.is_read).length}
+          notifications={[...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
           onMarkNotificationRead={markNotificationRead}
           onMarkAllRead={markAllNotificationsRead}
           onOpenProfile={(uid, role) => {
@@ -1734,11 +1572,21 @@ const App: React.FC = () => {
             handleOpenSavedCVs();
           }}
           onOpenMenu={() => setIsMobileMenuOpen(true)}
+          unreadMessageCount={unreadMessageCount}
+          onOpenMessages={() => setIsMessagesOpen(true)}
         />
 
       {/* ... previous modals ... */}
 
       {/* Notifications Model moved to Routes below */}
+      <MessagesModal
+        isOpen={isMessagesOpen}
+        onClose={() => setIsMessagesOpen(false)}
+        conversations={conversations}
+        activeConversationId={activeConversationId}
+        onSelectConversation={setActiveConversationId}
+        onRefreshConversations={fetchConversations}
+      />
 
       {isResetPasswordOpen && (
         <ResetPasswordModal onClose={() => setIsResetPasswordOpen(false)} />
@@ -1799,18 +1647,24 @@ const App: React.FC = () => {
             </div>
 
             {/* Mobile Header (View Mode Indicator) */}
-            <div className="flex sm:hidden items-center justify-between px-4 mt-0.5 mb-1.5 border-b border-gray-200/60 dark:border-white/20">
-                <div className="flex items-center gap-4 py-1.5">
-                  <div className="flex items-center gap-1">
-                    <div
-                      className="text-[17px] font-black tracking-tight text-black dark:text-white transition-all"
-                    >
-                      {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
+            <div className="flex sm:hidden items-center justify-between px-4 mt-0.5 mb-0">
+              <div className="flex items-center gap-4 pt-1.5 pb-0.5">
+                <div className="flex flex-col gap-0 w-full">
+                  <div className="text-[20px] font-black tracking-tighter text-black dark:text-white transition-all leading-none mb-1">
+                    {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
+                  </div>
+                  <div className="flex items-center w-full mt-1.5">
+                    {/* Icon moved further right, text stays fixed */}
+                    <div className="w-[36px] flex justify-center text-gray-400 dark:text-gray-500 opacity-80 shrink-0 mt-0.5 ml-[16px]">
+                      <i className="fi fi-rr-ballot text-[16px]"></i>
                     </div>
-                    <div className=""><SortDropdown value={sortBy} onChange={setSortBy} minimal={true} /></div>
+                    <div className="pl-[4px]">
+                      <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
 
             {viewMode === 'cvs' && (
               <div className="hidden sm:block">
@@ -1867,10 +1721,9 @@ const App: React.FC = () => {
               {viewMode === 'cvs' ? (
                 currentItems.length > 0 ? (
                   <>
+                    {/* Top Divider for First Item - Mobile Only */}
+                    <div className="ml-[74px] border-b border-gray-200/80 dark:border-white/15 mt-[-2px] mb-[-1px] sm:hidden" />
                     {currentItems.map(cv => {
-                      const request = sentRequests.find(r => r.target_user_id === cv.userId);
-                      const status = request ? request.status : 'none';
-
                       return (
                         <BusinessCard
                           key={cv.id}
@@ -1881,13 +1734,29 @@ const App: React.FC = () => {
                     })}
 
                     {currentPage === totalPages && !loading && (
-                      <div className="mt-4 mb-8 text-center px-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        <h3 className="text-[15px] font-black text-gray-900 dark:text-white mb-0.5 tracking-tight">
-                          {t('feed.end_title')}
-                        </h3>
-                        <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400">
-                          {t('feed.end_desc')}
-                        </p>
+                      <div className="mt-4 mb-12 flex flex-col items-center justify-center py-4 px-4">
+                        {isSimulatedLoading ? (
+                          <div className="flex flex-col items-center justify-center gap-3 animate-in fade-in duration-500">
+                             <div className="relative">
+                               <div className="w-9 h-9 border-[3px] border-[#1f6d78]/10 border-t-[#1f6d78] rounded-full animate-spin"></div>
+                               <div className="absolute inset-0 flex items-center justify-center">
+                                 <div className="w-1.5 h-1.5 bg-[#1f6d78] rounded-full animate-ping"></div>
+                               </div>
+                             </div>
+                             <p className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] animate-pulse uppercase tracking-widest text-center">
+                               {t('feed.searching_more') || "Daha Fazla CV Aranıyor..."}
+                             </p>
+                          </div>
+                        ) : showEndMessage ? (
+                          <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                            <h3 className="text-[13px] sm:text-[15px] font-black text-gray-900 dark:text-white mb-0.5 tracking-tight">
+                              {t('feed.end_title')}
+                            </h3>
+                            <p className="text-[11px] sm:text-[12px] font-bold text-gray-500 dark:text-gray-400">
+                              {t('feed.end_desc')}
+                            </p>
+                          </div>
+                        ) : null}
                       </div>
                     )}
                   </>
@@ -2226,12 +2095,8 @@ const App: React.FC = () => {
           }}
           hasCV={!!currentUserCV}
           userPhotoUrl={user?.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
-          notificationCount={receivedRequests.filter(r => r.status === 'pending').length + generalNotifications.filter(n => !n.is_read && !receivedRequests.some(r => r.id === n.related_id)).length}
-          notifications={[
-            ...receivedRequests,
-            ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
-          ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-          onNotificationAction={handleRequestAction}
+          notificationCount={generalNotifications.filter(n => !n.is_read).length}
+          notifications={[...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
           onMarkNotificationRead={markNotificationRead}
           onMarkAllRead={markAllNotificationsRead}
           onOpenProfile={(uid, role) => {
@@ -2380,9 +2245,7 @@ const App: React.FC = () => {
         <Route path="/cv/:id" element={
           <CVProfileRoute
             onClose={() => navigate('/', { replace: true })}
-            sentRequests={sentRequests}
-            handleSendRequest={handleSendRequest}
-            handleCancelRequest={handleCancelRequest}
+            onOpenChat={handleOpenChat}
             handleJobFound={handleJobFound}
           />
         } />
@@ -2390,17 +2253,7 @@ const App: React.FC = () => {
         <Route path="/is-verenler" element={null} />
         <Route path="/company/:id" element={
           <CompanyProfileRoute
-            requestStatus={activeModalRequest?.status}
-            requestId={activeModalRequestId} // Use activeModalRequestId here
             onClose={() => navigate('/', { replace: true })}
-            onAction={async (id, action) => {
-              await handleRequestAction(id, action);
-              setActiveModalRequest(prev => prev ? { ...prev, status: action } : null);
-            }}
-            onRevoke={async (id) => {
-              await handleRequestAction(id, 'rejected');
-              setActiveModalRequest(prev => prev ? { ...prev, status: 'rejected' } : null);
-            }}
           />
         } />
         <Route path="/kullanim-kosullari" element={
@@ -2493,11 +2346,7 @@ const App: React.FC = () => {
         <Route path="/bildirimler" element={
           <NotificationsModal
             onClose={() => navigate('/', { replace: true })}
-            notifications={[
-              ...receivedRequests,
-              ...generalNotifications.filter(n => !receivedRequests.some(r => r.id === n.related_id))
-            ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-            onAction={handleRequestAction}
+            notifications={generalNotifications.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
             onMarkRead={markNotificationRead}
             onMarkAllRead={markAllNotificationsRead}
             onOpenProfile={handleOpenProfile}

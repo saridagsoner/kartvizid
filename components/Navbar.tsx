@@ -25,6 +25,8 @@ interface NavbarProps {
   onMarkAllRead?: () => void;
   onOpenProfile?: (userId: string, role?: string) => void;
   onOpenMenu?: () => void;
+  unreadMessageCount?: number;
+  onOpenMessages?: () => void;
 }
 
 const Navbar: React.FC<NavbarProps & {
@@ -36,7 +38,7 @@ const Navbar: React.FC<NavbarProps & {
   onOpenSavedCVs?: () => void;
 }> = ({
   onSearch, onCreateCV, onOpenCompanyProfile, onOpenSettings, hasCV, userPhotoUrl, notificationCount = 0, notifications = [], onNotificationAction, onMarkNotificationRead,
-  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole, onMarkAllRead, onOpenProfile, onOpenSavedCVs, onOpenMenu
+  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole, onMarkAllRead, onOpenProfile, onOpenSavedCVs, onOpenMenu, unreadMessageCount = 0, onOpenMessages
 }) => {
     const { user, loading, signOut } = useAuth();
     const { t } = useLanguage();
@@ -118,7 +120,7 @@ const Navbar: React.FC<NavbarProps & {
             </div>
 
             {/* Right Section: Actions */}
-            <div className={`${loading ? 'flex' : user ? 'hidden sm:flex' : 'flex'} md:w-[330px] shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto lg:ml-0`}>
+            <div className={`${loading ? 'flex' : 'flex'} md:w-[330px] shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto lg:ml-0`}>
               {loading ? (
                 <div className="flex items-center gap-6 opacity-50 pr-4">
                   <div className="w-16 md:w-20 h-5 bg-gray-100 dark:bg-gray-700 animate-pulse rounded-full"></div>
@@ -139,10 +141,10 @@ const Navbar: React.FC<NavbarProps & {
                     }
                   </button>
 
-                  {/* Mobile Icon Button */}
+                  {/* Mobile Icon Button - Hidden entirely as per "only messages" request */}
                   <button
                     onClick={isEmployer && onOpenCompanyProfile ? onOpenCompanyProfile : onCreateCV}
-                    className="sm:hidden w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95 shadow-sm"
+                    className="hidden w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 items-center justify-center text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95 shadow-sm"
                     title={isEmployer ? t('nav.employer_profile') : (hasCV ? t('nav.fix_cv') : t('nav.create_cv'))}
                   >
                     {isEmployer ? (
@@ -156,7 +158,7 @@ const Navbar: React.FC<NavbarProps & {
 
                   <div className="h-6 w-px bg-gray-100 dark:bg-gray-700 hidden sm:block"></div>
 
-                  <div className="relative">
+                  <div className="relative hidden sm:block">
                     <button
                       onClick={() => {
                         setIsNotifOpen(!isNotifOpen);
@@ -182,9 +184,27 @@ const Navbar: React.FC<NavbarProps & {
                       />
                     )}
                   </div>
+
+                  <div className="relative">
+                    <button
+                      onClick={onOpenMessages}
+                      className="w-10 h-10 text-black dark:text-white rounded-full flex items-center justify-center text-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group"
+                    >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="opacity-95 text-[#3a4d59]">
+                        <path d="M12 3C7 3 3 7 3 12s4 9 9 9h9V12c0-5-4-9-9-9z"></path>
+                        <line x1="8" y1="10" x2="13" y2="10"></line>
+                        <line x1="8" y1="14.5" x2="16" y2="14.5"></line>
+                      </svg>
+                      {unreadMessageCount > 0 && (
+                        <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 border-2 border-white rounded-full text-[9px] text-white flex items-center justify-center font-bold shadow-sm">
+                          {unreadMessageCount}
+                        </span>
+                      )}
+                    </button>
+                  </div>
                   {/* Profile Dropdown ... */}
 
-                  <div className="relative" ref={profileRef}>
+                  <div className="relative hidden sm:block" ref={profileRef}>
                     <button
                       onClick={() => {
                         setIsProfileOpen(!isProfileOpen);

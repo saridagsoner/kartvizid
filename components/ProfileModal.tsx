@@ -11,13 +11,11 @@ import SEO from './SEO';
 interface ProfileModalProps {
   cv: CV;
   onClose: () => void;
-  requestStatus?: 'pending' | 'approved' | 'rejected' | 'none';
-  onRequestAccess?: () => void;
-  onCancelRequest?: () => void;
+  onOpenChat?: () => void;
   onJobFound?: () => void;
 }
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus = 'none', onRequestAccess, onCancelRequest, onJobFound }) => {
+const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, onJobFound }) => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const { showToast } = useToast();
@@ -48,14 +46,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
     }
   };
 
-  const hasAccess = requestStatus === 'approved' || isOwner;
-  // Show if public OR if access is approved OR is owner
-  const showEmail = cv.isEmailPublic || hasAccess;
-  const showPhone = cv.isPhonePublic || hasAccess;
-
-  // Show contact button if NOT approved AND NOT owner
-  const showRequestButton = !hasAccess && !isOwner;
-  const isPending = requestStatus === 'pending';
 
   const handleDownload = () => {
     const printWindow = window.open('', '_blank');
@@ -484,55 +474,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             )}
           </section>
 
-          {/* Bölüm 7: İletişim Bilgileri */}
-          <section>
-            <SectionTitle title={t('profile.contact')} />
-            {(cv.email || cv.phone) ? (
-              <div className="bg-gray-50 dark:bg-black rounded-2xl p-6 border border-gray-100 dark:border-white/10">
-
-                {/* Warning: If access not granted AND at least one field hidden AND NOT OWNER */}
-                {!hasAccess && !isOwner && (!cv.isEmailPublic || !cv.isPhonePublic) && (
-                  <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-4 flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">!</div>
-                    <p className="text-xs font-bold text-red-800 leading-relaxed">
-                      {t('profile.warning_hidden')}
-                    </p>
-                  </div>
-                )}
-
-                <div className="space-y-3">
-                  {cv.email && (
-                    <div className="flex items-center gap-3 text-sm font-bold text-gray-800 dark:text-gray-200">
-                      <div className="w-8 h-8 rounded-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 flex items-center justify-center shrink-0">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
-                      </div>
-                      {/* Show if Public OR Has Access OR Is Owner */}
-                      {(cv.isEmailPublic || hasAccess || isOwner) ? (
-                        <a href={`mailto:${cv.email}`} className="hover:text-black dark:hover:text-white hover:underline truncate">{cv.email}</a>
-                      ) : (
-                        <span className="text-gray-400 select-none blur-[4px]">***************@*****.com</span>
-                      )}
-                    </div>
-                  )}
-                  {cv.phone && (
-                    <div className="flex items-center gap-3 text-sm font-bold text-gray-800 dark:text-gray-200">
-                      <div className="w-8 h-8 rounded-full bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 flex items-center justify-center shrink-0">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.05 12.05 0 0 0 .57 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.05 12.05 0 0 0 2.81.57A2 2 0 0 1 22 16.92z"></path></svg>
-                      </div>
-                      {/* Show if Public OR Has Access OR Is Owner */}
-                      {(cv.isPhonePublic || hasAccess || isOwner) ? (
-                        <a href={`tel:${cv.phone}`} className="hover:text-black dark:hover:text-white hover:underline">{cv.phone}</a>
-                      ) : (
-                        <span className="text-gray-400 select-none blur-[4px]">+90 *** *** ** **</span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <p className="text-sm font-bold text-gray-400 italic">{t('errors.no_contact')}</p>
-            )}
-          </section>
         </div>
 
         {/* Footer Actions */}
@@ -563,35 +504,18 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, requestStatus 
             </>
           ) : (
             <>
-              {!hasAccess ? (
                 <button
-                  onClick={isPending ? onCancelRequest : () => {
+                  onClick={() => {
                     if (user?.user_metadata?.role === 'job_seeker') {
                       setShowRoleWarning(true);
                       return;
                     }
-                    onRequestAccess?.();
+                    onOpenChat?.();
                   }}
-                  className={`flex-[2] py-4 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest transition-all shadow-md sm:shadow-xl active:[0.98] group ${isPending
-                    ? 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-600 hover:shadow-none'
-                    : 'bg-[#1f6d78] text-white hover:bg-[#155e68]'
-                    }`}
+                  className="flex-[2] bg-[#1f6d78] text-white py-4 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest transition-all shadow-md sm:shadow-xl active:scale-95 hover:bg-[#155e68]"
                 >
-                  {isPending ? (
-                    <>
-                      <span className="group-hover:hidden">{t('profile.request_sent')}</span>
-                      <span className="hidden group-hover:inline">{t('profile.cancel_request')}</span>
-                    </>
-                  ) : t('profile.contact_request')}
+                  {t('profile.send_message') || 'Mesaj Gönder'}
                 </button>
-              ) : (
-                <button
-                  disabled
-                  className="flex-[2] bg-[#1f6d78] text-white py-4 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest shadow-md sm:shadow-xl cursor-default"
-                >
-                  {t('profile.contact_open')}
-                </button>
-              )}
 
 
               {/* SAVE CV BUTTON (For Employers) */}

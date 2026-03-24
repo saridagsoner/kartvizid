@@ -172,33 +172,13 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
                         }
                       </p>
 
-                      {/* Actions Area */}
-                      {(isContactRequest(item) || (item as NotificationItem).type === 'contact_request') && (
+                      {/* Legacy Approval Status (Read Only) */}
+                      {isResolved && (
                         <div className="mt-3">
-                          {isResolved ? (
-                            <div className={`text-[10px] font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5 
-                                ${status === 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
-                              {status === 'approved' ? `✓ ${t('notif.approved')}` : `✕ ${t('notif.rejected')}`}
-                            </div>
-                          ) : (
-                            /* Pending Actions */
-                            !isResolved && (
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); onAction(isContactRequest(item) ? item.id : (item as any).related_id, 'approved'); }}
-                                  className="flex-1 bg-[#1f6d78] text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-[#155e68] transition-colors"
-                                >
-                                  {t('profile.approve_request')}
-                                </button>
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); onAction(isContactRequest(item) ? item.id : (item as any).related_id, 'rejected'); }}
-                                  className="flex-1 bg-gray-100 dark:bg-gray-700 text-black dark:text-white text-[10px] font-bold py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                                >
-                                  {t('profile.reject_request')}
-                                </button>
-                              </div>
-                            )
-                          )}
+                          <div className={`text-[10px] font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5 
+                              ${status === 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
+                            {status === 'approved' ? `✓ ${t('notif.approved')}` : `✕ ${t('notif.rejected')}`}
+                          </div>
                         </div>
                       )}
                     </div>

@@ -80,7 +80,7 @@ const MonthYearPicker: React.FC<MonthYearPickerProps> = ({ value, onChange, plac
                 className={`w-full bg-gray-50 dark:bg-gray-800 border border-transparent rounded-xl px-4 py-3 text-sm font-bold flex items-center justify-between cursor-pointer transition-all outline-none ${isOpen ? 'bg-white dark:bg-gray-700 border-[#1f6d78]/10 ring-2 ring-[#1f6d78]/5' : ''
                     } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white dark:hover:bg-gray-700 hover:border-[#1f6d78]/10'}`}
             >
-                <span className={value ? 'text-black dark:text-white' : 'text-gray-400'}>
+                <span className={value ? 'text-gray-500 dark:text-gray-400' : 'text-gray-400'}>
                     {getDisplayValue()}
                 </span>
                 <svg

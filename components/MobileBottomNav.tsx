@@ -7,6 +7,7 @@ import SearchOverlay from './SearchOverlay';
 import { CV } from '../types';
 
 interface MobileBottomNavProps {
+    user?: any; // To match App.tsx usage
     onSearch: (query: string) => void;
     onCreateCV: () => void;
     onOpenCompanyProfile?: () => void;
@@ -26,6 +27,10 @@ interface MobileBottomNavProps {
     cvList?: CV[];
     onOpenFilter?: () => void;
     onOpenMenu?: () => void;
+    onOpenNotifications?: () => void;
+    onOpenSavedCVs?: () => void;
+    hasCV?: boolean;
+    onOpenSettings?: () => void; // Adding this too since it's used in App.tsx
 }
 
 const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
@@ -89,7 +94,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         <div className="flex items-center justify-center text-black dark:text-white translate-y-[2px]">
                             <i className={`fi ${isHomeView && !hasActiveBottomTab ? 'fi-sr-home' : 'fi-rr-home'} text-[22px]`}></i>
                         </div>
-                        <span className="text-[10px] font-black mt-1 transition-colors text-black dark:text-white">
+                        <span className="text-[10px] font-bold mt-1 transition-colors text-black dark:text-white">
                             {t('menu.home')}
                         </span>
                     </button>
@@ -102,7 +107,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         <div className="flex items-center justify-center text-black dark:text-white translate-y-[2px]">
                             <i className={`fi ${isSearchActive ? 'fi-sr-search' : 'fi-rr-search'} text-[22px]`}></i>
                         </div>
-                        <span className="text-[10px] font-black mt-1 transition-colors text-black dark:text-white">
+                        <span className="text-[10px] font-bold mt-1 transition-colors text-black dark:text-white">
                             {t('menu.search')}
                         </span>
                     </button>
@@ -126,7 +131,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         <div className={`flex items-center justify-center text-black dark:text-white transition-all ${isCreateActiveTab ? 'scale-110' : ''} translate-y-[2px]`}>
                             <i className={`fi ${isCreateActiveTab ? 'fi-sr-add' : 'fi-rr-add'} text-[22px]`}></i>
                         </div>
-                        <span className="text-[10px] font-black mt-1 transition-colors text-black dark:text-white">
+                        <span className="text-[10px] font-bold mt-1 transition-colors text-black dark:text-white">
                             {t('menu.create')}
                         </span>
                     </button>
@@ -145,7 +150,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                         <div className="flex items-center justify-center text-black dark:text-white translate-y-[2px]">
                             <i className={`fi ${isNotifActive ? 'fi-sr-bell' : 'fi-rr-bell'} text-[22px]`}></i>
                         </div>
-                        <span className="text-[10px] font-black mt-1 transition-colors text-black dark:text-white">
+                        <span className="text-[10px] font-bold mt-1 transition-colors text-black dark:text-white">
                             {t('menu.notifications')}
                         </span>
                         {notificationCount > 0 && (
@@ -176,7 +181,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                 <i className={`fi ${isProfileActiveTab ? 'fi-sr-circle-user' : 'fi-rr-circle-user'} text-[22px]`}></i>
                             )}
                         </div>
-                        <span className="text-[10px] font-black mt-1 transition-colors text-black dark:text-white">
+                        <span className="text-[10px] font-bold mt-1 transition-colors text-black dark:text-white">
                             {t('menu.profile')}
                         </span>
                     </button>

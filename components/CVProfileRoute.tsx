@@ -6,17 +6,13 @@ import { CV, ContactRequest } from '../types';
 import ProfileModal from './ProfileModal';
 
 interface CVProfileRouteProps {
-    sentRequests: ContactRequest[];
-    handleSendRequest: (userId: string) => void;
-    handleCancelRequest: (userId: string) => void;
+    onOpenChat: (userId: string) => void;
     handleJobFound?: () => void;
     onClose?: () => void;
 }
 
 const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
-    sentRequests,
-    handleSendRequest,
-    handleCancelRequest,
+    onOpenChat,
     handleJobFound,
     onClose
 }) => {
@@ -161,9 +157,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
         <ProfileModal
             cv={cv}
             onClose={handleClose}
-            requestStatus={sentRequests.find(r => r.target_user_id === cv.userId)?.status || 'none'}
-            onRequestAccess={() => handleSendRequest(cv.userId)}
-            onCancelRequest={() => handleCancelRequest(cv.userId)}
+            onOpenChat={() => onOpenChat(cv.userId)}
             onJobFound={handleJobFound}
         />
     );

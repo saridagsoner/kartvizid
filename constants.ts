@@ -4,6 +4,7 @@ import { CV, Notification, Statistic, PopularItem, TrendItem } from './types';
 export const MOCK_CVS: CV[] = [
   {
     id: '1',
+    userId: '1',
     name: 'Ahmet Yılmaz',
     profession: 'Frontend Developer',
     city: 'İstanbul',
@@ -32,6 +33,7 @@ export const MOCK_CVS: CV[] = [
   },
   {
     id: '2',
+    userId: '2',
     name: 'Selin Aras',
     profession: 'UI/UX Designer',
     city: 'Ankara',
@@ -57,6 +59,7 @@ export const MOCK_CVS: CV[] = [
   },
   {
     id: '3',
+    userId: '3',
     name: 'Can Demir',
     profession: 'Backend Developer',
     city: 'İzmir',

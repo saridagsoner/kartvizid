@@ -5,18 +5,14 @@ import { Company } from '../types';
 interface CompanyProfileModalProps {
     company: Company;
     onClose: () => void;
-    requestStatus?: string;
-    requestId?: string;
-    onAction?: (requestId: string, action: 'approved' | 'rejected') => void;
-    onRevoke?: (requestId: string) => void;
 }
 
 import SEO from './SEO';
 
-const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onClose, requestStatus, requestId, onAction, onRevoke }) => {
+const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onClose }) => {
     const { t } = useLanguage();
 
-    console.log('CompanyProfileModal Rendered:', { companyId: company.id, userId: company.userId, requestStatus, requestId });
+    console.log('CompanyProfileModal Rendered:', { companyId: company.id, userId: company.userId });
 
     const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
         <div className="mb-3 sm:mb-6 mt-5 sm:mt-10 first:mt-0">
@@ -42,7 +38,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
     );
 
     return (
-        <div className="fixed inset-0 z-[250] flex sm:items-center sm:justify-center sm:p-4 pb-[68px] sm:pb-0 bg-white dark:bg-black sm:bg-black/30 sm:dark:bg-black/60">
+        <div className="fixed inset-0 z-[250] flex sm:items-center sm:justify-center sm:p-4 bg-white dark:bg-black sm:bg-black/30 sm:dark:bg-black/60">
             <SEO
                 title={`${company.name} - Şirket Profili`}
                 description={company.description ? company.description.substring(0, 150) + '...' : `${company.name} şirketinin profilini inceleyin.`}
@@ -141,74 +137,6 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
 
                 </div>
 
-                {/* Footer Actions */}
-                {(requestStatus === 'pending' || requestStatus === 'approved' || requestStatus === 'rejected') && (
-                    <div className="pt-3 px-3 pb-2 sm:p-8 border-t border-gray-100 dark:border-white/10 bg-white dark:bg-black flex gap-2 sm:gap-5 sticky bottom-0 z-10 shrink-0">
-                        {requestStatus === 'pending' && onAction && requestId && (
-                            <div className="flex-1 flex gap-2 sm:gap-4">
-                                <button
-                                    onClick={() => onAction(requestId, 'approved')}
-                                    className="flex-1 bg-[#1f6d78] text-white py-3 sm:py-4 rounded-xl font-black text-[10px] sm:text-sm uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active:scale-95"
-                                >
-                                    {t('profile.approve_request')}
-                                </button>
-                                <button
-                                    onClick={() => onAction(requestId, 'rejected')}
-                                    className="flex-1 bg-white dark:bg-black border border-gray-200 dark:border-white/10 text-black dark:text-white py-3 sm:py-4 rounded-xl font-black text-[10px] sm:text-sm uppercase tracking-widest hover:bg-gray-50 dark:hover:bg-gray-700 transition-all active:scale-95"
-                                >
-                                    {t('profile.reject_request')}
-                                </button>
-                            </div>
-                        )}
-                        {requestStatus === 'approved' && onRevoke && requestId && (
-                            <div className="w-full flex flex-col items-center text-center gap-4 py-2">
-                                <div className="flex flex-col items-center gap-1">
-                                    <span className="text-green-600 font-bold text-sm flex items-center gap-2">
-                                        {t('profile.approved_msg')}
-                                    </span>
-                                    <span className="text-gray-400 text-[10px] font-medium">
-                                        {t('profile.employer_view_desc')}
-                                    </span>
-                                </div>
-
-                                <button
-                                    onClick={() => onRevoke(requestId)}
-                                    className="bg-white dark:bg-black border text-red-600 border-red-100 dark:border-red-900/30 px-8 py-3 rounded-xl font-bold text-xs hover:bg-red-50 dark:hover:bg-red-900/10 transition-all shadow-sm active: min-w-[200px]"
-                                >
-                                    {t('profile.hide_contact')}
-                                </button>
-                            </div>
-                        )}
-                        {requestStatus === 'rejected' && (
-                            <div className="w-full flex flex-col items-center text-center gap-4 py-2">
-                                <div className="flex flex-col items-center gap-1">
-                                    <span className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold text-sm flex items-center gap-2">
-                                        ⚠️ <span className="underline decoration-gray-300 dark:decoration-gray-700 underline-offset-4">{company.name}</span> {t('profile.rejected_msg')}
-                                    </span>
-                                    <span className="text-gray-400 text-[10px] font-medium">
-                                        {t('profile.undo_reject_desc')}
-                                    </span>
-                                </div>
-
-                                {onAction && requestId && (
-                                    <button
-                                        onClick={() => onAction(requestId, 'approved')}
-                                        className="bg-[#1f6d78] text-white px-12 py-3.5 rounded-xl font-black text-sm hover:bg-[#16555e] transition-all shadow-lg active:scale-95 w-full sm:w-auto min-w-[200px]"
-                                    >
-                                        {t('profile.undo_reject')}
-                                    </button>
-                                )}
-                            </div>
-                        )}
-                        {/* Close Button mobile friendly */}
-                        <button
-                            onClick={onClose}
-                            className="sm:hidden text-gray-500 font-bold text-xs px-4"
-                        >
-                            {t('profile.close')}
-                        </button>
-                    </div>
-                )}
             </div>
         </div>
     );
