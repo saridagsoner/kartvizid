@@ -29,8 +29,8 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
                 className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-2xl">
-                👤
+              <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-zinc-900">
+                <i className="fi fi-rr-user text-2xl sm:text-4xl text-gray-300 dark:text-zinc-700"></i>
               </div>
             )}
           </div>
@@ -45,19 +45,23 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
                 {cv.name}
               </h3>
 
-              <p className="text-[13px] sm:text-[18px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1">
-                {cv.profession}
+              <p className="text-[13px] sm:text-[18px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1 min-h-[1.2em]">
+                {cv.profession || ""}
               </p>
 
               <div className="flex flex-row items-center flex-wrap gap-2.5 sm:gap-6 mt-0.5 sm:mt-1">
                 <div className="flex items-center gap-1.5 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold sm:font-bold">
                   <i className="fi fi-rr-marker"></i>
-                  <span className="lowercase first-letter:uppercase">{cv.city}</span>
+                  <span className="lowercase first-letter:uppercase">{cv.city || ""}</span>
                 </div>
 
                 <div className="flex items-center gap-1.5 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold sm:font-bold">
                   <i className="fi fi-rr-briefcase"></i>
-                  {cv.experienceYears} {t('common.years_experience')}
+                  {cv.experienceYears > 0 
+                    ? `${cv.experienceYears} ${t('common.years_experience')}` 
+                    : (cv.experienceMonths && cv.experienceMonths > 0)
+                      ? t('common.less_than_year')
+                      : t('common.new_graduate')}
                 </div>
               </div>
 

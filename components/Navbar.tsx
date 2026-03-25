@@ -188,13 +188,9 @@ const Navbar: React.FC<NavbarProps & {
                   <div className="relative">
                     <button
                       onClick={onOpenMessages}
-                      className="w-10 h-10 text-black dark:text-white rounded-full flex items-center justify-center text-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group"
+                      className="w-10 h-10 text-black dark:text-white rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group"
                     >
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="opacity-95 text-[#3a4d59]">
-                        <path d="M12 3C7 3 3 7 3 12s4 9 9 9h9V12c0-5-4-9-9-9z"></path>
-                        <line x1="8" y1="10" x2="13" y2="10"></line>
-                        <line x1="8" y1="14.5" x2="16" y2="14.5"></line>
-                      </svg>
+                      <i className="fi fi-rr-envelope text-xl"></i>
                       {unreadMessageCount > 0 && (
                         <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 border-2 border-white rounded-full text-[9px] text-white flex items-center justify-center font-bold shadow-sm">
                           {unreadMessageCount}

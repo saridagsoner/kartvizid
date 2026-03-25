@@ -30,6 +30,7 @@ import CVProfileRoute from './components/CVProfileRoute';
 import CompanyProfileRoute from './components/CompanyProfileRoute';
 import ShopCard from './components/ShopCard';
 import ShopProfileModal from './components/ShopProfileModal';
+import CVCompletionPrompt from './components/CVCompletionPrompt';
 
 // Lazy loaded auxiliary modals
 const JobSuccessModal = React.lazy(() => import('./components/JobSuccessModal'));
@@ -1286,6 +1287,24 @@ const App: React.FC = () => {
     }
   };
 
+  const handleDeleteCV = async () => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from('cvs')
+        .delete()
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+      showToast('CV başarıyla silindi!', 'success');
+      navigate('/', { replace: true, state: {} });
+      fetchCVs();
+    } catch (error: any) {
+      console.error('Error deleting CV:', error);
+      showToast(getFriendlyErrorMessage(error), 'error');
+    }
+  };
+
   const filteredCVs = useMemo(() => {
     let result = cvList.filter((cv) => {
       // Global Search
@@ -2318,6 +2337,7 @@ const App: React.FC = () => {
               await handleCreateCV(data);
               navigate('/', { replace: true });
             }}
+            onDelete={handleDeleteCV}
             initialData={currentUserCV || (user?.user_metadata ? {
               name: user.user_metadata.full_name || '',
               profession: user.user_metadata.profession || '',
@@ -2354,6 +2374,38 @@ const App: React.FC = () => {
         } />
       </Routes>
 
+      {user?.user_metadata?.role === 'job_seeker' && currentUserCV && (
+        <CVCompletionPrompt 
+          completionScore={Math.round(
+            (() => {
+              let score = 0;
+              const cv = currentUserCV;
+              if (cv.name) score += 5;
+              if (cv.profession) score += 5;
+              if (cv.city) score += 5;
+              if (cv.birthDate) score += 5;
+              if (cv.photoUrl) score += 5;
+              if (cv.about && cv.about.length > 100) score += 20;
+              else if (cv.about && cv.about.length > 20) score += 10;
+              else if (cv.about) score += 5;
+              if (cv.workExperience && cv.workExperience.length > 0) score += 15;
+              if (cv.educationDetails && cv.educationDetails.length > 0) score += 10;
+              else if (cv.education) score += 5;
+              if (cv.skills && cv.skills.length > 0) score += 10;
+              if (cv.email) score += 5;
+              if (cv.phone) score += 5;
+              let otherCount = 0;
+              if (cv.internshipDetails && cv.internshipDetails.length > 0) otherCount++;
+              if (cv.languageDetails && cv.languageDetails.length > 0) otherCount++;
+              if (cv.certificates && cv.certificates.length > 0) otherCount++;
+              if (cv.references && cv.references.length > 0) otherCount++;
+              score += Math.min(otherCount * 2.5, 10);
+              return Math.min(score, 100);
+            })()
+          )}
+          onEdit={() => navigate('/cv-olustur')}
+        />
+      )}
     </div>
   );
 };

@@ -46,6 +46,7 @@ const SelectionPill: React.FC<SelectionPillProps> = ({ label, active, onClick })
 interface CVFormModalProps {
   onClose: () => void;
   onSubmit: (cv: Partial<CV>, consentGiven?: boolean) => void | Promise<void>;
+  onDelete?: () => void | Promise<void>;
   initialData?: Partial<CV>;
   availableCities?: Array<{ label: string }>;
 }
@@ -81,7 +82,7 @@ const validateInput = (val: string, maxLength: number) => {
   return result.slice(0, maxLength);
 };
 
-const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, initialData, availableCities = [] }) => {
+const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, onDelete, initialData, availableCities = [] }) => {
   const { t } = useLanguage();
   const [formData, setFormData] = useState<Partial<CV>>({
     name: initialData?.name || '',
@@ -480,12 +481,12 @@ const ExpandableSection = ({
         )}
 
         {/* Header */}
-        <div className="py-6 px-4 sm:py-10 sm:px-8 flex justify-between items-center bg-white dark:bg-black sticky top-0 z-50 shrink-0 border-b border-gray-100 dark:border-white/5">
+        <div className="pt-6 pb-3 px-4 sm:pt-10 sm:pb-4 sm:px-8 flex justify-between items-center bg-white dark:bg-black sticky top-0 z-50 shrink-0 border-b border-gray-100 dark:border-white/5">
           <div className="flex-1 min-w-0 pr-12">
             <h2 className="text-xl sm:text-2xl font-black text-black dark:text-white tracking-tight leading-none mb-2">
               {t('form.cv_create_title')}
             </h2>
-            <p className="text-[9px] sm:text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] leading-none whitespace-nowrap overflow-hidden text-ellipsis">
+            <p className="text-[10px] sm:text-[11px] font-bold text-gray-400 dark:text-gray-500 tracking-wide leading-none whitespace-nowrap overflow-hidden text-ellipsis">
               {t('form.cv_create_subtitle')}
             </p>
           </div>
@@ -505,7 +506,6 @@ const ExpandableSection = ({
         <div className="flex-1 overflow-y-auto p-5 sm:p-10 custom-scrollbar space-y-8 sm:space-y-12 bg-white dark:bg-black">
 
           <section>
-            <SectionTitle title={t('form.basic_info_clean')} subtitle={t('form.basic_info_subtitle')} />
 
             <div className="flex flex-row sm:flex-row gap-4 sm:gap-8 mb-5 sm:mb-8 items-start">
               <div className="shrink-0 space-y-1.5 flex flex-col">
@@ -519,7 +519,7 @@ const ExpandableSection = ({
                 />
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-20 h-28 sm:w-32 sm:h-44 rounded-xl sm:rounded-[2.5rem] border-2 border-dashed border-black/10 dark:border-white/20 bg-white dark:bg-black flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden shadow-sm relative"
+                  className="w-20 h-24 sm:w-28 sm:h-36 rounded-xl sm:rounded-[2rem] border-2 border-dashed border-black/10 dark:border-white/20 bg-white dark:bg-black flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden shadow-sm relative"
                 >
                   {formData.photoUrl ? (
                     <>
@@ -539,7 +539,7 @@ const ExpandableSection = ({
                         height="32"
                         viewBox="0 0 24 24"
                         fill="currentColor"
-                        className="text-black dark:text-gray-400 group-hover: transition-transform sm:scale-125"
+                        className="text-gray-400 dark:text-gray-500 group-hover:scale-110 transition-transform sm:scale-125"
                       >
                         <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-1.96-2.36L6.5 17h11l-3.54-4.71z" />
                       </svg>
@@ -554,7 +554,7 @@ const ExpandableSection = ({
                   )}
                 </div>
               </div>
-              <div className="flex-1 space-y-3 sm:space-y-6 min-w-0 pt-2">
+              <div className="flex-1 space-y-3 sm:space-y-6 min-w-0">
                 <div className="flex flex-col gap-3 sm:grid sm:grid-cols-2 sm:gap-4">
                   <div className="space-y-1.5 flex flex-col">
                     <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.fullname')}</label>
@@ -655,8 +655,8 @@ const ExpandableSection = ({
 
 
           <section>
-            <SectionTitle title={t('form.about_clean')} subtitle={t('form.about_subtitle')} />
             <div className="space-y-4">
+              <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.about_clean') || 'Hakkında'}</label>
               <div className="w-full bg-white dark:bg-black rounded-[1.5rem] sm:rounded-[2rem] border border-black/10 dark:border-white/10 focus-within:bg-white dark:focus-within:bg-black focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center h-40 sm:h-56">
                 <textarea
                   value={formData.about}
@@ -665,6 +665,9 @@ const ExpandableSection = ({
                   placeholder={t('form.about_placeholder')}
                 ></textarea>
               </div>
+              <p className="text-[10px] sm:text-[11px] font-medium text-gray-400 dark:text-gray-500 leading-relaxed px-4 pt-2">
+                Temel bilgilerinizle iş aramaya hemen başlayabilirsiniz. Profilinizi öne çıkarmak için aşağıdaki <strong>"Profilini Güçlendir"</strong> bölümünden eğitim ve deneyimlerinizi eklemeyi unutmayın.
+              </p>
             </div>
           </section>
 
@@ -1376,12 +1379,31 @@ const ExpandableSection = ({
               <p className="text-[10px] text-gray-400 font-bold leading-relaxed ml-2">* {t('form.contact_hint_text') || "Yanındaki yuvarlak kutucuğu işaretlemediğiniz sürece iletişim bilgileriniz profilinizde görünmez."}</p>
             </div>
           </ExpandableSection>
+
+          {/* Completion Indicator Box previously here */}
+          <div className="pt-8 pb-4 px-2 sm:px-4">
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <span className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-100 uppercase tracking-widest">
+                {t('form.completion_rate') || 'CV TAMAMLANMA ORANI'}
+              </span>
+              <span className={`text-[11px] sm:text-xs font-black tracking-tighter ${completion === 100 ? 'text-[#1f6d78]' : 'text-black dark:text-white'}`}>
+                %{completion}
+              </span>
+            </div>
+            <div className="h-2 sm:h-2.5 bg-gray-100 dark:bg-zinc-900 rounded-full overflow-hidden shadow-inner">
+              <div 
+                className={`h-full transition-all duration-1000 ease-out rounded-full shadow-md bg-[#1f6d78] dark:bg-white`}
+                style={{ width: `${completion}%` }}
+              />
+            </div>
+          </div>
+
         </div>
       </ExpandableSection>
 
-      <div className="mt-12 pt-12 space-y-8">
+      <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
         {/* KVKK Box */}
-        <div className="bg-white dark:bg-black p-5 sm:p-8 rounded-3xl sm:rounded-[2.5rem] border border-black/10 dark:border-white/5">
+        <div className="bg-white dark:bg-black p-5 sm:p-6 rounded-3xl sm:rounded-[2.5rem] border border-black/10 dark:border-white/5">
           <div className="flex flex-col gap-4">
             <div className="flex items-start gap-4 sm:gap-6">
               <input
@@ -1406,29 +1428,13 @@ const ExpandableSection = ({
           </div>
         </div>
 
-        {/* Completion Indicator Box */}
-        <div className="bg-white dark:bg-black p-6 sm:p-8 rounded-3xl sm:rounded-[2.5rem] border border-black/10 dark:border-white/5 shadow-sm">
-          <div className="flex items-center justify-between mb-2 sm:mb-3">
-            <span className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-100 uppercase tracking-widest">
-              {t('form.completion_rate') || 'CV TAMAMLANMA ORANI'}
-            </span>
-            <span className={`text-[11px] sm:text-xs font-black tracking-tighter ${completion === 100 ? 'text-[#1f6d78]' : 'text-black dark:text-white'}`}>
-              %{completion}
-            </span>
-          </div>
-          <div className="h-2 sm:h-2.5 bg-gray-50 dark:bg-zinc-950 rounded-full overflow-hidden border border-black/5 dark:border-white/10 shadow-inner">
-            <div 
-              className={`h-full transition-all duration-1000 ease-out rounded-full shadow-lg bg-black dark:bg-white`}
-              style={{ width: `${completion}%` }}
-            />
-          </div>
-        </div>
+
       </div>
 
     </div>
 
       {/* Footer Actions */}
-        <div className="p-4 sm:px-10 sm:py-6 border-t border-black/10 dark:border-white/10 bg-white dark:bg-black flex flex-row items-center justify-center sm:justify-end gap-4 sm:gap-12 sticky bottom-0 z-10 shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)]">
+        <div className="p-4 sm:px-10 sm:py-6 border-t border-black/10 dark:border-white/10 bg-white dark:bg-black flex flex-row items-stretch gap-3 sm:gap-4 sticky bottom-0 z-10 shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)]">
           {/* Submit Button */}
           <button
             disabled={isSubmitting}
@@ -1444,38 +1450,14 @@ const ExpandableSection = ({
                 return;
               }
 
-              // Photo and About Validation - REMOVED AS PER USER REQUEST
-              /*
-              if (!formData.photoUrl || !formData.about) {
+              // Name Validation
+              if (!formData.name) {
                 setShowWarning({
                   show: true,
-                  missing: [t('errors.photo_about_required')]
+                  missing: [t('form.fullname')]
                 });
                 return;
               }
-              */
-
-              // Validation for other fields - REMOVED AS PER USER REQUEST
-              /*
-              const requiredFields = [
-                { key: 'name', label: t('form.fullname') },
-                { key: 'profession', label: t('form.profession') },
-                { key: 'city', label: t('form.city') },
-                { key: 'email', label: t('form.email') },
-                { key: 'phone', label: t('form.phone') }
-              ];
-
-              const missing = requiredFields.filter(field => {
-                const val = formData[field.key as keyof CV];
-                if (Array.isArray(val)) return val.length === 0;
-                return !val;
-              });
-
-              if (missing.length > 0) {
-                setShowWarning({ show: true, missing: missing.map(m => m.label) });
-                return;
-              }
-              */
 
               // Sync legacy fields
               const syncedData = {
@@ -1494,9 +1476,23 @@ const ExpandableSection = ({
                 setIsSubmitting(false);
               }
             }}
-            className="shrink-0 px-8 sm:px-12 bg-white dark:bg-black border-2 border-black dark:border-white text-black dark:text-white py-2.5 sm:py-3.5 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all active: scale-[0.98] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed order-2"
+            className="flex-1 bg-[#1f6d78] text-white py-3.5 sm:py-4 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all active:scale-[0.98] shadow-lg shadow-[#1f6d78]/20 disabled:opacity-50 disabled:cursor-not-allowed order-2 text-center"
           >
             {isSubmitting ? t('settings.save') : 'YAYINLA'}
+          </button>
+
+          {/* Delete Button */}
+          <button
+            type="button"
+            onClick={async () => {
+              if (window.confirm("CV'nizi tamamen silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
+                if (onDelete) await onDelete();
+              }
+            }}
+            disabled={completion <= 15}
+            className={`flex-1 border-2 border-red-500 text-red-500 py-3.5 sm:py-4 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-red-50 dark:hover:bg-red-950/30 transition-all active:scale-[0.98] order-1 text-center ${completion > 15 ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+          >
+            CV'Mİ SİL
           </button>
         </div>
 
