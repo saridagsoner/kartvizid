@@ -271,9 +271,24 @@ const App: React.FC = () => {
         )
         .subscribe();
 
+      const chatChannel = supabase
+        .channel('realtime-chat-global')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'messages' },
+          (payload) => {
+            // Ensure we aren't fetching for our own sent messages if we just sent them
+            if (payload.new && payload.new.sender_id !== user.id) {
+              fetchConversations();
+            }
+          }
+        )
+        .subscribe();
+
       return () => {
         supabase.removeChannel(notificationsChannel);
         supabase.removeChannel(requestsChannel);
+        supabase.removeChannel(chatChannel);
       };
     } else {
       setActiveCompany(null);
@@ -1106,20 +1121,40 @@ const App: React.FC = () => {
   const fetchConversations = async () => {
     if (!user) return;
     try {
+      // 1. Fetch conversations (cannot join profiles directly as FK points to auth.users)
       const { data, error } = await supabase
         .from('conversations')
-        .select(`
-          *,
-          participant1:participant1_id(id, full_name, avatar_url, role),
-          participant2:participant2_id(id, full_name, avatar_url, role)
-        `)
+        .select('*')
         .or(`participant1_id.eq.${user.id},participant2_id.eq.${user.id}`)
         .order('last_message_at', { ascending: false });
 
       if (error) throw error;
 
+      // 2. Fetch profiles for all participants
+      const participantIds = new Set<string>();
+      (data || []).forEach(c => {
+        if (c.participant1_id) participantIds.add(c.participant1_id);
+        if (c.participant2_id) participantIds.add(c.participant2_id);
+      });
+
+      let profilesMap = new Map();
+      if (participantIds.size > 0) {
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, full_name, avatar_url, role')
+          .in('id', Array.from(participantIds));
+          
+        if (!profilesError && profilesData) {
+          profilesData.forEach(p => profilesMap.set(p.id, p));
+        }
+      }
+
+      // 3. Map conversations with their respective other participant profiles
       const mapped: Conversation[] = (data || []).map((conv: any) => {
-        const otherParticipant = conv.participant1_id === user.id ? conv.participant2 : conv.participant1;
+        const p1 = profilesMap.get(conv.participant1_id);
+        const p2 = profilesMap.get(conv.participant2_id);
+        const otherParticipant = conv.participant1_id === user.id ? p2 : p1;
+        
         return {
           id: conv.id,
           participant1_id: conv.participant1_id,
@@ -1132,7 +1167,7 @@ const App: React.FC = () => {
             full_name: otherParticipant.full_name,
             avatar_url: otherParticipant.avatar_url,
             role: otherParticipant.role
-          } : undefined
+          } : { id: conv.participant1_id === user.id ? conv.participant2_id : conv.participant1_id }
         };
       });
 

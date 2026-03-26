@@ -44,8 +44,12 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
           'postgres_changes',
           { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${activeConversationId}` },
           (payload) => {
-            setMessages(prev => [...prev, payload.new as Message]);
-            if (payload.new.sender_id !== user?.id) {
+            const newMsg = payload.new as Message;
+            setMessages(prev => {
+              if (prev.find(m => m.id === newMsg.id)) return prev;
+              return [...prev, newMsg];
+            });
+            if (newMsg.sender_id !== user?.id) {
                markMessagesAsRead(activeConversationId);
             }
           }
@@ -108,7 +112,7 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
     setNewMessage('');
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('messages')
         .insert([
           {
@@ -116,9 +120,22 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
             sender_id: user.id,
             content: content
           }
-        ]);
+        ])
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Optimistically append the new message to local state immediately
+      // This ensures the sender sees it instantly even if Realtime is disabled or delayed
+      if (data) {
+        setMessages(prev => {
+          if (!prev.find(m => m.id === data.id)) {
+            return [...prev, data as Message];
+          }
+          return prev;
+        });
+      }
 
       // Update conversation's last message
       await supabase
