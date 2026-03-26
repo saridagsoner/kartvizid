@@ -1182,7 +1182,7 @@ const App: React.FC = () => {
       setIsMessagesOpen(true);
     } catch (err) {
       console.error('Error opening chat:', err);
-      showToast('Sohbet başlatılamadı.', 'error');
+      showToast('Sohbet başlatılamadı: ' + ((err as any)?.message || 'Bilinmeyen Hata'), 'error');
     }
   };
 

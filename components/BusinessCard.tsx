@@ -29,8 +29,8 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
                 className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-zinc-900">
-                <i className="fi fi-rr-user text-2xl sm:text-4xl text-gray-300 dark:text-zinc-700"></i>
+              <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-zinc-800/80">
+                <i className="fi fi-sr-user text-3xl sm:text-5xl text-gray-300 dark:text-zinc-600 drop-shadow-sm"></i>
               </div>
             )}
           </div>

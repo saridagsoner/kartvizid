@@ -1489,8 +1489,7 @@ const ExpandableSection = ({
                 if (onDelete) await onDelete();
               }
             }}
-            disabled={completion <= 15}
-            className={`flex-1 border-2 border-red-500 text-red-500 py-3.5 sm:py-4 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-red-50 dark:hover:bg-red-950/30 transition-all active:scale-[0.98] order-1 text-center ${completion > 15 ? 'opacity-100 cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+            className={`flex-1 border-2 border-red-500 text-red-500 py-3.5 sm:py-4 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-red-50 dark:hover:bg-red-950/30 transition-all active:scale-[0.98] order-1 text-center opacity-100 cursor-pointer`}
           >
             CV'Mİ SİL
           </button>

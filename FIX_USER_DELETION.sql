@@ -55,6 +55,22 @@ ALTER TABLE public.contact_requests ADD CONSTRAINT contact_requests_requester_id
 ALTER TABLE public.contact_requests ADD CONSTRAINT contact_requests_target_user_id_fkey FOREIGN KEY (target_user_id) REFERENCES auth.users(id) ON DELETE CASCADE;
 
 
+-- 7. MESSAGING - CONVERSATIONS
+DELETE FROM public.conversations WHERE participant1_id NOT IN (SELECT id FROM auth.users);
+DELETE FROM public.conversations WHERE participant2_id NOT IN (SELECT id FROM auth.users);
+
+ALTER TABLE public.conversations DROP CONSTRAINT IF EXISTS conversations_participant1_id_fkey;
+ALTER TABLE public.conversations DROP CONSTRAINT IF EXISTS conversations_participant2_id_fkey;
+ALTER TABLE public.conversations ADD CONSTRAINT conversations_participant1_id_fkey FOREIGN KEY (participant1_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+ALTER TABLE public.conversations ADD CONSTRAINT conversations_participant2_id_fkey FOREIGN KEY (participant2_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+
+-- 8. MESSAGING - MESSAGES
+DELETE FROM public.messages WHERE sender_id NOT IN (SELECT id FROM auth.users);
+
+ALTER TABLE public.messages DROP CONSTRAINT IF EXISTS messages_sender_id_fkey;
+ALTER TABLE public.messages ADD CONSTRAINT messages_sender_id_fkey FOREIGN KEY (sender_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+
+
 -- --------------------------------------------------------------------------------
 -- STEP 2: STORAGE OBJECTS CLEANUP TRIGGER
 -- --------------------------------------------------------------------------------
