@@ -1170,12 +1170,30 @@ const App: React.FC = () => {
             { participant1_id: user.id, participant2_id: targetUserId }
           ])
           .select()
-          .single();
+          .maybeSingle();
 
-        if (error) throw error;
-        
-        await fetchConversations();
-        conv = { ...data, other_participant: { id: targetUserId } };
+        if (error) {
+          // If it's a unique constraint error (PGRST116 or 23505 duplicate key), the conversation already exists
+          // but our local 'conversations' state hasn't updated yet. We must fetch it directly.
+          if (error.code === '23505' || error.message.includes('unique constraint')) {
+            const { data: existingData, error: fetchError } = await supabase
+              .from('conversations')
+              .select('*')
+              .or(`and(participant1_id.eq.${user.id},participant2_id.eq.${targetUserId}),and(participant1_id.eq.${targetUserId},participant2_id.eq.${user.id})`)
+              .maybeSingle();
+              
+            if (fetchError) throw fetchError;
+            if (existingData) {
+              await fetchConversations();
+              conv = { ...existingData, other_participant: { id: targetUserId } };
+            }
+          } else {
+            throw error;
+          }
+        } else if (data) {
+          await fetchConversations();
+          conv = { ...data, other_participant: { id: targetUserId } };
+        }
       }
 
       setActiveConversationId(conv.id);
