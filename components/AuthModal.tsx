@@ -59,7 +59,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 await signInWithGoogle();
             }
         } catch (err: any) {
-            setError(err.message || 'Bir hata oluştu.');
+            console.error('AUTH_ERROR_DEBUG:', err);
+            const message = err.message || '';
+            let errorKey = 'auth.error_generic';
+            
+            if (message.toLowerCase().includes('invalid login credentials') || 
+                message.toLowerCase().includes('invalid credentials') ||
+                message.toLowerCase().includes('invalid_confirm_identity')) {
+                errorKey = 'auth.invalid_credentials';
+            } else if (message.toLowerCase().includes('email not confirmed')) {
+                errorKey = 'auth.email_not_confirmed';
+            } else if (message.toLowerCase().includes('user not found')) {
+                errorKey = 'auth.user_not_found';
+            }
+            
+            setError(t(errorKey));
             setLoading(false);
         }
     };
@@ -107,7 +121,21 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 onClose();
             }
         } catch (err: any) {
-            setError(err.message || 'Bir hata oluştu.');
+            console.error('AUTH_ERROR_DEBUG:', err);
+            const message = err.message || '';
+            let errorKey = 'auth.error_generic';
+            
+            if (message.toLowerCase().includes('invalid login credentials') || 
+                message.toLowerCase().includes('invalid credentials') ||
+                message.toLowerCase().includes('invalid_confirm_identity')) {
+                errorKey = 'auth.invalid_credentials';
+            } else if (message.toLowerCase().includes('email not confirmed')) {
+                errorKey = 'auth.email_not_confirmed';
+            } else if (message.toLowerCase().includes('user not found')) {
+                errorKey = 'auth.user_not_found';
+            }
+            
+            setError(t(errorKey));
         } finally {
             setLoading(false);
         }
@@ -119,6 +147,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
         <div className="fixed inset-0 z-[140] flex flex-col justify-end sm:justify-center items-center sm:p-4 bg-white dark:bg-black sm:bg-black/50 sm:backdrop-blur-sm">
             <div className="bg-white dark:bg-black w-full h-full max-h-[100dvh] sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-none sm:shadow-2xl relative flex flex-col rounded-none sm:rounded-3xl overflow-hidden sm:border sm:border-gray-100 dark:border-white/10">
                 
+                {/* Back Button - Conditional */}
+                {selectedRole && mode === 'signup' && (
+                    <button 
+                         onClick={() => setSelectedRole(null)}
+                         className="absolute top-4 left-4 sm:top-5 sm:left-5 p-2.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400 z-50 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50 group flex items-center justify-center"
+                         title={t('common.back')}
+                    >
+                        <i className="fi fi-rr-arrow-small-left text-2xl leading-none w-[22px] h-[22px] flex items-center justify-center group-hover:-translate-x-1 transition-transform"></i>
+                    </button>
+                )}
+
                 {/* Close Button */}
                 <button
                     onClick={onClose}
@@ -130,75 +169,72 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                     </svg>
                 </button>
 
-                <div className="flex-1 flex flex-col overflow-y-auto custom-scrollbar p-6 sm:p-10 pt-28 sm:pt-24 w-full pb-8 relative z-10">
-                    <div className="text-center mb-8 px-2">
-                        <h2 className="text-[28px] sm:text-[32px] font-black text-gray-900 dark:text-white mb-3 leading-tight tracking-tight">
-                            {mode === 'reset' ? t('auth.forgot_password') : (mode === 'signin' ? t('auth.signin_title') : t('auth.signup_title'))}
+                <div className={`flex-1 flex flex-col overflow-y-auto custom-scrollbar p-6 sm:p-10 w-full pb-10 relative z-10 ${
+                    mode === 'signup' && !selectedRole ? 'pt-24 sm:pt-32' : 'pt-14 sm:pt-16'
+                }`}>
+                    <div className={`text-center px-4 relative ${mode === 'signup' && !selectedRole ? 'mb-10 mt-2' : 'mb-6 mt-4'}`}>
+
+                        <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-2 leading-tight tracking-tight px-10">
+                            {mode === 'reset' ? t('auth.forgot_password') : (
+                                mode === 'signin' ? t('auth.signin_title') : (
+                                    selectedRole === 'job_seeker' ? 'İş Arayan Hesabı Oluştur' : 
+                                    selectedRole === 'employer' ? 'İş Veren Hesabı Oluştur' : 
+                                    t('auth.signup_title')
+                                )
+                            )}
                         </h2>
-                        <p className="text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-[0.15em] mx-auto max-w-[280px] sm:max-w-sm">
-                            {mode === 'signup' ? t('auth.signup_desc') || 'Size uygun olan hesap türünü seçin aramıza katılın.' : t('auth.signin_desc') || 'Sisteme giriş yapmak için bilgilerinizi girin.'}
-                        </p>
+                        {!selectedRole && (
+                            <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 font-medium leading-relaxed mx-auto max-w-[280px] sm:max-w-sm">
+                                {mode === 'signup' ? t('auth.signup_desc') || 'Size uygun olan hesap türünü seçin aramıza katılın.' : t('auth.signin_desc')}
+                            </p>
+                        )}
                     </div>
 
                     {mode === 'signup' && !selectedRole ? (
-                        <div className="space-y-8 max-w-sm mx-auto w-full mt-12">
+                        <div className="space-y-4 max-w-sm mx-auto w-full mt-7">
                             {[
-                                { id: 'job_seeker', title: t('auth.job_seeker_title'), desc: t('auth.job_seeker_desc'), icon: 'fi-rr-user' },
-                                { id: 'employer', title: t('auth.employer_title'), desc: t('auth.employer_desc'), icon: 'fi-rr-building' }
+                                { id: 'job_seeker', title: t('auth.job_seeker_title'), desc: t('auth.job_seeker_desc'), icon: 'fi-rr-user', color: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' },
+                                { id: 'employer', title: t('auth.employer_title'), desc: t('auth.employer_desc'), icon: 'fi-rr-building', color: 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400' }
                             ].map((role) => (
                                 <button
                                     key={role.id}
                                     onClick={() => setSelectedRole(role.id as any)}
-                                    className="w-full flex items-center gap-4 p-4 bg-white dark:bg-gray-800 border-2 border-black dark:border-white rounded-2xl transition-all group text-left shadow-sm active:scale-[0.98]"
+                                    className="w-full flex items-center gap-4 p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-white/10 rounded-3xl transition-all group text-left shadow-sm hover:shadow-xl hover:border-[#1f6d78]/30 dark:hover:border-[#2dd4bf]/30 hover:-translate-y-1 active:scale-[0.98]"
                                 >
-                                    <div className="w-12 h-12 flex items-center justify-center text-2xl text-[#1f6d78] dark:text-[#2dd4bf] group-hover:scale-110 transition-transform">
+                                    <div className={`w-14 h-14 shrink-0 flex items-center justify-center text-2xl rounded-2xl ${role.color} group-hover:scale-110 transition-transform`}>
                                         <i className={`fi ${role.icon}`}></i>
                                     </div>
-                                    <div>
-                                        <h3 className="font-black text-[#1f6d78] dark:text-[#2dd4bf] text-base leading-tight">{role.title}</h3>
-                                        <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-0.5">{role.desc}</p>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-black text-gray-900 dark:text-white text-lg leading-tight mb-0.5">{role.title}</h3>
+                                        <p className="text-xs font-bold text-gray-500 dark:text-gray-400 line-clamp-1">{role.desc}</p>
+                                    </div>
+                                    <div className="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:bg-[#1f6d78] group-hover:text-white transition-all">
+                                        <i className="fi fi-rr-arrow-right text-xs"></i>
                                     </div>
                                 </button>
                             ))}
                             
-                             <div className="flex flex-row items-center justify-center gap-1.5 pt-6">
+                             <div className="flex flex-row items-center justify-center gap-1.5 pt-8">
                                 <p className="text-[13.5px] text-gray-500 dark:text-gray-400 font-bold">{t('auth.have_account')}</p>
                                 <button
                                     onClick={() => { setMode('signin'); setSelectedRole(null); }}
-                                    className="text-[13.5px] font-black text-[#1f6d78] dark:text-[#2dd4bf] hover:text-[#155e68] dark:hover:text-white transition-colors"
+                                    className="text-[13.5px] font-black text-[#1f6d78] dark:text-[#2dd4bf] hover:underline underline-offset-4"
                                 >
                                     {t('auth.signin_btn')}
                                 </button>
                             </div>
                         </div>
                     ) : (
-                        <form id="auth-form" onSubmit={handleSubmit} className="flex flex-col gap-5 flex-1 w-full max-w-sm mx-auto">
-                            {selectedRole && mode === 'signup' && (
-                                <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-2xl mb-2 border border-dashed border-gray-200 dark:border-gray-700">
-                                    <button 
-                                        type="button"
-                                        onClick={() => setSelectedRole(null)}
-                                        className="w-8 h-8 rounded-full bg-white dark:bg-black flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors shadow-sm"
-                                    >
-                                        <i className="fi fi-rr-arrow-small-left text-xl"></i>
-                                    </button>
-                                    <div>
-                                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">{t('auth.selected_type') || 'Seçilen Tür'}</p>
-                                        <h4 className="text-sm font-black text-gray-800 dark:text-white leading-none">
-                                            {selectedRole === 'job_seeker' ? t('nav.job_seeker') : selectedRole === 'employer' ? t('nav.employer') : t('nav.service_provider')}
-                                        </h4>
-                                    </div>
-                                </div>
-                            )}
-
-                            {mode !== 'reset' && (
+                        <form id="auth-form" onSubmit={handleSubmit} className="flex flex-col gap-3.5 flex-1 w-full max-w-sm mx-auto pt-2">
+                             {/* Form Content */}
+                             {mode !== 'reset' && (
                                 <>
                                     <div className="flex flex-col gap-3 mb-2">
                                             <button
                                                 type="button"
                                                 onClick={() => handleSocialLogin('google')}
                                                 disabled={loading}
-                                                className="w-full flex items-center justify-center bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-white/5 h-[52px] rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all font-bold text-[14px] text-gray-700 dark:text-gray-200 active:scale-[0.98] shadow-sm"
+                                                className="w-full flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-white/10 h-[56px] rounded-3xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all font-black text-[15px] text-gray-800 dark:text-gray-200 active:scale-[0.98] shadow-sm"
                                             >
                                                 <div className="flex items-center justify-center gap-3 w-full">
                                                     <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
@@ -208,12 +244,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                                             className="w-full h-full object-contain"
                                                         />
                                                     </div>
-                                                    <span className="leading-none">{mode === 'signin' ? t('auth.signin_google') || 'Google ile Giriş Yap' : t('auth.signup_google') || 'Google ile Kayıt Ol'}</span>
+                                                    <span className="leading-none">{mode === 'signin' ? t('auth.signin_google') : t('auth.signup_google')}</span>
                                                 </div>
                                             </button>
                                     </div>
 
-                                    <div className="relative flex items-center gap-4 my-2 mb-4">
+                                    <div className="relative flex items-center gap-4 mt-0.5 mb-0">
                                         <div className="flex-1 h-px bg-gray-100 dark:bg-white/5"></div>
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('auth.or') || 'veya e-posta'}</span>
                                         <div className="flex-1 h-px bg-gray-100 dark:bg-white/5"></div>
@@ -234,7 +270,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="w-full bg-gray-50 dark:bg-black/50 border-2 border-transparent focus:bg-white dark:focus:bg-black focus:border-[#1f6d78]/30 dark:focus:border-[#2dd4bf]/30 rounded-2xl px-5 py-4 text-[15px] text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-[#1f6d78]/10 transition-all placeholder:text-gray-400"
+                                    className="w-full bg-gray-50 dark:bg-black/50 border border-gray-200 dark:border-white/5 focus:bg-white dark:focus:bg-black focus:border-[#1f6d78]/30 dark:focus:border-[#2dd4bf]/30 rounded-2xl px-5 py-3.5 text-[15px] text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-[#1f6d78]/10 transition-all placeholder:text-gray-400"
                                     placeholder="ornek@email.com"
                                 />
                             </div>
@@ -248,7 +284,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             required
-                                            className="w-full bg-gray-50 dark:bg-black/50 border-2 border-transparent focus:bg-white dark:focus:bg-black focus:border-[#1f6d78]/30 dark:focus:border-[#2dd4bf]/30 rounded-2xl px-5 py-4 text-[15px] text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-[#1f6d78]/10 transition-all placeholder:text-gray-400 pr-12"
+                                            className="w-full bg-gray-50 dark:bg-black/50 border border-gray-200 dark:border-white/5 focus:bg-white dark:focus:bg-black focus:border-[#1f6d78]/30 dark:focus:border-[#2dd4bf]/30 rounded-2xl px-5 py-3.5 text-[15px] text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-[#1f6d78]/10 transition-all placeholder:text-gray-400 pr-12"
                                             placeholder="••••••••"
                                         />
                                         <button
@@ -270,7 +306,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                              <button
                                  type="submit"
                                  disabled={loading}
-                                 className="w-full bg-[#1f6d78] dark:bg-[#2dd4bf] text-white dark:text-gray-900 font-black py-4 rounded-2xl hover:bg-[#155e68] shadow-xl shadow-[#1f6d78]/10 active:scale-[0.98] transition-all disabled:opacity-50 mt-4 uppercase tracking-widest text-sm"
+                                 className="w-full bg-[#1f6d78] dark:bg-[#2dd4bf] text-white dark:text-gray-900 font-black py-4 rounded-2xl hover:bg-[#155e68] shadow-xl shadow-[#1f6d78]/10 active:scale-[0.98] transition-all disabled:opacity-50 mt-2 uppercase tracking-widest text-sm"
                              >
                                  {loading ? t('common.processing') || 'İşleniyor...' : (mode === 'signin' ? t('auth.signin_btn') : (mode === 'signup' ? t('auth.signup_btn') : t('auth.send_reset_link') || 'Sıfırlama Linki Gönder'))}
                              </button>

@@ -6,9 +6,11 @@ interface SearchableSelectProps {
     options: string[];
     placeholder?: string;
     disabled?: boolean;
+    icon?: string;
+    searchable?: boolean;
 }
 
-const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, options, placeholder = 'Şehir', disabled = false }) => {
+const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, options, placeholder = 'Şehir', disabled = false, icon, searchable = true }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -24,71 +26,51 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Filter options
     const filteredOptions = options.filter(opt =>
         opt.toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr'))
     );
 
     return (
         <div className="relative w-full" ref={dropdownRef}>
-            {/* Trigger Button */}
             <div
                 onClick={() => !disabled && setIsOpen(!isOpen)}
-                className={`w-full h-[38px] sm:h-[48px] bg-white dark:bg-black border border-black/10 dark:border-white/10 rounded-full px-6 sm:px-8 text-sm font-bold flex items-center justify-between cursor-pointer transition-all ${isOpen ? 'bg-white dark:bg-gray-700 border-[#1f6d78]/20 ring-4 ring-[#1f6d78]/5' : ''
-                    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 dark:hover:bg-gray-900'}`}
+                className={`w-full h-[38px] sm:h-[48px] bg-white dark:bg-black border border-black/10 dark:border-white/10 rounded-full pl-5 pr-4 sm:pl-6 sm:pr-5 text-[14px] font-semibold flex items-center justify-between cursor-pointer transition-all ${isOpen ? 'ring-2 ring-[#1f6d78]/10 border-[#1f6d78]/20 bg-white dark:bg-black' : 'hover:bg-gray-50 dark:hover:bg-gray-900'
+                    } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-                <span className={value ? 'text-gray-500 dark:text-gray-400' : 'text-gray-400'}>
+                <span className={value ? 'text-black dark:text-white' : 'text-gray-400 font-medium'}>
                     {value || placeholder}
                 </span>
-                <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className={`text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-                >
-                    <path d="m6 9 6 6 6-6" />
-                </svg>
+                <div className="flex items-center translate-y-[1.5px]">
+                    <i className={`fi fi-rr-angle-small-down text-gray-400 text-lg transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}></i>
+                </div>
             </div>
 
-            {/* Dropdown Menu */}
             {isOpen && (
-                <div className="absolute z-50 top-[110%] left-0 w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                    {/* Search Input */}
-                    <div className="p-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
-                        <div className="relative h-[38px] overflow-hidden flex items-center">
-                            <input
-                                type="text"
-                                autoFocus
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                placeholder="Ara..."
-                                className="w-full h-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl pl-10 pr-4 py-0 text-[16px] font-medium outline-none focus:border-[#1f6d78] transition-colors dark:text-white"
-                                onClick={(e) => e.stopPropagation()}
-                            />
-                            <svg
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
+                <div className="absolute z-[100] top-[115%] left-0 w-full bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl rounded-[26px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-black/5 dark:border-white/5 overflow-hidden animate-in fade-in slide-in-from-top-3 duration-300">
+                    {searchable && (
+                        <div className="p-3 border-b border-black/5 dark:border-white/5">
+                            <div className="relative h-11">
+                                <input
+                                    type="text"
+                                    autoFocus
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    autoComplete="off"
+                                    onFocus={(e) => {
+                                        setTimeout(() => {
+                                            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        }, 300);
+                                    }}
+                                    placeholder="Ara..."
+                                    className="w-full h-full bg-gray-50/50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-2xl pl-10 pr-4 text-[15px] font-bold outline-none focus:border-[#1f6d78]/30 transition-all dark:text-white"
+                                    onClick={(e) => e.stopPropagation()}
+                                />
+                                <i className="fi fi-rr-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
-                    {/* Options List */}
-                    <div className="max-h-[240px] overflow-y-auto no-scrollbar p-2">
+                    <div className="max-h-[240px] overflow-y-auto p-2.5 no-scrollbar flex flex-col gap-1">
                         {filteredOptions.length > 0 ? (
                             filteredOptions.map((option) => (
                                 <div
@@ -98,14 +80,19 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
                                         setIsOpen(false);
                                         setSearch('');
                                     }}
-                                    className={`px-4 py-2.5 rounded-xl text-sm font-bold cursor-pointer transition-colors ${value === option ? 'bg-[#1f6d78] text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                                    className={`relative px-5 py-3.5 rounded-[18px] text-[14px] font-bold cursor-pointer transition-all flex items-center justify-between group overflow-hidden ${value === option 
+                                        ? 'bg-[#1f6d78]/8 text-[#1f6d78]' 
+                                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5'
                                         }`}
                                 >
-                                    {option}
+                                    <span className="relative z-10">{option}</span>
+                                    {value === option && (
+                                        <i className="fi fi-rr-check text-[15px] sm:text-[17px] font-black"></i>
+                                    )}
                                 </div>
                             ))
                         ) : (
-                            <div className="p-4 text-center text-xs font-bold text-gray-400">
+                            <div className="p-8 text-center text-[13px] font-bold text-gray-400 italic">
                                 Sonuç bulunamadı.
                             </div>
                         )}

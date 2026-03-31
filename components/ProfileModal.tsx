@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import ImageWithFallback from './ImageWithFallback';
 import { CV } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -22,7 +23,15 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
   const [showRoleWarning, setShowRoleWarning] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [showWarning, setShowWarning] = useState<{ show: boolean, message: string }>({ show: false, message: '' });
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const isOwner = user ? user.id === cv.userId : false;
+
+  const Tooltip = ({ text, show }: { text: string, show: boolean }) => (
+    <div className={`absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-2 bg-gray-900/95 backdrop-blur-md text-white text-[10px] font-bold rounded-xl transition-all duration-300 pointer-events-none z-[100] whitespace-nowrap shadow-2xl border border-white/10 flex items-center justify-center ${show ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-90'}`}>
+      {text}
+      <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-gray-900/95 rotate-45 border-r border-b border-white/5" />
+    </div>
+  );
 
   // Check if saved on mount
   React.useEffect(() => {
@@ -127,7 +136,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
 
   const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
     <div className="mb-3 sm:mb-6 mt-5 sm:mt-10 first:mt-0">
-      <h3 className="text-[12px] sm:text-lg font-black text-black dark:text-white uppercase tracking-[0.2em] border-l-4 border-[#1f6d78] pl-3 leading-none">{title}</h3>
+      <h3 className="text-[12px] sm:text-[15px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em] border-l-4 border-[#1f6d78] dark:border-[#2dd4bf] pl-3 leading-none logo-font">{title}</h3>
       {subtitle && <p className="text-[8px] sm:text-[10px] text-gray-400 font-bold uppercase mt-1 ml-4">{subtitle}</p>}
     </div>
   );
@@ -155,7 +164,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
   );
 
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-16 z-[250] flex sm:items-center sm:justify-center sm:p-4 bg-white dark:bg-black sm:bg-black/30 sm:dark:bg-black/60">
+    <div className="fixed top-0 left-0 right-0 bottom-0 z-[250] flex sm:items-center sm:justify-center sm:p-4 bg-white dark:bg-black sm:bg-black/30 sm:dark:bg-black/60">
       <SEO
         title={`${cv.name} - ${cv.profession}`}
         description={cv.about ? cv.about.substring(0, 150) + '...' : `${cv.name} adlı kullanıcının özgeçmişini inceleyin.`}
@@ -190,23 +199,28 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
           {/* Bölüm 1: Temel Bilgiler */}
           <section>
             <SectionTitle title={t('profile.basic_info')} />
-            <div className="flex flex-col gap-6 pt-4">
+            <div className="flex flex-col gap-6 pt-4 pl-4">
               <div className="flex flex-row gap-4 sm:gap-8 items-start">
                 <div className="shrink-0">
-                  <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-3 mb-1.5 block">{t('company.logo')}</span>
-                  <div className="w-20 h-28 sm:w-32 sm:h-44 rounded-xl sm:rounded-[2.5rem] border border-gray-100 dark:border-white/10 overflow-hidden shadow-xl bg-gray-50 dark:bg-gray-900 mt-2.5">
-                    <img src={cv.photoUrl} alt={cv.name} className="w-full h-full object-cover" />
+                  <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-3 mb-1.5 block">FOTOĞRAF</span>
+                  <div className="border border-dashed border-gray-300 dark:border-white/20 rounded-2xl sm:rounded-[3rem] p-1 mt-2.5 w-fit">
+                    <div className="w-20 h-28 sm:w-32 sm:h-44 rounded-xl sm:rounded-[2.5rem] overflow-hidden bg-gray-50 dark:bg-gray-900 flex items-center justify-center relative">
+                      <ImageWithFallback 
+                        src={cv.photoUrl} 
+                        alt={cv.name || ''} 
+                        className="w-full h-full object-cover"
+                        initialsClassName="text-4xl sm:text-6xl font-black"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="flex-1 grid grid-cols-2 gap-x-3 gap-y-4 min-w-0">
                   <InfoTag label={t('form.fullname')} value={cv.name} />
                   <InfoTag label={t('form.city')} value={`${cv.city}${cv.district ? ' / ' + cv.district : ''}`} />
                   <InfoTag label={t('form.profession')} value={cv.profession} />
-                  <InfoTag label={t('form.experience')} value={`${cv.experienceYears} ${t('common.year')}${cv.experienceMonths ? ' ' + cv.experienceMonths + ' ' + t('common.month') : ''}`} icon="fi fi-rr-briefcase" />
-                  {cv.birthDate && <InfoTag label={t('form.birth_date')} value={cv.birthDate} />}
-                  {(cv.personalDetails?.maritalStatus || cv.maritalStatus) && (
-                    <InfoTag label={t('form.marital')} value={cv.personalDetails?.maritalStatus || cv.maritalStatus} />
-                  )}
+                  <InfoTag label={t('form.experience')} value={`${cv.experienceYears} ${t('common.year')}${cv.experienceMonths ? ' ' + cv.experienceMonths + ' ' + t('common.month') : ''}`} />
+                  <InfoTag label={t('form.birth_date')} value={cv.birthDate} />
+                  <InfoTag label={t('form.marital')} value={cv.personalDetails?.maritalStatus || cv.maritalStatus} />
                 </div>
               </div>
             </div>
@@ -215,7 +229,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
           {/* Bölüm 5: Hakkında (Moved) */}
           <section>
             <SectionTitle title={t('profile.about')} />
-            <div className="px-1 text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 leading-relaxed pt-2">
+            <div className="pl-4 text-xs sm:text-base font-bold text-gray-500 dark:text-gray-400 leading-relaxed pt-2">
               {cv.about || t('errors.no_about')}
             </div>
           </section>
@@ -223,21 +237,28 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
           {/* Bölüm 2: İş Tercihleri */}
           <section>
             <SectionTitle title={t('profile.work_pref')} />
-            <div className="grid grid-cols-2 gap-x-3 gap-y-4 pt-4">
-              <InfoTag label={t('form.work_status')} value={(() => {
-                const statusMap: Record<string, string> = { active: t('form.working'), passive: t('form.not_working'), open: t('form.job_seeking') };
-                const currentStatus = cv.workingStatus || 'open';
-                return (
-                  <span className={`text-xs sm:text-base font-bold ${currentStatus === 'passive' ? 'text-gray-400' : 'text-black dark:text-white'}`}>
-                    {statusMap[currentStatus] || t('form.job_seeking')}
-                  </span>
-                );
-              })()} />
-               <InfoTag label={t('form.salary_exp')} value={`${(cv.salaryMin || 0).toLocaleString('tr-TR')}₺ - ${(cv.salaryMax || 0).toLocaleString('tr-TR')}₺`} />
-              <InfoTag label={t('form.work_model')} value={cv.workType || t('work.office')} />
-              <InfoTag label={t('form.employment_type')} value={cv.employmentType || t('emp.full_time')} />
-              <InfoTag label={t('form.preferred_city')} value={cv.preferredCity || '-'} />
-              <InfoTag label={t('form.preferred_roles')} value={cv.preferredRoles?.length ? cv.preferredRoles.join(', ') : '-'} />
+            <div className="grid grid-cols-2 gap-x-3 gap-y-6 pt-4 pl-4">
+               <InfoTag 
+                label={t('form.salary_exp')} 
+                value={(cv.salaryMin || cv.salaryMax) ? `${(cv.salaryMin || 0).toLocaleString('tr-TR')} - ${(cv.salaryMax || 0).toLocaleString('tr-TR')} ${cv.salaryCurrency || '₺'}` : '-'} 
+              />
+              <InfoTag label={t('form.work_model')} value={cv.workType} />
+              <InfoTag label={t('form.employment_type')} value={cv.employmentType} />
+              <div className="col-span-2">
+                <InfoTag 
+                  label="Çalışmak İstenilen Ülkeler" 
+                  value={cv.preferredCountries?.length ? cv.preferredCountries.join(' • ') : '-'} 
+                />
+              </div>
+              <div className="col-span-2">
+                <InfoTag 
+                  label="Çalışmak İstenilen Şehirler" 
+                  value={cv.preferredCities?.length ? cv.preferredCities.join(' • ') : (cv.preferredCity || '-')} 
+                />
+              </div>
+              <div className="col-span-2">
+                <InfoTag label="ÇALIŞMAK İSTENİLEN POZİSYONLAR" value={cv.preferredRoles?.length ? cv.preferredRoles.join(', ') : '-'} />
+              </div>
             </div>
           </section>
 
@@ -245,24 +266,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
           <section>
             <SectionTitle title={t('profile.work_exp')} />
             {cv.workExperience && cv.workExperience.length > 0 ? (
-              <div className="space-y-6 pt-4">
-                {cv.workExperience.map((work, idx) => (
-                  <React.Fragment key={work.id}>
+              <div className="relative border-l-2 border-gray-100 dark:border-white/5 ml-3 pl-8 space-y-12 pt-4">
+                {cv.workExperience.map((work) => (
+                  <div key={work.id} className="relative">
+                    <div className="absolute -left-[37px] top-1.5 w-2.5 h-2.5 rounded-full bg-white dark:bg-black border-2 border-[#1f6d78] dark:border-[#2dd4bf] z-10" />
                     <div className="grid grid-cols-2 gap-x-3 gap-y-4">
-                      <div className="col-span-2 sm:col-span-1">
-                        <InfoTag label={t('form.position')} value={work.role} />
-                      </div>
-                      <div className="col-span-2 sm:col-span-1">
-                        <InfoTag label={t('form.institution')} value={work.company} />
-                      </div>
-                      <div className="col-span-2">
-                        <InfoTag label={t('form.work_period')} value={`${work.startDate} - ${work.isCurrent ? t('common.ongoing') : work.endDate}`} />
-                      </div>
+                      <InfoTag label={t('form.position')} value={work.role} />
+                      <InfoTag label={t('form.institution')} value={work.company} />
+                      <InfoTag label={t('form.work_period')} value={`${work.startDate} - ${work.isCurrent ? t('common.ongoing') : work.endDate}`} />
                     </div>
-                    {idx !== cv.workExperience.length - 1 && (
-                      <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 my-2" />
-                    )}
-                  </React.Fragment>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -274,24 +287,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
           <section>
             <SectionTitle title={t('form.internships')} />
             {cv.internshipDetails && cv.internshipDetails.length > 0 ? (
-              <div className="space-y-6 pt-4">
-                {cv.internshipDetails.map((intern, idx) => (
-                  <React.Fragment key={intern.id}>
+              <div className="relative border-l-2 border-gray-100 dark:border-white/5 ml-3 pl-8 space-y-12 pt-4">
+                {cv.internshipDetails.map((intern) => (
+                  <div key={intern.id} className="relative">
+                    <div className="absolute -left-[37px] top-1.5 w-2.5 h-2.5 rounded-full bg-white dark:bg-black border-2 border-[#1f6d78] dark:border-[#2dd4bf] z-10" />
                     <div className="grid grid-cols-2 gap-x-3 gap-y-4">
-                      <div className="col-span-2 sm:col-span-1">
-                        <InfoTag label={t('form.intern_role')} value={intern.role} />
-                      </div>
-                      <div className="col-span-2 sm:col-span-1">
-                        <InfoTag label={t('form.institution')} value={intern.company} />
-                      </div>
-                      <div className="col-span-2">
-                        <InfoTag label={t('form.intern_period')} value={`${intern.startDate} - ${intern.isCurrent ? t('common.ongoing') : intern.endDate}`} />
-                      </div>
+                      <InfoTag label={t('form.intern_role')} value={intern.role} />
+                      <InfoTag label={t('form.institution')} value={intern.company} />
+                      <InfoTag label={t('form.intern_period')} value={`${intern.startDate} - ${intern.isCurrent ? t('common.ongoing') : intern.endDate}`} />
                     </div>
-                    {idx !== cv.internshipDetails.length - 1 && (
-                      <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 my-2" />
-                    )}
-                  </React.Fragment>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -299,133 +304,84 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
             )}
           </section>
 
-          {/* Bölüm 3: Eğitim ve Yetenekler */}
+          {/* Bölüm: Eğitim */}
           <section>
-            <SectionTitle title={t('profile.edu_skills')} />
-            <div className="space-y-8">
-
+            <SectionTitle title={t('form.education_info_clean')} />
+            <div>
               {/* Education List */}
               <div className="space-y-6 pt-4">
                 {cv.educationDetails && cv.educationDetails.length > 0 ? (
-                  <div className="space-y-6">
-                    {cv.educationDetails.map((edu, idx) => (
-                      <React.Fragment key={edu.id}>
+                  <div className="relative border-l-2 border-gray-100 dark:border-white/5 ml-3 pl-8 space-y-12 pt-4">
+                    {cv.educationDetails.map((edu) => (
+                      <div key={edu.id} className="relative">
+                        <div className="absolute -left-[37px] top-1.5 w-2.5 h-2.5 rounded-full bg-white dark:bg-black border-2 border-[#1f6d78] dark:border-[#2dd4bf] z-10" />
                         <div className="grid grid-cols-2 gap-x-3 gap-y-4">
-                          <div className="col-span-2 sm:col-span-1">
-                            <InfoTag label={t('form.university')} value={edu.university} />
-                          </div>
-                          <div className="col-span-2 sm:col-span-1">
-                            <InfoTag label={t('form.department')} value={`${edu.department} (${resolveValue(edu.level)})`} />
-                          </div>
-                          <div className="col-span-2">
-                            <InfoTag label={t('form.status')} value={edu.status || resolveValue(edu.level)} />
-                          </div>
+                          <InfoTag label={t('form.university')} value={edu.university} />
+                          <InfoTag label={t('form.department')} value={`${edu.department} (${resolveValue(edu.level)})`} />
+                          <InfoTag label={t('form.status')} value={edu.status || resolveValue(edu.level)} />
                         </div>
-                        {idx !== cv.educationDetails.length - 1 && (
-                          <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 my-2" />
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </div>
-                ) : (
-                  // Fallback to legacy
-                  <div className="grid grid-cols-2 gap-x-3 gap-y-4 pt-4">
-                    <div className="col-span-2 sm:col-span-1">
-                      <InfoTag label={t('form.university')} value={cv.education || '-'} />
-                    </div>
-                    <div className="col-span-2 sm:col-span-1">
-                      <InfoTag label={t('form.status')} value={`${resolveValue(cv.educationLevel)} - ${resolveValue(cv.graduationStatus)}`} />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Languages List */}
-              <div className="space-y-4">
-                <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 mb-6" />
-                <label className="text-[10px] font-black text-black dark:text-gray-100 uppercase tracking-widest ml-1 block mb-2">{t('form.languages')}</label>
-                <div className="flex flex-wrap gap-x-6 gap-y-4 pt-2">
-                  {cv.languageDetails && cv.languageDetails.length > 0 ? (
-                    cv.languageDetails.map(lang => (
-                      <div key={lang.id} className="min-w-[120px]">
-                        <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">{resolveValue(lang.language)}</span>
-                        <span className="text-sm sm:text-base font-bold text-black dark:text-white">
-                          {(() => {
-                            const val = resolveValue(lang.level) || '';
-                            return val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
-                          })()}
-                        </span>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="min-w-[120px]">
-                      <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest block mb-1">{resolveValue(cv.language)}</span>
-                      <span className="text-sm sm:text-base font-bold text-black dark:text-white">
-                        {(() => {
-                          const val = resolveValue(cv.languageLevel) || '';
-                          return val.charAt(0).toUpperCase() + val.slice(1).toLowerCase();
-                        })()}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 mb-6" />
-                <label className="text-[10px] font-black text-black dark:text-gray-100 uppercase tracking-widest ml-1 block mb-2">{t('form.skills')}</label>
-                {cv.skills && cv.skills.length > 0 ? (
-                  <div className="flex flex-wrap gap-x-4 gap-y-3 pt-2">
-                    {cv.skills.map((skill, idx) => (
-                      <span key={idx} className="text-gray-500 dark:text-gray-400 text-[11px] sm:text-sm font-bold uppercase tracking-tight">
-                        {skill}{idx !== cv.skills.length - 1 ? <span className="text-gray-300 dark:text-gray-700 mx-2">•</span> : ''}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm sm:text-base font-bold text-gray-400">{t('form.no_skills')}</p>
-                )}
-              </div>
-
-              <div className="space-y-4">
-                <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 mb-6" />
-                <label className="text-[10px] font-black text-black dark:text-gray-100 uppercase tracking-widest ml-1 block mb-2">{t('form.certificates')}</label>
-                {cv.certificates && cv.certificates.length > 0 ? (
-                  <div className="flex flex-col gap-y-5 pt-2">
-                    {cv.certificates.map((cert) => (
-                      <div key={cert.id} className="flex flex-col gap-0.5">
-                        <span className="text-gray-500 dark:text-gray-400 text-[11px] sm:text-sm font-bold uppercase tracking-tight">
-                          {cert.name}
-                        </span>
-                        {cert.issuer && (
-                          <span className="text-gray-400 dark:text-gray-500 text-[10px] sm:text-xs font-medium">
-                            ({cert.issuer})
-                          </span>
-                        )}
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm sm:text-base font-bold text-gray-400">{t('errors.no_cert')}</p>
+                  <div className="pl-4 text-xs font-bold text-gray-400 dark:text-gray-500 italic">
+                    {t('errors.no_edu')}
+                  </div>
                 )}
               </div>
             </div>
           </section>
 
+          {/* Bölüm: Yabancı Diller */}
+          <section>
+            <SectionTitle title={t('form.languages')} />
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4 pt-2 pl-4">
+              {cv.languageDetails && cv.languageDetails.length > 0 ? (
+                cv.languageDetails.map(lang => (
+                  <div key={lang.id}>
+                    <InfoTag label={resolveValue(lang.language)} value={resolveValue(lang.level)} />
+                  </div>
+                ))
+              ) : (
+                <span className="text-xs font-bold text-gray-400 dark:text-gray-500 italic px-1">{t('errors.no_lang')}</span>
+              )}
+            </div>
+          </section>
+
+
+          {/* Bölüm: Sertifikalar & Kurslar */}
+          <section>
+            <SectionTitle title={t('form.certificates')} />
+            {cv.certificates && cv.certificates.length > 0 ? (
+              <div className="flex flex-col gap-y-5 pt-2 pl-4">
+                {cv.certificates.map((cert) => (
+                  <div key={cert.id} className="flex flex-col gap-0.5">
+                    <span className="text-gray-500 dark:text-gray-400 text-[11px] sm:text-sm font-bold uppercase tracking-tight">
+                      {cert.name}
+                    </span>
+                    {cert.issuer && (
+                      <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest">
+                        ({cert.issuer})
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="pl-4 text-xs font-bold text-gray-400 dark:text-gray-500 italic">
+                {t('errors.no_cert')}
+              </div>
+            )}
+          </section>
+
           {/* Bölüm 4: Kişisel Detaylar */}
           <section>
             <SectionTitle title={t('profile.personal')} />
-            <div className="grid grid-cols-2 gap-x-3 gap-y-6 pt-4">
-              {cv.militaryStatus && (
-                <div className="col-span-2">
-                  <InfoTag label={t('form.military')} value={resolveValue(cv.militaryStatus)} />
-                  <div className="w-24 h-0.5 bg-gray-100 dark:bg-gray-800 rounded-full my-4 opacity-50" />
-                </div>
-              )}
-
-              <InfoTag label={t('form.travel')} value={resolveValue(cv.travelStatus)} />
-              <InfoTag label={t('form.disability')} value={resolveValue(cv.disabilityStatus)} />
-              <InfoTag label={t('form.start_date')} value={resolveValue(cv.noticePeriod)} />
+            <div className="grid grid-cols-2 gap-x-3 gap-y-6 pt-4 pl-4">
+              <InfoTag label={t('form.military')} value={cv.militaryStatus} />
+              <InfoTag label={t('form.travel')} value={cv.travelStatus} />
+              <InfoTag label={t('form.disability')} value={cv.disabilityStatus} />
+              <InfoTag label={t('form.start_date')} value={cv.noticePeriod} />
 
               <div className="flex flex-col gap-1.5">
                 <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">{t('form.driving_license')}</span>
@@ -436,7 +392,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                         {l}{idx !== cv.driverLicense.length - 1 ? <span className="text-gray-300 dark:text-gray-700 mx-2">•</span> : ''}
                       </span>
                     ))
-                  ) : <span className="text-sm sm:text-base font-bold text-gray-400">{t('common.none')}</span>}
+                  ) : <span className="text-xs sm:text-base font-bold text-gray-700 dark:text-gray-300">-</span>}
                 </div>
               </div>
             </div>
@@ -447,25 +403,30 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
           <section>
             <SectionTitle title={t('profile.references')} />
             {cv.references && cv.references.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {cv.references.map((ref) => (
-                  <div key={ref.id} className="bg-gray-50 dark:bg-black p-6 rounded-3xl border border-gray-200 dark:border-white/10">
-                    <h4 className="font-bold text-black dark:text-white text-sm">{ref.name}</h4>
-                    <p className="text-xs text-gray-500 font-bold mt-1">{ref.role} @ {ref.company}</p>
-                    <div className="mt-4 pt-4 border-t border-gray-100 dark:border-white/10 space-y-2">
-                      {ref.email && (
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] text-gray-400 font-bold">✉️</span>
-                          <span className="text-xs font-bold text-gray-700">{ref.email}</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-4">
+                {cv.references.map((ref, idx) => (
+                  <div key={ref.id} className="py-2">
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-4">
+                      <div className="col-span-2 sm:col-span-1">
+                        <InfoTag label={t('form.fullname')} value={ref.name} />
+                      </div>
+                      <div className="col-span-2 sm:col-span-1">
+                        <InfoTag label={t('form.position')} value={`${ref.role} @ ${ref.company}`} />
+                      </div>
+                      {ref.phone && (
+                        <div className="col-span-1">
+                          <InfoTag label={t('form.phone')} value={ref.phone} icon="📞" />
                         </div>
                       )}
-                      {ref.phone && (
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] text-gray-400 font-bold">📞</span>
-                          <span className="text-xs font-bold text-gray-700">{ref.phone}</span>
+                      {ref.email && (
+                        <div className="col-span-1">
+                          <InfoTag label={t('form.email')} value={ref.email} icon="✉️" />
                         </div>
                       )}
                     </div>
+                    {idx !== cv.references.length - 1 && (
+                      <div className="w-24 h-0.5 bg-[#1f6d78] dark:bg-[#2dd4bf] rounded-full opacity-30 my-6" />
+                    )}
                   </div>
                 ))}
               </div>
@@ -476,55 +437,75 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
 
         </div>
 
-        {/* Footer Actions */}
-        <div className="pt-3 px-3 pb-2 sm:p-8 border-t border-gray-100 dark:border-white/10 bg-white dark:bg-black flex gap-2 sm:gap-5 sticky bottom-0 z-10 shrink-0">
-          {isOwner && cv.workingStatus !== 'active' && (
-            <button
-              onClick={onJobFound}
-              className="flex-[1.5] bg-[#1f6d78] text-white py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-sm uppercase tracking-wider sm:tracking-widest hover:bg-[#155e68] transition-all active: shadow-md sm:shadow-lg shadow-[#1f6d78]/20"
-            >
-              {t('profile.job_found')}
-            </button>
-          )}
+        <div className="py-3 px-4 sm:py-6 sm:px-10 border-t border-gray-100 dark:border-white/10 bg-white dark:bg-black/95 backdrop-blur-md flex items-center gap-2 sm:gap-4 sticky bottom-0 z-50 shrink-0 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] pb-safe-bottom">
+          
+          {/* Action Buttons Container */}
+          {!isOwner ? (
+            <div className="flex w-full items-center gap-2 sm:gap-4">
+              {/* Message Button - Primary Action */}
+              <button
+                onClick={() => {
+                  if (user?.user_metadata?.role === 'job_seeker' || !user) {
+                    setShowRoleWarning(true);
+                    return;
+                  }
+                  onOpenChat?.();
+                }}
+                className="flex-[2.5] h-12 sm:h-14 bg-[#1f6d78] text-white rounded-2xl sm:rounded-full font-bold text-[14px] sm:text-base shadow-lg shadow-[#1f6d78]/20 active:scale-95 hover:bg-[#155e68] transition-all"
+              >
+                {t('profile.send_message') || 'Mesaj Gönder'}
+              </button>
 
-          {isOwner ? (
-            <>
-              <button
-                onClick={handleDownload}
-                className="flex-1 bg-white dark:bg-black border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active: shadow-sm sm:shadow-xl"
-              >
-                {t('profile.download_cv')}
-              </button>
-              <button
-                onClick={handleShare}
-                className="flex-1 bg-white dark:bg-black border border-[#1f6d78] text-[#1f6d78] dark:text-[#2dd4bf] dark:border-[#2dd4bf] py-2 sm:py-5 rounded-xl sm:rounded-full font-black text-[9px] sm:text-xs uppercase tracking-wider sm:tracking-widest hover:bg-[#1f6d78] dark:hover:bg-[#1f6d78] hover:text-white transition-all active: shadow-sm sm:shadow-xl"
-              >
-                {t('profile.share_cv')}
-              </button>
-            </>
-          ) : (
-            <>
+              {/* Share Button - Circular Blue */}
+              <div className="relative">
+                <Tooltip text={t('profile.share_cv')} show={activeTooltip === 'share'} />
                 <button
                   onClick={() => {
-                    if (user?.user_metadata?.role === 'job_seeker') {
+                    if (user?.user_metadata?.role !== 'employer') {
                       setShowRoleWarning(true);
                       return;
                     }
-                    onOpenChat?.();
+                    handleShare();
                   }}
-                  className="flex-[2] bg-[#1f6d78] text-white py-4 sm:py-5 rounded-xl sm:rounded-full font-black text-[10px] sm:text-base uppercase tracking-wider sm:tracking-widest transition-all shadow-md sm:shadow-xl active:scale-95 hover:bg-[#155e68]"
+                  onMouseEnter={() => setActiveTooltip('share')}
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-teal-50 bg-teal-50/30 dark:border-teal-900/30 text-blue-500 dark:text-blue-400 flex items-center justify-center hover:bg-teal-50 transition-all active:scale-90"
                 >
-                  {t('profile.send_message') || 'Mesaj Gönder'}
+                  <i className="fi fi-rr-share-square text-lg"></i>
                 </button>
+              </div>
 
+              {/* Download Button - Circular Green */}
+              <div className="relative">
+                <Tooltip text={t('profile.download_cv')} show={activeTooltip === 'download'} />
+                <button
+                  onClick={() => {
+                    if (user?.user_metadata?.role !== 'employer') {
+                      setShowRoleWarning(true);
+                      return;
+                    }
+                    handleDownload();
+                  }}
+                  onMouseEnter={() => setActiveTooltip('download')}
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-teal-50 bg-teal-50/30 dark:border-teal-900/30 text-green-500 dark:text-green-400 flex items-center justify-center hover:bg-teal-50 transition-all active:scale-90"
+                >
+                  <i className="fi fi-rr-download text-lg"></i>
+                </button>
+              </div>
 
-              {/* SAVE CV BUTTON (For Employers) */}
-              {user?.user_metadata?.role === 'employer' && !isOwner && (
+              {/* Save Button - Circular Teal/Rose (Role Restricted) */}
+              <div className="relative">
+                <Tooltip text={isSaved ? t('common.unsave') : t('common.save')} show={activeTooltip === 'save'} />
                 <button
                   onClick={async () => {
+                    if (user?.user_metadata?.role !== 'employer') {
+                      setShowRoleWarning(true);
+                      return;
+                    }
+                    
                     try {
                       if (isSaved) {
-                        // Unsave
                         const { error } = await supabase
                           .from('saved_cvs')
                           .delete()
@@ -533,7 +514,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                         setIsSaved(false);
                         showToast('CV kaydedilenlerden çıkarıldı.', 'info');
                       } else {
-                        // Save
                         const { error } = await supabase
                           .from('saved_cvs')
                           .insert({ employer_id: user.id, cv_id: cv.id });
@@ -546,22 +526,55 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                       showToast('İşlem başarısız.', 'error');
                     }
                   }}
-                    className={`w-12 h-12 sm:w-16 sm:h-auto rounded-full flex items-center justify-center border transition-all active: shadow-xl ${isSaved
-                    ? 'bg-white dark:bg-black border-[#1f6d78] text-[#1f6d78]'
-                    : 'bg-white dark:bg-black border-gray-200 dark:border-white/10 text-gray-400 hover:text-[#1f6d78] hover:border-[#1f6d78]'
-                    }`}
-                  title={isSaved ? t('common.unsave') : t('common.save')}
+                  onMouseEnter={() => setActiveTooltip('save')}
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 flex items-center justify-center transition-all active:scale-90 ${
+                    isSaved 
+                    ? 'bg-rose-50 border-rose-100 text-rose-500 dark:bg-rose-950/30 dark:border-rose-900/50' 
+                    : 'bg-teal-50/30 border-teal-50 dark:border-teal-900/30 text-[#1f6d78] dark:text-[#2dd4bf] hover:bg-teal-50'
+                  }`}
                 >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                  </svg>
+                  <i className={`${isSaved ? 'fi fi-sr-bookmark' : 'fi fi-rr-bookmark'} text-lg`}></i>
                 </button>
-              )}
-            </>
-          )}
+              </div>
+            </div>
+          ) : (
+            <div className="flex w-full items-center justify-center gap-4">
+              {/* Owner Actions */}
+              <button
+                onClick={onJobFound}
+                className="flex-1 max-w-[200px] h-12 sm:h-14 bg-[#1f6d78] text-white rounded-2xl sm:rounded-full font-bold text-xs sm:text-sm uppercase tracking-wider hover:bg-[#155e68] transition-all shadow-lg shadow-[#1f6d78]/20"
+              >
+                {t('profile.job_found')}
+              </button>
+              
+              <div className="relative">
+                <Tooltip text={t('profile.download_cv')} show={activeTooltip === 'owner_download'} />
+                <button
+                  onClick={handleDownload}
+                  onMouseEnter={() => setActiveTooltip('owner_download')}
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-green-50 text-green-500 flex items-center justify-center hover:bg-green-50 transition-all active:scale-90"
+                >
+                  <i className="fi fi-rr-download text-lg"></i>
+                </button>
+              </div>
 
+              <div className="relative">
+                <Tooltip text={t('profile.share_cv')} show={activeTooltip === 'owner_share'} />
+                <button
+                  onClick={handleShare}
+                  onMouseEnter={() => setActiveTooltip('owner_share')}
+                  onMouseLeave={() => setActiveTooltip(null)}
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-blue-50 text-blue-500 flex items-center justify-center hover:bg-blue-50 transition-all active:scale-90"
+                >
+                  <i className="fi fi-rr-share-square text-lg"></i>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      </div >
+      </div>
 
       {/* Warning / Success Overlay */}
       {

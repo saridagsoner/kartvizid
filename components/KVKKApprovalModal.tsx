@@ -56,7 +56,7 @@ const KVKKApprovalModal: React.FC<KVKKApprovalModalProps> = ({ onApprove, onCanc
                     <div className="prose prose-sm prose-slate max-w-none text-gray-600">
                         <p className="font-bold text-gray-900 mb-4 text-center sm:text-left">6698 SAYILI KİŞİSEL VERİLERİN KORUNMASI KANUNU ("KVKK") KAPSAMINDA AYDINLATMA METNİ</p>
 
-                        <p>Kartvizid.com olarak, veri sorumlusu sıfatıyla, kişisel verilerinizin güvenliği hususuna azami hassasiyet göstermekteyiz. Bu bilinçle, platformumuzdan faydalanan siz değerli kullanıcılarımızın kişisel verilerinin 6698 sayılı Kişisel Verilerin Korunması Kanunu’na (“Kanun”), ikincil düzenlemelere ve Kişisel Verileri Koruma Kurulu kararlarına uygun olarak işlenmesine ve muhafaza edilmesine büyük önem vermekteyiz.</p>
+                        <p>Kartvizid.com olarak, veri sorumlusu sıfatıyla, kişisel verilerinizin güvenliği hususuna azami hassasiyet göstermekteyiz. Bu bilinçle, platformumuzdan faydalanan siz değerli kullanıcılarımızın kişisel verilerinin (profilinizi tam olarak doldurmamış olsanız dahi, girdiğiniz tüm bilgilerin) 6698 sayılı Kişisel Verilerin Korunması Kanunu’na (“Kanun”), ikincil düzenlemelere ve Kişisel Verileri Koruma Kurulu kararlarına uygun olarak işlenmesine ve muhafaza edilmesine büyük önem vermekteyiz.</p>
 
                         <h4 className="font-bold text-gray-900 mt-6 mb-2">1. Veri Sorumlusu</h4>
                         <p>6698 sayılı Kişisel Verilerin Korunması Kanunu uyarınca, kişisel verileriniz; veri sorumlusu olarak Kartvizid.com ("Şirket") tarafından aşağıda açıklanan kapsamda işlenebilecektir.</p>

@@ -3,6 +3,7 @@ import { ContactRequest, NotificationItem } from '../types';
 import NotificationDropdown from './NotificationDropdown';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import ImageWithFallback from './ImageWithFallback';
 import SearchOverlay from './SearchOverlay';
 import { CV } from '../types';
 
@@ -54,8 +55,9 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
 }) => {
     const { user } = useAuth();
     const { t } = useLanguage();
-    const [activeTab, setActiveTab] = useState<'home' | 'notifications' | 'profile' | 'search' | 'create' | null>(null);
+    const [activeTab, setActiveTab] = useState<'home' | 'profile' | 'search' | 'create' | null>(null);
     const isEmployer = user?.user_metadata?.role === 'employer';
+    const isShop = user?.user_metadata?.role === 'shop';
 
     // Close sheets when navigating away from home
     useEffect(() => {
@@ -64,7 +66,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         }
     }, [isHomeView, activeTab]);
 
-    const toggleTab = (tab: 'notifications' | 'profile' | 'search' | 'create') => {
+    const toggleTab = (tab: 'profile' | 'search' | 'create') => {
         if (activeTab === tab) {
             setActiveTab(null);
         } else {
@@ -73,43 +75,36 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     };
 
     const isSearchActive = activeTab === 'search';
-    const isNotifActive = activeTab === 'notifications';
     const isCreateActiveTab = isCreateOpen || activeTab === 'create';
     const isProfileActiveTab = isProfileOpen || activeTab === 'profile';
-    const hasActiveBottomTab = isSearchActive || isNotifActive || isCreateActiveTab || isProfileActiveTab;
+    const hasActiveBottomTab = isSearchActive || isCreateActiveTab || isProfileActiveTab;
 
     return (
         <>
             {/* Fixed Bottom Bar */}
             <div className="fixed bottom-0 left-0 right-0 z-[100] sm:hidden">
-                <div className="bg-white/95 dark:bg-black/95 backdrop-blur-xl border-t border-gray-100 dark:border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.3)] flex items-center justify-between px-2 pb-safe h-[72px]">
+                <div className="bg-white/95 dark:bg-black/95 backdrop-blur-xl border-t border-gray-100 dark:border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.3)] flex justify-between px-2 pb-safe h-[60px]">
                     {/* Home Button */}
                     <button
                         onClick={() => {
                             setActiveTab(null);
                             if (onGoHome) onGoHome();
                         }}
-                        className={`flex flex-col items-center justify-center py-1 relative flex-1 transition-transform duration-200 active:scale-90`}
+                        className={`flex flex-col items-center justify-center relative flex-1 transition-transform duration-200 active:scale-90`}
                     >
                         <div className="flex items-center justify-center text-black dark:text-white translate-y-[2px]">
                             <i className={`fi ${isHomeView && !hasActiveBottomTab ? 'fi-sr-home' : 'fi-rr-home'} text-[22px]`}></i>
                         </div>
-                        <span className="text-[10px] font-bold mt-1 transition-colors text-black dark:text-white">
-                            {t('menu.home')}
-                        </span>
                     </button>
                     
                     {/* Search Button */}
                     <button
                         onClick={() => toggleTab('search')}
-                        className={`flex flex-col items-center justify-center py-1 relative flex-1 transition-transform duration-200 active:scale-90`}
+                        className={`flex flex-col items-center justify-center relative flex-1 transition-transform duration-200 active:scale-90`}
                     >
                         <div className="flex items-center justify-center text-black dark:text-white translate-y-[2px]">
                             <i className={`fi ${isSearchActive ? 'fi-sr-search' : 'fi-rr-search'} text-[22px]`}></i>
                         </div>
-                        <span className="text-[10px] font-bold mt-1 transition-colors text-black dark:text-white">
-                            {t('menu.search')}
-                        </span>
                     </button>
 
                     {/* Main Action Button (Create/Edit) */}
@@ -126,38 +121,11 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                 }
                             }
                         }}
-                        className={`flex flex-col items-center justify-center py-1 relative flex-1 transition-transform duration-200 active:scale-90`}
+                        className={`flex flex-col items-center justify-center relative flex-1 transition-transform duration-200 active:scale-90`}
                     >
                         <div className={`flex items-center justify-center text-black dark:text-white transition-all ${isCreateActiveTab ? 'scale-110' : ''} translate-y-[2px]`}>
                             <i className={`fi ${isCreateActiveTab ? 'fi-sr-add' : 'fi-rr-add'} text-[22px]`}></i>
                         </div>
-                        <span className="text-[10px] font-bold mt-1 transition-colors text-black dark:text-white">
-                            {t('menu.create')}
-                        </span>
-                    </button>
-
-                    {/* Notifications Button */}
-                    <button
-                        onClick={() => {
-                            if (!user) {
-                                onOpenAuth('signup');
-                            } else {
-                                toggleTab('notifications');
-                            }
-                        }}
-                        className={`flex flex-col items-center justify-center py-1 relative flex-1 transition-transform duration-200 active:scale-90`}
-                    >
-                        <div className="flex items-center justify-center text-black dark:text-white translate-y-[2px]">
-                            <i className={`fi ${isNotifActive ? 'fi-sr-bell' : 'fi-rr-bell'} text-[22px]`}></i>
-                        </div>
-                        <span className="text-[10px] font-bold mt-1 transition-colors text-black dark:text-white">
-                            {t('menu.notifications')}
-                        </span>
-                        {notificationCount > 0 && (
-                            <span className="absolute top-1.5 right-2 w-4 h-4 bg-red-500 border-2 border-white dark:border-black rounded-full text-[8px] text-white flex items-center justify-center font-black">
-                                {notificationCount}
-                            </span>
-                        )}
                     </button>
 
                     {/* Profile Button */}
@@ -170,20 +138,26 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                                 if (onOpenProfile) onOpenProfile(user.id, user.user_metadata?.role);
                             }
                         }}
-                        className={`flex flex-col items-center justify-center py-1 relative flex-1 transition-transform duration-200 active:scale-90`}
+                        className={`flex flex-col items-center justify-center relative flex-1 transition-transform duration-200 active:scale-90`}
                     >
                         <div className="flex items-center justify-center text-black dark:text-white translate-y-[2px]">
                             {userPhotoUrl ? (
-                                <div className={`w-7 h-7 rounded-full overflow-hidden border-2 ${isProfileActiveTab ? 'border-black dark:border-white' : 'border-transparent'}`}>
-                                    <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
+                                <div className={`w-7 h-7 rounded-full overflow-hidden border-2 flex items-center justify-center ${isProfileActiveTab ? 'border-black dark:border-white' : 'border-transparent'}`}>
+                                    <ImageWithFallback 
+                                        src={userPhotoUrl} 
+                                        alt={user?.user_metadata?.full_name || user?.email || 'User'} 
+                                        className="w-full h-full object-cover"
+                                        initialsClassName="text-xs font-black"
+                                    />
                                 </div>
                             ) : (
-                                <i className={`fi ${isProfileActiveTab ? 'fi-sr-circle-user' : 'fi-rr-circle-user'} text-[22px]`}></i>
+                                <i className={`fi ${
+                                    isEmployer ? (isProfileActiveTab ? 'fi-sr-building' : 'fi-rr-building') :
+                                    isShop ? (isProfileActiveTab ? 'fi-sr-shop' : 'fi-rr-shop') :
+                                    (isProfileActiveTab ? 'fi-sr-circle-user' : 'fi-rr-circle-user')
+                                } text-[22px]`}></i>
                             )}
                         </div>
-                        <span className="text-[10px] font-bold mt-1 transition-colors text-black dark:text-white">
-                            {t('menu.profile')}
-                        </span>
                     </button>
                 </div>
             </div>
@@ -196,21 +170,6 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     onOpenProfile={onOpenProfile || (() => {})}
                     onOpenFilter={onOpenFilter}
                 />
-            )}
-
-            {isNotifActive && user && (
-                <>
-                    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[80] sm:hidden" onClick={() => setActiveTab(null)} />
-                    <NotificationDropdown
-                        onClose={() => setActiveTab(null)}
-                        notifications={notifications}
-                        onAction={onNotificationAction || (() => {})}
-                        onMarkRead={onMarkNotificationRead}
-                        onMarkAllRead={onMarkAllRead}
-                        onOpenProfile={onOpenProfile}
-                        mobile={true}
-                    />
-                </>
             )}
         </>
     );

@@ -16,7 +16,8 @@ import {
   DRIVER_LICENSES,
   TRAVEL_STATUSES,
   LANGUAGES,
-  LANGUAGE_LEVELS
+  LANGUAGE_LEVELS,
+  COUNTRIES
 } from '../constants';
 import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabase';
@@ -33,11 +34,12 @@ const SelectionPill: React.FC<SelectionPillProps> = ({ label, active, onClick })
   <button
     type="button"
     onClick={onClick}
-    className={`px-3 py-2 sm:px-5 sm:py-2.5 rounded-full text-[10px] sm:text-[11px] font-bold border transition-all ${active
-      ? 'bg-[#1f6d78] border-[#1f6d78] text-white shadow-md'
-      : 'bg-white dark:bg-black border-black/10 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:border-[#1f6d78] dark:hover:border-[#1f6d78]'
+    className={`px-5 py-2.5 sm:px-8 sm:py-3.5 rounded-full text-[13px] sm:text-[14px] font-bold border transition-all flex items-center gap-2 ${active
+      ? 'bg-[#1f6d78] border-[#1f6d78] text-white shadow-lg scale-[1.02]'
+      : 'bg-gray-50 dark:bg-white/5 border-black/5 dark:border-white/5 text-gray-500 dark:text-gray-400 hover:border-[#1f6d78] dark:hover:border-[#1f6d78] hover:bg-white dark:hover:bg-black'
       }`}
   >
+    {active && <i className="fi fi-rr-check text-[10px] sm:text-[12px]"></i>}
     {label}
   </button>
 );
@@ -82,6 +84,68 @@ const validateInput = (val: string, maxLength: number) => {
   return result.slice(0, maxLength);
 };
 
+const ExpandableSection = ({ 
+  title, 
+  subtitle, 
+  isOpen, 
+  onToggle, 
+  children,
+  className = ""
+}: { 
+  title: string, 
+  subtitle?: string, 
+  isOpen: boolean, 
+  onToggle: () => void, 
+  children: React.ReactNode,
+  className?: string
+}) => {
+  return (
+    <div className={`border-b border-black/10 dark:border-white/5 last:border-0 pb-6 group ${className}`}>
+      <button 
+        type="button"
+        onClick={onToggle}
+        className="w-full flex items-center justify-between py-4 group hover:bg-white dark:hover:bg-white/5 rounded-2xl pl-6 pr-0 -mx-6 transition-all"
+      >
+        <div className="flex items-center gap-5">
+           <div className={`w-1 h-8 rounded-full transition-all duration-500 ${isOpen ? 'bg-[#1f6d78] scale-y-110' : 'bg-gray-200 dark:bg-black'}`} />
+           <div className="text-left">
+             <h3 className={`text-[13px] sm:text-[15px] font-black uppercase tracking-widest transition-colors ${isOpen ? 'text-[#1f6d78]' : 'text-black dark:text-white'}`}>
+               {title}
+             </h3>
+             {subtitle && <p className="text-[8px] sm:text-[9px] text-gray-400 font-bold uppercase mt-1 tracking-widest">{subtitle}</p>}
+           </div>
+        </div>
+        <div className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-500 transform translate-x-5 sm:translate-x-8 ${isOpen ? 'text-[#1f6d78] rotate-180' : 'text-gray-400'}`}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </button>
+      
+      {isOpen && (
+        <div className="mt-6">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
+const handleDateMask = (val: string) => {
+  const digits = val.replace(/\D/g, '');
+  let formatted = '';
+  if (digits.length > 0) {
+    formatted = digits.substring(0, 2);
+    if (digits.length > 2) {
+      formatted += '.' + digits.substring(2, 4);
+      if (digits.length > 4) {
+        formatted += '.' + digits.substring(4, 8);
+      }
+    }
+  }
+  return formatted;
+};
+
 const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, onDelete, initialData, availableCities = [] }) => {
   const { t } = useLanguage();
   const [formData, setFormData] = useState<Partial<CV>>({
@@ -90,34 +154,30 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, onDelete, 
     city: initialData?.city || '',
     district: initialData?.district || '',
     experienceYears: initialData?.experienceYears || 0,
-    language: initialData?.language || 'İngilizce', // Legacy fallback
-    languageLevel: initialData?.languageLevel || 'Orta', // Legacy fallback
+    language: initialData?.language || '',
+    languageLevel: initialData?.languageLevel || '',
     languageDetails: initialData?.languageDetails || [],
     about: initialData?.about || '',
     skills: initialData?.skills || [],
-    salaryMin: initialData?.salaryMin || 40000,
-    salaryMax: initialData?.salaryMax || 50000,
-    education: initialData?.education || '', // Legacy fallback
-    educationLevel: initialData?.educationLevel || 'Lisans', // Legacy fallback
-    graduationStatus: initialData?.graduationStatus || 'Mezun', // Legacy fallback
+    salaryMin: initialData?.salaryMin || 0,
+    salaryMax: initialData?.salaryMax || 0,
+    education: initialData?.education || '',
+    educationLevel: initialData?.educationLevel || '',
+    graduationStatus: initialData?.graduationStatus || '',
     educationDetails: initialData?.educationDetails || [],
     internshipDetails: initialData?.internshipDetails || [],
     workExperience: initialData?.workExperience || [],
-    workType: initialData?.workType || 'Ofis',
-    employmentType: initialData?.employmentType || 'Tam Zamanlı',
+    workType: initialData?.workType || '',
+    employmentType: initialData?.employmentType || '',
     militaryStatus: initialData?.militaryStatus || '',
-    maritalStatus: initialData?.maritalStatus || 'Bekar',
-    disabilityStatus: initialData?.disabilityStatus || 'Yok',
-    travelStatus: initialData?.travelStatus || 'Seyahat Engeli Yok',
+    maritalStatus: initialData?.maritalStatus || '',
+    disabilityStatus: initialData?.disabilityStatus || '',
+    travelStatus: initialData?.travelStatus || '',
     driverLicense: initialData?.driverLicense || [],
-    noticePeriod: initialData?.noticePeriod || 'Hemen',
+    noticePeriod: initialData?.noticePeriod || '',
     photoUrl: initialData?.photoUrl,
-    email: initialData?.email || '',
-    phone: initialData?.phone || '',
-    isEmailPublic: initialData?.isEmailPublic || false,
-    isPhonePublic: initialData?.isPhonePublic || false,
-    workingStatus: initialData?.workingStatus || 'open',
-    preferredCity: initialData?.preferredCity || '',
+    preferredCities: initialData?.preferredCities || (initialData?.preferredCity ? [initialData.preferredCity] : []),
+    preferredCountries: initialData?.preferredCountries || [],
     preferredRoles: initialData?.preferredRoles || [],
     references: initialData?.references || [],
     birthDate: initialData?.birthDate || '',
@@ -165,18 +225,11 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, onDelete, 
     // 3. Work Experience (15%)
     if (formData.workExperience && formData.workExperience.length > 0) score += 15;
 
-    // 4. Education (10%)
-    if (formData.educationDetails && formData.educationDetails.length > 0) score += 10;
-    else if (formData.education) score += 5;
+    // 4. Education (20%)
+    if (formData.educationDetails && formData.educationDetails.length > 0) score += 20;
+    else if (formData.education) score += 10;
 
-    // 5. Skills (10%)
-    if (formData.skills && formData.skills.length > 0) score += 10;
-
-    // 6. Contact Info (10%)
-    if (formData.email) score += 5;
-    if (formData.phone) score += 5;
-
-    // 7. Other (10%) - Internships, Languages, Certificates, References, etc.
+    // 5. Other (10%) - Internships, Languages, Certificates, References, etc.
     let otherCount = 0;
     if (formData.internshipDetails && formData.internshipDetails.length > 0) otherCount++;
     if (formData.languageDetails && formData.languageDetails.length > 0) otherCount++;
@@ -245,28 +298,6 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, onDelete, 
     }));
   };
 
-  const [skillInput, setSkillInput] = useState('');
-
-  const handleSkillAdd = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && skillInput.trim()) {
-      e.preventDefault();
-      if (!formData.skills?.includes(skillInput.trim())) {
-        setFormData(prev => ({
-          ...prev,
-          skills: [...(prev.skills || []), skillInput.trim()]
-        }));
-      }
-      setSkillInput('');
-    }
-  };
-
-  const removeSkill = (idx: number) => {
-    setFormData(prev => ({
-      ...prev,
-      skills: prev.skills?.filter((_, i) => i !== idx)
-    }));
-  };
-
 
   const [roleInput, setRoleInput] = useState('');
 
@@ -306,12 +337,28 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, onDelete, 
   };
 
   // Education
-  const [eduInput, setEduInput] = useState<Partial<EducationEntry>>({ university: '', department: '', level: 'Lisans', status: 'Mezun' });
+  const [eduInput, setEduInput] = useState<Partial<EducationEntry>>({ 
+    university: '', 
+    department: '', 
+    level: 'Lisans', 
+    status: 'Mezun',
+    startDate: '',
+    endDate: '',
+    isCurrent: false
+  });
   const addEducation = () => {
     if (eduInput.university && eduInput.department) {
       const newEdu = { ...eduInput, id: Math.random().toString() } as EducationEntry;
       setFormData(prev => ({ ...prev, educationDetails: [...(prev.educationDetails || []), newEdu] }));
-      setEduInput({ university: '', department: '', level: 'Lisans', status: 'Mezun' });
+      setEduInput({ 
+        university: '', 
+        department: '', 
+        level: 'Lisans', 
+        status: 'Mezun',
+        startDate: '',
+        endDate: '',
+        isCurrent: false 
+      });
     }
   };
   const removeEducation = (id: string) => {
@@ -367,6 +414,23 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, onDelete, 
   };
 
   const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
+  const [isMinFocused, setIsMinFocused] = useState(false);
+  const [isMaxFocused, setIsMaxFocused] = useState(false);
+
+  // Helper functions for salary formatting
+  const formatSalary = (val: number | string | undefined) => {
+    if (val === undefined || val === null || val === '' || val === 0) return '0';
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
+
+  const parseSalary = (val: string) => {
+    const clean = val.replace(/\./g, '').replace(/^0+/, '');
+    const numStr = clean.slice(0, 9);
+    const num = parseInt(numStr);
+    if (isNaN(num)) return 0;
+    return num;
+  };
+
   const [uploading, setUploading] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [tempImageSrc, setTempImageSrc] = useState<string | null>(null);
@@ -408,65 +472,6 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, onDelete, 
   };
 
 
-const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
-  <div className="mb-4 sm:mb-6">
-    <h3 className="text-[14px] sm:text-[16px] font-black text-black dark:text-white uppercase tracking-[0.2em] border-l-[3px] border-[#1f6d78] pl-5 leading-none transition-all">{title}</h3>
-    {subtitle && (
-      <p className={`text-[9px] sm:text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase mt-2.5 ml-6 tracking-widest hidden sm:block ${title === t('form.basic_info_clean') ? 'hidden sm:block' : ''}`}>
-        {subtitle}
-      </p>
-    )}
-  </div>
-);
-
-const ExpandableSection = ({ 
-  title, 
-  subtitle, 
-  isOpen, 
-  onToggle, 
-  children,
-  className = ""
-}: { 
-  title: string, 
-  subtitle?: string, 
-  isOpen: boolean, 
-  onToggle: () => void, 
-  children: React.ReactNode,
-  className?: string
-}) => {
-  return (
-    <div className={`border-b border-black/10 dark:border-white/5 last:border-0 pb-6 group ${className}`}>
-      <button 
-        type="button"
-        onClick={onToggle}
-        className="w-full flex items-center justify-between py-4 group hover:bg-white dark:hover:bg-white/5 rounded-2xl pl-4 pr-0 -mx-4 transition-all"
-      >
-        <div className="flex items-center gap-5">
-           <div className={`w-1 h-8 rounded-full transition-all duration-500 ${isOpen ? 'bg-[#1f6d78] scale-y-110' : 'bg-gray-200 dark:bg-black'}`} />
-           <div className="text-left">
-             <h3 className={`text-[13px] sm:text-[15px] font-black uppercase tracking-widest transition-colors ${isOpen ? 'text-[#1f6d78]' : 'text-black dark:text-white'}`}>
-               {title}
-             </h3>
-             {subtitle && <p className="text-[8px] sm:text-[9px] text-gray-400 font-bold uppercase mt-1 tracking-widest">{subtitle}</p>}
-           </div>
-        </div>
-        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-500 transform translate-x-1.5 sm:translate-x-2 ${isOpen ? 'bg-[#1f6d78] text-white rotate-180 shadow-lg shadow-[#1f6d78]/20' : 'bg-white dark:bg-black text-gray-400'}`}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-        </div>
-      </button>
-      
-      {isOpen && (
-        <div className="mt-6">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-};
-
-
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center sm:p-4 bg-white dark:bg-black sm:bg-black/60 sm:backdrop-blur-xl">
       <div className="bg-white dark:bg-black w-full h-full sm:w-full sm:max-w-[800px] sm:h-[90vh] rounded-none sm:rounded-[3rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden">
@@ -502,14 +507,14 @@ const ExpandableSection = ({
           </button>
         </div>
 
-        {/* Form Body */}
-        <div className="flex-1 overflow-y-auto p-5 sm:p-10 custom-scrollbar space-y-8 sm:space-y-12 bg-white dark:bg-black">
+        {/* Form Body - Compressing layout further as per user request */}
+        <div className="flex-1 overflow-y-auto px-5 pt-8 pb-4 sm:p-10 custom-scrollbar space-y-4 sm:space-y-6 bg-white dark:bg-black">
 
           <section>
 
-            <div className="flex flex-row sm:flex-row gap-4 sm:gap-8 mb-5 sm:mb-8 items-start">
-              <div className="shrink-0 space-y-1.5 flex flex-col">
-                <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">FOTOĞRAF</label>
+            <div className="flex flex-row gap-4 sm:gap-8 mb-5 sm:mb-8 items-stretch">
+              <div className="shrink-0 space-y-1.5 flex flex-col w-20 sm:w-28">
+                <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-[11px]">FOTOĞRAF</label>
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -519,12 +524,11 @@ const ExpandableSection = ({
                 />
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-20 h-24 sm:w-28 sm:h-36 rounded-xl sm:rounded-[2rem] border-2 border-dashed border-black/10 dark:border-white/20 bg-white dark:bg-black flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden shadow-sm relative"
+                  className="flex-1 rounded-xl sm:rounded-[2rem] border-2 border-dashed border-black/10 dark:border-white/20 bg-white dark:bg-black flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden shadow-sm relative min-h-[100px]"
                 >
                   {formData.photoUrl ? (
                     <>
                       <img src={formData.photoUrl} alt={t('form.cv_photo') || "CV Photo"} className="w-full h-full object-cover" />
-                      {/* Hover Overlay for Edit */}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M12 20h9"></path>
@@ -546,7 +550,6 @@ const ExpandableSection = ({
                     </>
                   )}
 
-                  {/* Loading Overlay */}
                   {uploading && (
                     <div className="absolute inset-0 bg-white/80 dark:bg-black/80 flex items-center justify-center z-10">
                       <div className=" w-6 h-6 border-2 border-[#1f6d78] border-t-transparent rounded-full"></div>
@@ -554,69 +557,51 @@ const ExpandableSection = ({
                   )}
                 </div>
               </div>
-              <div className="flex-1 space-y-3 sm:space-y-6 min-w-0">
-                <div className="flex flex-col gap-3 sm:grid sm:grid-cols-2 sm:gap-4">
-                  <div className="space-y-1.5 flex flex-col">
-                    <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.fullname')}</label>
-                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
-                      <input
-                        type="text"
-                        value={formData.name}
-                        onChange={e => {
-                          const validated = validateInput(e.target.value, 50);
-                          setFormData({ ...formData, name: capitalizeWords(validated) });
-                        }}
-                        maxLength={50}
-                        className="w-full h-full bg-transparent outline-none font-bold text-[14px] sm:text-[16px] px-4 sm:px-6 text-gray-500 dark:text-gray-400 placeholder:text-gray-400"
-                        placeholder={t('form.fullname')}
-                      />
-                    </div>
+              <div className="flex-1 flex flex-col gap-3 sm:gap-4 min-w-0">
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.fullname')}</label>
+                  <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={e => {
+                        const validated = validateInput(e.target.value, 50);
+                        setFormData({ ...formData, name: capitalizeWords(validated) });
+                      }}
+                      onFocus={(e) => {
+                        setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                      }}
+                      maxLength={50}
+                      className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-4 sm:px-6 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
+                      placeholder={t('form.fullname')}
+                    />
                   </div>
-                  <div className="space-y-1.5 flex flex-col">
-                    <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.profession')}</label>
-                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
-                      <input
-                        type="text"
-                        value={formData.profession}
-                        onChange={e => {
-                          const validated = validateInput(e.target.value, 60);
-                          setFormData({ ...formData, profession: capitalizeWords(validated) });
-                        }}
-                        maxLength={60}
-                        className="w-full h-full bg-transparent outline-none font-bold text-[14px] sm:text-[16px] px-4 sm:px-6 text-gray-500 dark:text-gray-400 placeholder:text-gray-400"
-                        placeholder={t('form.profession')}
-                      />
-                    </div>
+                </div>
+                <div className="space-y-1.5 flex flex-col">
+                  <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">MESLEK</label>
+                  <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
+                    <input
+                      type="text"
+                      value={formData.profession}
+                      onChange={e => {
+                        const validated = validateInput(e.target.value, 60);
+                        setFormData({ ...formData, profession: capitalizeWords(validated) });
+                      }}
+                      onFocus={(e) => {
+                        setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                      }}
+                      maxLength={60}
+                      className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-4 sm:px-6 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
+                      placeholder="Meslek"
+                    />
                   </div>
                 </div>
                 <p className="hidden sm:block text-[9px] text-gray-400 mt-1 ml-4 font-bold">{t('form.profession_hint') || "Birden fazla ünvan için virgül (,) ile ayırınız."}</p>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.city')}</label>
-                    <SearchableSelect
-                      value={formData.city}
-                      onChange={(val) => setFormData({ ...formData, city: val, district: '' })}
-                      options={Object.keys(TURKEY_LOCATIONS).sort()}
-                      placeholder={t('form.city')}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.district')}</label>
-                    <SearchableSelect
-                      value={formData.district || ''}
-                      onChange={(val) => setFormData({ ...formData, district: val })}
-                      options={formData.city ? TURKEY_LOCATIONS[formData.city] || [] : []}
-                      placeholder={t('form.district')}
-                      disabled={!formData.city}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.experience')}</label>
+                <div className="space-y-1.5">
+                  <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">TECRÜBE</label>
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
@@ -625,7 +610,7 @@ const ExpandableSection = ({
                           min="0"
                           value={formData.experienceYears === 0 ? '' : formData.experienceYears}
                           onChange={e => setFormData({ ...formData, experienceYears: e.target.value === '' ? 0 : parseInt(e.target.value) })}
-                          className="w-full h-full bg-transparent outline-none font-bold text-[14px] sm:text-[16px] px-5 sm:px-7 py-0 text-gray-500 dark:text-gray-400 placeholder:text-gray-400"
+                          className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-5 sm:px-7 py-0 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
                           placeholder={t('common.year')}
                         />
                       </div>
@@ -642,31 +627,61 @@ const ExpandableSection = ({
                             if (val > 11) val = 11;
                             setFormData({ ...formData, experienceMonths: e.target.value === '' ? 0 : val });
                           }}
-                          className="w-full h-full bg-transparent outline-none font-bold text-[14px] sm:text-[16px] px-5 sm:px-7 py-0 text-gray-500 dark:text-gray-400 placeholder:text-gray-400"
+                          className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-5 sm:px-7 py-0 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
                           placeholder={t('common.month')}
                         />
                       </div>
                     </div>
                   </div>
-              </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.city')}</label>
+                    <SearchableSelect
+                      value={formData.city}
+                      onChange={(val) => setFormData({ ...formData, city: val, district: '' })}
+                      options={Object.keys(TURKEY_LOCATIONS).sort()}
+                      placeholder={t('form.city')}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.district')}</label>
+                    <SearchableSelect
+                      value={formData.district || ''}
+                      onChange={(val) => setFormData({ ...formData, district: val })}
+                      options={formData.city ? TURKEY_LOCATIONS[formData.city] || [] : []}
+                      placeholder={t('form.district')}
+                      disabled={!formData.city}
+                    />
+                  </div>
+                </div>
             </div>
           </section>
 
 
 
           <section>
-            <div className="space-y-4">
-              <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.about_clean') || 'Hakkında'}</label>
-              <div className="w-full bg-white dark:bg-black rounded-[1.5rem] sm:rounded-[2rem] border border-black/10 dark:border-white/10 focus-within:bg-white dark:focus-within:bg-black focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center h-40 sm:h-56">
+            <div className="space-y-1.5">
+              <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.about_clean') || 'Hakkında'}</label>
+              <div className="w-full bg-white dark:bg-black rounded-[1.5rem] sm:rounded-[2rem] border border-black/10 dark:border-white/10 focus-within:bg-white dark:focus-within:bg-black focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center h-24 sm:h-32">
                 <textarea
                   value={formData.about}
                   onChange={e => setFormData({ ...formData, about: e.target.value })}
-                  className="w-full h-full bg-transparent outline-none resize-none px-6 py-8 sm:px-10 sm:py-10 text-[15px] font-medium leading-relaxed text-gray-500 dark:text-gray-400 placeholder:text-gray-400/70 tracking-wide"
-                  placeholder={t('form.about_placeholder')}
+                  onFocus={(e) => {
+                    setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                  }}
+                  className="w-full h-full bg-transparent outline-none resize-none px-6 py-3.5 sm:px-10 sm:py-5 text-[16px] font-semibold leading-relaxed text-black dark:text-white placeholder:text-gray-400/50 tracking-wide"
+                  placeholder="Kendinizi kısaca tanıtın"
                 ></textarea>
               </div>
-              <p className="text-[10px] sm:text-[11px] font-medium text-gray-400 dark:text-gray-500 leading-relaxed px-4 pt-2">
-                Temel bilgilerinizle iş aramaya hemen başlayabilirsiniz. Profilinizi öne çıkarmak için aşağıdaki <strong>"Profilini Güçlendir"</strong> bölümünden eğitim ve deneyimlerinizi eklemeyi unutmayın.
+              <p className="text-[10px] sm:text-[11px] font-medium text-gray-400 dark:text-gray-500 leading-relaxed px-4 pt-1.5 flex items-center gap-1.5">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-black/30 dark:text-white/30">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                Profilini hemen yayınla ya da CV'ni güçlendir.
               </p>
             </div>
           </section>
@@ -688,117 +703,178 @@ const ExpandableSection = ({
             isOpen={openSections.jobPrep}
             onToggle={() => toggleSection('jobPrep')}
           >
-            <div className="space-y-10 sm:space-y-14">
-              {/* Çalışma Durumu */}
-              <div className="bg-white dark:bg-black p-5 sm:p-8 rounded-3xl sm:rounded-[2.5rem] border border-black/10 dark:border-white/5">
-                <label className="text-[10px] sm:text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-4 sm:mb-6 block">{t('form.work_status')}</label>
-                <div className="flex flex-wrap gap-3">
-                  {[
-                    { id: 'active', label: t('form.working') },
-                    { id: 'passive', label: t('form.not_working') },
-                    { id: 'open', label: t('form.job_seeking') }
-                  ].map(status => (
-                    <SelectionPill
-                      key={status.id}
-                      label={status.label}
-                      active={formData.workingStatus === status.id}
-                      onClick={() => setFormData({ ...formData, workingStatus: status.id as any })}
-                    />
-                  ))}
-                </div>
-              </div>
+            <div className="space-y-8">
+               {/* Countries and Cities Selection (Max 3 each) */}
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                 <div className="space-y-2">
+                   <div className="px-4">
+                     <label className="text-[10.5px] sm:text-[11px] font-bold text-black dark:text-white uppercase tracking-[0.14em] leading-none">Çalışmak İstenilen Ülkeler</label>
+                   </div>
+                   <SearchableSelect
+                     value=""
+                     onChange={(val) => {
+                       if (val && !formData.preferredCountries?.includes(val) && (formData.preferredCountries?.length || 0) < 3) {
+                         setFormData({ ...formData, preferredCountries: [...(formData.preferredCountries || []), val] });
+                       }
+                     }}
+                     options={COUNTRIES.sort()}
+                     placeholder="Ülke Seçiniz (Maks 3)"
+                   />
+                   <div className="flex flex-wrap gap-2 px-1">
+                     {formData.preferredCountries?.map((country, idx) => (
+                       <span key={idx} className="bg-[#1f6d78]/10 text-[#1f6d78] dark:bg-[#1f6d78]/20 dark:text-white text-[10px] font-black px-3 py-1.5 rounded-full flex items-center gap-2 uppercase tracking-widest border border-[#1f6d78]/20 shadow-sm">
+                         {country}
+                         <button type="button" onClick={() => setFormData({ ...formData, preferredCountries: formData.preferredCountries?.filter((_, i) => i !== idx) })} className="hover:text-red-500 transition-colors text-xs">×</button>
+                       </span>
+                     ))}
+                   </div>
+                  </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-12">
-                <div className="space-y-4">
-                  <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.preferred_city')}</label>
-                  <SearchableSelect
-                    value={formData.preferredCity || ''}
-                    onChange={(val) => setFormData({ ...formData, preferredCity: val })}
-                    options={Object.keys(TURKEY_LOCATIONS).sort()}
-                    placeholder={t('form.city')}
-                  />
+                 <div className="space-y-2">
+                   <div className="px-4">
+                     <label className="text-[10.5px] sm:text-[11px] font-bold text-black dark:text-white uppercase tracking-[0.14em] leading-none">Çalışmak İstenilen Şehirler</label>
+                   </div>
+                   <SearchableSelect
+                     value=""
+                     onChange={(val) => {
+                       if (val && !formData.preferredCities?.includes(val) && (formData.preferredCities?.length || 0) < 3) {
+                         setFormData({ ...formData, preferredCities: [...(formData.preferredCities || []), val] });
+                       }
+                     }}
+                     options={Object.keys(TURKEY_LOCATIONS).sort()}
+                     placeholder="Şehir Seçiniz (Maks 3)"
+                   />
+                   <div className="flex flex-wrap gap-2 px-1">
+                     {formData.preferredCities?.map((city, idx) => (
+                       <span key={idx} className="bg-[#1f6d78]/10 text-[#1f6d78] dark:bg-[#1f6d78]/20 dark:text-white text-[10px] font-black px-3 py-1.5 rounded-full flex items-center gap-2 uppercase tracking-widest border border-[#1f6d78]/20 shadow-sm">
+                         {city}
+                         <button type="button" onClick={() => setFormData({ ...formData, preferredCities: formData.preferredCities?.filter((_, i) => i !== idx) })} className="hover:text-red-500 transition-colors text-xs">×</button>
+                       </span>
+                     ))}
+                   </div>
+                 </div>
                 </div>
-                <div className="space-y-4">
-                  <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.preferred_roles')}</label>
-                  <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
+
+                {/* Work Model and Mode Selection */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-0 mt-0">
+                  <div className="space-y-2">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.work_model')}</label>
+                    <SearchableSelect
+                      value={formData.workType || ''}
+                      onChange={(val) => setFormData({ ...formData, workType: val })}
+                      options={WORK_TYPES}
+                      placeholder={t('form.work_model')}
+                      searchable={false}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.employment_type')}</label>
+                    <SearchableSelect
+                      value={formData.employmentType || ''}
+                      onChange={(val) => setFormData({ ...formData, employmentType: val })}
+                      options={EMPLOYMENT_TYPES}
+                      placeholder={t('form.employment_type')}
+                      searchable={false}
+                    />
+                  </div>
+                </div>
+
+                {/* Preferred Roles / Positions */}
+                <div className="space-y-2 pt-0 mt-0">
+                  <div className="px-4">
+                    <label className="text-[10.5px] sm:text-[11px] font-bold text-black dark:text-white uppercase tracking-[0.14em] leading-none">ÇALIŞMAK İSTENİLEN POZİSYONLAR</label>
+                  </div>
+                  <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
                     <input
                       type="text"
                       value={roleInput}
                       onChange={e => setRoleInput(e.target.value)}
                       onKeyDown={handleRoleAdd}
-                      className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-6 sm:px-8 py-0 dark:text-white placeholder:text-gray-400"
-                      placeholder={t('form.roles_placeholder')}
+                      onFocus={(e) => {
+                        setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                      }}
+                      className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-5 sm:px-6 py-0 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
+                      placeholder="Enter ile ekleyin... (Örn: Satış Sorumlusu)"
                     />
                   </div>
-                  <div className="flex flex-wrap gap-2 pt-2">
+                  <div className="flex flex-wrap gap-2 px-1">
                     {formData.preferredRoles?.map((role, idx) => (
-                      <span key={idx} className="bg-[#1f6d78] text-white text-[10px] font-black px-3 py-1.5 rounded-full flex items-center gap-2 uppercase tracking-wider">
+                      <span key={idx} className="bg-[#1f6d78] text-white text-[10px] font-black px-4 py-2 rounded-full flex items-center gap-3 uppercase tracking-widest shadow-sm">
                         {role}
-                        <button onClick={() => removeRole(idx)} className="hover:opacity-50">×</button>
+                        <button type="button" onClick={() => removeRole(idx)} className="hover:text-red-500 transition-colors text-sm">×</button>
                       </span>
                     ))}
                   </div>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-10">
-                <div className="space-y-4">
-                  <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.work_model')}</label>
-                  <div className="flex flex-wrap gap-2">
-                    {WORK_TYPES.map(t => <SelectionPill key={t} label={t} active={formData.workType === t} onClick={() => setFormData({ ...formData, workType: t })} />)}
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.employment_type')}</label>
-                  <div className="flex flex-wrap gap-2">
-                    {EMPLOYMENT_TYPES.map(t => <SelectionPill key={t} label={t} active={formData.employmentType === t} onClick={() => setFormData({ ...formData, employmentType: t })} />)}
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.salary_exp')}</label>
-                <div className="flex items-center gap-2 md:gap-4">
-                  <div className="flex-1 relative">
-                    <input type="number" value={formData.salaryMin} onChange={e => setFormData({ ...formData, salaryMin: parseInt(e.target.value) })} className="w-full bg-white dark:bg-black rounded-full px-4 py-3 sm:px-8 sm:py-4 outline-none border border-black/10 dark:border-white/10 font-bold text-xs sm:text-sm dark:text-white" placeholder={t('filter.salary_min')} />
-                    <span className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-[9px] sm:text-[10px] font-black text-gray-400 pointer-events-none">{t('filter.salary_min').toUpperCase()}</span>
-                  </div>
-                  <div className="w-2 md:w-4 h-0.5 bg-gray-200 dark:bg-gray-700"></div>
-                  <div className="flex-1 relative">
-                    <input type="number" value={formData.salaryMax} onChange={e => setFormData({ ...formData, salaryMax: parseInt(e.target.value) })} className="w-full bg-white dark:bg-black rounded-full px-4 py-3 sm:px-8 sm:py-4 outline-none border border-black/10 dark:border-white/10 font-bold text-xs sm:text-sm dark:text-white" placeholder={t('filter.salary_max')} />
-                    <span className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-[9px] sm:text-[10px] font-black text-gray-400 pointer-events-none">{t('filter.salary_max').toUpperCase()}</span>
-                  </div>
-
-                  {/* Currency Selector */}
-                  <div className="relative">
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setIsCurrencyOpen(!isCurrencyOpen); }}
-                      className="h-[44px] w-[60px] sm:h-[52px] sm:w-[70px] bg-white dark:bg-black rounded-full font-bold text-xs sm:text-sm text-gray-700 dark:text-white flex items-center justify-center gap-1 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      {formData.salaryCurrency || '₺'}
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform ${isCurrencyOpen ? 'rotate-180' : ''}`}>
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                      </svg>
-                    </button>
-
-                    {isCurrencyOpen && (
-                      <div className="absolute right-0 top-full mt-2 bg-white dark:bg-black rounded-xl shadow-xl border border-black/10 dark:border-gray-700 overflow-hidden flex items-center z-30 w-[70px]">
-                        {['₺', '$', '€', '£'].map(c => (
-                          <div
-                            key={c}
-                            onClick={() => { setFormData({ ...formData, salaryCurrency: c }); setIsCurrencyOpen(false); }}
-                            className={`px-2 py-3 hover:bg-white dark:hover:bg-gray-700 cursor-pointer text-center font-bold text-sm ${formData.salaryCurrency === c ? 'bg-white dark:bg-gray-700 text-black dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
-                          >
-                            {c}
-                          </div>
-                        ))}
+                {/* Salary Expectation Clean UI */}
+                <div className="space-y-2 pt-0 mt-0">
+                  <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.salary_exp')}</label>
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all relative flex items-center group">
+                        <input 
+                          type="text" 
+                          value={formatSalary(formData.salaryMin)} 
+                          onChange={e => setFormData({ ...formData, salaryMin: parseSalary(e.target.value) })} 
+                          onFocus={(e) => {
+                            setIsMinFocused(true);
+                            setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                          }}
+                          onBlur={() => setIsMinFocused(false)}
+                          className={`w-full h-full bg-transparent outline-none text-[14px] sm:text-[15px] px-6 sm:px-8 tracking-tight transition-colors ${formData.salaryMin === 0 ? 'text-gray-300 dark:text-white/20 font-medium' : 'text-black dark:text-white font-semibold'}`} 
+                          placeholder="0" 
+                        />
+                        <span className={`absolute right-5 sm:right-8 text-[10px] sm:text-[11px] font-black text-black/10 dark:text-white/10 uppercase tracking-widest pointer-events-none transition-opacity duration-200 ${(isMinFocused || formData.salaryMin !== 0) ? 'opacity-0' : 'opacity-100'}`}>En Az</span>
                       </div>
-                    )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all relative flex items-center group">
+                        <input 
+                          type="text" 
+                          value={formatSalary(formData.salaryMax)} 
+                          onChange={e => setFormData({ ...formData, salaryMax: parseSalary(e.target.value) })} 
+                          onFocus={(e) => {
+                            setIsMaxFocused(true);
+                            setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                          }}
+                          onBlur={() => setIsMaxFocused(false)}
+                          className={`w-full h-full bg-transparent outline-none text-[14px] sm:text-[15px] px-6 sm:px-8 tracking-tight transition-colors ${formData.salaryMax === 0 ? 'text-gray-300 dark:text-white/20 font-medium' : 'text-black dark:text-white font-semibold'}`} 
+                          placeholder="0" 
+                        />
+                        <span className={`absolute right-5 sm:right-8 text-[10px] sm:text-[11px] font-black text-black/10 dark:text-white/10 uppercase tracking-widest pointer-events-none transition-opacity duration-200 ${(isMaxFocused || formData.salaryMax !== 0) ? 'opacity-0' : 'opacity-100'}`}>En Çok</span>
+                      </div>
+                    </div>
+
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setIsCurrencyOpen(!isCurrencyOpen); }}
+                        className={`h-[42px] w-[54px] sm:h-[48px] sm:w-[64px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 font-black text-sm flex items-center justify-center gap-1 transition-all ${isCurrencyOpen ? 'border-[#1f6d78] text-[#1f6d78]' : 'text-black dark:text-white hover:bg-gray-50 dark:hover:bg-gray-900'}`}
+                      >
+                        {formData.salaryCurrency || '₺'}
+                        <i className={`fi fi-rr-angle-small-down transition-transform duration-300 ${isCurrencyOpen ? 'rotate-180' : ''}`}></i>
+                      </button>
+
+                      {isCurrencyOpen && (
+                        <div className="absolute right-0 top-full mt-3 bg-white dark:bg-zinc-900 rounded-[1.5rem] shadow-2xl border border-black/5 dark:border-white/5 overflow-hidden flex flex-col z-[500] w-[80px] p-2 gap-1 animate-in fade-in slide-in-from-top-2">
+                          {['₺', '$', '€', '£'].map(c => (
+                            <button
+                              key={c}
+                              type="button"
+                              onClick={() => { setFormData({ ...formData, salaryCurrency: c }); setIsCurrencyOpen(false); }}
+                              className={`h-10 w-full rounded-xl hover:bg-[#1f6d78]/10 dark:hover:bg-[#2dd4bf]/10 font-black text-lg transition-colors ${formData.salaryCurrency === c ? 'text-black dark:text-white' : 'text-gray-400'}`}
+                            >
+                              {c}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </ExpandableSection>
+              </ExpandableSection>
 
           <ExpandableSection
             title={t('form.work_history_clean')}
@@ -811,30 +887,85 @@ const ExpandableSection = ({
               {formData.workExperience?.map(work => (
                 <div key={work.id} className="bg-white dark:bg-black p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-black/10 dark:border-white/5 relative group">
                   <button onClick={() => removeWork(work.id)} className="absolute top-4 right-4 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all font-bold">×</button>
-                  <h4 className="font-bold text-black dark:text-white">{work.role}</h4>
-                  <p className="text-xs font-bold text-gray-500 dark:text-gray-400">{work.company}</p>
+                  <h4 className="font-semibold text-black dark:text-white tracking-tight">{work.role}</h4>
+                  <p className="text-xs font-semibold text-black/60 dark:text-white/60 tracking-tight">{work.company}</p>
                   <p className="text-[10px] text-gray-400 mt-1">{work.startDate} - {work.isCurrent ? t('form.currently_working_short') : work.endDate}</p>
                 </div>
               ))}
 
-              {/* Add Form */}
-              <div className="bg-white dark:bg-black border-2 border-dashed border-black/10 dark:border-white/10 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 space-y-4">
-                <h5 className="text-[10px] sm:text-xs font-black text-black dark:text-gray-500 uppercase tracking-widest">{t('form.add_experience')}</h5>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="w-full h-[38px] sm:h-[46px] bg-white dark:bg-black rounded-xl border border-black/10 dark:border-white/10 focus-within:bg-white dark:focus-within:bg-black focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
-                    <input type="text" placeholder={`${t('form.institution')} *`} value={workInput.company} onChange={e => setWorkInput({ ...workInput, company: e.target.value })} className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-4 py-0 sm:px-5 dark:text-white" />
+              {/* Add Form - Clean Style */}
+              <div className="space-y-6 sm:space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
+                  <div className="space-y-2">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">ÇALIŞILAN KURUM ADI *</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                      <input 
+                        type="text" 
+                        placeholder="Kurum Adı" 
+                        value={workInput.company} 
+                        onChange={e => setWorkInput({ ...workInput, company: e.target.value })} 
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" 
+                      />
+                    </div>
                   </div>
-                  <div className="w-full h-[38px] sm:h-[46px] bg-white dark:bg-black rounded-xl border border-black/10 dark:border-white/10 focus-within:bg-white dark:focus-within:bg-black focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
-                    <input type="text" placeholder={`${t('form.position')} *`} value={workInput.role} onChange={e => setWorkInput({ ...workInput, role: e.target.value })} className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-4 py-0 sm:px-5 dark:text-white" />
+                  <div className="space-y-2">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.position')} *</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                      <input 
+                        type="text" 
+                        placeholder={t('form.position')} 
+                        value={workInput.role} 
+                        onChange={e => setWorkInput({ ...workInput, role: e.target.value })} 
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" 
+                      />
+                    </div>
                   </div>
-                  <MonthYearPicker placeholder={t('form.start_date_label')} value={workInput.startDate} onChange={val => setWorkInput({ ...workInput, startDate: val })} />
-                  <MonthYearPicker placeholder={t('form.end_date_label')} disabled={workInput.isCurrent} value={workInput.endDate || ''} onChange={val => setWorkInput({ ...workInput, endDate: val })} />
+                  <div className="space-y-2">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">İŞE BAŞLAMA TARİHİ *</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                      <input
+                        type="text"
+                        placeholder="GG.AA.YYYY"
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/50 tracking-tight"
+                        value={workInput.startDate}
+                        onChange={e => setWorkInput({ ...workInput, startDate: handleDateMask(e.target.value) })}
+                      />
+                    </div>
+                  </div>
+                  {!workInput.isCurrent && (
+                    <div className="space-y-2">
+                      <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">İŞTEN AYRILMA TARİHİ</label>
+                      <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                        <input
+                          type="text"
+                          placeholder="GG.AA.YYYY"
+                          className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/50 tracking-tight"
+                          value={workInput.endDate}
+                          onChange={e => setWorkInput({ ...workInput, endDate: handleDateMask(e.target.value) })}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-3 pt-2 pl-2">
+                    <input 
+                      type="checkbox" 
+                      id="work-is-current"
+                      checked={workInput.isCurrent} 
+                      onChange={e => setWorkInput({ ...workInput, isCurrent: e.target.checked })} 
+                      className="w-5 h-5 rounded-md accent-[#1f6d78]" 
+                    />
+                    <label htmlFor="work-is-current" className="text-[11px] font-black text-gray-500 uppercase tracking-widest cursor-pointer">
+                      {t('form.currently_working')}
+                    </label>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <input type="checkbox" checked={workInput.isCurrent} onChange={e => setWorkInput({ ...workInput, isCurrent: e.target.checked })} className="accent-[#1f6d78] w-4 h-4" />
-                  <span className="text-xs font-bold dark:text-gray-500">{t('form.currently_working')}</span>
-                </div>
-                <button onClick={addWork} className="w-full bg-[#1f6d78] text-white font-bold py-2.5 sm:py-3 rounded-xl hover:bg-[#155e68] text-[10px] sm:text-xs uppercase tracking-widest">+ {t('form.add')}</button>
+                <button 
+                  type="button" 
+                  onClick={addWork} 
+                  className="w-full mt-2 bg-[#1f6d78] text-white font-semibold py-3 sm:py-4 rounded-xl hover:bg-[#155e68] transition-all active:scale-[0.98] text-[10px] sm:text-xs uppercase tracking-widest shadow-lg shadow-[#1f6d78]/20"
+                >
+                  + {t('form.add')}
+                </button>
               </div>
             </div>
           </ExpandableSection>
@@ -854,6 +985,7 @@ const ExpandableSection = ({
                   {formData.internshipDetails.map((intern) => (
                     <div key={intern.id} className="bg-white dark:bg-black p-5 sm:p-8 rounded-3xl sm:rounded-[2.5rem] border border-black/10 dark:border-white/10 relative group shadow-sm hover:shadow-md transition-all">
                       <button
+                        type="button"
                         onClick={() => removeInternship(intern.id)}
                         className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center bg-red-50 dark:bg-red-500/10 text-red-500 rounded-full hover:bg-red-500 hover:text-white transition-all font-bold z-10"
                       >
@@ -862,15 +994,15 @@ const ExpandableSection = ({
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                         <div className="space-y-1">
                           <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{t('form.intern_role')}</label>
-                          <p className="text-base sm:text-lg font-black text-black dark:text-white">{intern.role}</p>
+                          <p className="text-base sm:text-lg font-semibold text-black dark:text-white tracking-tight">{intern.role}</p>
                         </div>
                         <div className="space-y-1">
                           <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{t('form.institution')}</label>
-                          <p className="text-base sm:text-lg font-black text-black dark:text-white">{intern.company}</p>
+                          <p className="text-base sm:text-lg font-semibold text-black dark:text-white tracking-tight">{intern.company}</p>
                         </div>
                         <div className="sm:col-span-2 space-y-1">
                           <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{t('form.intern_period')}</label>
-                          <p className="text-sm sm:text-base font-bold text-gray-600 dark:text-gray-400">{intern.startDate} - {intern.isCurrent ? t('common.ongoing') : intern.endDate}</p>
+                          <p className="text-sm sm:text-base font-semibold text-black/60 dark:text-white/60 tracking-tight">{intern.startDate} - {intern.isCurrent ? t('common.ongoing') : intern.endDate}</p>
                         </div>
                       </div>
                     </div>
@@ -878,59 +1010,55 @@ const ExpandableSection = ({
                 </div>
               )}
 
-              {/* Add Internship Form */}
-              <div className="bg-white dark:bg-black/50 rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-10 border-2 border-dashed border-black/10 dark:border-white/5">
-                <h5 className="text-[11px] sm:text-xs font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em] mb-6 sm:mb-8 flex items-center gap-3">
-                  <span className="w-6 h-6 rounded-full bg-[#1f6d78]/10 flex items-center justify-center text-[10px]">+</span>
-                  {t('form.add_internship') || "Staj Ekle"}
-                </h5>
+              {/* Add Internship Form - Clean Style */}
+              <div className="space-y-6 sm:space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
                   <div className="space-y-2">
-                    <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.intern_role')} *</label>
-                    <div className="w-full h-12 sm:h-14 bg-white dark:bg-black rounded-full border border-black/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.intern_role')} *</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
                       <input
                         type="text"
                         placeholder={t('form.position')}
-                        className="w-full h-full bg-transparent outline-none font-bold text-base px-6 sm:px-8 dark:text-white"
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
                         value={internInput.role}
                         onChange={e => setInternInput({ ...internInput, role: e.target.value })}
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.institution')} *</label>
-                    <div className="w-full h-12 sm:h-14 bg-white dark:bg-black rounded-full border border-black/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">STAJ YAPILAN KURUM ADI *</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
                       <input
                         type="text"
-                        placeholder={t('form.institution')}
-                        className="w-full h-full bg-transparent outline-none font-bold text-base px-6 sm:px-8 dark:text-white"
+                        placeholder="Kurum Adı"
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
                         value={internInput.company}
                         onChange={e => setInternInput({ ...internInput, company: e.target.value })}
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.start_date')} *</label>
-                    <div className="w-full h-12 sm:h-14 bg-white dark:bg-black rounded-full border border-black/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">STAJ BAŞLAMA TARİHİ *</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
                       <input
-                        type="month"
-                        className="w-full h-full bg-transparent outline-none font-bold text-base px-6 sm:px-8 dark:text-white"
+                        type="text"
+                        placeholder="GG.AA.YYYY"
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/50 tracking-tight"
                         value={internInput.startDate}
-                        onChange={e => setInternInput({ ...internInput, startDate: e.target.value })}
-                        lang="tr"
+                        onChange={e => setInternInput({ ...internInput, startDate: handleDateMask(e.target.value) })}
                       />
                     </div>
                   </div>
                   {!internInput.isCurrent && (
                     <div className="space-y-2">
-                      <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.end_date')}</label>
-                      <div className="w-full h-12 sm:h-14 bg-white dark:bg-black rounded-full border border-black/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                      <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">STAJ BİTİŞ TARİHİ</label>
+                      <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
                         <input
-                          type="month"
-                          className="w-full h-full bg-transparent outline-none font-bold text-base px-6 sm:px-8 dark:text-white"
+                          type="text"
+                          placeholder="GG.AA.YYYY"
+                          className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/50 tracking-tight"
                           value={internInput.endDate}
-                          onChange={e => setInternInput({ ...internInput, endDate: e.target.value })}
-                          lang="tr"
+                          onChange={e => setInternInput({ ...internInput, endDate: handleDateMask(e.target.value) })}
                         />
                       </div>
                     </div>
@@ -949,8 +1077,9 @@ const ExpandableSection = ({
                   </div>
                 </div>
                 <button
+                  type="button"
                   onClick={addInternship}
-                  className="w-full mt-8 bg-[#1f6d78] text-white font-black py-4 rounded-2xl hover:bg-[#155e68] transition-all active:scale-[0.98] text-xs uppercase tracking-[0.2em] shadow-lg shadow-[#1f6d78]/20"
+                  className="w-full mt-6 bg-[#1f6d78] text-white font-semibold py-2.5 sm:py-3 rounded-xl hover:bg-[#155e68] transition-all active:scale-[0.98] text-[10px] sm:text-xs uppercase tracking-widest shadow-lg shadow-[#1f6d78]/20"
                 >
                   + {t('form.add_list')}
                 </button>
@@ -970,32 +1099,98 @@ const ExpandableSection = ({
               <div className="space-y-4">
                 {formData.educationDetails?.map(edu => (
                   <div key={edu.id} className="bg-white dark:bg-black p-4 rounded-2xl border border-black/10 dark:border-white/5 relative group flex justify-between items-center">
-                    <div>
-                      <h4 className="font-bold text-sm text-black dark:text-white">{edu.university}</h4>
-                      <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{edu.department} ({edu.level})</p>
-                      <p className="text-[10px] text-gray-400 mt-1">{edu.status}</p>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-sm sm:text-base text-black dark:text-white tracking-tight">{edu.university}</h4>
+                      <p className="text-xs sm:text-sm font-semibold text-black/60 dark:text-white/60 tracking-tight">{edu.department} ({edu.level})</p>
+                      <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                        <p className="text-[10px] font-black text-[#1f6d78] uppercase tracking-widest">{edu.status}</p>
+                        {edu.startDate && (
+                          <div className="flex items-center gap-1.5 text-gray-400">
+                            <span className="w-1 h-1 rounded-full bg-gray-300" />
+                            <p className="text-[10px] font-bold uppercase tracking-widest">{edu.startDate} - {edu.isCurrent ? 'DEVAM EDİYOR' : edu.endDate || '?'}</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <button onClick={() => removeEducation(edu.id)} className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 rounded-full font-bold">×</button>
+                    <button type="button" onClick={() => removeEducation(edu.id)} className="text-red-500 font-bold hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full px-1">×</button>
                   </div>
                 ))}
 
-                <div className="bg-white dark:bg-black border-2 border-dashed border-black/10 dark:border-white/10 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 space-y-4">
-                  <h5 className="text-[10px] sm:text-xs font-black text-black dark:text-gray-500 uppercase tracking-widest">+ {t('form.add_education')}</h5>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="w-full h-[38px] sm:h-[46px] bg-white dark:bg-black rounded-xl border border-black/10 dark:border-white/10 focus-within:bg-white dark:focus-within:bg-black focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
-                      <input type="text" placeholder={t('form.university')} value={eduInput.university} onChange={e => setEduInput({ ...eduInput, university: e.target.value })} className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-4 py-0 sm:px-5 dark:text-white" />
+                {/* Add Education Form - Clean Style */}
+                <div className="space-y-6 sm:space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
+                    <div className="space-y-2">
+                      <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.university')} *</label>
+                      <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                        <input type="text" placeholder={t('form.university')} value={eduInput.university} onChange={e => setEduInput({ ...eduInput, university: e.target.value })} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" />
+                      </div>
                     </div>
-                    <div className="w-full h-[38px] sm:h-[46px] bg-white dark:bg-black rounded-xl border border-black/10 dark:border-white/10 focus-within:bg-white dark:focus-within:bg-black focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
-                      <input type="text" placeholder={t('form.department') || ''} value={eduInput.department || ''} onChange={e => setEduInput({ ...eduInput, department: e.target.value })} className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-4 py-0 sm:px-5 dark:text-white" />
+                    <div className="space-y-2">
+                      <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.department')} *</label>
+                      <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                        <input type="text" placeholder={t('form.department') || ''} value={eduInput.department || ''} onChange={e => setEduInput({ ...eduInput, department: e.target.value })} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" />
+                      </div>
                     </div>
-                    <select value={eduInput.level} onChange={e => setEduInput({ ...eduInput, level: e.target.value })} className="w-full bg-white dark:bg-black rounded-xl px-4 py-3 outline-none font-bold text-sm appearance-none border border-black/10 focus:bg-white dark:focus:bg-black focus:border-[#1f6d78]/10 transition-all dark:text-white">
-                      {EDUCATION_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
-                    </select>
-                    <select value={eduInput.status} onChange={e => setEduInput({ ...eduInput, status: e.target.value })} className="w-full bg-white dark:bg-black rounded-xl px-4 py-3 outline-none font-bold text-sm appearance-none border border-black/10 focus:bg-white dark:focus:bg-black focus:border-[#1f6d78]/10 transition-all dark:text-white">
-                      {GRADUATION_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
+                    <div className="space-y-2">
+                      <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">EĞİTİM SEVİYESİ *</label>
+                      <SearchableSelect
+                        value={eduInput.level}
+                        onChange={val => setEduInput({ ...eduInput, level: val })}
+                        options={EDUCATION_LEVELS}
+                        placeholder="Seviye Seçin"
+                        searchable={false}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">MEZUNİYET DURUMU *</label>
+                      <SearchableSelect
+                        value={eduInput.status}
+                        onChange={val => setEduInput({ ...eduInput, status: val, isCurrent: val === 'Öğrenci' })}
+                        options={GRADUATION_STATUSES}
+                        placeholder="Durum Seçin"
+                        searchable={false}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">EĞİTİM BAŞLAMA TARİHİ *</label>
+                      <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                        <input
+                          type="text"
+                          placeholder="GG.AA.YYYY"
+                          className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/50 tracking-tight"
+                          value={eduInput.startDate}
+                          onChange={e => setEduInput({ ...eduInput, startDate: handleDateMask(e.target.value) })}
+                        />
+                      </div>
+                    </div>
+                    {!eduInput.isCurrent && (
+                      <div className="space-y-2">
+                        <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">MEZUNİYET TARİHİ</label>
+                        <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                          <input
+                            type="text"
+                            placeholder="GG.AA.YYYY"
+                            className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/50 tracking-tight"
+                            value={eduInput.endDate}
+                            onChange={e => setEduInput({ ...eduInput, endDate: handleDateMask(e.target.value) })}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-3 pt-2 pl-2 md:col-span-2">
+                      <input
+                        type="checkbox"
+                        id="edu-is-current"
+                        checked={eduInput.isCurrent}
+                        onChange={e => setEduInput({ ...eduInput, isCurrent: e.target.checked })}
+                        className="w-5 h-5 rounded-md accent-[#1f6d78]"
+                      />
+                      <label htmlFor="edu-is-current" className="text-[11px] font-black text-gray-500 uppercase tracking-widest cursor-pointer">
+                        BU OKULDA EĞİTİMİM DEVAM EDİYOR
+                      </label>
+                    </div>
                   </div>
-                  <button onClick={addEducation} className="w-full bg-[#1f6d78] text-white font-bold py-2.5 sm:py-3 rounded-xl hover:bg-[#155e68] text-[10px] sm:text-xs uppercase tracking-widest transition-all active: shadow-lg">+ {t('form.add_education')}</button>
+                  <button type="button" onClick={addEducation} className="w-full mt-2 bg-[#1f6d78] text-white font-semibold py-3 sm:py-4 rounded-xl hover:bg-[#155e68] text-[10px] sm:text-xs uppercase tracking-widest shadow-lg shadow-[#1f6d78]/20 transition-all active:scale-95">+ {t('form.add')}</button>
                 </div>
               </div>
             </div>
@@ -1008,39 +1203,50 @@ const ExpandableSection = ({
             isOpen={openSections.lang}
             onToggle={() => toggleSection('lang')}
           >
-            <div className="space-y-4">
+            <div className="space-y-8">
               {/* Added Languages List */}
               {formData.languageDetails && formData.languageDetails.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-3 mb-2">
                   {formData.languageDetails.map(lang => (
-                    <div key={lang.id} className="inline-flex items-center gap-2 bg-white dark:bg-black border border-black/10 dark:border-white/5 rounded-full px-4 py-2">
-                      <span className="text-xs font-bold dark:text-white">{lang.language} - {lang.level}</span>
-                      <button onClick={() => removeLang(lang.id)} className="text-red-500 font-bold hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full px-1">×</button>
+                    <div key={lang.id} className="inline-flex items-center gap-3 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 border border-[#1f6d78]/20 rounded-full px-5 py-2.5 shadow-sm group">
+                      <span className="text-[11px] font-black text-[#1f6d78] dark:text-white uppercase tracking-widest">{lang.language} — {lang.level}</span>
+                      <button type="button" onClick={() => removeLang(lang.id)} className="text-[#1f6d78] hover:text-red-500 transition-colors font-bold text-lg leading-none">×</button>
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Add Language Form */}
-              <div className="bg-white dark:bg-black border-2 border-dashed border-black/10 dark:border-white/10 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 space-y-4">
-                <h5 className="text-[10px] sm:text-xs font-black text-black dark:text-gray-500 uppercase tracking-widest">{t('form.add_language')}</h5>
-                <div className="flex flex-col gap-4">
-                  <select
-                    value={langInput.language}
-                    onChange={e => setLangInput({ ...langInput, language: e.target.value })}
-                    className="w-full bg-white dark:bg-black rounded-xl px-3 py-2 sm:px-4 sm:py-3 outline-none font-bold text-[11px] sm:text-sm appearance-none border border-black/10 focus:bg-white dark:focus:bg-black focus:border-[#1f6d78]/10 transition-all dark:text-white"
-                  >
-                    {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
-                  </select>
-
-                  <div className="flex flex-wrap gap-2">
-                    {LANGUAGE_LEVELS.map(lvl => (
-                      <button key={lvl} onClick={() => setLangInput({ ...langInput, level: lvl })} className={`px-3 py-2 sm:px-4 sm:py-2 rounded-full text-[9px] sm:text-[10px] font-bold border transition-all ${langInput.level === lvl ? 'bg-[#1f6d78] text-white border-[#1f6d78]' : 'bg-white dark:bg-black text-gray-500 dark:text-gray-400 border-black/10 dark:border-white/10 hover:bg-white dark:hover:bg-black'}`}>{lvl}</button>
-                    ))}
+              {/* Add Language Form - Minimal Style */}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">DİL</label>
+                    <SearchableSelect
+                      value={langInput.language || ''}
+                      onChange={val => setLangInput({ ...langInput, language: val })}
+                      options={LANGUAGES}
+                      placeholder="Dil Seçin"
+                      searchable={false}
+                    />
                   </div>
-
-                  <button onClick={addLang} className="w-full bg-[#1f6d78] text-white font-bold py-2.5 sm:py-3 rounded-xl hover:bg-[#155e68] text-[10px] sm:text-xs uppercase tracking-widest transition-all active: shadow-lg">+ {t('form.add')}</button>
+                  <div className="space-y-2">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">SEVİYE</label>
+                    <SearchableSelect
+                      value={langInput.level || ''}
+                      onChange={val => setLangInput({ ...langInput, level: val })}
+                      options={LANGUAGE_LEVELS}
+                      placeholder="Seviye Seçin"
+                      searchable={false}
+                    />
+                  </div>
                 </div>
+                <button 
+                  type="button" 
+                  onClick={addLang} 
+                  className="w-full bg-[#1f6d78] text-white font-black py-3.5 sm:py-4 rounded-2xl hover:bg-[#155e68] text-[10px] sm:text-xs uppercase tracking-widest shadow-lg shadow-[#1f6d78]/20 transition-all active:scale-95"
+                >
+                  + DİL EKLE
+                </button>
               </div>
             </div>
           </ExpandableSection>
@@ -1051,83 +1257,81 @@ const ExpandableSection = ({
             isOpen={openSections.cert}
             onToggle={() => toggleSection('cert')}
           >
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Added Certificates List */}
               {formData.certificates && formData.certificates.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="space-y-4">
                   {formData.certificates.map(cert => (
-                    <div key={cert.id} className="inline-flex items-center gap-2 bg-white dark:bg-black border border-black/10 dark:border-white/5 rounded-full px-3 py-1.5 sm:px-4 sm:py-2">
-                      <span className="text-[10px] sm:text-xs font-bold dark:text-white">{cert.name} {cert.issuer ? `(${cert.issuer})` : ''}</span>
-                      <button onClick={() => removeCertificate(cert.id)} className="text-red-500 font-bold hover:bg-red-50 rounded-full px-1">×</button>
+                    <div key={cert.id} className="bg-white dark:bg-black p-4 rounded-2xl border border-black/10 dark:border-white/5 relative group flex justify-between items-center shadow-sm">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-sm sm:text-base text-black dark:text-white tracking-tight">{cert.name}</h4>
+                        <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                          {cert.issuer && <p className="text-[10px] font-black text-[#1f6d78] uppercase tracking-widest">{cert.issuer}</p>}
+                          {cert.date && (
+                            <div className="flex items-center gap-1.5 text-gray-400">
+                              <span className="w-1 h-1 rounded-full bg-gray-300" />
+                              <p className="text-[10px] font-bold uppercase tracking-widest">{cert.date}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <button type="button" onClick={() => removeCertificate(cert.id)} className="text-red-500 font-bold hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full px-1">×</button>
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Add Certificate Form */}
-              <div className="bg-white dark:bg-black border-2 border-dashed border-black/10 dark:border-white/10 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 space-y-4">
-                <h5 className="text-[10px] sm:text-xs font-black text-black dark:text-gray-500 uppercase tracking-widest">{t('form.add_certificate')}</h5>
-                <div className="flex flex-col gap-4">
-                  <div className="w-full h-[38px] sm:h-[46px] bg-white dark:bg-black rounded-xl border border-black/10 focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
+              {/* Add Certificate Form - Minimal Style */}
+              <div className="space-y-6">
+                <div className="space-y-1.5">
+                  <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.cert_name')} *</label>
+                  <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
                     <input
                       type="text"
                       placeholder={t('form.cert_name')}
                       value={certInput.name}
                       onChange={e => setCertInput({ ...certInput, name: e.target.value })}
-                      className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-4 py-0 sm:px-5 dark:text-white"
+                      className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="w-full h-[38px] sm:h-[46px] bg-white dark:bg-black rounded-xl border border-black/10 dark:border-white/10 focus-within:bg-white dark:focus-within:bg-black focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1.5">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.cert_issuer')}</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
                       <input
                         type="text"
-                        placeholder={t('form.cert_issuer')}
+                        placeholder="Kurum Adı"
                         value={certInput.issuer}
                         onChange={e => setCertInput({ ...certInput, issuer: e.target.value })}
-                        className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-4 py-0 sm:px-5 dark:text-white"
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
                       />
                     </div>
-                    <MonthYearPicker
-                      placeholder={t('form.cert_date')}
-                      value={certInput.date || ''}
-                      onChange={val => setCertInput({ ...certInput, date: val })}
-                    />
                   </div>
-
-                  <button onClick={addCertificate} className="w-full bg-[#1f6d78] text-white font-bold py-2.5 sm:py-3 rounded-xl hover:bg-[#155e68] text-[10px] sm:text-xs uppercase tracking-widest transition-all active: shadow-lg">+ {t('form.add')}</button>
+                  <div className="space-y-1.5">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.cert_date')}</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                      <input
+                        type="text"
+                        placeholder="GG.AA.YYYY"
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/50 tracking-tight"
+                        value={certInput.date || ''}
+                        onChange={e => setCertInput({ ...certInput, date: handleDateMask(e.target.value) })}
+                      />
+                    </div>
+                  </div>
                 </div>
+
+                <button 
+                  type="button" 
+                  onClick={addCertificate} 
+                  className="w-full bg-[#1f6d78] text-white font-black py-3.5 sm:py-4 rounded-2xl hover:bg-[#155e68] text-[10px] sm:text-xs uppercase tracking-widest shadow-lg shadow-[#1f6d78]/20 transition-all active:scale-95"
+                >
+                  + SERTİFİKA EKLE
+                </button>
               </div>
             </div>
           </ExpandableSection>
-
-          <ExpandableSection
-            title={t('form.skills')}
-            subtitle={t('form.skills_placeholder')}
-            isOpen={openSections.skills}
-            onToggle={() => toggleSection('skills')}
-          >
-            <div className="space-y-4">
-              <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.skills')}</label>
-              <input
-                type="text"
-                value={skillInput}
-                onChange={e => setSkillInput(e.target.value)}
-                onKeyDown={handleSkillAdd}
-                className="w-full bg-white dark:bg-black border border-black/10 focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-black rounded-full px-5 py-3 sm:px-8 sm:py-4 outline-none transition-all text-[11px] sm:text-sm font-bold shadow-sm dark:text-white"
-                placeholder={t('form.skills_placeholder') || "React, Proje Yönetimi, SQL, Figma..."}
-              />
-              <div className="flex flex-wrap gap-2 pt-2">
-                {formData.skills?.map((skill, idx) => (
-                  <span key={idx} className="bg-[#1f6d78] text-white text-[10px] font-black px-4 py-2 rounded-full flex items-center gap-2 uppercase tracking-wider zoom-in-50">
-                    {skill}
-                    <button onClick={() => removeSkill(idx)} className="hover:opacity-50 text-base font-light">×</button>
-                  </span>
-                ))}
-                {(!formData.skills || formData.skills.length === 0) && <p className="text-[10px] text-gray-400 italic">{t('form.no_skills')}</p>}
-              </div>
-            </div>
-          </ExpandableSection>
-
 
           <ExpandableSection
             title={t('form.personal_clean')}
@@ -1135,99 +1339,99 @@ const ExpandableSection = ({
             isOpen={openSections.additional}
             onToggle={() => toggleSection('additional')}
           >
-            <div className="space-y-12">
-              <div className="space-y-4">
-                <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.birth_date')}</label>
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center flex items-center justify-center">
-                      <input
-                        type="text"
-                        maxLength={2}
-                        value={(formData.birthDate || '').split('.')[0] || ''}
-                        onChange={e => {
-                          const val = e.target.value.replace(/\D/g, '');
-                          const parts = (formData.birthDate || '').split('.');
-                          setFormData({ ...formData, birthDate: `${val}.${parts[1] || ''}.${parts[2] || ''}` });
-                        }}
-                        className="w-full h-full bg-transparent outline-none font-bold text-[14px] sm:text-[16px] text-center text-gray-500 dark:text-gray-400 placeholder:text-gray-400"
-                        placeholder="GG"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center flex items-center justify-center">
-                      <input
-                        type="text"
-                        maxLength={2}
-                        value={(formData.birthDate || '').split('.')[1] || ''}
-                        onChange={e => {
-                          const val = e.target.value.replace(/\D/g, '');
-                          const parts = (formData.birthDate || '').split('.');
-                          setFormData({ ...formData, birthDate: `${parts[0] || ''}.${val}.${parts[2] || ''}` });
-                        }}
-                        className="w-full h-full bg-transparent outline-none font-bold text-[14px] sm:text-[16px] text-center text-gray-500 dark:text-gray-400 placeholder:text-gray-400"
-                        placeholder="AA"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center flex items-center justify-center">
-                      <input
-                        type="text"
-                        maxLength={4}
-                        value={(formData.birthDate || '').split('.')[2] || ''}
-                        onChange={e => {
-                          const val = e.target.value.replace(/\D/g, '');
-                          const parts = (formData.birthDate || '').split('.');
-                          setFormData({ ...formData, birthDate: `${parts[0] || ''}.${parts[1] || ''}.${val}` });
-                        }}
-                        className="w-full h-full bg-transparent outline-none font-bold text-[14px] sm:text-[16px] text-center text-gray-500 dark:text-gray-400 placeholder:text-gray-400"
-                        placeholder="YYYY"
-                      />
-                    </div>
-                  </div>
+            <div className="space-y-6">
+              <div className="space-y-1.5">
+                <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.birth_date')} *</label>
+                <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                  <input
+                    type="text"
+                    placeholder="GG.AA.YYYY"
+                    className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/50 tracking-tight text-center sm:text-left"
+                    value={formData.birthDate || ''}
+                    onChange={e => setFormData({ ...formData, birthDate: handleDateMask(e.target.value) })}
+                    onFocus={(e) => {
+                      setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+                    }}
+                  />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-12">
-                <div className="space-y-4">
-                  <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.military')}</label>
-                  <div className="flex flex-wrap gap-2">
-                    {MILITARY_STATUSES.map(s => <SelectionPill key={s} label={s} active={formData.militaryStatus === s} onClick={() => setFormData({ ...formData, militaryStatus: formData.militaryStatus === s ? '' : s })} />)}
-                  </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                <div className="space-y-2">
+                  <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.military')}</label>
+                  <SearchableSelect
+                    value={formData.militaryStatus || ''}
+                    onChange={(val) => setFormData({ ...formData, militaryStatus: val })}
+                    options={MILITARY_STATUSES}
+                    placeholder={t('form.military')}
+                    searchable={false}
+                  />
                 </div>
-                <div className="space-y-4">
-                  <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.driving_license')}</label>
-                  <div className="flex flex-wrap gap-2">
-                    {DRIVER_LICENSES.map(l => <SelectionPill key={l} label={l} active={formData.driverLicense?.includes(l) || false} onClick={() => toggleList('driverLicense', l)} />)}
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.driving_license')}</label>
+                  <SearchableSelect
+                    value=""
+                    onChange={(val) => {
+                      if (val && !formData.driverLicense?.includes(val)) {
+                        toggleList('driverLicense', val);
+                      }
+                    }}
+                    options={DRIVER_LICENSES}
+                    placeholder={t('form.driving_license')}
+                    searchable={false}
+                  />
+                  {formData.driverLicense && formData.driverLicense.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-3 ml-4">
+                      {formData.driverLicense.map(l => (
+                        <span key={l} className="bg-[#1f6d78]/10 text-[#1f6d78] dark:bg-[#1f6d78]/20 dark:text-white text-[10px] font-black px-3 py-1.5 rounded-full flex items-center gap-2 uppercase tracking-widest border border-[#1f6d78]/20 shadow-sm">
+                          {l}
+                          <button type="button" onClick={() => toggleList('driverLicense', l)} className="hover:text-red-500 transition-colors text-xs font-bold leading-none">×</button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                <div className="space-y-4">
-                  <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.marital')}</label>
-                  <div className="flex flex-wrap gap-2">
-                    {MARITAL_STATUSES.map(s => <SelectionPill key={s} label={s} active={formData.maritalStatus === s} onClick={() => setFormData({ ...formData, maritalStatus: s })} />)}
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.marital')}</label>
+                  <SearchableSelect
+                    value={formData.maritalStatus || ''}
+                    onChange={(val) => setFormData({ ...formData, maritalStatus: val })}
+                    options={MARITAL_STATUSES}
+                    placeholder={t('form.marital')}
+                    searchable={false}
+                  />
                 </div>
-                <div className="space-y-4">
-                  <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.travel')}</label>
-                  <div className="flex flex-wrap gap-2">
-                    {TRAVEL_STATUSES.map(s => <SelectionPill key={s} label={s} active={formData.travelStatus === s} onClick={() => setFormData({ ...formData, travelStatus: s })} />)}
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.travel')}</label>
+                  <SearchableSelect
+                    value={formData.travelStatus || ''}
+                    onChange={(val) => setFormData({ ...formData, travelStatus: val })}
+                    options={TRAVEL_STATUSES}
+                    placeholder={t('form.travel')}
+                    searchable={false}
+                  />
                 </div>
 
-                <div className="space-y-4">
-                  <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.disability')}</label>
-                  <div className="flex flex-wrap gap-2">
-                    {DISABILITY_STATUSES.map(s => <SelectionPill key={s} label={s} active={formData.disabilityStatus === s} onClick={() => setFormData({ ...formData, disabilityStatus: s })} />)}
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.disability')}</label>
+                  <SearchableSelect
+                    value={formData.disabilityStatus || ''}
+                    onChange={(val) => setFormData({ ...formData, disabilityStatus: val })}
+                    options={DISABILITY_STATUSES}
+                    placeholder={t('form.disability')}
+                    searchable={false}
+                  />
                 </div>
-                <div className="space-y-4">
-                  <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.start_date')}</label>
-                  <div className="flex flex-wrap gap-2">
-                    {NOTICE_PERIODS.map(p => <SelectionPill key={p} label={p} active={formData.noticePeriod === p} onClick={() => setFormData({ ...formData, noticePeriod: p })} />)}
-                  </div>
+                <div className="space-y-2">
+                  <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.start_date')}</label>
+                  <SearchableSelect
+                    value={formData.noticePeriod || ''}
+                    onChange={(val) => setFormData({ ...formData, noticePeriod: val })}
+                    options={NOTICE_PERIODS}
+                    placeholder={t('form.start_date')}
+                    searchable={false}
+                  />
                 </div>
               </div>
             </div>
@@ -1248,13 +1452,14 @@ const ExpandableSection = ({
                   {formData.references.map((ref) => (
                     <div key={ref.id} className="bg-white dark:bg-black p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-black/10 dark:border-white/5 relative group">
                       <button
+                        type="button"
                         onClick={() => removeReference(ref.id)}
                         className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white rounded-full text-red-500 hover:bg-red-50 shadow-sm opacity-0 group-hover:opacity-100 transition-all font-bold"
                       >
                         ×
                       </button>
-                      <h4 className="font-bold text-black dark:text-white text-sm">{ref.name}</h4>
-                      <p className="text-xs text-gray-500 font-bold">{ref.role} @ {ref.company}</p>
+                      <h4 className="font-semibold text-black dark:text-white text-sm tracking-tight">{ref.name}</h4>
+                      <p className="text-xs font-semibold text-black/60 dark:text-white/60 tracking-tight">{ref.role} @ {ref.company}</p>
                       {(ref.email || ref.phone) && (
                         <div className="mt-3 pt-3 border-t border-black/10 space-y-1">
                           {ref.email && <p className="text-[10px] text-gray-400 font-medium">✉️ {ref.email}</p>}
@@ -1266,59 +1471,84 @@ const ExpandableSection = ({
                 </div>
               )}
 
-              {/* Add Reference Form */}
-              <div className="bg-white dark:bg-black border-2 border-dashed border-black/10 dark:border-white/10 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6">
-                <h5 className="text-[10px] sm:text-xs font-black text-black dark:text-gray-500 uppercase tracking-widest mb-3 sm:mb-4">{t('form.add_reference')}</h5>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div className="w-full h-[38px] sm:h-[46px] bg-white dark:bg-black rounded-xl border border-black/10 dark:border-white/10 focus-within:bg-white dark:focus-within:bg-black focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
-                    <input
-                      type="text"
-                      placeholder={t('form.fullname')}
-                      className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-4 py-0 sm:px-5 dark:text-white"
-                      value={refInput.name}
-                      onChange={e => setRefInput({ ...refInput, name: capitalizeWords(e.target.value) })}
-                    />
+              {/* Add Reference Form - Premium Style */}
+              <div className="space-y-6 sm:space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
+                  {/* Ad Soyad */}
+                  <div className="space-y-2">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.fullname')} *</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                      <input
+                        type="text"
+                        placeholder="Ad Soyad"
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
+                        value={refInput.name}
+                        onChange={e => setRefInput({ ...refInput, name: capitalizeWords(e.target.value) })}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full h-[38px] sm:h-[46px] bg-white dark:bg-black rounded-xl border border-black/10 focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
-                    <input
-                      type="text"
-                      placeholder={t('form.institution')}
-                      className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-4 py-0 sm:px-5 dark:text-white"
-                      value={refInput.company}
-                      onChange={e => setRefInput({ ...refInput, company: capitalizeWords(e.target.value) })}
-                    />
+
+                  {/* Kurum Adı */}
+                  <div className="space-y-2">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.institution')} *</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                      <input
+                        type="text"
+                        placeholder={t('form.institution')}
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
+                        value={refInput.company}
+                        onChange={e => setRefInput({ ...refInput, company: capitalizeWords(e.target.value) })}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full h-[38px] sm:h-[46px] bg-white dark:bg-black rounded-xl border border-black/10 focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
-                    <input
-                      type="text"
-                      placeholder={t('form.profession')}
-                      className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-4 py-0 sm:px-5 dark:text-white"
-                      value={refInput.role}
-                      onChange={e => setRefInput({ ...refInput, role: capitalizeWords(e.target.value) })}
-                    />
+
+                  {/* Meslek / Ünvan */}
+                  <div className="space-y-2">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.profession')} *</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                      <input
+                        type="text"
+                        placeholder={t('form.profession')}
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
+                        value={refInput.role}
+                        onChange={e => setRefInput({ ...refInput, role: capitalizeWords(e.target.value) })}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full h-[38px] sm:h-[46px] bg-white dark:bg-black rounded-xl border border-black/10 focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
-                    <input
-                      type="tel"
-                      placeholder={`${t('form.phone')} (${t('form.optional')})`}
-                      className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-4 py-0 sm:px-5 dark:text-white"
-                      value={refInput.phone}
-                      onChange={e => setRefInput({ ...refInput, phone: e.target.value })}
-                    />
+
+                  {/* TELEFON */}
+                  <div className="space-y-2">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.phone')} ({t('form.optional')})</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                      <input
+                        type="tel"
+                        placeholder={t('form.phone')}
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
+                        value={refInput.phone}
+                        onChange={e => setRefInput({ ...refInput, phone: e.target.value })}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full h-[38px] sm:h-[46px] bg-white dark:bg-black rounded-xl border border-black/10 focus-within:bg-white dark:focus-within:bg-gray-700 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center">
-                    <input
-                      type="email"
-                      placeholder={`${t('form.email')} (${t('form.optional')})`}
-                      className="w-full h-full bg-transparent outline-none font-medium text-[14px] sm:text-[16px] px-4 py-0 sm:px-5 dark:text-white"
-                      value={refInput.email}
-                      onChange={e => setRefInput({ ...refInput, email: e.target.value })}
-                    />
+
+                  {/* E-POSTA */}
+                  <div className="space-y-2">
+                    <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.email')} ({t('form.optional')})</label>
+                    <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all overflow-hidden flex items-center shadow-sm">
+                      <input
+                        type="email"
+                        placeholder={t('form.email')}
+                        className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-6 sm:px-8 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight"
+                        value={refInput.email}
+                        onChange={e => setRefInput({ ...refInput, email: e.target.value })}
+                      />
+                    </div>
                   </div>
                 </div>
+
                 <button
                   onClick={handleAddReference}
-                  className="w-full bg-[#1f6d78] text-white font-bold py-4 rounded-xl hover:bg-[#155e68] transition-all active:scale-[0.98] text-xs uppercase tracking-[0.2em] shadow-lg shadow-[#1f6d78]/20 mt-4"
+                  className="w-full mt-2 bg-[#1f6d78] text-white font-semibold py-3 sm:py-4 rounded-xl hover:bg-[#155e68] transition-all active:scale-95 text-[10px] sm:text-xs uppercase tracking-widest shadow-lg shadow-[#1f6d78]/20"
+                  type="button"
                 >
                   + {t('form.add_list')}
                 </button>
@@ -1326,67 +1556,14 @@ const ExpandableSection = ({
             </div>
           </ExpandableSection>
 
-          <ExpandableSection
-            title={t('form.contact_info_clean')}
-            subtitle={t('form.contact_info_subtitle')}
-            isOpen={openSections.contact}
-            onToggle={() => toggleSection('contact')}
-          >
-            <div className="bg-white dark:bg-black p-5 sm:p-10 rounded-[2rem] sm:rounded-[3rem] border border-black/10 dark:border-white/5 space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10">
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center px-1">
-                    <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.email')}</label>
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => setFormData({ ...formData, isEmailPublic: !formData.isEmailPublic })}>
-                      <div className={`w-4 h-4 rounded-full border transition-all flex items-center justify-center ${formData.isEmailPublic ? 'bg-[#1f6d78] border-[#1f6d78]' : 'border-gray-300 dark:border-white/20 bg-white dark:bg-black'}`}>
-                        {formData.isEmailPublic && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
-                      </div>
-                      <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{formData.isEmailPublic ? t('form.visible') : t('form.hidden')}</span>
-                    </div>
-                  </div>
-                  <div className={`w-full h-14 rounded-full border transition-all overflow-hidden flex items-center focus-within:bg-white dark:focus-within:bg-black ${formData.isEmailPublic ? 'bg-white dark:bg-black border-[#1f6d78]/20' : 'bg-gray-100 dark:bg-gray-950 border-black/10'}`}>
-                    <input
-                      type="email"
-                      value={formData.email || ''}
-                      onChange={e => setFormData({ ...formData, email: e.target.value })}
-                      className={`w-full h-full bg-transparent outline-none font-bold text-base px-8 ${formData.isEmailPublic ? 'text-gray-500' : 'text-gray-400'}`}
-                      placeholder="ornek@email.com"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center px-1">
-                    <label className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.phone')}</label>
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => setFormData({ ...formData, isPhonePublic: !formData.isPhonePublic })}>
-                      <div className={`w-4 h-4 rounded-full border transition-all flex items-center justify-center ${formData.isPhonePublic ? 'bg-[#1f6d78] border-[#1f6d78]' : 'border-gray-300 dark:border-white/20 bg-white dark:bg-black'}`}>
-                        {formData.isPhonePublic && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
-                      </div>
-                      <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{formData.isPhonePublic ? t('form.visible') : t('form.hidden')}</span>
-                    </div>
-                  </div>
-                  <div className={`w-full h-14 rounded-full border transition-all overflow-hidden flex items-center focus-within:bg-white dark:focus-within:bg-black ${formData.isPhonePublic ? 'bg-white dark:bg-black border-[#1f6d78]/20' : 'bg-gray-100 dark:bg-gray-950 border-black/10'}`}>
-                    <input
-                      type="tel"
-                      value={formData.phone || ''}
-                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                      className={`w-full h-full bg-transparent outline-none font-bold text-base px-8 ${formData.isPhonePublic ? 'text-gray-500' : 'text-gray-400'}`}
-                      placeholder="0555 123 45 67"
-                    />
-                  </div>
-                </div>
-              </div>
-              <p className="text-[10px] text-gray-400 font-bold leading-relaxed ml-2">* {t('form.contact_hint_text') || "Yanındaki yuvarlak kutucuğu işaretlemediğiniz sürece iletişim bilgileriniz profilinizde görünmez."}</p>
-            </div>
-          </ExpandableSection>
 
           {/* Completion Indicator Box previously here */}
           <div className="pt-8 pb-4 px-2 sm:px-4">
             <div className="flex items-center justify-between mb-2 sm:mb-3">
-              <span className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-100 uppercase tracking-widest">
+              <span className="text-[9px] sm:text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest">
                 {t('form.completion_rate') || 'CV TAMAMLANMA ORANI'}
               </span>
-              <span className={`text-[11px] sm:text-xs font-black tracking-tighter ${completion === 100 ? 'text-[#1f6d78]' : 'text-black dark:text-white'}`}>
+              <span className={`text-[11px] sm:text-xs font-black tracking-tight ${completion === 100 ? 'text-[#1f6d78]' : 'text-black dark:text-white'}`}>
                 %{completion}
               </span>
             </div>
@@ -1400,178 +1577,141 @@ const ExpandableSection = ({
 
         </div>
       </ExpandableSection>
-
-      <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
-        {/* KVKK Box */}
-        <div className="bg-white dark:bg-black p-5 sm:p-6 rounded-3xl sm:rounded-[2.5rem] border border-black/10 dark:border-white/5">
-          <div className="flex flex-col gap-4">
-            <div className="flex items-start gap-4 sm:gap-6">
-              <input
-                type="checkbox"
-                id="cv-form-terms"
-                checked={isConsentGiven}
-                onChange={(e) => {
-                  handleCheckboxChange(e);
-                  if (e.target.checked) setShowConsentError(false);
-                }}
-                className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md accent-[#1f6d78] shrink-0 mt-0.5 cursor-pointer border-2 ${showConsentError ? 'border-red-500 bg-red-50' : 'border-black/10'}`}
-              />
-              <label htmlFor="cv-form-terms" className={`text-[10px] sm:text-xs font-bold leading-relaxed cursor-pointer select-none ${showConsentError ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>
-                {t('form.kvkk_text')}
-              </label>
-            </div>
-            {showConsentError && (
-              <p className="text-red-500 text-[10px] sm:text-xs font-bold ml-9">
-                * Lütfen devam etmek için bu alanı işaretleyin.
-              </p>
-            )}
-          </div>
-        </div>
-
-
-      </div>
-
-    </div>
-
-      {/* Footer Actions */}
-        <div className="p-4 sm:px-10 sm:py-6 border-t border-black/10 dark:border-white/10 bg-white dark:bg-black flex flex-row items-stretch gap-3 sm:gap-4 sticky bottom-0 z-10 shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.2)]">
-          {/* Submit Button */}
-          <button
-            disabled={isSubmitting}
-            onClick={async () => {
-              // Consent Validation (Warning only)
-              if (!isConsentGiven) {
-                setShowConsentError(true);
-                // Scroll to checkbox if error
-                const element = document.getElementById('cv-form-terms');
-                if (element) {
-                   element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-                return;
-              }
-
-              // Name Validation
-              if (!formData.name) {
-                setShowWarning({
-                  show: true,
-                  missing: [t('form.fullname')]
-                });
-                return;
-              }
-
-              // Sync legacy fields
-              const syncedData = {
-                ...formData,
-                education: formData.educationDetails?.[0]?.university || formData.education || '',
-                educationLevel: formData.educationDetails?.[0]?.level || formData.educationLevel || '',
-                graduationStatus: formData.educationDetails?.[0]?.status || formData.graduationStatus || '',
-                language: formData.languageDetails?.[0]?.language || formData.language || '',
-                languageLevel: formData.languageDetails?.[0]?.level || formData.languageLevel || '',
-              };
-
-              setIsSubmitting(true);
-              try {
-                await onSubmit(syncedData, isConsentGiven);
-              } finally {
-                setIsSubmitting(false);
-              }
-            }}
-            className="flex-1 bg-[#1f6d78] text-white py-3.5 sm:py-4 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all active:scale-[0.98] shadow-lg shadow-[#1f6d78]/20 disabled:opacity-50 disabled:cursor-not-allowed order-2 text-center"
-          >
-            {isSubmitting ? t('settings.save') : 'YAYINLA'}
-          </button>
-
-          {/* Delete Button */}
-          <button
-            type="button"
-            onClick={async () => {
-              if (window.confirm("CV'nizi tamamen silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
-                if (onDelete) await onDelete();
-              }
-            }}
-            className={`flex-1 border-2 border-red-500 text-red-500 py-3.5 sm:py-4 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-red-50 dark:hover:bg-red-950/30 transition-all active:scale-[0.98] order-1 text-center opacity-100 cursor-pointer`}
-          >
-            CV'Mİ SİL
-          </button>
-        </div>
-
-        {/* KVKK Approval Modal */}
-        {
-          showKVKKModal && (
-            <KVKKApprovalModal
-              onCancel={() => setShowKVKKModal(false)}
-              onApprove={async () => {
-                setShowKVKKModal(false);
-                setIsConsentGiven(true);
-                setHasPriorConsent(true); // Optimistically set prior consent
-
-                // Save consent immediately to DB
-                try {
-                  const { data: { user } } = await supabase.auth.getUser();
-                  if (user) {
-                    await supabase
-                      .from('profiles')
-                      .update({
-                        kvkk_consent: true,
-                        kvkk_consent_date: new Date().toISOString()
-                      })
-                      .eq('id', user.id);
-                  }
-                } catch (err) {
-                  console.error('Error saving consent instantly:', err);
-                }
+    <div className="mt-2 sm:mt-3 space-y-3 sm:space-y-4">
+      {/* KVKK Box */}
+      <div className="bg-white dark:bg-black p-5 sm:p-6 rounded-3xl sm:rounded-[2.5rem] border border-black/10 dark:border-white/5">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-start gap-4 sm:gap-6">
+            <input
+              type="checkbox"
+              id="cv-form-terms"
+              checked={isConsentGiven}
+              onChange={(e) => {
+                handleCheckboxChange(e);
+                if (e.target.checked) setShowConsentError(false);
               }}
+              className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md accent-[#1f6d78] shrink-0 mt-0.5 cursor-pointer border-2 ${showConsentError ? 'border-red-500 bg-red-50' : 'border-black/10'}`}
             />
-          )
-        }
-
-        {/* Warning Overlay */}
-        {
-          showWarning.show && (
-            <div className="absolute inset-0 z-[150] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6  fade-in ">
-              <div className="bg-white border-2 border-red-50 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl   zoom-in-95  text-center relative overflow-hidden">
-                {/* Decoration */}
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-white rounded-full blur-2xl opacity-50 pointer-events-none"></div>
-                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[#1f6d78]/5 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
-
-                <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-xl relative z-10">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
-                  {showWarning.missing.length === 1 && showWarning.missing[0].length > 50 ? t('common.info_msg') : t('common.missing_info')}
-                </h3>
-                <p className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-wider relative z-10">
-                  {showWarning.missing.length === 1 && showWarning.missing[0].length > 50 ? t('common.please_note') : t('common.please_fill')}
-                </p>
-
-                <div className="bg-white rounded-2xl p-4 mb-8 border border-black/10 relative z-10">
-                  <ul className="text-left space-y-2">
-                    {showWarning.missing.map((item, idx) => (
-                      <li key={idx} className="flex items-center gap-3 text-sm font-bold text-gray-700">
-                        <span className="w-1.5 h-1.5 rounded-full bg-black shrink-0"></span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <button
-                  onClick={() => setShowWarning({ show: false, missing: [] })}
-                  className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg shadow-[#1f6d78]/20 active: relative z-10"
-                >
-                  {t('common.ok_fill')}
-                </button>
-              </div>
-            </div>
-          )
-        }
+            <label htmlFor="cv-form-terms" className={`text-[10px] sm:text-xs font-bold leading-relaxed cursor-pointer select-none ${showConsentError ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>
+              {t('form.kvkk_text')} <span className="text-[#1f6d78] font-black">(ZORUNLU)</span>
+            </label>
+          </div>
+          {showConsentError && (
+            <p className="text-red-500 text-[10px] sm:text-xs font-bold ml-9">
+              * Lütfen devam etmek için bu alanı işaretleyin.
+            </p>
+          )}
+        </div>
       </div>
     </div>
-  );
+  </div>
+
+    {/* Footer Actions */}
+    <div className="p-3 sm:px-10 sm:py-5 border-t border-black/5 dark:border-white/5 bg-white/80 dark:bg-black/80 backdrop-blur-md flex flex-row items-center gap-3 sm:gap-4 sticky bottom-0 z-10 shrink-0 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.3)] pb-safe-bottom">
+      <button
+        disabled={isSubmitting || !isConsentGiven}
+        onClick={async () => {
+          if (!formData.name) {
+            setShowWarning({ show: true, missing: [t('form.fullname')] });
+            return;
+          }
+          const syncedData = {
+            ...formData,
+            education: formData.educationDetails?.[0]?.university || formData.education || '',
+            educationLevel: formData.educationDetails?.[0]?.level || formData.educationLevel || '',
+            graduationStatus: formData.educationDetails?.[0]?.status || formData.graduationStatus || '',
+            language: formData.languageDetails?.[0]?.language || formData.language || '',
+            languageLevel: formData.languageDetails?.[0]?.level || formData.languageLevel || '',
+          };
+          setIsSubmitting(true);
+          try { await onSubmit(syncedData, isConsentGiven); } finally { setIsSubmitting(false); }
+        }}
+        className={`flex-[2] h-11 sm:h-14 flex items-center justify-center gap-2.5 sm:gap-3 transition-all active:scale-[0.98] rounded-2xl sm:rounded-full font-black text-[11px] sm:text-[13px] uppercase tracking-widest shadow-xl ${
+          !isConsentGiven 
+          ? 'bg-gray-100 dark:bg-zinc-800 text-gray-400 cursor-not-allowed opacity-50 shadow-none' 
+          : 'bg-[#1f6d78] text-white hover:bg-[#155e68] shadow-[#1f6d78]/20 hover:shadow-[#1f6d78]/30'
+        }`}
+      >
+        {isSubmitting ? (
+          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+        ) : (
+          <>
+            <i className="fi fi-rs-paper-plane text-[15px] sm:text-[18px]"></i>
+            <span>{t('settings.save') === 'Kaydet' ? 'YAYINLA' : t('settings.save')}</span>
+          </>
+        )}
+      </button>
+
+      <button
+        type="button"
+        onClick={async () => {
+          if (window.confirm("CV'nizi tamamen silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
+            if (onDelete) await onDelete();
+          }
+        }}
+        className="flex-1 h-11 sm:h-14 flex items-center justify-center gap-2 sm:gap-2.5 border-2 border-red-500/10 hover:border-red-500 bg-red-50/30 dark:bg-red-950/10 text-red-500 rounded-2xl sm:rounded-full font-black text-[10px] sm:text-[11px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all active:scale-[0.98] group"
+      >
+        <i className="fi fi-rr-trash text-[13px] sm:text-[16px] group-hover:scale-110 transition-transform"></i>
+        <span>CV'Mİ SİL</span>
+      </button>
+    </div>
+
+    {/* Modals */}
+    {showKVKKModal && (
+      <KVKKApprovalModal
+        onCancel={() => setShowKVKKModal(false)}
+        onApprove={async () => {
+          setShowKVKKModal(false);
+          setIsConsentGiven(true);
+          setHasPriorConsent(true);
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+              await supabase.from('profiles').update({ kvkk_consent: true, kvkk_consent_date: new Date().toISOString() }).eq('id', user.id);
+            }
+          } catch (err) { console.error('Error saving consent:', err); }
+        }}
+      />
+    )}
+
+    {showWarning.show && (
+      <div className="absolute inset-0 z-[150] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6 fade-in">
+        <div className="bg-white border-2 border-red-50 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl zoom-in-95 text-center relative overflow-hidden">
+          <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-xl relative z-10">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
+            {showWarning.missing.length === 1 && showWarning.missing[0].length > 50 ? t('common.info_msg') : t('common.missing_info')}
+          </h3>
+          <p className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-wider relative z-10">
+            {showWarning.missing.length === 1 && showWarning.missing[0].length > 50 ? t('common.please_note') : t('common.please_fill')}
+          </p>
+          <div className="bg-white rounded-2xl p-4 mb-8 border border-black/10 relative z-10">
+            <ul className="text-left space-y-2">
+              {showWarning.missing.map((item, idx) => (
+                <li key={idx} className="flex items-center gap-3 text-sm font-bold text-gray-700">
+                  <span className="w-1.5 h-1.5 rounded-full bg-black shrink-0"></span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <button
+            onClick={() => setShowWarning({ show: false, missing: [] })}
+            className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg shadow-[#1f6d78]/20 active:scale-95 z-10"
+          >
+            {t('common.ok_fill')}
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+</div>
+);
 };
 
 export default CVFormModal;

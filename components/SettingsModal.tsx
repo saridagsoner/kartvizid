@@ -12,7 +12,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     const { user, signOut } = useAuth();
     const { language, setLanguage, t } = useLanguage();
     const { theme, toggleTheme } = useTheme();
-    const [activeTab, setActiveTab] = useState<'general' | 'account' | 'security' | 'notifications'>('account');
+    const [activeTab, setActiveTab] = useState<'general' | 'account' | 'security' | 'notifications'>(user ? 'account' : 'general');
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showDeleteSuccess, setShowDeleteSuccess] = useState(false);
     const [showWarning, setShowWarning] = useState<{ show: boolean, message: string }>({ show: false, message: '' });
@@ -161,24 +161,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     return (
         <div className="fixed inset-0 z-[250] flex items-center justify-center sm:p-4 bg-white sm:bg-black/60 sm:backdrop-blur-sm">
             {/* Fixed Height Layout */}
-            <div className="bg-white w-full h-full sm:h-[600px] sm:max-h-[90vh] sm:max-w-2xl sm:rounded-[2rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden">
+            <div className="bg-white w-full h-full sm:h-[600px] sm:max-h-[90vh] sm:max-w-2xl sm:rounded-[2rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden text-black dark:text-white dark:bg-gray-900 transition-colors duration-300">
 
                 {/* Warning / Error Overlay */}
                 {showWarning.show && (
-                    <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6">
-                        <div className="bg-white border-2 border-gray-100 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl text-center relative overflow-hidden">
-                            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
-                            <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-xl relative z-10">
+                    <div className="absolute inset-0 z-[300] flex items-center justify-center bg-white/90 dark:bg-black/90 backdrop-blur-sm p-6">
+                        <div className="bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-[2rem] p-8 w-full max-w-sm shadow-2xl text-center relative overflow-hidden">
+                            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 dark:bg-gray-700 rounded-full blur-2xl opacity-50 pointer-events-none"></div>
+                            <div className="w-16 h-16 bg-black dark:bg-white text-white dark:text-gray-900 rounded-full flex items-center justify-center mx-auto mb-5 text-2xl shadow-xl relative z-10">
                                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <line x1="12" y1="8" x2="12" y2="12"></line>
                                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
+                            <h3 className="text-xl font-black text-black dark:text-white mb-2 leading-tight tracking-tight relative z-10">
                                 Bilgi Mesajı
                             </h3>
-                            <p className="text-sm font-bold text-gray-500 mb-8 leading-relaxed relative z-10">
+                            <p className="text-sm font-bold text-gray-500 dark:text-gray-400 mb-8 leading-relaxed relative z-10">
                                 {showWarning.message}
                             </p>
                             <button
@@ -193,15 +193,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
                 {/* Custom Delete Confirmation Overlay */}
                 {showDeleteConfirm && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm p-6">
-                        <div className="bg-white border border-red-100 rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center">
-                            <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-5 text-2xl">
+                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 dark:bg-black/80 backdrop-blur-sm p-6">
+                        <div className="bg-white dark:bg-gray-800 border border-red-100 dark:border-red-900 rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center">
+                            <div className="w-16 h-16 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mx-auto mb-5 text-2xl">
                                 ⚠️
                             </div>
-                            <h3 className="text-xl font-black text-black mb-3 leading-tight">
+                            <h3 className="text-xl font-black text-black dark:text-white mb-3 leading-tight">
                                 {t('settings.delete_confirm_title')}
                             </h3>
-                            <p className="text-sm text-gray-500 mb-8 leading-relaxed">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
                                 {isEmployer
                                     ? t('settings.delete_confirm_desc_emp')
                                     : t('settings.delete_confirm_desc_seek')
@@ -218,7 +218,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 <button
                                     onClick={() => setShowDeleteConfirm(false)}
                                     disabled={loading}
-                                    className="w-full bg-gray-50 text-black py-3.5 rounded-xl font-bold text-sm hover:bg-gray-100 transition-all active:"
+                                    className="w-full bg-gray-50 dark:bg-gray-700 text-black dark:text-white py-3.5 rounded-xl font-bold text-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition-all active:"
                                 >
                                     {t('settings.cancel')}
                                 </button>
@@ -229,15 +229,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
                 {/* Account Deletion Success Overlay */}
                 {showDeleteSuccess && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/95 backdrop-blur-md p-6">
-                        <div className="bg-white border border-gray-100 rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center">
-                            <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
+                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/95 dark:bg-black/95 backdrop-blur-md p-6">
+                        <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-3xl p-8 w-full max-w-sm shadow-2xl text-center">
+                            <div className="w-20 h-20 bg-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">
                                 👋
                             </div>
-                            <h3 className="text-2xl font-black text-[#1f6d78] mb-4 leading-tight tracking-tight">
+                            <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">
                                 {t('settings.delete_success_title') || 'Hesabınız Silindi'}
                             </h3>
-                            <p className="text-sm font-medium text-gray-500 mb-8 leading-relaxed">
+                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
                                 {t('settings.delete_success_desc') || 'Kartvizid ailesinin bir parçası olduğunuz için teşekkür ederiz. Sizi tekrar aramızda görmekten mutluluk duyarız.'}
                             </p>
                             <button
@@ -251,16 +251,16 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                 )}
 
                 {/* Header */}
-                <div className="p-6 sm:p-8 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10 shrink-0">
+                <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
                     <div>
-                        <h2 className="text-xl sm:text-2xl font-black text-black tracking-tighter">{t('settings.header_title')}</h2>
-                        <p className="text-[10px] sm:text-[11px] text-gray-400 font-bold uppercase tracking-widest mt-1">
-                            {t('settings.header_subtitle')}
+                        <h2 className="text-xl sm:text-2xl font-black text-black dark:text-white tracking-tighter">{t('settings.header_title')}</h2>
+                        <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mt-1">
+                            {user ? t('settings.header_subtitle') : t('account.appearance')}
                         </p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-xl text-black hover:bg-black hover:text-white transition-all active:"
+                        className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-xl text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all active:"
                     >
                         ×
                     </button>
@@ -268,39 +268,45 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
                 <div className="flex flex-col sm:flex-row flex-1 overflow-hidden">
                     {/* Sidebar Tabs */}
-                    <div className="w-full sm:w-48 bg-gray-50 p-4 sm:p-6 flex flex-row sm:flex-col gap-2 border-b sm:border-b-0 sm:border-r border-gray-100 shrink-0 overflow-x-auto hide-scrollbar snap-x snap-mandatory">
-                        <button
-                            onClick={() => setActiveTab('account')}
-                            className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'account' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
-                                }`}
-                        >
-                            {t('settings.account')}
-                        </button>
+                    <div className="w-full sm:w-48 bg-gray-50 dark:bg-gray-850 p-4 sm:p-6 flex flex-row sm:flex-col gap-2 border-b sm:border-b-0 sm:border-r border-gray-100 dark:border-gray-800 shrink-0 overflow-x-auto hide-scrollbar snap-x snap-mandatory">
+                        {user && (
+                            <button
+                                onClick={() => setActiveTab('account')}
+                                className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'account' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800'
+                                    }`}
+                            >
+                                {t('settings.account')}
+                            </button>
+                        )}
                         <button
                             onClick={() => setActiveTab('general')}
-                            className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'general' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
+                            className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'general' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800'
                                 }`}
                         >
                             {t('settings.general')}
                         </button>
-                        <button
-                            onClick={() => setActiveTab('security')}
-                            className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'security' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
-                                }`}
-                        >
-                            {t('settings.security')}
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('notifications')}
-                            className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'notifications' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 hover:bg-gray-200'
-                                }`}
-                        >
-                            {t('settings.notifications')}
-                        </button>
+                        {user && (
+                            <>
+                                <button
+                                    onClick={() => setActiveTab('security')}
+                                    className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'security' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800'
+                                        }`}
+                                >
+                                    {t('settings.security')}
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('notifications')}
+                                    className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'notifications' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800'
+                                        }`}
+                                >
+                                    {t('settings.notifications')}
+                                </button>
+                            </>
+                        )}
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 p-6 sm:p-8 overflow-y-auto custom-scrollbar">
+                    <div className="flex-1 p-6 sm:p-8 overflow-y-auto custom-scrollbar dark:bg-gray-900">
 
                         {activeTab === 'general' && (
                             <div className="space-y-8">

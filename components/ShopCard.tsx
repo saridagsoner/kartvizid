@@ -1,4 +1,6 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import ImageWithFallback from './ImageWithFallback';
 
 interface ShopCardProps {
   shop: {
@@ -15,19 +17,20 @@ interface ShopCardProps {
 }
 
 const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick }) => {
+  const { t } = useLanguage();
+
   return (
     <div
       onClick={onClick}
       className="flex items-center gap-4 sm:gap-10 pl-1.5 pr-4 py-4 sm:p-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-750 transition-colors sm:border sm:rounded-[35px] sm:mb-4 cursor-pointer group"
     >
       <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-xl sm:rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 bg-white dark:bg-gray-700 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
-        {shop.logo_url ? (
-          <img src={shop.logo_url} alt={shop.name} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gray-50 dark:bg-gray-800">
-             <i className="fi fi-rr-shop text-2xl sm:text-4xl text-gray-300 dark:text-gray-600"></i>
-          </div>
-        )}
+        <ImageWithFallback 
+          src={shop.logo_url} 
+          alt={shop.name} 
+          className="w-full h-full object-cover"
+          initialsClassName="text-3xl sm:text-5xl font-black"
+        />
       </div>
 
       <div className="flex-1 min-w-0">
@@ -43,13 +46,13 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick }) => {
           
           <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-sm font-bold text-gray-500 dark:text-gray-400">
             <i className="fi fi-rr-briefcase translate-y-[0.5px]"></i>
-            <span className="truncate uppercase tracking-wider">{shop.profession}</span>
+            <span className="truncate uppercase tracking-wider">{shop.profession || t('card.no_profession')}</span>
           </div>
 
           <div className="flex items-center gap-3 mt-0.5">
-            <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-bold text-gray-400 dark:text-gray-500">
+            <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-bold text-gray-400 dark:text-gray-500 whitespace-nowrap">
               <i className="fi fi-rr-marker"></i>
-              <span>{shop.city}{shop.district ? `, ${shop.district}` : ''}</span>
+              <span>{shop.city || t('card.no_city')}{shop.district ? `, ${shop.district}` : ''}</span>
             </div>
             
             {shop.phone && (
@@ -62,8 +65,8 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick }) => {
         </div>
         
         {shop.description && (
-          <p className="hidden sm:block mt-3 text-sm text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">
-            {shop.description}
+          <p className="hidden sm:block mt-3 text-sm text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed italic opacity-90">
+             {shop.description}
           </p>
         )}
       </div>

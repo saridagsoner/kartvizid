@@ -15,6 +15,7 @@ import Filters from './components/Filters';
 import Footer from './components/Footer';
 import SortDropdown from './components/SortDropdown';
 import MobileBottomNav from './components/MobileBottomNav';
+import ImageWithFallback from './components/ImageWithFallback';
 import MobileMenuDrawer from './components/MobileMenuDrawer';
 import { BusinessCardSkeleton } from './components/Skeleton';
 
@@ -60,6 +61,19 @@ const getFriendlyErrorMessage = (error: any): string => {
   return 'Bir hata oluştu: ' + message;
 };
 
+// Seeded random rank for daily shuffling
+const getDailySeed = () => new Date().toDateString();
+
+const getDailyRank = (id: string, seed: string) => {
+  let hash = 0;
+  const str = id + seed;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash;
+};
+
 const App: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -95,7 +109,6 @@ const App: React.FC = () => {
     languageLevel: '',
     salaryMin: '',
     salaryMax: '',
-    skills: [],
     workType: '',
     employmentType: '',
     educationLevel: '',
@@ -105,7 +118,9 @@ const App: React.FC = () => {
     disabilityStatus: '',
     noticePeriod: '',
     travelStatus: '',
-    driverLicenses: []
+    driverLicenses: [],
+    preferredCities: [],
+    preferredCountries: []
   });
 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -618,6 +633,10 @@ const App: React.FC = () => {
         isEmailPublic: item.is_email_public,
         isPhonePublic: item.is_phone_public,
         workingStatus: item.working_status,
+        salaryCurrency: item.salary_currency,
+        preferredCities: item.preferred_cities || (item.preferred_city ? [item.preferred_city] : []),
+        preferredCountries: item.preferred_countries || [],
+        preferredRoles: item.preferred_roles || [],
         references: item.references || []
       }));
       setPopularCVs(mapped);
@@ -706,6 +725,10 @@ const App: React.FC = () => {
         isEmailPublic: item.is_email_public,
         isPhonePublic: item.is_phone_public,
         workingStatus: item.working_status,
+        salaryCurrency: item.salary_currency,
+        preferredCities: item.preferred_cities || (item.preferred_city ? [item.preferred_city] : []),
+        preferredCountries: item.preferred_countries || [],
+        preferredRoles: item.preferred_roles || [],
         references: item.references || []
       }));
       setJobFinders(mapped);
@@ -817,7 +840,35 @@ const App: React.FC = () => {
           }
 
           if (data) {
-            navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data as CV, background: background || location } });
+            const mapped: CV = {
+              ...data,
+              userId: data.user_id,
+              experienceYears: data.experience_years || 0,
+              experienceMonths: data.experience_months || 0,
+              salaryMin: data.salary_min || 0,
+              salaryMax: data.salary_max || 0,
+              salaryCurrency: data.salary_currency,
+              educationLevel: data.education_level || '',
+              graduationStatus: data.graduation_status || '',
+              workType: data.work_type || '',
+              employmentType: data.employment_type || '',
+              militaryStatus: data.military_status || '',
+              disabilityStatus: data.disability_status || '',
+              noticePeriod: data.notice_period || '',
+              travelStatus: data.travel_status || '',
+              driverLicense: data.driver_license || [],
+              isEmailPublic: data.is_email_public,
+              isPhonePublic: data.is_phone_public,
+              workingStatus: data.working_status,
+              preferredCities: data.preferred_cities || (data.preferred_city ? [data.preferred_city] : []),
+              preferredCountries: data.preferred_countries || [],
+              preferredRoles: data.preferred_roles || [],
+              languageDetails: data.languageDetails || [],
+              educationDetails: data.educationDetails || [],
+              workExperience: data.workExperience || [],
+              internshipDetails: data.internshipDetails || []
+            };
+            navigate(`/cv/${data.slug || data.id}`, { state: { cvData: mapped, background: background || location } });
             return true;
           }
         } catch (e) {
@@ -968,7 +1019,6 @@ const App: React.FC = () => {
           salaryMin: item.salary_min || 0,
           salaryMax: item.salary_max || 0,
           about: item.about || '',
-          skills: item.skills || [],
           education: item.education || '',
           educationLevel: item.education_level || '',
           graduationStatus: item.graduation_status || '',
@@ -990,14 +1040,15 @@ const App: React.FC = () => {
           isPhonePublic: item.is_phone_public,
           workingStatus: item.working_status || 'open',
           references: item.references,
-          // Map new JSONB columns
           workExperience: item.work_experience || [],
           internshipDetails: item.internship_details || [],
           educationDetails: item.education_details || [],
           languageDetails: item.language_details || [],
           certificates: item.certificates || [],
-          preferredCity: item.preferred_city,
+          preferredCities: item.preferred_cities || (item.preferred_city ? [item.preferred_city] : []),
+          preferredCountries: item.preferred_countries || [],
           preferredRoles: item.preferred_roles || [],
+          salaryCurrency: item.salary_currency,
           created_at: item.created_at
         }));
         setCvList(mappedData);
@@ -1086,7 +1137,10 @@ const App: React.FC = () => {
         district: companyData.district,
         country: companyData.country,
         address: companyData.address,
-        logo_url: companyData.logoUrl
+        logo_url: companyData.logoUrl,
+        founded_year: companyData.foundedYear,
+        employee_count: companyData.employeeCount,
+        instagram_url: companyData.instagramUrl
       } as any;
 
       // Clean up undefined values
@@ -1118,6 +1172,24 @@ const App: React.FC = () => {
     }
   };
 
+  const handleDeleteCompany = async () => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from('companies')
+        .delete()
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+      showToast('İş veren profili başarıyla silindi!', 'success');
+      navigate('/', { replace: true, state: {} });
+      fetchCompany();
+    } catch (error: any) {
+      console.error('Error deleting company:', error);
+      showToast(getFriendlyErrorMessage(error), 'error');
+    }
+  };
+
   const fetchConversations = async () => {
     if (!user) return;
     try {
@@ -1130,27 +1202,71 @@ const App: React.FC = () => {
 
       if (error) throw error;
 
+      // Parallelize last_message backfill to avoid N+1 slow loading
+      const conversationsData = data || [];
+      await Promise.all(conversationsData.map(async (conv) => {
+        if (!conv.last_message) {
+          const { data: latestMsg } = await supabase
+            .from('messages')
+            .select('content')
+            .eq('conversation_id', conv.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+          
+          if (latestMsg) {
+            conv.last_message = latestMsg.content;
+          }
+        }
+      }));
+
       // 2. Fetch profiles for all participants
       const participantIds = new Set<string>();
-      (data || []).forEach(c => {
+      conversationsData.forEach(c => {
         if (c.participant1_id) participantIds.add(c.participant1_id);
         if (c.participant2_id) participantIds.add(c.participant2_id);
       });
 
       let profilesMap = new Map();
       if (participantIds.size > 0) {
-        const { data: profilesData, error: profilesError } = await supabase
+        // Fetch profiles (might be blocked by RLS)
+        const { data: profilesData } = await supabase
           .from('profiles')
           .select('id, full_name, avatar_url, role')
           .in('id', Array.from(participantIds));
           
-        if (!profilesError && profilesData) {
+        if (profilesData) {
           profilesData.forEach(p => profilesMap.set(p.id, p));
         }
+
+        // Fetch fallback names from public cvs and companies tables (RLS is public here)
+        const { data: cvsData } = await supabase.from('cvs').select('user_id, name, photoUrl, profession').in('user_id', Array.from(participantIds));
+        const { data: companiesData } = await supabase.from('companies').select('user_id, company_name, logo_url').in('user_id', Array.from(participantIds));
+
+        participantIds.forEach(id => {
+          if (!profilesMap.has(id)) {
+            const cvMatch = cvsData?.find(c => c.user_id === id);
+            const compMatch = companiesData?.find(c => c.user_id === id);
+            
+            if (compMatch) {
+              profilesMap.set(id, { id, full_name: compMatch.company_name, avatar_url: compMatch.logo_url, role: 'employer' });
+            } else if (cvMatch) {
+              profilesMap.set(id, { id, full_name: cvMatch.name, avatar_url: cvMatch.photoUrl, role: 'job_seeker', profession: cvMatch.profession });
+            }
+          } else {
+             // If profile was found via RLS, still attach profession from CV if present
+             const cvMatch = cvsData?.find(c => c.user_id === id);
+             if (cvMatch && cvMatch.profession) {
+               const p = profilesMap.get(id);
+               p.profession = cvMatch.profession;
+               profilesMap.set(id, p);
+             }
+          }
+        });
       }
 
       // 3. Map conversations with their respective other participant profiles
-      const mapped: Conversation[] = (data || []).map((conv: any) => {
+      const mapped: Conversation[] = conversationsData.map((conv: any) => {
         const p1 = profilesMap.get(conv.participant1_id);
         const p2 = profilesMap.get(conv.participant2_id);
         const otherParticipant = conv.participant1_id === user.id ? p2 : p1;
@@ -1281,7 +1397,6 @@ const App: React.FC = () => {
         language: cvData.language,
         language_level: cvData.languageLevel,
         about: cvData.about,
-        skills: cvData.skills,
         salary_min: cvData.salaryMin,
 
         salary_max: cvData.salaryMax,
@@ -1298,10 +1413,6 @@ const App: React.FC = () => {
         travel_status: cvData.travelStatus,
         notice_period: cvData.noticePeriod,
         photo_url: cvData.photoUrl || '',
-        email: cvData.email,
-        phone: cvData.phone,
-        is_email_public: cvData.isEmailPublic,
-        is_phone_public: cvData.isPhonePublic,
         working_status: cvData.workingStatus,
         references: cvData.references,
         preferred_city: cvData.preferredCity,
@@ -1365,8 +1476,7 @@ const App: React.FC = () => {
       const matchesSearch =
         cv.name.toLocaleLowerCase('tr').includes(searchLower) ||
         cv.profession.toLocaleLowerCase('tr').includes(searchLower) ||
-        cv.city.toLocaleLowerCase('tr').includes(searchLower) ||
-        cv.skills.some(s => s.toLocaleLowerCase('tr').includes(searchLower));
+        cv.city.toLocaleLowerCase('tr').includes(searchLower);
 
       const matchesProfession = !activeFilters.profession || cv.profession?.split(',').map(p => p.trim()).includes(activeFilters.profession);
       const matchesCity = !activeFilters.city || cv.city === activeFilters.city;
@@ -1388,8 +1498,6 @@ const App: React.FC = () => {
       const matchesLangLevel = !activeFilters.languageLevel || cv.languageLevel === activeFilters.languageLevel;
       const matchesSalaryMin = activeFilters.salaryMin === '' || cv.salaryMax >= (activeFilters.salaryMin as number);
       const matchesSalaryMax = activeFilters.salaryMax === '' || cv.salaryMin <= (activeFilters.salaryMax as number);
-      const matchesSkills = activeFilters.skills.length === 0 || activeFilters.skills.every(s => cv.skills.includes(s));
-      const matchesWorkType = !activeFilters.workType || cv.workType === activeFilters.workType;
       const matchesEmpType = !activeFilters.employmentType || cv.employmentType === activeFilters.employmentType;
       const matchesEduLevel = !activeFilters.educationLevel || cv.educationLevel === activeFilters.educationLevel;
       const matchesGradStatus = !activeFilters.graduationStatus || cv.graduationStatus === activeFilters.graduationStatus;
@@ -1400,9 +1508,11 @@ const App: React.FC = () => {
       const matchesDriver = activeFilters.driverLicenses.length === 0 ||
         (cv.driverLicense && activeFilters.driverLicenses.some(l => cv.driverLicense?.includes(l)));
 
+      const matchesWorkType = !activeFilters.workType || cv.workType === activeFilters.workType;
+
       return matchesSearch && matchesProfession && matchesCity && matchesExperience &&
         matchesLanguage && matchesLangLevel && matchesSalaryMin && matchesSalaryMax &&
-        matchesSkills && matchesWorkType && matchesEmpType && matchesEduLevel &&
+        matchesWorkType && matchesEmpType && matchesEduLevel &&
         matchesGradStatus && matchesMilitary && matchesMarital && matchesDisability &&
         matchesTravel && matchesDriver;
     });
@@ -1416,12 +1526,49 @@ const App: React.FC = () => {
     } else if (sortBy === 'oldest') {
       result = [...result].sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
     } else if (sortBy === 'default') {
-      // Default = Popularity (Most Views)
-      result = [...result].sort((a, b) => (b.views || 0) - (a.views || 0));
+      // Daily Random Shuffle (Changes every 24h)
+      const seed = getDailySeed();
+      result = [...result].sort((a, b) => getDailyRank(a.id, seed) - getDailyRank(b.id, seed));
     }
 
     return result;
   }, [cvList, searchQuery, activeFilters, sortBy]);
+
+  const filteredShops = useMemo(() => {
+    let result = shopList.filter(s => 
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.profession && s.profession.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
+    if (sortBy === 'newest') {
+      result = [...result].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    } else if (sortBy === 'oldest') {
+      result = [...result].sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+    } else if (sortBy === 'default') {
+      const seed = getDailySeed();
+      result = [...result].sort((a, b) => getDailyRank(a.id, seed) - getDailyRank(b.id, seed));
+    }
+
+    return result;
+  }, [shopList, searchQuery, sortBy]);
+
+  const filteredEmployers = useMemo(() => {
+    let result = companyList.filter(c => 
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (c.industry && c.industry.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
+    if (sortBy === 'newest') {
+      result = [...result].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    } else if (sortBy === 'oldest') {
+      result = [...result].sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+    } else if (sortBy === 'default') {
+      const seed = getDailySeed();
+      result = [...result].sort((a, b) => getDailyRank(a.id || a.userId, seed) - getDailyRank(b.id || b.userId, seed));
+    }
+
+    return result;
+  }, [companyList, searchQuery, sortBy]);
 
   const totalPages = Math.ceil(filteredCVs.length / ITEMS_PER_PAGE);
   const currentItems = useMemo(() => {
@@ -1722,18 +1869,23 @@ const App: React.FC = () => {
             <div className="flex sm:hidden items-center justify-between px-4 mt-0.5 mb-0">
               <div className="flex items-center gap-4 pt-1.5 pb-0.5">
                 <div className="flex flex-col gap-0 w-full">
-                  <div className="text-[20px] font-black tracking-tighter text-black dark:text-white transition-all leading-none mb-1">
-                    {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
-                  </div>
-                  <div className="flex items-center w-full mt-1.5">
-                    {/* Icon moved further right, text stays fixed */}
-                    <div className="w-[36px] flex justify-center text-gray-400 dark:text-gray-500 opacity-80 shrink-0 mt-0.5 ml-[16px]">
-                      <i className="fi fi-rr-ballot text-[16px]"></i>
+                  {((viewMode === 'cvs') || 
+                    (viewMode === 'shops' && (showAllShops || searchQuery.length > 0)) || 
+                    (viewMode === 'employers' && (showAllEmployers || searchQuery.length > 0))) && (
+                    <div className="animate-in fade-in duration-300 pb-2">
+                      <div className="text-[20px] font-black tracking-tighter text-black dark:text-white transition-all leading-none mb-1">
+                        {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
+                      </div>
+                      <div className="flex items-center w-full mt-1.5 px-0">
+                        <div className="flex items-center text-gray-400 dark:text-gray-500 opacity-70 shrink-0 mt-0.5 pr-1.5">
+                          <i className="fi fi-rr-ballot text-[13px]"></i>
+                        </div>
+                        <div className="flex-1">
+                          <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
+                        </div>
+                      </div>
                     </div>
-                    <div className="pl-[4px]">
-                      <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -1845,12 +1997,9 @@ const App: React.FC = () => {
                     <p className="text-gray-800 dark:text-white font-bold">{t('feed.no_results')}</p>
                     <button onClick={() => {
                       setSortBy('default');
-                      setActiveFilters({
-                        profession: '', city: '', experience: '', language: '', languageLevel: '', salaryMin: '', salaryMax: '',
-                        skills: [], workType: '', employmentType: '', educationLevel: '', graduationStatus: '',
-                        militaryStatus: '', maritalStatus: '', disabilityStatus: '', noticePeriod: '', travelStatus: '', driverLicenses: []
-                      });
-                    }} className="mt-4 text-blue-500 font-bold hover:underline">{t('feed.reset_filters')}</button>
+                    }} className="mt-4 text-[#1f6d78] dark:text-[#2dd4bf] font-black hover:underline uppercase tracking-widest text-sm">
+                      Filtreleri Temizle
+                    </button>
                   </div>
                 )
               ) : viewMode === 'employers' ? (
@@ -1859,25 +2008,20 @@ const App: React.FC = () => {
                   {/* Employer List Content */}
 
                   {showAllEmployers || searchQuery.length > 0 ? (
-                    companyList.filter(c => 
-                      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      (c.industry && c.industry.toLowerCase().includes(searchQuery.toLowerCase()))
-                    ).length > 0 ? (
-                      companyList.filter(c => 
-                        c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        (c.industry && c.industry.toLowerCase().includes(searchQuery.toLowerCase()))
-                      ).map(company => (
+                    filteredEmployers.length > 0 ? (
+                      filteredEmployers.map(company => (
                         <div
                           key={company.id}
                           onClick={() => handleOpenProfile(company.userId, 'employer')}
                           className="flex items-center gap-4 sm:gap-10 pl-1.5 pr-4 py-4 sm:p-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-white/10 active:bg-gray-50 dark:active:bg-gray-750 transition-colors sm:border sm:rounded-[35px] sm:mb-4"
                         >
-                          <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-lg sm:rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 bg-gray-50 dark:bg-gray-800 flex items-center justify-center shadow-sm sm:border sm:border-gray-100 dark:sm:border-gray-700">
-                            {company.logoUrl ? (
-                              <img src={company.logoUrl} alt={company.name} className="w-full h-full object-cover" />
-                            ) : (
-                               <i className="fi fi-rr-briefcase text-2xl sm:text-4xl text-gray-300 dark:text-gray-600"></i>
-                            )}
+                          <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-lg sm:rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 shadow-sm flex items-center justify-center text-center">
+                            <ImageWithFallback 
+                              src={company.logoUrl} 
+                              alt={company.name} 
+                              className="w-full h-full object-cover"
+                              initialsClassName="text-3xl sm:text-5xl font-black"
+                            />
                           </div>
                           <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div className="flex-1 min-w-0">
@@ -1886,11 +2030,11 @@ const App: React.FC = () => {
                                   {company.name}
                                 </h3>
                                 <p className="text-[13px] sm:text-[18px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1">
-                                  {company.industry}
+                                  {company.industry || t('card.no_profession')}
                                 </p>
-                                <div className="flex items-center gap-1.5 mt-0.5 sm:mt-1 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold">
+                                <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold whitespace-nowrap">
                                   <i className="fi fi-rr-marker"></i>
-                                  <span className="lowercase first-letter:uppercase">{company.city}</span>
+                                  <span className="">{company.city || t('card.no_city')}</span>
                                 </div>
                               </div>
                             </div>
@@ -1920,55 +2064,45 @@ const App: React.FC = () => {
                       </div>
                     )
                   ) : (
-                    <div className="flex flex-col gap-4">
-                      {/* Landing Section First (Flat Style) */}
-                      <div className="bg-white dark:bg-gray-900 py-6 sm:py-10 text-gray-900 dark:text-white overflow-hidden relative group transition-colors duration-300 px-4 sm:px-10">
-                        <div className="relative z-10 flex flex-col items-center">
+                      <div className="bg-white dark:bg-gray-900 py-6 sm:py-10 text-gray-900 dark:text-white overflow-hidden relative group transition-colors duration-300">
+                        <div className="relative z-10 flex flex-col items-center px-4">
                           <div className="text-center">
-                            <h2 className="text-2xl sm:text-[42px] font-black mb-4 leading-[1.1] tracking-tight text-gray-900 dark:text-white">
-                              Geleceğin Yıldızlarını <br /> Ekibinize Katın!
+                            <h2 className="text-3xl sm:text-[40px] font-black mb-6 leading-[1.1] tracking-tight text-gray-900 dark:text-white">
+                              Geleceğin Yıldızlarını <br className="sm:hidden" /> Ekibinize Katın
                             </h2>
-                            <p className="text-gray-500 dark:text-gray-400 text-[13px] sm:text-[17px] font-medium mb-10 max-w-lg leading-relaxed mx-auto">
-                              Doğru yeteneği bulmak hiç bu kadar kolay olmamıştı. Kartvizid'de şirket profilinizi oluşturun, ilanlarınızı yayınlayın ve doğrudan profesyonellere ulaşın.
+                            <p className="text-gray-500 dark:text-gray-400 text-[13px] sm:text-[15px] font-bold mb-12 max-w-lg leading-relaxed mx-auto px-6 sm:px-0">
+                              Doğru yeteneği bulmak hiç bu kadar kolay olmamıştı. <br className="hidden sm:block" /> Kartvizid'de profilinizi oluşturun ve doğrudan profesyonellere ulaşın.
                             </p>
                             
-                            <div className="flex flex-col items-center gap-5 w-full max-w-[400px] mx-auto">
-                              <button 
-                                onClick={() => {
-                                  if (!user) {
-                                    handleAuthOpen('signup', 'employer');
-                                  } else {
-                                    navigate('/sirket-olustur');
-                                  }
-                                }}
-                                className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white py-5 px-9 rounded-[2.2rem] transition-all hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-[0.98] shadow-xl shadow-black/5"
-                              >
-                                <div className="flex items-center gap-6">
-                                  <i className="fi fi-rr-building text-[29px] text-[#1f6d78] dark:text-[#2dd4bf]"></i>
-                                  <div className="text-left">
-                                    <h4 className="text-[17px] font-black text-[#1f6d78] dark:text-[#2dd4bf] leading-tight mb-1">İş Veren Kaydı Oluştur</h4>
-                                    <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-tight">Şirketinizi kaydedin ve aradığınız yetenekleri bulun</p>
-                                  </div>
-                                </div>
-                              </button>
-
+                            <div className="flex flex-col items-center gap-8 w-full max-w-[380px] mx-auto">
+                              <div className="flex flex-col items-center gap-3 w-full">
+                                <button 
+                                  onClick={() => {
+                                    if (!user) {
+                                      handleAuthOpen('signup', 'employer');
+                                    } else {
+                                      navigate('/sirket-olustur');
+                                    }
+                                  }}
+                                  className="px-8 py-3 text-[15px] font-black bg-[#1f6d78] text-white rounded-full transition-all hover:bg-[#154e56] active:scale-95 shadow-lg shadow-[#1f6d78]/20 uppercase tracking-widest whitespace-nowrap"
+                                >
+                                  İş Veren Kaydı Oluştur
+                                </button>
+                                <p className="text-[10px] sm:text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-center mt-1">
+                                  Şirketinizi kaydedin ve aradığınız yetenekleri bulun
+                                </p>
+                              </div>
+    
                               <button 
                                 onClick={() => setShowAllEmployers(true)}
-                                className="w-full bg-white dark:bg-gray-800 border-2 border-black dark:border-white py-5 px-9 rounded-[2.2rem] transition-all hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-[0.98] shadow-xl shadow-black/5"
+                                className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-[12px] sm:text-[13px] hover:underline uppercase tracking-widest transition-all active:scale-95"
                               >
-                                <div className="flex items-center gap-6">
-                                  <i className="fi fi-rr-search-alt text-[29px] text-[#1f6d78] dark:text-[#2dd4bf]"></i>
-                                  <div className="text-left">
-                                    <h4 className="text-[17px] font-black text-[#1f6d78] dark:text-[#2dd4bf] leading-tight mb-1">İş Verenleri Keşfet</h4>
-                                    <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-tight">Sektörün öncü firmalarını inceleyin</p>
-                                  </div>
-                                </div>
+                                İş Verenleri Keşfet
                               </button>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
                   )}
                 </div>
               ) : (
@@ -1976,15 +2110,9 @@ const App: React.FC = () => {
                 <div className="flex flex-col gap-6">
                   {/* Hizmetler List Content */}
                   {showAllShops || searchQuery.length > 0 ? (
-                    shopList.filter(s => 
-                      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      (s.profession && s.profession.toLowerCase().includes(searchQuery.toLowerCase()))
-                    ).length > 0 ? (
+                    filteredShops.length > 0 ? (
                       <div className="flex flex-col gap-4">
-                        {shopList.filter(s => 
-                          s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          (s.profession && s.profession.toLowerCase().includes(searchQuery.toLowerCase()))
-                        ).map(shop => (
+                        {filteredShops.map(shop => (
                           <ShopCard
                             key={shop.id}
                             shop={shop}
@@ -2018,38 +2146,31 @@ const App: React.FC = () => {
                     /* Shops Landing / Explanation Section - Updated for Flat background */
                     <div className="bg-white dark:bg-gray-900 py-6 sm:py-10 text-gray-900 dark:text-white overflow-hidden relative group transition-colors duration-300">
                       <div className="relative z-10 flex flex-col sm:flex-row items-center gap-8">
-                        <div className="flex-1 text-center sm:text-left">
-                          <h2 className="text-3xl sm:text-[42px] font-black mb-6 leading-[1.1] tracking-tight text-gray-900 dark:text-white">
-                            Yeteneğini Kazanca <br /> Dönüştürme Vakti!
+                        <div className="flex-1 text-center">
+                          <h2 className="text-3xl sm:text-[40px] font-black mb-6 leading-[1.1] tracking-tight text-gray-900 dark:text-white">
+                            Yeteneğini Kazanca <br className="sm:hidden" /> Dönüştür
                           </h2>
-                          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-[17px] font-medium mb-10 max-w-lg leading-relaxed">
-                            Kartvizid'de sadece iş arayanlar değil, kendi işinin patronu olan hizmet sağlayıcılar da kazanıyor. Ustalığını konuştur, profilini oluştur ve doğrudan müşterilerin seni bulmasını sağla.
+                          <p className="text-gray-500 dark:text-gray-400 text-[13px] sm:text-[15px] font-bold mb-12 max-w-lg leading-relaxed mx-auto px-6 sm:px-0">
+                            Kartvizid’de ustalığınızı kazanca, profilinizi birer iş fırsatına dönüştürün. <br className="hidden sm:block" /> Doğrudan müşterilere ulaşmanın en şeffaf yolu.
                           </p>
-                          <div className="flex flex-col sm:flex-row gap-5 items-center">
-                            <button 
-                              onClick={() => handleAuthOpen('signup', 'shop')}
-                              className="w-full sm:w-auto bg-white dark:bg-gray-800 border-2 border-black dark:border-white py-5 px-9 rounded-[2.2rem] transition-all hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-[0.98] shadow-xl shadow-black/5"
-                            >
-                              <div className="flex items-center gap-6">
-                                <i className="fi fi-rr-shop text-[29px] text-[#1f6d78] dark:text-[#2dd4bf]"></i>
-                                <div className="text-left">
-                                  <h4 className="text-[17px] font-black text-[#1f6d78] dark:text-[#2dd4bf] leading-tight mb-1">Hemen Hizmet Vermeye Başla</h4>
-                                  <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-tight">Yeteneklerinizi kazanca dönüştürün</p>
-                                </div>
-                              </div>
-                            </button>
+                          <div className="flex flex-col items-center gap-8 w-full max-w-[380px] mx-auto">
+                            <div className="flex flex-col items-center gap-3 w-full">
+                              <button 
+                                onClick={() => handleAuthOpen('signup', 'shop')}
+                                className="px-8 py-3 text-[15px] font-black bg-[#1f6d78] text-white rounded-full transition-all hover:bg-[#154e56] active:scale-95 shadow-lg shadow-[#1f6d78]/20 uppercase tracking-widest whitespace-nowrap"
+                              >
+                                Hemen Hizmet Vermeye Başla
+                              </button>
+                              <p className="text-[10px] sm:text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-center mt-1">
+                                Yeteneklerinizi kazanca dönüştürün
+                              </p>
+                            </div>
   
                             <button 
                               onClick={() => setShowAllShops(true)}
-                              className="w-full sm:w-auto bg-white dark:bg-gray-800 border-2 border-black dark:border-white py-5 px-9 rounded-[2.2rem] transition-all hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-[0.98] shadow-xl shadow-black/5"
+                              className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-[12px] sm:text-[13px] hover:underline uppercase tracking-widest transition-all active:scale-95"
                             >
-                              <div className="flex items-center gap-6">
-                                <i className="fi fi-rr-search-heart text-[29px] text-[#1f6d78] dark:text-[#2dd4bf]"></i>
-                                <div className="text-left">
-                                  <h4 className="text-[17px] font-black text-[#1f6d78] dark:text-[#2dd4bf] leading-tight mb-1">Hizmetleri Keşfet</h4>
-                                  <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-tight">Sektördeki uzmanlara ulaşın</p>
-                                </div>
-                              </div>
+                              Hizmetleri Keşfet
                             </button>
                           </div>
                         </div>
@@ -2170,9 +2291,13 @@ const App: React.FC = () => {
           notificationCount={generalNotifications.filter(n => !n.is_read).length}
           notifications={[...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
           onMarkNotificationRead={markNotificationRead}
-          onMarkAllRead={markAllNotificationsRead}
+          onOpenNotifications={() => {
+            navigate('/bildirimler', { state: { background: background || location } });
+          }}
           onOpenProfile={(uid, role) => {
-            if (user && uid === user.id && !currentUserCV) {
+            const userRole = user?.user_metadata?.role;
+            // Only show CV promo if user is clicking their own profile AND doesn't have a CV AND isn't an employer/shop
+            if (user && uid === user.id && !currentUserCV && userRole !== 'employer' && userRole !== 'shop') {
               if (isCVPromoOpen) {
                 navigate('/', { replace: true });
                 closeAllModals();
@@ -2188,10 +2313,7 @@ const App: React.FC = () => {
               closeAllModals();
               return;
             }
-            handleOpenProfile(uid, role);
-          }}
-          onOpenNotifications={() => {
-            navigate('/bildirimler', { state: { background: background || location } });
+            handleOpenProfile(uid, role || userRole);
           }}
           onOpenSavedCVs={() => {
             setIsSavedCVsOpen(true);
@@ -2252,6 +2374,7 @@ const App: React.FC = () => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         user={user}
+        isEmployer={!!activeCompany || user?.user_metadata?.role === 'employer'}
         onOpenSettings={() => {
           setIsMobileMenuOpen(false);
           navigate('/ayarlar', { state: { background: background || location } });
@@ -2279,6 +2402,12 @@ const App: React.FC = () => {
           shop={activeShop}
           isOpen={isShopProfileOpen}
           onClose={() => setIsShopProfileOpen(false)}
+          onOpenChat={() => {
+            if (activeShop.user_id) {
+              handleOpenChat(activeShop.user_id);
+              setIsShopProfileOpen(false);
+            }
+          }}
         />
       )}
 
@@ -2410,6 +2539,7 @@ const App: React.FC = () => {
               navigate('/', { replace: true });
             }}
             initialData={activeCompany || undefined}
+            onDelete={handleDeleteCompany}
             availableCities={availableCities}
           />
         } />
@@ -2444,9 +2574,6 @@ const App: React.FC = () => {
               if (cv.workExperience && cv.workExperience.length > 0) score += 15;
               if (cv.educationDetails && cv.educationDetails.length > 0) score += 10;
               else if (cv.education) score += 5;
-              if (cv.skills && cv.skills.length > 0) score += 10;
-              if (cv.email) score += 5;
-              if (cv.phone) score += 5;
               let otherCount = 0;
               if (cv.internshipDetails && cv.internshipDetails.length > 0) otherCount++;
               if (cv.languageDetails && cv.languageDetails.length > 0) otherCount++;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { CV } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import ImageWithFallback from './ImageWithFallback';
 
 interface BusinessCardProps {
   cv: CV;
@@ -22,17 +23,12 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
         {/* Photo Section */}
         <div className="relative shrink-0">
           <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-lg sm:rounded-3xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm sm:border sm:border-gray-100 dark:sm:border-white/10">
-            {cv.photoUrl ? (
-              <img
-                src={cv.photoUrl}
-                alt={cv.name}
-                className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-zinc-800/80">
-                <i className="fi fi-sr-user text-3xl sm:text-5xl text-gray-300 dark:text-zinc-600 drop-shadow-sm"></i>
-              </div>
-            )}
+            <ImageWithFallback 
+              src={cv.photoUrl} 
+              alt={cv.name || ''} 
+              className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
+              initialsClassName="text-3xl sm:text-5xl font-black"
+            />
           </div>
         </div>
 
@@ -46,24 +42,34 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick }) => {
               </h3>
 
               <p className="text-[13px] sm:text-[18px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1 min-h-[1.2em]">
-                {cv.profession || ""}
+                {cv.profession || t('card.no_profession')}
               </p>
 
               <div className="flex flex-row items-center flex-wrap gap-2.5 sm:gap-6 mt-0.5 sm:mt-1">
-                <div className="flex items-center gap-1.5 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold sm:font-bold">
+                <div className="flex items-center gap-1 sm:gap-1.5 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold whitespace-nowrap">
                   <i className="fi fi-rr-marker"></i>
-                  <span className="lowercase first-letter:uppercase">{cv.city || ""}</span>
+                  <span className="">{cv.city || t('card.no_city')}</span>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold sm:font-bold">
+                <div className="flex items-center gap-1 sm:gap-1.5 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold whitespace-nowrap">
                   <i className="fi fi-rr-briefcase"></i>
                   {cv.experienceYears > 0 
                     ? `${cv.experienceYears} ${t('common.years_experience')}` 
                     : (cv.experienceMonths && cv.experienceMonths > 0)
                       ? t('common.less_than_year')
-                      : t('common.new_graduate')}
+                      : t('card.no_experience')}
                 </div>
               </div>
+
+              {(cv.preferredCountries?.length || cv.preferredCities?.length) ? (
+                <div className="flex items-center gap-2 mt-2 sm:mt-3 overflow-hidden">
+                  <i className="fi fi-rr-paper-plane text-[10px] sm:text-[12px] text-[#1f6d78] dark:text-[#2dd4bf]"></i>
+                  <p className="text-[10px] sm:text-[13px] font-bold text-[#1f6d78] dark:text-[#2dd4bf] truncate opacity-90 uppercase tracking-wider">
+                    {[...(cv.preferredCountries || []), ...(cv.preferredCities || [])].slice(0, 4).join(' • ')} 
+                    {([...(cv.preferredCountries || []), ...(cv.preferredCities || [])].length > 4) && ' ...'}
+                  </p>
+                </div>
+              ) : null}
 
               {cv.about && (
                 <div className="hidden sm:block mt-3">

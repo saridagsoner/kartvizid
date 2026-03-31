@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Conversation, Message } from '../types';
 import { useToast } from '../context/ToastContext';
+import ImageWithFallback from './ImageWithFallback';
 
 interface MessagesModalProps {
   isOpen: boolean;
@@ -34,6 +35,8 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
 
   useEffect(() => {
     if (activeConversationId && isOpen) {
+      // Clear old messages instantly to prevent ghosting previous chat while fetching
+      setMessages([]);
       fetchMessages(activeConversationId);
       markMessagesAsRead(activeConversationId);
       
@@ -161,9 +164,9 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
         
         {/* Sidebar - Conversation List */}
         <div className={`w-full sm:w-[350px] flex-col border-r border-gray-100 bg-gray-50/30 ${activeConversationId && 'hidden sm:flex'} flex`}>
-          <div className="p-6 sm:p-7 sm:pb-4 border-b border-gray-100 flex items-start justify-between bg-white/50 backdrop-blur-sm sticky top-0 z-20">
+          <div className="pl-4 pr-6 sm:pl-5 sm:pr-7 pt-6 pb-2 sm:pb-3 border-b border-gray-100 flex items-start justify-between bg-white/50 backdrop-blur-sm sticky top-0 z-20">
             <div>
-              <h2 className="text-2xl font-bold text-black tracking-tight mb-0.5">{t('messages.title')}</h2>
+              <h2 className="text-[28px] font-black text-black tracking-tighter mb-0.5 leading-tight">{t('messages.title')}</h2>
               <p className="text-xs font-medium text-gray-500 max-w-[280px] leading-relaxed">
                 {t('messages.subtitle')}
               </p>
@@ -191,33 +194,38 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                  </p>
               </div>
             ) : (
-              conversations.map(conv => (
-                <button
-                  key={conv.id}
-                  onClick={() => onSelectConversation(conv.id)}
-                  className={`w-full p-4 rounded-3xl flex items-center gap-4 transition-all hover:bg-white hover:shadow-md group ${activeConversationId === conv.id ? 'bg-white shadow-md ring-1 ring-gray-100' : ''}`}
-                >
-                  <div className="relative shrink-0">
-                    {conv.other_participant?.avatar_url ? (
-                      <img src={conv.other_participant.avatar_url} className="w-12 h-12 rounded-full object-cover shadow-sm bg-gray-100" />
-                    ) : (
-                      <div className="w-12 h-12 rounded-full bg-[#1f6d78]/10 text-[#1f6d78] flex items-center justify-center font-black text-lg shadow-sm">
-                        {conv.other_participant?.full_name?.charAt(0) || '?'}
+              conversations.map((conv, idx) => (
+                <div key={conv.id} className="relative">
+                  <button
+                    onClick={() => onSelectConversation(conv.id)}
+                    className={`w-full pl-2 pr-6 py-5 flex items-center gap-4 transition-all duration-200 hover:bg-gray-50/50 group ${activeConversationId === conv.id ? 'bg-gray-50' : 'bg-transparent'}`}
+                  >
+                    <div className="relative shrink-0">
+                      <div className="w-14 h-16 rounded-lg overflow-hidden bg-gray-50 dark:bg-black border border-gray-100 dark:border-white/10 shadow-sm transition-transform group-hover:scale-[1.02]">
+                        <ImageWithFallback 
+                          src={conv.other_participant?.avatar_url} 
+                          alt={conv.other_participant?.full_name || '?'} 
+                          className="w-full h-full object-cover"
+                          initialsClassName="text-xl font-black"
+                        />
                       </div>
-                    )}
-                    {conv.unread_count && conv.unread_count > 0 ? (
-                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-lg">
-                        {conv.unread_count}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="flex-1 text-left min-w-0">
-                    <h4 className="font-black text-black text-sm truncate">{conv.other_participant?.full_name || 'Kullanıcı'}</h4>
-                    <p className="text-gray-400 text-xs font-bold truncate mt-0.5">
-                      {conv.last_message || (t('messages.click_to_start') || 'Sohbeti başlatın...')}
-                    </p>
-                  </div>
-                </button>
+                      {conv.unread_count && conv.unread_count > 0 ? (
+                        <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-lg z-10">
+                          {conv.unread_count}
+                        </span>
+                      ) : null}
+                    </div>
+                    <div className="flex-1 text-left min-w-0">
+                      <h4 className="font-bold text-black text-[15px] sm:text-[16.5px] tracking-tight truncate leading-tight mb-1">{conv.other_participant?.full_name || 'Kullanıcı'}</h4>
+                      <p className="text-gray-400 text-[13px] font-medium truncate opacity-90">
+                        {conv.last_message || (t('messages.click_to_start') || 'Sohbeti başlatın...')}
+                      </p>
+                    </div>
+                  </button>
+                  {idx !== conversations.length - 1 && (
+                    <div className="absolute bottom-0 right-0 left-[88px] border-b border-gray-100 dark:border-white/5" />
+                  )}
+                </div>
               ))
             )}
           </div>
@@ -233,17 +241,19 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                   <i className="fi fi-rr-arrow-left text-sm"></i>
                 </button>
                 <div className="flex items-center gap-3">
-                  {activeConversation.other_participant?.avatar_url ? (
-                    <img src={activeConversation.other_participant.avatar_url} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-sm bg-gray-100" />
-                  ) : (
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#1f6d78]/10 text-[#1f6d78] flex items-center justify-center font-black text-base shadow-sm">
-                      {activeConversation.other_participant?.full_name?.charAt(0) || '?'}
-                    </div>
-                  )}
+                  <div className="w-12 h-14 sm:w-14 sm:h-16 rounded-lg overflow-hidden shrink-0 shadow-sm">
+                    <ImageWithFallback 
+                      src={activeConversation.other_participant?.avatar_url} 
+                      alt={activeConversation.other_participant?.full_name || '?'} 
+                      className="w-full h-full object-cover"
+                      initialsClassName="text-xl font-black"
+                    />
+                  </div>
                   <div>
                     <h3 className="font-black text-black text-sm sm:text-lg tracking-tight">{activeConversation.other_participant?.full_name}</h3>
                     <p className="text-[10px] sm:text-xs font-bold text-[#1f6d78] uppercase tracking-wider">
-                      {activeConversation.other_participant?.role === 'employer' ? t('common.employer') : t('common.job_seeker')}
+                      {activeConversation.other_participant?.profession || 
+                        (activeConversation.other_participant?.role === 'employer' ? t('nav.employer') : t('nav.job_seeker'))}
                     </p>
                   </div>
                 </div>
@@ -256,65 +266,97 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                 </button>
               </div>
 
-              {/* Messages Body */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 custom-scrollbar bg-gray-50/10">
-                {messages.length === 0 && !loading && (
-                  <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-40">
-                    <p className="text-xs font-black uppercase tracking-[0.2em] text-[#1f6d78]">
-                      İSE ALIM SÜRECİ VE KARİYER GÖRÜŞMESİ
-                    </p>
-                    <div className="w-24 h-0.5 bg-gray-100 my-4" />
-                    <p className="text-sm font-bold text-gray-400">
-                      Sohbeti başlatan ilk mesajı siz gönderin.
-                    </p>
-                  </div>
-                )}
-                
-                {messages.map((msg, idx) => {
-                  const isOwn = msg.sender_id === user?.id;
-                  const showTime = idx === 0 || 
-                    new Date(msg.created_at).getTime() - new Date(messages[idx-1].created_at).getTime() > 1800000;
-
-                  return (
-                    <div key={msg.id} className="flex flex-col">
-                      {showTime && (
-                        <div className="flex justify-center my-4">
-                          <span className="px-3 py-1 rounded-full bg-gray-50 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                            {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
+              {/* Messages Body (Anchored to Bottom) */}
+              <div className="flex-1 overflow-y-auto custom-scrollbar bg-gray-50/10 flex flex-col min-h-0">
+                <div className="flex-1" />
+                <div className="p-4 sm:p-8 space-y-4">
+                  {loading ? (
+                    <div className="space-y-6 animate-pulse px-4">
+                      {[1, 2, 3].map(i => (
+                        <div key={i} className={`flex ${i % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`h-12 w-48 sm:w-64 rounded-2xl ${i % 2 === 0 ? 'bg-[#1f6d78]/10' : 'bg-gray-200/50'}`} />
                         </div>
-                      )}
-                      <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[85%] sm:max-w-[70%] px-5 py-3.5 sm:px-6 sm:py-4 rounded-3xl font-medium text-sm sm:text-[15px] shadow-sm leading-relaxed ${
-                          isOwn 
-                          ? 'bg-[#1f6d78] text-white rounded-br-none' 
-                          : 'bg-white text-gray-800 border border-gray-100 rounded-bl-none'
-                        }`}>
-                          {msg.content}
-                        </div>
-                      </div>
+                      ))}
                     </div>
-                  );
-                })}
-                <div ref={messagesEndRef} />
+                  ) : messages.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center text-center p-8">
+                      <div className="inline-block px-4 py-1.5 rounded-full bg-[#1f6d78]/5 border border-[#1f6d78]/10 mb-6">
+                        <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#1f6d78]/70">
+                          GÜVENLİ KARİYER SOHBETİ
+                        </p>
+                      </div>
+                      <p className="text-sm font-bold text-gray-400 max-w-[200px] leading-relaxed">
+                        İlk mesajınızı göndererek sohbeti hemen başlatın.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      {messages.map((msg, idx) => {
+                        const isOwn = msg.sender_id === user?.id;
+                        const showTime = idx === 0 || 
+                          new Date(msg.created_at).getTime() - new Date(messages[idx-1].created_at).getTime() > 1800000;
+
+                        return (
+                          <div key={msg.id} className="flex flex-col group/msg">
+                            {showTime && (
+                              <div className="flex justify-center my-6">
+                                <span className="px-4 py-1 rounded-lg bg-gray-100/50 text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                                  {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </div>
+                            )}
+                            <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                              <div className={`max-w-[85%] sm:max-w-[70%] px-5 py-3 sm:px-6 sm:py-3.5 shadow-sm leading-relaxed transition-all ${
+                                isOwn 
+                                ? 'bg-[#1f6d78] text-white rounded-[1.25rem] rounded-br-[0.2rem]' 
+                                : 'bg-white text-gray-800 border border-gray-100 rounded-[1.25rem] rounded-bl-[0.2rem]'
+                              }`}>
+                                <p className="text-sm sm:text-[15px] font-medium leading-relaxed">{msg.content}</p>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      <div ref={messagesEndRef} />
+                    </>
+                  )}
+                </div>
               </div>
 
-              {/* Input Area */}
-              <div className="p-4 sm:p-8 bg-white border-t border-gray-50 sticky bottom-0">
-                <form onSubmit={handleSendMessage} className="relative flex items-center gap-3">
+              {/* Input Area (Solid & Clean - Fixed Overlapping) */}
+              <div className="p-4 sm:p-6 bg-white border-t border-gray-100 sticky bottom-0 z-30">
+                <form 
+                  onSubmit={handleSendMessage} 
+                  className="w-full max-w-4xl mx-auto flex items-center bg-gray-50/50 border border-gray-200/60 rounded-2xl px-2 py-1.5 focus-within:bg-white focus-within:border-[#1f6d78]/40 transition-all duration-300 shadow-sm"
+                >
                   <input
                     type="text"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(e)}
                     placeholder={t('messages.type_placeholder') || "Mesajınızı buraya yazın..."}
-                    className="flex-1 bg-gray-50 border-none rounded-2xl sm:rounded-3xl py-3.5 sm:py-5 px-5 sm:px-8 text-sm sm:text-base font-bold text-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-[#1f6d78] transition-all shadow-inner"
+                    className="flex-1 bg-transparent border-none focus:ring-0 outline-none py-3 px-4 sm:px-6 text-sm sm:text-base font-medium text-gray-800 placeholder:text-gray-400"
                   />
                   <button
                     type="submit"
                     disabled={!newMessage.trim()}
-                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl sm:rounded-3xl bg-[#1f6d78] text-white flex items-center justify-center hover:bg-[#155e68] transition-all active: disabled:opacity-50 disabled:grayscale shadow-lg shadow-[#1f6d78]/20"
+                    className="w-12 h-12 flex items-center justify-center transition-all duration-300 active:scale-90 disabled:cursor-not-allowed group shrink-0"
+                    title={t('messages.send') || "Gönder"}
                   >
-                    <i className="fi fi-sr-paper-plane text-base sm:text-xl"></i>
+                    <svg 
+                      viewBox="0 0 24 24" 
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={`w-6 h-6 sm:w-7 sm:h-7 transition-all duration-300 ${
+                        newMessage.trim() 
+                        ? 'text-[#1f6d78] scale-110 group-hover:scale-125' 
+                        : 'text-gray-300 opacity-60'
+                      }`}
+                    >
+                      <path 
+                        d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" 
+                        fill="currentColor"
+                      />
+                    </svg>
                   </button>
                 </form>
               </div>

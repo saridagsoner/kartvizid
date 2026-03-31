@@ -23,6 +23,7 @@ interface MobileMenuDrawerProps {
     onEmployersViewAll: () => void;
     onFilterApply: (type: 'profession' | 'city', value: string) => void;
     user?: any; // To determine visibility of logged-in features
+    isEmployer?: boolean; // More robust check than user_metadata
     onOpenSettings?: () => void;
     onOpenSavedCVs?: () => void;
     onLogout?: () => void;
@@ -49,6 +50,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
     onEmployersViewAll,
     onFilterApply,
     user,
+    isEmployer = false,
     onOpenSettings = () => { },
     onOpenSavedCVs = () => { },
     onLogout = () => { },
@@ -57,7 +59,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
 }) => {
     const { t, language, setLanguage } = useLanguage();
     const { theme, toggleTheme } = useTheme();
-    const [activeCategory, setActiveCategory] = useState<'about' | 'professions' | 'cities' | 'jobFinders' | 'stats' | 'companies' | 'shops' | 'mostViewed' | 'siteUsage' | 'securityPrivacy' | 'dataPolicy' | 'mobileApp' | 'kartvizid' | 'premium' | 'settings' | LegalSection | null>(null);
+    const [activeCategory, setActiveCategory] = useState<'about' | 'professions' | 'cities' | 'jobFinders' | 'stats' | 'companies' | 'shops' | 'mostViewed' | 'siteUsage' | 'securityPrivacy' | 'dataPolicy' | 'mobileApp' | 'kartvizid' | 'premium' | LegalSection | null>(null);
 
     // Reset state when drawer closes
     React.useEffect(() => {
@@ -626,72 +628,6 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                     </div>
                 );
                 break;
-            case 'settings':
-                title = t('profile.settings');
-                content = (
-                    <div className="flex flex-col p-6 space-y-10 pb-20 bg-white dark:bg-gray-900">
-                        {/* Theme Section */}
-                        <section>
-                            <h3 className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 px-1">{t('account.appearance')}</h3>
-                            <div className="space-y-4">
-                                <button
-                                    onClick={toggleTheme}
-                                    className="w-full flex items-center justify-between py-5 border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/10 transition-all active:scale-[0.98] px-1"
-                                >
-                                    <div className="flex items-center space-x-4">
-                                        <div className="w-10 h-10 rounded-xl bg-transparent flex items-center justify-center text-gray-900 dark:text-white">
-                                            <i className={`fi ${theme === 'dark' ? 'fi-rr-moon' : 'fi-rr-sun'} text-xl`}></i>
-                                        </div>
-                                        <div className="text-left">
-                                            <p className="text-[15px] font-bold text-gray-900 dark:text-gray-100">{theme === 'dark' ? t('account.dark') : t('account.light')}</p>
-                                            <p className="text-[11px] text-gray-400 dark:text-gray-500 font-medium">{t('settings.language_desc')}</p>
-                                        </div>
-                                    </div>
-                                    <div className={`w-11 h-6 rounded-full p-1 transition-all duration-300 border border-gray-200 dark:border-gray-700 ${theme === 'dark' ? 'bg-black' : 'bg-gray-100'}`}>
-                                        <div className={`w-4 h-4 bg-white rounded-full shadow-sm transform transition-transform duration-300 ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`}></div>
-                                    </div>
-                                </button>
-                            </div>
-                        </section>
-
-                        {/* Language Section */}
-                        <section>
-                            <h3 className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 px-1">{t('settings.language')}</h3>
-                            <div className="grid grid-cols-1 gap-3">
-                                {[
-                                    { code: 'tr', label: 'Türkçe', flag: '🇹🇷' },
-                                    { code: 'en', label: 'English', flag: '🇬🇧' }
-                                ].map((lang) => (
-                                    <button
-                                        key={lang.code}
-                                        onClick={() => setLanguage(lang.code as any)}
-                                        className={`flex items-center justify-between p-5 rounded-2xl transition-all active:scale-[0.98] border-2 ${language === lang.code
-                                            ? 'bg-white dark:bg-gray-900 border-black dark:border-white text-black dark:text-white shadow-xl shadow-black/5 scale-[1.02]'
-                                            : 'bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-50 dark:border-gray-800/50'
-                                            }`}
-                                    >
-                                        <div className="flex items-center space-x-4">
-                                            <span className="text-2xl">{lang.flag}</span>
-                                            <span className="font-bold text-[15px] tracking-tight">{lang.label}</span>
-                                        </div>
-                                        {language === lang.code && (
-                                            <i className="fi fi-rr-check-circle text-lg text-black dark:text-white"></i>
-                                        )}
-                                    </button>
-                                ))}
-                            </div>
-                        </section>
-
-                        <div className="pt-4 px-2">
-                            <p className="text-[11px] text-gray-400 dark:text-gray-600 font-medium text-center italic leading-relaxed">
-                                {language === 'tr' 
-                                    ? "Tercihleriniz cihazınıza yerel olarak kaydedilir ve her oturumda korunur."
-                                    : "Your preferences are saved locally on your device and maintained across sessions."}
-                            </p>
-                        </div>
-                    </div>
-                );
-                break;
             default:
                 // Check if it's a legal section
                 if (activeCategory && activeCategory in LEGAL_CONTENT) {
@@ -779,6 +715,14 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                             onClick={() => { onShopsViewAll(); onClose(); }}
                             icon={<i className="fi fi-rr-shop"></i>}
                         />
+
+                        {isEmployer && (
+                            <MenuItem
+                                label="Kaydettiklerim"
+                                onClick={onOpenSavedCVs}
+                                icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>}
+                            />
+                        )}
                         <MenuItem
                             label={t('menu.kartvizid')}
                             onClick={() => setActiveCategory('kartvizid')}
@@ -791,7 +735,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                         />
                         <MenuItem
                             label={t('profile.settings')}
-                            onClick={() => setActiveCategory('settings')}
+                            onClick={onOpenSettings}
                             icon={<i className="fi fi-rr-settings"></i>}
                         />
 
@@ -822,19 +766,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                             <>
                                 <div className="my-3 border-t border-gray-100 dark:border-gray-800"></div>
 
-                                {user.user_metadata?.role === 'employer' && (
-                                    <MenuItem
-                                        label="Kaydettiklerim"
-                                        onClick={onOpenSavedCVs}
-                                        icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>}
-                                    />
-                                )}
 
-                                <MenuItem
-                                    label="Ayarlar"
-                                    onClick={onOpenSettings}
-                                    icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>}
-                                />
                                 <button
                                     onClick={onLogout}
                                     className="w-full text-left py-3 flex items-center gap-3 group"

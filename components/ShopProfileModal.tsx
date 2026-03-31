@@ -1,10 +1,13 @@
 import React from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 interface ShopProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
   shop: {
     id: string;
+    user_id?: string;
     name: string;
     profession: string;
     city: string;
@@ -14,10 +17,15 @@ interface ShopProfileModalProps {
     description?: string;
     views?: number;
   };
+  onOpenChat?: () => void;
 }
 
-const ShopProfileModal: React.FC<ShopProfileModalProps> = ({ isOpen, onClose, shop }) => {
+const ShopProfileModal: React.FC<ShopProfileModalProps> = ({ isOpen, onClose, shop, onOpenChat }) => {
+  const { user } = useAuth();
+  const { t } = useLanguage();
   if (!isOpen) return null;
+
+  const isOwner = user && shop.user_id === user.id;
 
   return (
     <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4">
@@ -62,10 +70,20 @@ const ShopProfileModal: React.FC<ShopProfileModalProps> = ({ isOpen, onClose, sh
               </div>
               
               <div className="flex items-center gap-2">
-                 <button className="flex-1 sm:flex-none bg-[#1f6d78] text-white px-6 py-3 rounded-2xl font-black text-sm hover:bg-[#155e68] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#1f6d78]/20">
-                    <i className="fi fi-rr-phone-call"></i>
-                    <span>{shop.phone || 'Mesaj Gönder'}</span>
-                 </button>
+                 {!isOwner && (
+                   <button 
+                    onClick={onOpenChat}
+                    className="flex-1 sm:flex-none bg-[#1f6d78] text-white px-6 py-3 rounded-2xl font-black text-sm hover:bg-[#155e68] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#1f6d78]/20"
+                   >
+                      <i className="fi fi-rr-paper-plane"></i>
+                      <span>{t?.('profile.send_message') || 'Mesaj Gönder'}</span>
+                   </button>
+                 )}
+                 {isOwner && (
+                   <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 dark:bg-gray-800/50 px-4 py-2 rounded-xl">
+                      Kendi Profiliniz
+                   </div>
+                 )}
               </div>
             </div>
 

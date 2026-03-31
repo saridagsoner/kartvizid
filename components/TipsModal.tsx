@@ -61,7 +61,7 @@ const TIPS = [
             </svg>
         ),
         title: "İletişim Bilgileri",
-        description: "E-posta ve telefon bilgilerinizin güncel olduğundan emin olun. Ayrıca LinkedIn profilinizi veya portfolyonuzu eklemek, profesyonelliğinizi pekiştirir."
+        description: "E-posta ve telefon bilgilerinizin güncel olduğundan emin olun. Ayrıca portfolyonuzu eklemek, profesyonelliğinizi pekiştirir."
     }
 ];
 

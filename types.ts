@@ -7,6 +7,7 @@ export interface EducationEntry {
   status: string;
   startDate?: string;
   endDate?: string;
+  isCurrent?: boolean;
 }
 
 export interface WorkExperienceEntry {
@@ -63,7 +64,6 @@ export interface CV {
   salaryMax: number;
   salaryCurrency?: string;
   about: string;
-  skills: string[];
   education: string; // Legacy / Primary Display
   educationLevel?: string; // Legacy
   graduationStatus?: string; // Legacy
@@ -82,10 +82,6 @@ export interface CV {
   isActive?: boolean;
   views?: number;
   isPlaced?: boolean;
-  email?: string;
-  phone?: string;
-  isEmailPublic?: boolean;
-  isPhonePublic?: boolean;
   references?: Array<{
     id: string;
     name: string;
@@ -95,7 +91,9 @@ export interface CV {
     email?: string;
   }>;
   workingStatus?: 'active' | 'passive' | 'open';
-  preferredCity?: string;
+  preferredCity?: string; // Legacy
+  preferredCities?: string[];
+  preferredCountries?: string[];
   preferredRoles?: string[];
   created_at?: string;
 }
@@ -109,7 +107,6 @@ export interface FilterState {
   salaryMin: number | '';
   salaryMax: number | '';
   salaryCurrency?: string;
-  skills: string[];
   workType: string;
   employmentType: string;
   educationLevel: string;
@@ -120,6 +117,9 @@ export interface FilterState {
   noticePeriod: string;
   travelStatus: string;
   driverLicenses: string[];
+  preferredCities?: string[];
+  preferredCountries?: string[];
+  preferredRoles?: string[];
 }
 
 export interface Notification {
@@ -199,6 +199,9 @@ export interface Company {
   address?: string;
   logoUrl?: string;
   createdAt?: string;
+  foundedYear?: number;
+  employeeCount?: string;
+  instagramUrl?: string;
 }
 
 export interface PopularCompany extends Company {
@@ -242,6 +245,7 @@ export interface Conversation {
     full_name?: string;
     avatar_url?: string;
     role?: string;
+    profession?: string;
   };
 }
 

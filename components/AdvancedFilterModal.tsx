@@ -6,7 +6,6 @@ import {
   EXPERIENCE_LEVELS,
   LANGUAGES,
   LANGUAGE_LEVELS,
-  ALL_SKILLS,
   WORK_TYPES,
   EMPLOYMENT_TYPES,
   EDUCATION_LEVELS,
@@ -121,15 +120,6 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
   const [filters, setFilters] = useState<FilterState>(initialFilters);
   const { t } = useLanguage();
 
-  const toggleSkill = (skill: string) => {
-    setFilters(prev => ({
-      ...prev,
-      skills: prev.skills.includes(skill)
-        ? prev.skills.filter(s => s !== skill)
-        : [...prev.skills, skill]
-    }));
-  };
-
   const toggleLicense = (license: string) => {
     setFilters(prev => ({
       ...prev,
@@ -148,7 +138,6 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
       languageLevel: '',
       salaryMin: '',
       salaryMax: '',
-      skills: [],
       workType: '',
       employmentType: '',
       educationLevel: '',
@@ -355,21 +344,6 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
               {MILITARY_STATUSES.map(s => <SelectionPill key={s} label={getLocalizedLabel('militaryStatus', s)} active={filters.militaryStatus === s} onClick={() => setFilters({ ...filters, militaryStatus: filters.militaryStatus === s ? '' : s })} />)}
             </FilterSection>
           </div>
-
-          <FilterSection title={t('filter.skills_label')}>
-            {ALL_SKILLS.map(skill => (
-              <button
-                key={skill}
-                onClick={() => toggleSkill(skill)}
-                className={`px-5 py-2.5 rounded-full text-[11px] font-bold border transition-all ${filters.skills.includes(skill)
-                  ? 'bg-[#1f6d78] border-[#1f6d78] text-white shadow-md'
-                  : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 text-gray-400 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-600'
-                  }`}
-              >
-                {skill}
-              </button>
-            ))}
-          </FilterSection>
         </div>
 
         {/* Footer */}

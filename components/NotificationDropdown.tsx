@@ -3,6 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { ContactRequest, NotificationItem } from '../types';
 import { supabase } from '../lib/supabase';
+import ImageWithFallback from './ImageWithFallback';
 
 interface NotificationDropdownProps {
   onClose: () => void;
@@ -142,11 +143,12 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
                     {/* Avatar */}
                     <div className="relative shrink-0">
                       <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden border border-gray-100 dark:border-gray-600 shadow-sm flex items-center justify-center">
-                        {details.avatar ? (
-                          <img src={details.avatar} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="font-bold text-gray-500 dark:text-gray-400 text-xs">{details.name.charAt(0).toUpperCase()}</span>
-                        )}
+                        <ImageWithFallback 
+                          src={details.avatar} 
+                          alt={details.name} 
+                          className="w-full h-full object-cover"
+                          initialsClassName="text-xs font-black"
+                        />
                       </div>
                       {/* Status Icon Badge */}
                       {(!isContactRequest(item) && !item.is_read) && (

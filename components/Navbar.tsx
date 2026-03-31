@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import NotificationDropdown from './NotificationDropdown';
 import UserMenuDropdown from './UserMenuDropdown';
+import ImageWithFallback from './ImageWithFallback';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
@@ -158,15 +159,15 @@ const Navbar: React.FC<NavbarProps & {
 
                   <div className="h-6 w-px bg-gray-100 dark:bg-gray-700 hidden sm:block"></div>
 
-                  <div className="relative hidden sm:block">
+                  <div className="relative">
                     <button
                       onClick={() => {
                         setIsNotifOpen(!isNotifOpen);
                         setIsProfileOpen(false);
                       }}
-                      className="w-10 h-10 text-gray-600 dark:text-gray-300 rounded-full flex items-center justify-center text-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group"
+                      className="w-10 h-10 text-black dark:text-white rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group"
                     >
-                      <i className="fi fi-rr-bell text-xl translate-y-[1px]"></i>
+                      <i className="fi fi-rr-bell text-xl"></i>
                       {notificationCount > 0 && (
                         <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 border-2 border-white rounded-full text-[9px] text-white flex items-center justify-center font-bold shadow-sm">
                           {notificationCount}
@@ -181,6 +182,7 @@ const Navbar: React.FC<NavbarProps & {
                         onMarkRead={onMarkNotificationRead}
                         onMarkAllRead={onMarkAllRead}
                         onOpenProfile={onOpenProfile}
+                        mobile={window.innerWidth < 640}
                       />
                     )}
                   </div>
@@ -210,12 +212,18 @@ const Navbar: React.FC<NavbarProps & {
                     >
 
                       {userPhotoUrl ? (
-                        <img src={userPhotoUrl} alt="Profile" className="w-full h-full object-cover" />
+                        <ImageWithFallback 
+                          src={userPhotoUrl} 
+                          alt={user?.user_metadata?.full_name || user?.email || 'User'} 
+                          className="w-full h-full object-cover"
+                          initialsClassName="text-sm font-black"
+                        />
                       ) : (
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                          </svg>
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800">
+                          <i className={`fi ${
+                            isEmployer ? 'fi-rr-building' : 'fi-rr-circle-user'
+                          } text-lg`}></i>
+                        </div>
                       )}
                     </button>
                     {isProfileOpen && <UserMenuDropdown onClose={() => setIsProfileOpen(false)} onLogout={signOut} onOpenSettings={onOpenSettings} onOpenSavedCVs={onOpenSavedCVs} onOpenProfile={onOpenProfile} />}

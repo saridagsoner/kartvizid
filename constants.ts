@@ -15,7 +15,6 @@ export const MOCK_CVS: CV[] = [
     salaryMin: 45000,
     salaryMax: 60000,
     about: 'Deneyimli frontend developer, React ve Vue konusunda uzman. Modern web teknolojileri ve responsive tasarım konularında bilgili.',
-    skills: ['React', 'TypeScript', 'Redux', 'Tailwind CSS', 'Next.js'],
     education: 'İstanbul Teknik Üniversitesi - Bilgisayar Mühendisliği',
     educationLevel: 'Lisans',
     graduationStatus: 'Mezun',
@@ -44,7 +43,6 @@ export const MOCK_CVS: CV[] = [
     salaryMin: 40000,
     salaryMax: 50000,
     about: 'Kullanıcı odaklı tasarımlar yapmayı seven, Figma ve Adobe XD araçlarına hakim tasarımcı.',
-    skills: ['Figma', 'Adobe XD', 'Sketch', 'Prototyping', 'User Research'],
     education: 'ODTÜ - Endüstriyel Tasarım',
     educationLevel: 'Yüksek Lisans',
     graduationStatus: 'Mezun',
@@ -70,7 +68,6 @@ export const MOCK_CVS: CV[] = [
     salaryMin: 55000,
     salaryMax: 75000,
     about: 'Node.js ve Microservices mimarileri konusunda uzman backend mühendisi.',
-    skills: ['Node.js', 'Go', 'Docker', 'Kubernetes', 'PostgreSQL'],
     education: 'Ege Üniversitesi - Yazılım Mühendisliği',
     views: 2100,
     isPlaced: true,
@@ -89,15 +86,36 @@ export const LANGUAGES = ['İngilizce', 'Almanca', 'Fransızca', 'Rusça', 'Arap
 export const LANGUAGE_LEVELS = ['Başlangıç', 'Orta', 'İleri', 'Anadil'];
 export const DRIVER_LICENSES = ['A1', 'A2', 'B', 'C', 'D', 'E'];
 export const TRAVEL_STATUSES = ['Seyahat Engeli Yok', 'Seyahat Edemem'];
-
-export const ALL_SKILLS = [
-  'React', 'Vue', 'Angular', 'TypeScript', 'Node.js', 'Go', 'Python', 'Docker', 'Figma', 'Sketch',
-  'UI/UX', 'SEO', 'Pazarlama', 'Satış', 'Finans', 'İnsan Karşılamaları', 'Proje Yönetimi', 'AWS', 'SQL'
+export const COUNTRIES = [
+  'Türkiye', 'Almanya', 'İngiltere', 'Hollanda', 'ABD', 'Kanada', 
+  'Fransa', 'Avusturya', 'İsviçre', 'Belçika', 'İtalya', 'İspanya',
+  'Polonya', 'Birleşik Arap Emirlikleri', 'Azerbaycan', 'Diğer'
 ];
 
+export const EMPLOYEE_COUNTS = [
+  '1-10',
+  '11-50',
+  '51-200',
+  '201-500',
+  '501-1000',
+  '1000+'
+];
 
-
-
+export const COMPANY_INDUSTRIES = [
+  'Teknoloji',
+  'E-Ticaret',
+  'Sağlık',
+  'Eğitim',
+  'Finans',
+  'İnşaat',
+  'Gıda',
+  'Turizm',
+  'Lojistik',
+  'Perakende',
+  'Tekstil',
+  'Enerji',
+  'Diğer'
+];
 
 export const EXPERIENCE_LEVELS: PopularItem[] = [
   { label: 'Stajyer / Yeni Mezun', count: 120 },
@@ -106,8 +124,6 @@ export const EXPERIENCE_LEVELS: PopularItem[] = [
   { label: 'Kıdemli (5-10 Yıl)', count: 150 },
   { label: 'Uzman (10+ Yıl)', count: 72 },
 ];
-
-
 
 export const NOTIFICATIONS: Notification[] = [
   {

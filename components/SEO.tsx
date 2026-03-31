@@ -28,7 +28,7 @@ const SEO: React.FC<SEOProps> = ({
             <title>{fullTitle}</title>
             <meta name="description" content={fullDescription} />
 
-            {/* Open Graph (Facebook/LinkedIn etc.) */}
+            {/* Open Graph (Facebook etc.) */}
             <meta property="og:type" content={type} />
             <meta property="og:title" content={fullTitle} />
             <meta property="og:description" content={fullDescription} />
