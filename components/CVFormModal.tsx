@@ -23,6 +23,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { supabase } from '../lib/supabase';
 
 import KVKKApprovalModal from './KVKKApprovalModal';
+import LegalModal from './LegalModal';
 
 interface SelectionPillProps {
   label: string;
@@ -1593,7 +1594,16 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, onDelete, 
               className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md accent-[#1f6d78] shrink-0 mt-0.5 cursor-pointer border-2 ${showConsentError ? 'border-red-500 bg-red-50' : 'border-black/10'}`}
             />
             <label htmlFor="cv-form-terms" className={`text-[10px] sm:text-xs font-bold leading-relaxed cursor-pointer select-none ${showConsentError ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>
-              {t('form.kvkk_text')} <span className="text-[#1f6d78] font-black">(ZORUNLU)</span>
+              <span 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowKVKKModal(true);
+                }}
+                className="text-[#1f6d78] hover:text-[#155e68] transition-colors"
+              >
+                {t('form.kvkk_text')}
+              </span>
             </label>
           </div>
           {showConsentError && (
@@ -1709,6 +1719,7 @@ const CVFormModal: React.FC<CVFormModalProps> = ({ onClose, onSubmit, onDelete, 
         </div>
       </div>
     )}
+
   </div>
 </div>
 );
