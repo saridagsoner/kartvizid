@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { EXPERIENCE_LEVELS } from '../constants';
 import SelectionModal from './SelectionModal';
-import AdvancedFilterModal from './AdvancedFilterModal';
+const AdvancedFilterModal = React.lazy(() => import('./AdvancedFilterModal'));
 import { FilterState } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -211,13 +211,15 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
         />
       )}
       {activeModal === 'advanced' && (
-        <AdvancedFilterModal
-          initialFilters={currentFilters}
-          onApply={handleAdvancedApply}
-          onClose={() => setActiveModal(null)}
-          availableProfessions={availableProfessions}
-          availableCities={availableCities}
-        />
+        <React.Suspense fallback={null}>
+          <AdvancedFilterModal
+            initialFilters={currentFilters}
+            onApply={handleAdvancedApply}
+            onClose={() => setActiveModal(null)}
+            availableProfessions={availableProfessions}
+            availableCities={availableCities}
+          />
+        </React.Suspense>
       )}
     </div>
   );

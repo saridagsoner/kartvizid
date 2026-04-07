@@ -715,6 +715,15 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                             onClick={() => { onShopsViewAll(); onClose(); }}
                             icon={<i className="fi fi-rr-shop"></i>}
                         />
+                        <div className="my-1 border-t border-gray-50 dark:border-gray-800/30"></div>
+                        <MenuItem
+                            label="Kariyer Rehberi"
+                            onClick={() => {
+                                window.location.href = '/rehber';
+                                onClose();
+                            }}
+                            icon={<i className="fi fi-rr-book-alt text-[#1f6d78] dark:text-[#2dd4bf]"></i>}
+                        />
 
                         {isEmployer && (
                             <MenuItem

@@ -13,7 +13,8 @@ export const LEGAL_ROUTE_MAP: Record<LegalSection, string> = {
     kvkk: '/kvkk-aydinlatma',
     membership: '/uyelik-sozlesmesi',
     data_form: '/veri-sahibi-basvuru-formu',
-    iletisim: '/iletisim'
+    iletisim: '/iletisim',
+    about: '/hakkimizda'
 };
 
 interface LegalRouteProps {

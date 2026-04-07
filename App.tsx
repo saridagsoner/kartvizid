@@ -5,8 +5,7 @@ import { supabase } from './lib/supabase';
 import { useAuth } from './context/AuthContext';
 import { useLanguage } from './context/LanguageContext';
 import { useToast } from './context/ToastContext';
-// import { MOCK_CVS } from './constants'; // No longer needed
-import { MOCK_CVS } from './constants';
+import SEO from './components/SEO';
 import Navbar from './components/Navbar';
 import SidebarLeft from './components/SidebarLeft';
 import SidebarRight from './components/SidebarRight';
@@ -32,6 +31,7 @@ import CompanyProfileRoute from './components/CompanyProfileRoute';
 import ShopCard from './components/ShopCard';
 import ShopProfileModal from './components/ShopProfileModal';
 import CVCompletionPrompt from './components/CVCompletionPrompt';
+import CookieConsent from './components/CookieConsent';
 
 // Lazy loaded auxiliary modals
 const JobSuccessModal = React.lazy(() => import('./components/JobSuccessModal'));
@@ -41,6 +41,7 @@ const ResetPasswordModal = React.lazy(() => import('./components/ResetPasswordMo
 const CVPromoModal = React.lazy(() => import('./components/CVPromoModal'));
 const AuthModal = React.lazy(() => import('./components/AuthModal'));
 const LegalRoute = React.lazy(() => import('./components/LegalRoute'));
+const BlogRoute = React.lazy(() => import('./components/BlogRoute'));
 
 const getFriendlyErrorMessage = (error: any): string => {
   const message = error.message || error.toString();
@@ -129,7 +130,6 @@ const App: React.FC = () => {
   const [activeShop, setActiveShop] = useState<any | null>(null);
   const [isShopProfileOpen, setIsShopProfileOpen] = useState(false);
   const [activeModalRequest, setActiveModalRequest] = useState<ContactRequest | null>(null);
-  /* REMOVING DUPLICATE DECLARATION */
   const [activeModalRequestId, setActiveModalRequestId] = useState<string | null>(null);
   const [isJobSuccessOpen, setIsJobSuccessOpen] = useState(false);
   const [isSavedCVsOpen, setIsSavedCVsOpen] = useState(false);
@@ -808,10 +808,10 @@ const App: React.FC = () => {
           .single();
 
         if (!error && data) {
-           setActiveShop(data);
-           setIsShopProfileOpen(true);
-           if (requestId) setActiveModalRequestId(requestId);
-           return true;
+          setActiveShop(data);
+          setIsShopProfileOpen(true);
+          if (requestId) setActiveModalRequestId(requestId);
+          return true;
         }
         return false;
       };
@@ -1179,7 +1179,7 @@ const App: React.FC = () => {
         .from('companies')
         .delete()
         .eq('user_id', user.id);
-      
+
       if (error) throw error;
       showToast('İş veren profili başarıyla silindi!', 'success');
       navigate('/', { replace: true, state: {} });
@@ -1213,7 +1213,7 @@ const App: React.FC = () => {
             .order('created_at', { ascending: false })
             .limit(1)
             .single();
-          
+
           if (latestMsg) {
             conv.last_message = latestMsg.content;
           }
@@ -1234,7 +1234,7 @@ const App: React.FC = () => {
           .from('profiles')
           .select('id, full_name, avatar_url, role')
           .in('id', Array.from(participantIds));
-          
+
         if (profilesData) {
           profilesData.forEach(p => profilesMap.set(p.id, p));
         }
@@ -1247,20 +1247,20 @@ const App: React.FC = () => {
           if (!profilesMap.has(id)) {
             const cvMatch = cvsData?.find(c => c.user_id === id);
             const compMatch = companiesData?.find(c => c.user_id === id);
-            
+
             if (compMatch) {
               profilesMap.set(id, { id, full_name: compMatch.company_name, avatar_url: compMatch.logo_url, role: 'employer' });
             } else if (cvMatch) {
               profilesMap.set(id, { id, full_name: cvMatch.name, avatar_url: cvMatch.photoUrl, role: 'job_seeker', profession: cvMatch.profession });
             }
           } else {
-             // If profile was found via RLS, still attach profession from CV if present
-             const cvMatch = cvsData?.find(c => c.user_id === id);
-             if (cvMatch && cvMatch.profession) {
-               const p = profilesMap.get(id);
-               p.profession = cvMatch.profession;
-               profilesMap.set(id, p);
-             }
+            // If profile was found via RLS, still attach profession from CV if present
+            const cvMatch = cvsData?.find(c => c.user_id === id);
+            if (cvMatch && cvMatch.profession) {
+              const p = profilesMap.get(id);
+              p.profession = cvMatch.profession;
+              profilesMap.set(id, p);
+            }
           }
         });
       }
@@ -1270,7 +1270,7 @@ const App: React.FC = () => {
         const p1 = profilesMap.get(conv.participant1_id);
         const p2 = profilesMap.get(conv.participant2_id);
         const otherParticipant = conv.participant1_id === user.id ? p2 : p1;
-        
+
         return {
           id: conv.id,
           participant1_id: conv.participant1_id,
@@ -1288,13 +1288,13 @@ const App: React.FC = () => {
       });
 
       setConversations(mapped);
-      
+
       const { count } = await supabase
         .from('messages')
         .select('id', { count: 'exact', head: true })
         .eq('is_read', false)
         .neq('sender_id', user.id);
-      
+
       setUnreadMessageCount(count || 0);
 
     } catch (err) {
@@ -1309,7 +1309,7 @@ const App: React.FC = () => {
     }
 
     try {
-      let conv = conversations.find(c => 
+      let conv = conversations.find(c =>
         (c.participant1_id === user.id && c.participant2_id === targetUserId) ||
         (c.participant1_id === targetUserId && c.participant2_id === user.id)
       );
@@ -1332,7 +1332,7 @@ const App: React.FC = () => {
               .select('*')
               .or(`and(participant1_id.eq.${user.id},participant2_id.eq.${targetUserId}),and(participant1_id.eq.${targetUserId},participant2_id.eq.${user.id})`)
               .maybeSingle();
-              
+
             if (fetchError) throw fetchError;
             if (existingData) {
               await fetchConversations();
@@ -1458,7 +1458,7 @@ const App: React.FC = () => {
         .from('cvs')
         .delete()
         .eq('user_id', user.id);
-      
+
       if (error) throw error;
       showToast('CV başarıyla silindi!', 'success');
       navigate('/', { replace: true, state: {} });
@@ -1535,7 +1535,7 @@ const App: React.FC = () => {
   }, [cvList, searchQuery, activeFilters, sortBy]);
 
   const filteredShops = useMemo(() => {
-    let result = shopList.filter(s => 
+    let result = shopList.filter(s =>
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (s.profession && s.profession.toLowerCase().includes(searchQuery.toLowerCase()))
     );
@@ -1553,7 +1553,7 @@ const App: React.FC = () => {
   }, [shopList, searchQuery, sortBy]);
 
   const filteredEmployers = useMemo(() => {
-    let result = companyList.filter(c => 
+    let result = companyList.filter(c =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (c.industry && c.industry.toLowerCase().includes(searchQuery.toLowerCase()))
     );
@@ -1752,48 +1752,53 @@ const App: React.FC = () => {
     return false;
   }, [location.pathname, currentUserCV, activeCompany, isCVPromoOpen]);
 
+  const isHomeView = useMemo(() => {
+    return location.pathname === '/' || location.pathname === '';
+  }, [location.pathname]);
+
   return (
     <div className="min-h-screen flex flex-col bg-white sm:bg-[#F0F2F5] dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+      <SEO />
 
       <Navbar
-          onSearch={setSearchQuery}
-          onCreateCV={() => {
-            navigate('/cv-olustur', { state: { background: background || location } });
-          }}
-          onOpenCompanyProfile={() => {
-            if (user?.user_metadata?.role === 'employer') {
-              fetchCompany().then(company => {
-                if (company) {
-                  const companyData = company as any;
-                  navigate(`/company/${companyData.slug || companyData.id}`, { state: { companyData, background: background || location } });
-                }
-              });
-            }
-          }}
-          onOpenSettings={() => {
-            navigate('/ayarlar', { state: { background: background || location } });
-          }}
-          hasCV={!!currentUserCV}
-          userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
-          notificationCount={generalNotifications.filter(n => !n.is_read).length}
-          notifications={[...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-          onMarkNotificationRead={markNotificationRead}
-          onMarkAllRead={markAllNotificationsRead}
-          onOpenProfile={(uid, role) => {
-            handleOpenProfile(uid, role);
-          }}
-          onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
-          isAuthModalOpen={isAuthModalOpen}
-          onCloseAuth={() => setIsAuthModalOpen(false)}
-          authMode={authMode}
-          authRole={authRole}
-          onOpenSavedCVs={() => {
-            handleOpenSavedCVs();
-          }}
-          onOpenMenu={() => setIsMobileMenuOpen(true)}
-          unreadMessageCount={unreadMessageCount}
-          onOpenMessages={() => setIsMessagesOpen(true)}
-        />
+        onSearch={setSearchQuery}
+        onCreateCV={() => {
+          navigate('/cv-olustur', { state: { background: background || location } });
+        }}
+        onOpenCompanyProfile={() => {
+          if (user?.user_metadata?.role === 'employer') {
+            fetchCompany().then(company => {
+              if (company) {
+                const companyData = company as any;
+                navigate(`/company/${companyData.slug || companyData.id}`, { state: { companyData, background: background || location } });
+              }
+            });
+          }
+        }}
+        onOpenSettings={() => {
+          navigate('/ayarlar', { state: { background: background || location } });
+        }}
+        hasCV={!!currentUserCV}
+        userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
+        notificationCount={generalNotifications.filter(n => !n.is_read).length}
+        notifications={[...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+        onMarkNotificationRead={markNotificationRead}
+        onMarkAllRead={markAllNotificationsRead}
+        onOpenProfile={(uid, role) => {
+          handleOpenProfile(uid, role);
+        }}
+        onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
+        isAuthModalOpen={isAuthModalOpen}
+        onCloseAuth={() => setIsAuthModalOpen(false)}
+        authMode={authMode}
+        authRole={authRole}
+        onOpenSavedCVs={() => {
+          handleOpenSavedCVs();
+        }}
+        onOpenMenu={() => setIsMobileMenuOpen(true)}
+        unreadMessageCount={unreadMessageCount}
+        onOpenMessages={() => setIsMessagesOpen(true)}
+      />
 
       {/* ... previous modals ... */}
 
@@ -1869,23 +1874,23 @@ const App: React.FC = () => {
             <div className="flex sm:hidden items-center justify-between px-4 mt-0.5 mb-0">
               <div className="flex items-center gap-4 pt-1.5 pb-0.5">
                 <div className="flex flex-col gap-0 w-full">
-                  {((viewMode === 'cvs') || 
-                    (viewMode === 'shops' && (showAllShops || searchQuery.length > 0)) || 
+                  {((viewMode === 'cvs') ||
+                    (viewMode === 'shops' && (showAllShops || searchQuery.length > 0)) ||
                     (viewMode === 'employers' && (showAllEmployers || searchQuery.length > 0))) && (
-                    <div className="animate-in fade-in duration-300 pb-2">
-                      <div className="text-[20px] font-black tracking-tighter text-black dark:text-white transition-all leading-none mb-1">
-                        {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
-                      </div>
-                      <div className="flex items-center w-full mt-1.5 px-0">
-                        <div className="flex items-center text-gray-400 dark:text-gray-500 opacity-70 shrink-0 mt-0.5 pr-1.5">
-                          <i className="fi fi-rr-ballot text-[13px]"></i>
+                      <div className="animate-in fade-in duration-300 pb-2">
+                        <div className="text-[20px] font-black tracking-tighter text-black dark:text-white transition-all leading-none mb-1">
+                          {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
                         </div>
-                        <div className="flex-1">
-                          <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
+                        <div className="flex items-center w-full mt-1.5 px-0">
+                          <div className="flex items-center text-gray-400 dark:text-gray-500 opacity-70 shrink-0 mt-0.5 pr-1.5">
+                            <i className="fi fi-rr-ballot text-[13px]"></i>
+                          </div>
+                          <div className="flex-1">
+                            <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               </div>
             </div>
@@ -1940,8 +1945,8 @@ const App: React.FC = () => {
               </div>
             </div>
 
-              <div className="flex flex-col sm:gap-5 -mt-2 sm:mt-0">
-              
+            <div className="flex flex-col sm:gap-5 -mt-2 sm:mt-0">
+
               {viewMode === 'cvs' ? (
                 currentItems.length > 0 ? (
                   <>
@@ -1961,15 +1966,15 @@ const App: React.FC = () => {
                       <div className="mt-4 mb-12 flex flex-col items-center justify-center py-4 px-4">
                         {isSimulatedLoading ? (
                           <div className="flex flex-col items-center justify-center gap-3 animate-in fade-in duration-500">
-                             <div className="relative">
-                               <div className="w-9 h-9 border-[3px] border-[#1f6d78]/10 border-t-[#1f6d78] rounded-full animate-spin"></div>
-                               <div className="absolute inset-0 flex items-center justify-center">
-                                 <div className="w-1.5 h-1.5 bg-[#1f6d78] rounded-full animate-ping"></div>
-                               </div>
-                             </div>
-                             <p className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] animate-pulse uppercase tracking-widest text-center">
-                               {t('feed.searching_more') || "Daha Fazla CV Aranıyor..."}
-                             </p>
+                            <div className="relative">
+                              <div className="w-9 h-9 border-[3px] border-[#1f6d78]/10 border-t-[#1f6d78] rounded-full animate-spin"></div>
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-1.5 h-1.5 bg-[#1f6d78] rounded-full animate-ping"></div>
+                              </div>
+                            </div>
+                            <p className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] animate-pulse uppercase tracking-widest text-center">
+                              {t('feed.searching_more') || "Daha Fazla CV Aranıyor..."}
+                            </p>
                           </div>
                         ) : showEndMessage ? (
                           <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -2016,9 +2021,9 @@ const App: React.FC = () => {
                           className="flex items-center gap-4 sm:gap-10 pl-1.5 pr-4 py-4 sm:p-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-white/10 active:bg-gray-50 dark:active:bg-gray-750 transition-colors sm:border sm:rounded-[35px] sm:mb-4"
                         >
                           <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-lg sm:rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 shadow-sm flex items-center justify-center text-center">
-                            <ImageWithFallback 
-                              src={company.logoUrl} 
-                              alt={company.name} 
+                            <ImageWithFallback
+                              src={company.logoUrl}
+                              alt={company.name}
                               className="w-full h-full object-cover"
                               initialsClassName="text-3xl sm:text-5xl font-black"
                             />
@@ -2064,45 +2069,45 @@ const App: React.FC = () => {
                       </div>
                     )
                   ) : (
-                      <div className="bg-white dark:bg-gray-900 py-6 sm:py-10 text-gray-900 dark:text-white overflow-hidden relative group transition-colors duration-300">
-                        <div className="relative z-10 flex flex-col items-center px-4">
-                          <div className="text-center">
-                            <h2 className="text-3xl sm:text-[40px] font-black mb-6 leading-[1.1] tracking-tight text-gray-900 dark:text-white">
-                              Geleceğin Yıldızlarını <br className="sm:hidden" /> Ekibinize Katın
-                            </h2>
-                            <p className="text-gray-500 dark:text-gray-400 text-[13px] sm:text-[15px] font-bold mb-12 max-w-lg leading-relaxed mx-auto px-6 sm:px-0">
-                              Doğru yeteneği bulmak hiç bu kadar kolay olmamıştı. <br className="hidden sm:block" /> Kartvizid'de profilinizi oluşturun ve doğrudan profesyonellere ulaşın.
-                            </p>
-                            
-                            <div className="flex flex-col items-center gap-8 w-full max-w-[380px] mx-auto">
-                              <div className="flex flex-col items-center gap-3 w-full">
-                                <button 
-                                  onClick={() => {
-                                    if (!user) {
-                                      handleAuthOpen('signup', 'employer');
-                                    } else {
-                                      navigate('/sirket-olustur');
-                                    }
-                                  }}
-                                  className="px-8 py-3 text-[15px] font-black bg-[#1f6d78] text-white rounded-full transition-all hover:bg-[#154e56] active:scale-95 shadow-lg shadow-[#1f6d78]/20 uppercase tracking-widest whitespace-nowrap"
-                                >
-                                  İş Veren Kaydı Oluştur
-                                </button>
-                                <p className="text-[10px] sm:text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-center mt-1">
-                                  Şirketinizi kaydedin ve aradığınız yetenekleri bulun
-                                </p>
-                              </div>
-    
-                              <button 
-                                onClick={() => setShowAllEmployers(true)}
-                                className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-[12px] sm:text-[13px] hover:underline uppercase tracking-widest transition-all active:scale-95"
+                    <div className="bg-white dark:bg-gray-900 py-6 sm:py-10 text-gray-900 dark:text-white overflow-hidden relative group transition-colors duration-300">
+                      <div className="relative z-10 flex flex-col items-center px-4">
+                        <div className="text-center">
+                          <h2 className="text-3xl sm:text-[40px] font-black mb-6 leading-[1.1] tracking-tight text-gray-900 dark:text-white">
+                            Geleceğin Yıldızlarını <br className="sm:hidden" /> Ekibinize Katın
+                          </h2>
+                          <p className="text-gray-500 dark:text-gray-400 text-[13px] sm:text-[15px] font-bold mb-12 max-w-lg leading-relaxed mx-auto px-6 sm:px-0">
+                            Doğru yeteneği bulmak hiç bu kadar kolay olmamıştı. <br className="hidden sm:block" /> Kartvizid'de profilinizi oluşturun ve doğrudan profesyonellere ulaşın.
+                          </p>
+
+                          <div className="flex flex-col items-center gap-8 w-full max-w-[380px] mx-auto">
+                            <div className="flex flex-col items-center gap-3 w-full">
+                              <button
+                                onClick={() => {
+                                  if (!user) {
+                                    handleAuthOpen('signup', 'employer');
+                                  } else {
+                                    navigate('/sirket-olustur');
+                                  }
+                                }}
+                                className="px-8 py-3 text-[15px] font-black bg-[#1f6d78] text-white rounded-full transition-all hover:bg-[#154e56] active:scale-95 shadow-lg shadow-[#1f6d78]/20 uppercase tracking-widest whitespace-nowrap"
                               >
-                                İş Verenleri Keşfet
+                                İş Veren Kaydı Oluştur
                               </button>
+                              <p className="text-[10px] sm:text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-center mt-1">
+                                Şirketinizi kaydedin ve aradığınız yetenekleri bulun
+                              </p>
                             </div>
+
+                            <button
+                              onClick={() => setShowAllEmployers(true)}
+                              className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-[12px] sm:text-[13px] hover:underline uppercase tracking-widest transition-all active:scale-95"
+                            >
+                              İş Verenleri Keşfet
+                            </button>
                           </div>
                         </div>
                       </div>
+                    </div>
                   )}
                 </div>
               ) : (
@@ -2134,7 +2139,7 @@ const App: React.FC = () => {
                         <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base max-w-sm leading-relaxed font-bold">
                           Kartvizid'de hizmetler sayfası çok yakında dolmaya başlayacak. <br className="hidden sm:block" />İlk hizmet kapısını siz açabilirsiniz!
                         </p>
-                        <button 
+                        <button
                           onClick={() => handleAuthOpen('signup', 'shop')}
                           className="mt-8 text-[#1f6d78] dark:text-[#2dd4bf] font-black hover:underline text-sm sm:text-base uppercase tracking-widest"
                         >
@@ -2155,7 +2160,7 @@ const App: React.FC = () => {
                           </p>
                           <div className="flex flex-col items-center gap-8 w-full max-w-[380px] mx-auto">
                             <div className="flex flex-col items-center gap-3 w-full">
-                              <button 
+                              <button
                                 onClick={() => handleAuthOpen('signup', 'shop')}
                                 className="px-8 py-3 text-[15px] font-black bg-[#1f6d78] text-white rounded-full transition-all hover:bg-[#154e56] active:scale-95 shadow-lg shadow-[#1f6d78]/20 uppercase tracking-widest whitespace-nowrap"
                               >
@@ -2165,8 +2170,8 @@ const App: React.FC = () => {
                                 Yeteneklerinizi kazanca dönüştürün
                               </p>
                             </div>
-  
-                            <button 
+
+                            <button
                               onClick={() => setShowAllShops(true)}
                               className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-[12px] sm:text-[13px] hover:underline uppercase tracking-widest transition-all active:scale-95"
                             >
@@ -2324,6 +2329,75 @@ const App: React.FC = () => {
       )}
 
       <Footer />
+      <CookieConsent />
+
+      {/* AdSense Value Section - Appears only on Home View at the bottom of the main list */}
+      {isHomeView && !background && (
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6 pb-20 mt-12 animate-in fade-in duration-700">
+           <div className="bg-white dark:bg-gray-800/50 rounded-[40px] border border-gray-100 dark:border-gray-800 p-8 md:p-16 shadow-2xl shadow-gray-200/50 dark:shadow-none">
+              <div className="max-w-4xl mx-auto">
+                 <div className="flex flex-col items-center text-center mb-16">
+                    <span className="bg-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-6">
+                        Dijital Kariyer Platformu
+                    </span>
+                    <h2 className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white leading-tight mb-8">
+                        İş Aramayın, <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1f6d78] to-[#2dd4bf]">Değerinizi Keşfedin.</span>
+                    </h2>
+                    <p className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed italic">
+                        "Klasik kariyer sitelerinde ilanlara boğulmaktan yoruldunuz mu? Kartvizid olarak, işe alım sürecini tersine çeviriyor ve adayları pazarın merkezine yerleştiriyoruz."
+                    </p>
+                 </div>
+
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12">
+                     <div className="space-y-6">
+                        <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf]">Kartvizid Nedir?</h3>
+                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
+                           Kartvizid, geleneksel iş ilanı modelini yıkan, yetenek odaklı bir dijital kartvizit ve kariyer platformudur. İşverenlerin ilan açıp binlerce başvuru arasından eleme yapması yerine, profesyonellerin kendilerini en iyi şekilde ifade ettiği dijital profiller üzerinden işlerin sizi bulmasını sağlıyoruz.
+                        </p>
+                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
+                           Vizyonumuz, her profesyonelin kendi markasının yöneticisi olduğu, şeffaf, hızlı ve güvenli bir iş piyasası inşa etmektir. Kartvizid ile iletişim bilgileriniz siz onay verene kadar gizli kalır; böylece mahremiyetinizden ödün vermeden en iyi iş fırsatlarına ulaşırsınız.
+                        </p>
+                     </div>
+
+                     <div className="space-y-6">
+                        <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf]">Tersine İşe Alım Modeli</h3>
+                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
+                           "Tersine İşe Alım" (Reverse Recruitment) modelimizde başrol sizsiniz. İşverenler, gelişmiş filtreleme sistemlerimiz ile ihtiyaç duydukları yeteneklere doğrudan ulaşır ve size görüşme talebi gönderir. Bu, hem zaman kazandırır hem de gerçekten aranan bir yetenek olduğunuzu hissetmenizi sağlar.
+                        </p>
+                        <ul className="space-y-4">
+                           <li className="flex gap-4 items-start">
+                              <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 shrink-0">✓</div>
+                              <p className="text-sm font-bold text-gray-700 dark:text-gray-300">İlan kirliliği yok, doğrudan eşleşme var.</p>
+                           </li>
+                           <li className="flex gap-4 items-start">
+                              <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 shrink-0">✓</div>
+                              <p className="text-sm font-bold text-gray-700 dark:text-gray-300">İletişim izni verene kadar numaranız ve mailiniz gizli.</p>
+                           </li>
+                           <li className="flex gap-4 items-start">
+                              <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 shrink-0">✓</div>
+                              <p className="text-sm font-bold text-gray-700 dark:text-gray-300">Her profil bir dijital markadır.</p>
+                           </li>
+                        </ul>
+                     </div>
+                 </div>
+
+                 <div className="mt-20 pt-12 border-t border-gray-100 dark:border-gray-800">
+                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-3xl p-8 md:p-12 text-center">
+                       <h4 className="text-xl font-black mb-4 italic">Kariyeriniz İçin Sadece Bir CV Yetmez, Bir Hikaye Gerekir.</h4>
+                       <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base leading-relaxed mb-8">
+                          Kartvizid sadece bir liste sitesi değil, aynı zamanda profesyonel gelişiminiz için bir rehberdir. <a href="/rehber" className="text-[#1f6d78] dark:text-[#2dd4bf] font-black hover:underline">Kariyer Rehberimiz</a> üzerinden mülakat tekniklerinden maaş pazarlığına kadar onlarca güncel içeriğe ulaşabilirsiniz.
+                       </p>
+                       <div className="flex flex-wrap justify-center gap-4">
+                          <button onClick={() => navigate('/cv-olustur')} className="bg-[#1f6d78] text-white px-10 py-4 rounded-2xl font-black text-sm hover:opacity-90 transition-all shadow-xl shadow-[#1f6d78]/20">Hemen Profilini Oluştur</button>
+                          <a href="/rehber" className="bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white px-10 py-4 rounded-2xl font-black text-sm hover:bg-gray-50 transition-all">Rehberi İncele</a>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+      )}
       {/* Local Modals have moved into <Routes> below */}
 
 
@@ -2443,6 +2517,7 @@ const App: React.FC = () => {
       )}
 
       <Routes>
+        <Route path="/" element={null} />
         <Route path="/cv/:id" element={
           <CVProfileRoute
             onClose={() => navigate('/', { replace: true })}
@@ -2452,6 +2527,16 @@ const App: React.FC = () => {
         } />
         <Route path="/hizmetler" element={null} />
         <Route path="/is-verenler" element={null} />
+        <Route path="/rehber" element={
+          <React.Suspense fallback={null}>
+            <BlogRoute />
+          </React.Suspense>
+        } />
+        <Route path="/rehber/:slug" element={
+          <React.Suspense fallback={null}>
+            <BlogRoute />
+          </React.Suspense>
+        } />
         <Route path="/company/:id" element={
           <CompanyProfileRoute
             onClose={() => navigate('/', { replace: true })}
@@ -2512,6 +2597,11 @@ const App: React.FC = () => {
             <LegalRoute section="iletisim" />
           </React.Suspense>
         } />
+        <Route path="/hakkimizda" element={
+          <React.Suspense fallback={null}>
+            <LegalRoute section="about" />
+          </React.Suspense>
+        } />
         <Route path="/cv-olustur" element={
           <CVFormModal
             onClose={() => navigate('/', { replace: true })}
@@ -2558,7 +2648,7 @@ const App: React.FC = () => {
       </Routes>
 
       {user?.user_metadata?.role === 'job_seeker' && currentUserCV && (
-        <CVCompletionPrompt 
+        <CVCompletionPrompt
           completionScore={Math.round(
             (() => {
               let score = 0;

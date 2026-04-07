@@ -158,12 +158,25 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
     }
 
     return (
-        <ProfileModal
-            cv={cv}
-            onClose={handleClose}
-            onOpenChat={() => onOpenChat(cv.userId)}
-            onJobFound={handleJobFound}
-        />
+        <div className="relative">
+            {/* SEO Booster: Hidden from users but visible to crawlers in raw HTML */}
+            <div className="sr-only opacity-0 h-0 pointer-events-none overflow-hidden" aria-hidden="true">
+                <h1>{cv.name} - {cv.profession} Dijital CV</h1>
+                <p>{cv.city} bölgesinde {cv.profession} olarak faaliyet gösteren {cv.name} isimli profesyonelin güncel iş deneyimleri, yetenekleri ve kariyer hedefleri.</p>
+                <p>Kartvizid.com üzerinden {cv.name} ile doğrudan iletişim kurabilir, tersine işe alım modelimiz ile kariyer yolculuğunuza yön verebilirsiniz. {cv.about?.substring(0, 150)}...</p>
+                <nav>
+                    <a href="/rehber">Kariyer Rehberimizi İnceleyin</a> | 
+                    <a href="/hakkimizda">Kartvizid Hakkında Bilgi Alın</a>
+                </nav>
+            </div>
+
+            <ProfileModal
+                cv={cv}
+                onClose={handleClose}
+                onOpenChat={() => onOpenChat(cv.userId)}
+                onJobFound={handleJobFound}
+            />
+        </div>
     );
 };
 

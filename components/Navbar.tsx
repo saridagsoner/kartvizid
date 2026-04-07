@@ -6,7 +6,6 @@ import ImageWithFallback from './ImageWithFallback';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Link } from 'react-router-dom';
-import AuthModal from './AuthModal';
 
 
 
@@ -98,6 +97,15 @@ const Navbar: React.FC<NavbarProps & {
                 <span className="hidden sm:block text-[12px] font-medium text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
                   dijital cv & doğru eşleşme
                 </span>
+              </Link>
+              
+              <Link 
+                to="/rehber" 
+                className="hidden lg:flex items-center gap-2 ml-8 px-4 py-2 text-sm font-black text-gray-500 hover:text-[#1f6d78] dark:text-gray-400 dark:hover:text-[#2dd4bf] transition-colors group"
+              >
+                <i className="fi fi-rr-book-alt translate-y-[1px]"></i>
+                <span>REHBER</span>
+                <span className="w-1.5 h-1.5 bg-[#1f6d78] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
               </Link>
             </div>
 
@@ -249,12 +257,6 @@ const Navbar: React.FC<NavbarProps & {
           </div>
         </nav>
 
-        <AuthModal
-          isOpen={isAuthModalOpen}
-          onClose={onCloseAuth}
-          initialMode={authMode}
-          initialRole={authRole}
-        />
       </>
     );
   };

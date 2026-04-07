@@ -63,6 +63,7 @@ export interface CV {
   salaryMin: number;
   salaryMax: number;
   salaryCurrency?: string;
+  skills?: string[];
   about: string;
   education: string; // Legacy / Primary Display
   educationLevel?: string; // Legacy
@@ -82,6 +83,10 @@ export interface CV {
   isActive?: boolean;
   views?: number;
   isPlaced?: boolean;
+  email?: string;
+  phone?: string;
+  isEmailPublic?: boolean;
+  isPhonePublic?: boolean;
   references?: Array<{
     id: string;
     name: string;

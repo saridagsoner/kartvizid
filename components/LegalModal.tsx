@@ -12,7 +12,8 @@ type LegalSection =
     | 'kvkk'
     | 'membership'
     | 'data_form'
-    | 'iletisim';
+    | 'iletisim'
+    | 'about';
 
 interface LegalModalProps {
     initialSection?: LegalSection;
@@ -21,14 +22,31 @@ interface LegalModalProps {
 }
 
 export const LEGAL_CONTENT: Record<LegalSection, { title: string; content: React.ReactNode }> = {
+    about: {
+        title: "Hakkımızda",
+        content: (
+            <div className="space-y-6">
+                <p className="text-lg font-medium text-[#1f6d78] dark:text-[#2dd4bf]">Kartvizid.com: Dijital Kariyerinizin Yeni Nesil Yüzü</p>
+                <p>Kartvizid, modern iş dünyasının en büyük problemlerinden biri olan "doğru aday ve doğru işveren eşleşmesi" sorununa yenilikçi bir çözüm sunmak amacıyla kurulmuş bir "Tersine İşe Alım" platformudur.</p>
+                
+                <h4 className="font-bold text-gray-900">Vizyonumuz</h4>
+                <p>İş arama sürecini, adayların birer "başvuru numarası" olmaktan çıkıp, kendi yeteneklerini ve profesyonel kimliklerini sergiledikleri bir dijital vitrine dönüştürmektir. Bizim dünyamızda işler adayları bulur, adaylar ise sadece kendilerine en uygun olanı seçer.</p>
+
+                <h4 className="font-bold text-gray-900">Neden Kartvizid?</h4>
+                <p>Geleneksel iş ilanları arasında kaybolmak, yüzlerce yere başvurup yanıt alamamak yorucudur. Kartvizid ile bir kez profilinizi oluşturursunuz ve işverenlerin gelişmiş filtreleme sistemimizle size ulaşmasını sağlarsınız. Sadece iletişim izni verdiğiniz işverenler sizinle iletişime geçebilir, bu da gizliliğinizi en üst düzeyde korur.</p>
+                
+                <p>2026 yılı itibariyle dijitalleşen iş dünyasında, kağıt üzerindeki CV'lerin yerini interaktif, paylaşılabilir ve karekod destekli dijital kartvizitler alıyor. Biz bu geleceğin öncüsü olmayı hedefliyoruz.</p>
+            </div>
+        )
+    },
     general: {
         title: "Genel Koşullar",
         content: (
             <div className="space-y-4">
-                <p><strong>1. Giriş</strong><br />Kartvizid.com ("Platform"), iş arayanların ("Aday") dijital profillerini oluşturduğu ve işverenlerin ("İşveren") bu profilleri inceleyerek iletişim talebinde bulunduğu bir tersine işe alım platformudur.</p>
-                <p><strong>2. Tersine İşe Alım Modeli</strong><br />Platformumuzda klasik iş ilanı mantığı bulunmamaktadır. Adaylar ilanlara başvurmaz; İşverenler, kriterlerine uygun Adayları arar ve bulur. İletişim, ancak Adayın onayı ile başlar.</p>
-                <p><strong>3. Üyelik ve Kullanım</strong><br />Platforma üyelik Adaylar için ücretsizdir. İşverenler için belirli hizmetler ücretli olabilir. Kullanıcılar, profillerinde beyan ettikleri bilgilerin doğruluğundan sorumludur.</p>
-                <p><strong>4. Hesap Güvenliği</strong><br />Kullanıcılar hesap şifrelerinin güvenliğinden sorumludur. Platform, yetkisiz erişimlerden doğacak zararlardan sorumlu tutulamaz.</p>
+                <p><strong>1. Platformun Amacı</strong><br />Kartvizid.com, iş arayanların ("Aday") dijital profillerini sergilediği ve işverenlerin ("İşveren") bu profilleri inceleyerek doğrudan iletişim kurabildiği bir ekosistemdir. Platform, bir "ilan sitesi" değil, bir "yetenek vitrini"dir.</p>
+                <p><strong>2. Tersine İşe Alım Modeli</strong><br />Platformda klasik usülde ilan açma ve başvuru yapma özellikleri bulunmamaktadır. İşverenler, aradıkları kriterlere uygun adayları özel algoritmalarla filtreler ve adaylara "İletişim Talebi" gönderirler.</p>
+                <p><strong>3. Hesap Oluşturma ve Doğruluk</strong><br />Adaylar, profillerinde yer verdikleri eğitim, deneyim ve yetenek bilgilerinin gerçeği yansıttığını taahhüt ederler. Yanıltıcı beyanlardan doğacak hukuki sorumluluk kullanıcıya aittir.</p>
+                <p><strong>4. Kullanım Şartları Değişikliği</strong><br />Kartvizid, platformun gelişimine göre kullanım şartlarında güncelleme yapma hakkını saklı tutar. Güncellemeler yapıldığında kullanıcılar haberdar edilecektir.</p>
             </div>
         )
     },
@@ -36,11 +54,13 @@ export const LEGAL_CONTENT: Record<LegalSection, { title: string; content: React
         title: "Güvenlik İpuçları",
         content: (
             <div className="space-y-4">
-                <ul className="list-disc pl-5 space-y-2">
-                    <li><strong>Kişisel Verilerinizi Koruyun:</strong> Platform üzerindeki iletişiminizde T.C. Kimlik No, banka hesap bilgileri gibi hassas verileri paylaşmaktan kaçının.</li>
-                    <li><strong>İşveren Doğrulaması:</strong> Sizinle iletişime geçen şirketin kurumsal e-posta adresini ve web sitesini kontrol edin. Şüpheli durumlarda "Bildir" seçeneğini kullanın.</li>
-                    <li><strong>Para Talepleri:</strong> İşe alım süreci için sizden para talep eden (dosya masrafı, eğitim ücreti vb.) kişilere itibar etmeyin.</li>
-                    <li><strong>Harici Bağlantılar:</strong> Platform dışına yönlendiren şüpheli linklere tıklamayın.</li>
+                <p>İnternet üzerinde iş ararken güvenliğinizi korumak en önemli önceliğiniz olmalıdır. İşte Kartvizid üzerinde ve genel kariyer yolculuğunuzda dikkat etmeniz gerekenler:</p>
+                <ul className="list-disc pl-5 space-y-3">
+                    <li><strong>Hassas Veri Paylaşımı:</strong> T.C. Kimlik numaranız, banka hesap bilgileriniz veya ev adresiniz gibi çok özel verileri ilk yazışmalarda kesinlikle paylaşmayın. Bu veriler ancak resmi işe alım aşamasında (SGK girişi vb.) gereklidir.</li>
+                    <li><strong>İşveren Profilini İnceleyin:</strong> Sizi davet eden şirketin profilini Kartvizid üzerinden inceleyin. Varsa web sitelerini ve LinkedIn sayfalarını kontrol ederek kurumsal kimliklerinden emin olun.</li>
+                    <li><strong>Asla Para Ödemeyin:</strong> Hiçbir gerçek işveren; dosya masrafı, eğitim ücreti, ekipman temini veya vize işlemleri adı altında sizden para talep etmez. Para isteyen kişileri derhal "Bildir" butonuyla bize iletin.</li>
+                    <li><strong>Güvenli İletişim:</strong> İlk görüşmelerinizi platform üzerinden yapmanızı öneririz. WhatsApp veya Telegram gibi platformlara geçmeden önce işverenin kurumsal bir hat kullandığından emin olun.</li>
+                    <li><strong>Şüpheli Bağlantılar:</strong> E-posta veya mesaj yoluyla gelen, kaynağı belirsiz "Hemen başvur" veya "Formu doldur" gibi linklere tıklamadan önce URL yapısını kontrol edin.</li>
                 </ul>
             </div>
         )
@@ -50,20 +70,32 @@ export const LEGAL_CONTENT: Record<LegalSection, { title: string; content: React
         content: (
             <div className="space-y-6">
                 <div>
-                    <h4 className="font-bold text-gray-900">Kartvizid.com ücretli mi?</h4>
-                    <p>Adaylar için profil oluşturmak ve yayınlamak tamamen ücretsizdir.</p>
+                    <h4 className="font-bold text-gray-900 border-l-4 border-[#1f6d78] pl-3 mb-2">Kartvizid.com tam olarak nedir?</h4>
+                    <p>Kartvizid, geleneksel iş ilanlarının aksine, "tersine işe alım" modeliyle çalışan bir platformdur. Burada adaylar ilanlara başvurmak yerine, kendi profesyonel dijital kartlarını (CV) oluştururlar ve işverenlerin kendilerini bulmasını beklerler. Bu sayede doğru eşleşme ihtimali yükselir.</p>
                 </div>
                 <div>
-                    <h4 className="font-bold text-gray-900">İletişim bilgilerim herkese açık mı?</h4>
-                    <p>Hayır. Telefon ve e-posta bilgileriniz varsayılan olarak gizlidir. Sadece iletişim isteğini onayladığınız İşverenler bu bilgilere erişebilir.</p>
+                    <h4 className="font-bold text-gray-900 border-l-4 border-[#1f6d78] pl-3 mb-2">Platformu kullanmak adaylar için ücretli mi?</h4>
+                    <p>Kesinlikle hayır. Kartvizid'de profil oluşturmak, dijital kartınızı yayınlamak ve işverenlerle iletişime geçmek adaylar için tamamen ücretsiz bir hizmettir.</p>
                 </div>
                 <div>
-                    <h4 className="font-bold text-gray-900">Profilimi nasıl gizleyebilirim?</h4>
-                    <p>Ayarlar menüsünden profil görünürlüğünü "Pasif" yaparak aramalarda çıkmamasını sağlayabilirsiniz.</p>
+                    <h4 className="font-bold text-gray-900 border-l-4 border-[#1f6d78] pl-3 mb-2">Kişisel bilgilerim ve iletişim verilerim güvende mi?</h4>
+                    <p>Güvenliğiniz bizim önceliğimizdir. Telefon numaranız ve e-posta adresiniz varsayılan olarak gizlidir. Bir işveren size iletişim isteği gönderdiğinde, bu isteği onaylamadığınız sürece bilgileriniz karşı tarafa gösterilmez.</p>
                 </div>
                 <div>
-                    <h4 className="font-bold text-gray-900">Başvuru yapabileceğim ilanlar nerede?</h4>
-                    <p>Kartvizid'de ilan yoktur. Siz profilinizi oluşturursunuz, size uygun bir pozisyon olduğunda İşveren size ulaşır.</p>
+                    <h4 className="font-bold text-gray-900 border-l-4 border-[#1f6d78] pl-3 mb-2">Neden hiç iş ilanı göremiyorum?</h4>
+                    <p>Kartvizid bir "ilan tahtası" değildir. Bizim modelimizde "iş sizi bulur". Profilinizi ne kadar detaylı ve profesyonel doldurursanız, işverenlerin arama sonuçlarında üst sıralarda çıkma ve teklif alma şansınız o kadar artar.</p>
+                </div>
+                <div>
+                    <h4 className="font-bold text-gray-900 border-l-4 border-[#1f6d78] pl-3 mb-2">Profilimi nasıl daha etkili hale getirebilirim?</h4>
+                    <p>İyi bir profil fotoğrafı, net bir meslek tanımı ve "Hakkımda" bölümünde başarılarınızı anlatan öz bir yazı, işverenlerin dikkatini çekmek için en önemli unsurlardır. Ayrıca "Yetenekler" ve "Deneyim" kısımlarını güncel tutmanız kritik önemdedir.</p>
+                </div>
+                <div>
+                    <h4 className="font-bold text-gray-900 border-l-4 border-[#1f6d78] pl-3 mb-2">Hesabımı ve verilerimi silebilir miyim?</h4>
+                    <p>Evet, dilediğiniz zaman ayarlar bölümünden hesabınızı tamamen silebilirsiniz. KVKK uyumluluğumuz gereği, hesabınızı sildiğinizde tüm verileriniz sunucularımızdan kalıcı olarak temizlenir.</p>
+                </div>
+                <div>
+                    <h4 className="font-bold text-gray-900 border-l-4 border-[#1f6d78] pl-3 mb-2">İşverenlerle nasıl iletişim kuracağım?</h4>
+                    <p>Bir işveren sizinle ilgilendiğinde size bir "İletişim Talebi" gönderir. Bu talep size bildirim olarak gelir. Onay verdiğiniz takdirde platform üzerinden mesajlaşmaya başlayabilir veya doğrudan telefon/e-posta yoluyla görüşebilirsiniz.</p>
                 </div>
             </div>
         )
@@ -84,37 +116,66 @@ export const LEGAL_CONTENT: Record<LegalSection, { title: string; content: React
     iletisim: {
         title: "İletişim",
         content: (
-            <div className="space-y-4">
-                <p>Bizimle iletişime geçmek için aşağıdaki kanalları kullanabilirsiniz.</p>
-                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
-                    <p className="font-bold text-gray-900 dark:text-white">E-posta</p>
-                    <p className="text-[#1f6d78] dark:text-[#2dd4bf]"><a href="mailto:iletisim@kartvizid.com">iletisim@kartvizid.com</a></p>
+            <div className="space-y-6">
+                <p className="text-gray-600 leading-relaxed">Kartvizid ekibi olarak size yardımcı olmak için buradayız. Her türlü soru, geri bildirim veya iş birliği talebiniz için aşağıdaki kanalları kullanabilirsiniz.</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all">
+                        <div className="w-10 h-10 bg-[#1f6d78] text-white rounded-full flex items-center justify-center mb-4">
+                            <i className="fi fi-rr-envelope"></i>
+                        </div>
+                        <h4 className="font-bold text-gray-900 dark:text-white mb-1">Genel İletişim</h4>
+                        <p className="text-xs text-gray-500 mb-3">Tüm sorularınız ve iş birliği için</p>
+                        <a href="mailto:iletisim@kartvizid.com" className="text-[#1f6d78] dark:text-[#2dd4bf] font-black hover:underline">iletisim@kartvizid.com</a>
+                    </div>
+
+                    <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-3xl border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all">
+                        <div className="w-10 h-10 bg-[#1f6d78] text-white rounded-full flex items-center justify-center mb-4">
+                            <i className="fi fi-rr-headset"></i>
+                        </div>
+                        <h4 className="font-bold text-gray-900 dark:text-white mb-1">Destek Merkezi</h4>
+                        <p className="text-xs text-gray-500 mb-3">Teknik sorunlar ve yardım için</p>
+                        <a href="mailto:destek@kartvizid.com" className="text-[#1f6d78] dark:text-[#2dd4bf] font-black hover:underline">destek@kartvizid.com</a>
+                    </div>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
-                    <p className="font-bold text-gray-900 dark:text-white">Destek ve Yardım</p>
-                    <p className="text-[#1f6d78] dark:text-[#2dd4bf]"><a href="mailto:destek@kartvizid.com">destek@kartvizid.com</a></p>
+
+                <div className="bg-[#F0F2F5] dark:bg-gray-900 p-6 rounded-3xl">
+                    <h5 className="font-bold text-gray-900 dark:text-white mb-2 italic">Ekibimiz Ne Zaman Yanıt Veriyor?</h5>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Gönderdiğiniz tüm e-postalar ekibimiz tarafından titizlikle incelenir. Genellikle <strong>2 ile 24 saat</strong> içerisinde tüm taleplerinize resmi dönüş sağlamaktayız. Lütfen talebinizle ilgili detaylı (ekran görüntüsü, işlem numarası vb.) bilgi vermeyi unutmayın.</p>
                 </div>
-                <p>Tüm soru, görüş ve önerileriniz için e-posta yoluyla bize 7/24 ulaşabilirsiniz. Talepleriniz en kısa sürede ekibimiz tarafından değerlendirilerek geri dönüş sağlanacaktır.</p>
             </div>
         )
     },
     services: {
         title: "Hizmetlerimiz",
         content: (
-            <div className="space-y-4">
-                <p><strong>Adaylar İçin:</strong></p>
-                <ul className="list-disc pl-5 space-y-1">
-                    <li>Dijital CV ve Portfolyo Oluşturma</li>
-                    <li>PDF CV Çıktısı Alma</li>
-                    <li>Karekod ile Profil Paylaşımı</li>
-                    <li>İşverenlerden Gelen Teklifleri Değerlendirme</li>
-                </ul>
-                <p className="mt-4"><strong>İşverenler İçin:</strong></p>
-                <ul className="list-disc pl-5 space-y-1">
-                    <li>Gelişmiş Aday Arama ve Filtreleme</li>
-                    <li>Aday Davet Sistemi</li>
-                    <li>Aday Havuzu Oluşturma (Kaydedilenler)</li>
-                </ul>
+            <div className="space-y-6">
+                <div className="bg-[#1f6d78]/5 p-6 rounded-2xl border border-[#1f6d78]/10">
+                    <h4 className="font-bold text-[#1f6d78] mb-3 flex items-center gap-2">
+                        <i className="fi fi-rr-user"></i> Adaylar İçin Profesyonel Çözümler
+                    </h4>
+                    <p className="text-sm mb-4">Kartvizid, adayların iş arama sürecini pasif bir bekleyişten aktif bir sergilemeye dönüştürür:</p>
+                    <ul className="list-disc pl-5 space-y-2 text-sm text-gray-600">
+                        <li><strong>Dinamik Dijital Profil:</strong> Saniyeler içinde oluşturulabilen, her cihazda kusursuz görünen profesyonel bir web profili.</li>
+                        <li><strong>Akıllı PDF CV Oluşturucu:</strong> Profil verilerinizden tek tıkla modern ve ATS uyumlu PDF çıktısı alma imkanı.</li>
+                        <li><strong>QR Kod (Karekod) Entegrasyonu:</strong> Fiziksel kartvizitlerinize veya basılı CV'lerinize ekleyebileceğiniz, doğrudan dijital profilinize yönlendiren özel karekod.</li>
+                        <li><strong>Gizlilik Kontrollü İletişim:</strong> Bilgilerinizin kiminle paylaşılacağına sadece sizin karar verdiğiniz gelişmiş onay mekanizması.</li>
+                        <li><strong>Kariyer Rehberi Erişimi:</strong> Sektör profesyonelleri tarafından hazırlanan güncel kariyer tavsiyelerine ve mülakat tekniklerine ücretsiz erişim.</li>
+                    </ul>
+                </div>
+
+                <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                    <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <i className="fi fi-rr-building"></i> İşverenler İçin Verimli İşe Alım
+                    </h4>
+                    <p className="text-sm mb-4">Doğru yeteneğe ulaşmanın en kısa ve en düşük maliyetli yolu:</p>
+                    <ul className="list-disc pl-5 space-y-2 text-sm text-gray-600">
+                        <li><strong>Gelişmiş Filtreleme:</strong> Şehir, deneyim, meslek ve yetenek bazlı nokta atışı aday arama motoru.</li>
+                        <li><strong>Aday Havuzu Yönetimi:</strong> Beğendiğiniz profilleri kategorize etme ve daha sonra incelemek üzere kaydetme özelliği.</li>
+                        <li><strong>Doğrudan Davet Sistemi:</strong> Aracı kurumlar olmadan, doğru adaya anında iletişim talebi gönderme kolaylığı.</li>
+                        <li><strong>Şeffaf Profil Yapısı:</strong> Adayların tüm yetkinliklerini tek bir sayfada, karmaşadan uzak görme imkanı.</li>
+                    </ul>
+                </div>
             </div>
         )
     },
@@ -227,6 +288,19 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
                         <h3 className="font-black text-xl text-gray-900">Yasal Merkez</h3>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 space-y-1">
+                        <button
+                            key="about"
+                            onClick={() => {
+                                if (onNavigate) onNavigate('about');
+                                else setActiveSection('about');
+                            }}
+                            className={`w-full text-left px-4 py-3 rounded-xl text-sm font-black transition-all ${activeSection === 'about'
+                                ? 'bg-[#1f6d78] text-white shadow-md shadow-[#1f6d78]/20'
+                                : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+                                }`}
+                        >
+                            Hakkımızda
+                        </button>
                         {Object.entries(LEGAL_CONTENT).map(([key, data]) => (
                             <button
                                 key={key}

@@ -32,7 +32,20 @@ const staticRoutes = [
     '/cerez-politikasi',
     '/kvkk-aydinlatma',
     '/uyelik-sozlesmesi',
-    '/veri-sahibi-basvuru-formu'
+    '/veri-sahibi-basvuru-formu',
+    '/iletisim',
+    '/rehber',
+    '/hakkimizda',
+    '/rehber/etkili-cv-hazirlama-rehberi-2026',
+    '/rehber/mulakatlarda-basarili-olmanin-sirlari',
+    '/rehber/dijital-dunyada-kisisel-marka-olusturma',
+    '/rehber/linkedin-profil-optimizasyonu-2026',
+    '/rehber/maas-pazarligi-teknikleri',
+    '/rehber/uzaktan-calisma-verimliligi',
+    '/rehber/cv-fotografi-nasil-olmali',
+    '/rehber/yazilim-sektorunde-kariyer-yapmak',
+    '/rehber/is-mulakatinda-beden-dili',
+    '/rehber/kariyerde-stres-yonetimi'
 ];
 
 // Production Domain
