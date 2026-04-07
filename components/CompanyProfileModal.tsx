@@ -5,11 +5,12 @@ import { Company } from '../types';
 interface CompanyProfileModalProps {
     company: Company;
     onClose: () => void;
+    isInline?: boolean;
 }
 
 import SEO from './SEO';
 
-const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onClose }) => {
+const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onClose, isInline = false }) => {
     const { t } = useLanguage();
 
     console.log('CompanyProfileModal Rendered:', { companyId: company.id, userId: company.userId });
@@ -38,13 +39,15 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
     );
 
     return (
-        <div className="fixed inset-0 z-[250] flex sm:items-center sm:justify-center sm:p-4 bg-white dark:bg-black sm:bg-black/30 sm:dark:bg-black/60">
+        <div className={isInline ? "h-full flex flex-col bg-white dark:bg-[#0f172a] shadow-none border-none overflow-hidden" : "fixed inset-0 z-[250] flex sm:items-center sm:justify-center sm:p-4 bg-white dark:bg-black sm:bg-black/30 sm:dark:bg-black/60"}>
+            {!isInline && (
             <SEO
                 title={`${company.name} - Şirket Profili`}
                 description={company.description ? company.description.substring(0, 150) + '...' : `${company.name} şirketinin profilini inceleyin.`}
                 image={company.logoUrl}
             />
-            <div className="bg-white dark:bg-black w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden border-none sm:border border-gray-100 dark:border-white/10">
+            )}
+            <div className={isInline ? "w-full h-full relative flex flex-col overflow-hidden" : "bg-white dark:bg-black w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] shadow-2xl relative flex flex-col overflow-hidden border-none sm:border border-gray-100 dark:border-white/10"}>
 
                 {/* Header */}
                 <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-black shrink-0">
@@ -66,8 +69,9 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                     </div>
                 </div>
 
-                {/* Modal Body */}
-                <div className="flex-1 overflow-y-auto p-5 sm:p-10 custom-scrollbar space-y-8 sm:space-y-12 bg-white dark:bg-black">
+                {/* Modal Body - A4 Paper Wrapper */}
+                <div className={`flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-black ${isInline ? 'px-4 py-8 sm:px-12 sm:py-16' : 'p-5 sm:p-10'}`}>
+                    <div className={isInline ? "max-w-[800px] mx-auto bg-white dark:bg-gray-900 shadow-[0_0_50px_rgba(0,0,0,0.06)] dark:shadow-none border border-gray-100 dark:border-white/5 rounded-[2rem] p-8 sm:p-16 min-h-[1100px]" : "space-y-8 sm:space-y-12"}>
                     {/* Bölüm: Kurumsal Kimlik (Başlık kaldırıldı) */}
                     <section>
                         <div className="flex flex-col gap-8 pt-4">
@@ -187,6 +191,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                         })()}
                     </section>
 
+                    </div>
                 </div>
                 
                 {/* Content Padding Bottom */}

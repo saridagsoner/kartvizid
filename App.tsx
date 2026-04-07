@@ -32,6 +32,7 @@ import ShopCard from './components/ShopCard';
 import ShopProfileModal from './components/ShopProfileModal';
 import CVCompletionPrompt from './components/CVCompletionPrompt';
 import CookieConsent from './components/CookieConsent';
+import DesktopNav from './components/DesktopNav';
 
 // Lazy loaded auxiliary modals
 const JobSuccessModal = React.lazy(() => import('./components/JobSuccessModal'));
@@ -98,6 +99,18 @@ const App: React.FC = () => {
   const [companyList, setCompanyList] = useState<any[]>([]);
   const [shopList, setShopList] = useState<any[]>([]);
 
+  // 3-Column Layout Logic
+  const isDiscoveryView = useMemo(() => 
+    location.pathname === '/' || 
+    location.pathname === '' ||
+    location.pathname.startsWith('/cv/') || 
+    location.pathname.startsWith('/company/') || 
+    location.pathname === '/is-verenler' || 
+    location.pathname === '/hizmetler',
+  [location.pathname]);
+
+  const isHomeView = useMemo(() => location.pathname === '/', [location.pathname]);
+
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 20;
@@ -138,6 +151,7 @@ const App: React.FC = () => {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFilterModal, setActiveFilterModal] = useState<'professions' | 'cities' | 'experience' | 'advanced' | null>(null);
+  const [isDesktopFilterOpen, setIsDesktopFilterOpen] = useState(false);
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
   const [isCVPromoOpen, setIsCVPromoOpen] = useState(false);
   const [isSimulatedLoading, setIsSimulatedLoading] = useState(false);
@@ -1752,57 +1766,128 @@ const App: React.FC = () => {
     return false;
   }, [location.pathname, currentUserCV, activeCompany, isCVPromoOpen]);
 
-  const isHomeView = useMemo(() => {
-    return location.pathname === '/' || location.pathname === '';
-  }, [location.pathname]);
+  const HomeDiscoveryContent = () => (
+    <>
+      <div className="flex sm:hidden items-center justify-between px-4 mt-0.5 mb-0">
+        <div className="flex flex-col gap-0 w-full pt-1.5 pb-0.5">
+          {((viewMode === 'cvs') || 
+            (viewMode === 'shops' && (showAllShops || searchQuery.length > 0)) || 
+            (viewMode === 'employers' && (showAllEmployers || searchQuery.length > 0))) && (
+            <div className="animate-in fade-in duration-300 pb-2">
+              <div className="text-[20px] font-black tracking-tighter text-black dark:text-white transition-all leading-none mb-1">
+                {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
+              </div>
+              <div className="flex items-center w-full mt-1.5">
+                <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Filters are now moved to Top Navbar */}
+      {isDesktopFilterOpen && viewMode === 'cvs' && (
+        <div className="hidden sm:block animate-in slide-in-from-top-4 duration-300 mb-6 mt-2">
+          <Filters
+            currentFilters={activeFilters}
+            onChange={handleFilterUpdate}
+            availableProfessions={availableProfessions}
+            availableCities={availableCities}
+            activeModal={activeFilterModal}
+            onActiveModalChange={setActiveFilterModal}
+          />
+        </div>
+      )}
+
+      {/* Desktop Category Title & Sort */}
+      <div className="hidden sm:block mt-8 mb-4 lg:pl-4 px-1">
+        <div className="flex items-center justify-start gap-4">
+          <h1 className="text-[28px] font-black tracking-tighter text-black dark:text-white leading-none">
+            {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
+          </h1>
+          <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:gap-0 -mt-2 sm:mt-0 lg:pl-4">
+        {viewMode === 'cvs' ? (
+          currentItems.length > 0 ? (
+            <>
+              {currentItems.map(cv => (
+                <BusinessCard key={cv.id} cv={cv} onClick={() => handleCVClick(cv)} />
+              ))}
+              {currentPage === totalPages && showEndMessage && (
+                <div className="mt-4 mb-12 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                  <h3 className="text-[13px] font-black text-gray-900 dark:text-white">{t('feed.end_title')}</h3>
+                  <p className="text-[11px] font-bold text-gray-500 dark:text-gray-400">{t('feed.end_desc')}</p>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="p-16 text-center text-gray-800 dark:text-white font-bold">{t('feed.no_results')}</div>
+          )
+        ) : viewMode === 'employers' ? (
+          <div className="flex flex-col gap-6">
+            {showAllEmployers || searchQuery.length > 0 ? (
+              filteredEmployers.length > 0 ? filteredEmployers.map(company => (
+                <div key={company.id} onClick={() => handleOpenProfile(company.userId, 'employer')} className="flex items-center gap-10 p-8 bg-white dark:bg-gray-800 border rounded-[35px] cursor-pointer hover:bg-gray-50">
+                  <div className="w-24 h-28 rounded-3xl border overflow-hidden shrink-0"><ImageWithFallback src={company.logoUrl} alt={company.name} /></div>
+                  <div className="flex-1"><h3 className="text-[22px] font-bold">{company.name}</h3><p className="text-[18px] text-[#1f6d78] font-bold">{company.industry}</p></div>
+                </div>
+              )) : <div className="p-16 text-center font-bold">Şirket bulunamadı.</div>
+            ) : (
+              <div className="bg-white dark:bg-gray-900 p-10 text-center rounded-[35px]">
+                <h2 className="text-[40px] font-black mb-6">Geleceğin Yıldızlarını Ekibinize Katın</h2>
+                <button onClick={() => setShowAllEmployers(true)} className="bg-[#1f6d78] text-white px-8 py-3 rounded-full font-black">İş Verenleri Keşfet</button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-6">
+            {showAllShops || searchQuery.length > 0 ? (
+              filteredShops.length > 0 ? filteredShops.map(shop => <ShopCard key={shop.id} shop={shop} onClick={() => { setActiveShop(shop); setIsShopProfileOpen(true); }} />) : <div className="p-16 text-center font-black italic opacity-50">Henüz Kayıtlı Hizmet Yok</div>
+            ) : (
+              <div className="bg-white dark:bg-gray-900 p-10 text-center rounded-[35px]">
+                <h2 className="text-[40px] font-black text-gray-900 dark:text-white">Yeteneğini Kazanca Dönüştür</h2>
+                <button onClick={() => setShowAllShops(true)} className="bg-[#1f6d78] text-white px-8 py-3 rounded-full font-black mt-6">Hizmetleri Keşfet</button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {filteredCVs.length > ITEMS_PER_PAGE && (
+        <div className="mt-8 flex justify-center items-center gap-4 pb-12 sm:pb-8">
+          <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="px-4 py-2 border rounded-full">←</button>
+          <span className="font-bold text-sm text-gray-500">{currentPage} / {totalPages}</span>
+          <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} className="px-4 py-2 border rounded-full">→</button>
+        </div>
+      )}
+    </>
+  );
 
   return (
-    <div className="min-h-screen flex flex-col bg-white sm:bg-[#F0F2F5] dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
       <SEO />
-
       <Navbar
         onSearch={setSearchQuery}
-        onCreateCV={() => {
-          navigate('/cv-olustur', { state: { background: background || location } });
-        }}
-        onOpenCompanyProfile={() => {
-          if (user?.user_metadata?.role === 'employer') {
-            fetchCompany().then(company => {
-              if (company) {
-                const companyData = company as any;
-                navigate(`/company/${companyData.slug || companyData.id}`, { state: { companyData, background: background || location } });
-              }
-            });
-          }
-        }}
-        onOpenSettings={() => {
-          navigate('/ayarlar', { state: { background: background || location } });
-        }}
+        onCreateCV={() => navigate('/cv-olustur')}
+        onOpenSettings={() => navigate('/ayarlar')}
         hasCV={!!currentUserCV}
         userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
         notificationCount={generalNotifications.filter(n => !n.is_read).length}
-        notifications={[...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+        notifications={[...generalNotifications].sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
         onMarkNotificationRead={markNotificationRead}
-        onMarkAllRead={markAllNotificationsRead}
-        onOpenProfile={(uid, role) => {
-          handleOpenProfile(uid, role);
-        }}
-        onOpenAuth={(mode, role) => handleAuthOpen(mode, role)}
-        isAuthModalOpen={isAuthModalOpen}
-        onCloseAuth={() => setIsAuthModalOpen(false)}
-        authMode={authMode}
-        authRole={authRole}
-        onOpenSavedCVs={() => {
-          handleOpenSavedCVs();
-        }}
+        onOpenProfile={handleOpenProfile}
+        onOpenAuth={handleAuthOpen}
+        onOpenSavedCVs={() => setIsSavedCVsOpen(true)}
         onOpenMenu={() => setIsMobileMenuOpen(true)}
         unreadMessageCount={unreadMessageCount}
         onOpenMessages={() => setIsMessagesOpen(true)}
+        onToggleFilter={() => setIsDesktopFilterOpen(!isDesktopFilterOpen)}
+        isFilterOpen={isDesktopFilterOpen}
       />
 
-      {/* ... previous modals ... */}
-
-      {/* Notifications Model moved to Routes below */}
       <MessagesModal
         isOpen={isMessagesOpen}
         onClose={() => setIsMessagesOpen(false)}
@@ -1812,871 +1897,140 @@ const App: React.FC = () => {
         onRefreshConversations={fetchConversations}
       />
 
-      {isResetPasswordOpen && (
-        <ResetPasswordModal onClose={() => setIsResetPasswordOpen(false)} />
-      )}
-
-
-      <div className="flex-1 flex justify-center pt-[68px] md:pt-[84px] px-2 md:px-6">
-        <div className="max-w-[1440px] w-full flex items-start gap-6 pb-12">
-          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[84px] h-fit pb-4">
-            <SidebarLeft
-              popularProfessions={professionStats}
-              popularCities={cityStats}
-              weeklyTrends={weeklyRisingStats}
-              platformStats={platformStats}
-              jobFinders={jobFinders}
-              onCVClick={handleCVClick}
-              loading={loading}
+      <div className="flex-1 flex justify-center pt-[68px] md:pt-[64px] px-0 sm:px-2 md:px-6">
+        <div className="max-w-[1600px] w-full flex items-start pb-12 lg:px-12">
+          
+          {/* COLUMN 1: LEFT NAVIGATION (Desktop Only) */}
+          <aside className="hidden lg:block w-[320px] shrink-0 sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/20 pr-2 pl-12 transition-colors duration-300">
+            <DesktopNav 
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              user={user}
+              isEmployer={!!activeCompany || user?.user_metadata?.role === 'employer'}
+              onOpenAuth={handleAuthOpen}
             />
           </aside>
 
+          {/* MAIN CONTENT AREA */}
+          <main className="flex-1 flex items-start min-w-0 h-full">
+            
+            {/* COLUMN 2: MIDDLE CONTENT (Feed or Full Page) */}
+            <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 ${
+              isDiscoveryView ? 'lg:max-w-[500px] border-r border-gray-100 dark:border-gray-800/20' : 'w-full'
+            }`}>
+              <Routes>
+                {/* Discovery Routes (List View) */}
+                <Route path="/" element={<HomeDiscoveryContent />} />
+                <Route path="/cv/:id" element={<><HomeDiscoveryContent /><div className="lg:hidden"><CVProfileRoute onOpenChat={handleOpenChat} handleJobFound={handleJobFound} /></div></>} />
+                <Route path="/company/:id" element={<><HomeDiscoveryContent /><div className="lg:hidden"><CompanyProfileRoute /></div></>} />
+                <Route path="/hizmetler" element={<HomeDiscoveryContent />} />
+                <Route path="/is-verenler" element={<HomeDiscoveryContent />} />
 
+                {/* Page Routes (Full Width on Desktop) */}
+                <Route path="/rehber/*" element={<div className="bg-white dark:bg-gray-900 rounded-[35px] overflow-hidden"><BlogRoute /></div>} />
+                <Route path="/ayarlar" element={<SettingsModal onClose={() => navigate('/', { replace: true })} />} />
+                <Route path="/bildirimler" element={<NotificationsModal onClose={() => navigate('/', { replace: true })} notifications={generalNotifications} onMarkRead={markNotificationRead} onOpenProfile={handleOpenProfile} />} />
+                <Route path="/cv-olustur" element={<CVFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCreateCV} initialData={currentUserCV || {}} availableCities={availableCities} />} />
+                <Route path="/sirket-olustur" element={<CompanyFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCompanySubmit} initialData={activeCompany || {}} availableCities={availableCities} />} />
+                <Route path="*" element={<LegalRoute section="general" />} />
+              </Routes>
+            </section>
 
-
-
-          <section className="flex-1 min-w-0 flex flex-col gap-2 sm:gap-4">
-            {/* Redundant Mobile Search Bar Hidden - Using Dedicated Search Overlay instead */}
-            <div className="hidden w-full mb-0 mt-2">
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <div className={`absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none transition-colors ${isSearchFocused ? 'text-[#1f6d78] dark:text-[#2dd4bf]' : 'text-gray-500'
-                    }`}>
-                    <i className="fi fi-br-search text-sm"></i>
-                  </div>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => setIsSearchFocused(true)}
-                    onBlur={() => setIsSearchFocused(false)}
-                    placeholder={isSearchFocused ? 'Meslek, Şehir, İsim veya Unvan Ara' : t('nav.search_placeholder')}
-                    className="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-full pl-11 pr-12 h-[42px] font-medium tracking-tight outline-none appearance-none focus:bg-white dark:focus:bg-gray-800 focus:border-[1.5px] focus:border-[#1f6d78] dark:focus:border-[#2dd4bf] focus:ring-0 transition-all placeholder:text-gray-400/90 text-[13px] sm:text-[16px] text-gray-900 dark:text-white"
-                  />
-                  <button
-                    onClick={() => setActiveFilterModal('advanced')}
-                    className="absolute right-1 text-xs top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors active:scale-95 z-20"
-                  >
-                    <svg className="text-[#1f6d78] dark:text-[#2dd4bf]" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="4" y1="8" x2="20" y2="8" />
-                      <circle cx="16" cy="8" r="2" fill="white" className="dark:fill-gray-900" />
-                      <line x1="4" y1="16" x2="20" y2="16" />
-                      <circle cx="8" cy="16" r="2" fill="white" className="dark:fill-gray-900" />
-                    </svg>
-                  </button>
-                </div>
-
-
-              </div>
-            </div>
-
-            {/* Mobile Header (View Mode Indicator) */}
-            <div className="flex sm:hidden items-center justify-between px-4 mt-0.5 mb-0">
-              <div className="flex items-center gap-4 pt-1.5 pb-0.5">
-                <div className="flex flex-col gap-0 w-full">
-                  {((viewMode === 'cvs') ||
-                    (viewMode === 'shops' && (showAllShops || searchQuery.length > 0)) ||
-                    (viewMode === 'employers' && (showAllEmployers || searchQuery.length > 0))) && (
-                      <div className="animate-in fade-in duration-300 pb-2">
-                        <div className="text-[20px] font-black tracking-tighter text-black dark:text-white transition-all leading-none mb-1">
-                          {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
-                        </div>
-                        <div className="flex items-center w-full mt-1.5 px-0">
-                          <div className="flex items-center text-gray-400 dark:text-gray-500 opacity-70 shrink-0 mt-0.5 pr-1.5">
-                            <i className="fi fi-rr-ballot text-[13px]"></i>
-                          </div>
-                          <div className="flex-1">
-                            <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                </div>
-              </div>
-            </div>
-
-            {viewMode === 'cvs' && (
-              <div className="hidden sm:block">
-                <Filters
-                  currentFilters={activeFilters}
-                  onChange={handleFilterUpdate}
-                  availableProfessions={availableProfessions}
-                  availableCities={availableCities}
-                  activeModal={activeFilterModal}
-                  onActiveModalChange={setActiveFilterModal}
-                  mobileSort={
-                    <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest whitespace-nowrap">{t('feed.sort')}:</span>
-                      <SortDropdown value={sortBy} onChange={setSortBy} />
+            {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
+            <aside className={`hidden lg:block w-[550px] min-w-0 h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-x border-gray-100 dark:border-gray-800 ${
+              isDiscoveryView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
+            }`}>
+              <div className="h-full">
+                <Routes>
+                  <Route path="/cv/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} />} />
+                  <Route path="/company/:id" element={<CompanyProfileRoute isInline={true} />} />
+                  <Route path="*" element={
+                    <div className="h-full flex flex-col items-center justify-center p-12 text-center text-gray-400 dark:text-gray-600">
+                       <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800/50 rounded-full flex items-center justify-center mb-6">
+                          <i className="fi fi-rr-cursor-finger text-3xl"></i>
+                       </div>
+                       <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">Detayları Gör</h3>
+                       <p className="text-sm font-medium">Soldaki listeden bir profil seçerek detaylarını burada inceleyebilirsiniz.</p>
                     </div>
-                  }
-                />
+                  } />
+                </Routes>
               </div>
-            )}
-
-            {/* Mobile Advanced Filter Modal */}
-            {activeFilterModal === 'advanced' && (
-              <div className="sm:hidden">
-                <AdvancedFilterModal
-                  initialFilters={activeFilters}
-                  onApply={(newFilters) => {
-                    Object.entries(newFilters).forEach(([key, val]) => {
-                      handleFilterUpdate(key, val);
-                    });
-                    setActiveFilterModal(null);
-                  }}
-                  onClose={() => setActiveFilterModal(null)}
-                  availableProfessions={availableProfessions}
-                  availableCities={availableCities}
-                />
-              </div>
-            )}
-
-            <div className="hidden sm:flex bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 px-4 pt-4 pb-0 sm:px-8 sm:pt-6 mb-2 flex-col sm:flex-row sm:items-baseline justify-between gap-3 sm:gap-0 shadow-sm transition-colors duration-300">
-              <div className="flex items-center gap-12 border-b border-gray-200 dark:border-white/20 w-full mb-[-1px]">
-                <div className="flex items-center gap-1">
-                  <div
-                    className={`${(viewMode === 'employers' || viewMode === 'shops') ? 'text-[22px] font-black' : 'text-[17px] font-black border-b-2 border-[#1f6d78] dark:border-[#2dd4bf] pb-3 -mb-px'} transition-all text-[#1f6d78] dark:text-[#2dd4bf]`}
-                  >
-                    {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
-                  </div>
-                  {viewMode === 'cvs' && <div className="pb-3"><SortDropdown value={sortBy} onChange={setSortBy} minimal={true} /></div>}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:gap-5 -mt-2 sm:mt-0">
-
-              {viewMode === 'cvs' ? (
-                currentItems.length > 0 ? (
-                  <>
-                    {/* Top Divider for First Item - Mobile Only */}
-                    <div className="ml-[74px] border-b border-gray-200/80 dark:border-white/15 mt-[-2px] mb-[-1px] sm:hidden" />
-                    {currentItems.map(cv => {
-                      return (
-                        <BusinessCard
-                          key={cv.id}
-                          cv={cv}
-                          onClick={() => handleCVClick(cv)}
-                        />
-                      );
-                    })}
-
-                    {currentPage === totalPages && !loading && (
-                      <div className="mt-4 mb-12 flex flex-col items-center justify-center py-4 px-4">
-                        {isSimulatedLoading ? (
-                          <div className="flex flex-col items-center justify-center gap-3 animate-in fade-in duration-500">
-                            <div className="relative">
-                              <div className="w-9 h-9 border-[3px] border-[#1f6d78]/10 border-t-[#1f6d78] rounded-full animate-spin"></div>
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-1.5 h-1.5 bg-[#1f6d78] rounded-full animate-ping"></div>
-                              </div>
-                            </div>
-                            <p className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] animate-pulse uppercase tracking-widest text-center">
-                              {t('feed.searching_more') || "Daha Fazla CV Aranıyor..."}
-                            </p>
-                          </div>
-                        ) : showEndMessage ? (
-                          <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                            <h3 className="text-[13px] sm:text-[15px] font-black text-gray-900 dark:text-white mb-0.5 tracking-tight">
-                              {t('feed.end_title')}
-                            </h3>
-                            <p className="text-[11px] sm:text-[12px] font-bold text-gray-500 dark:text-gray-400">
-                              {t('feed.end_desc')}
-                            </p>
-                          </div>
-                        ) : null}
-                      </div>
-                    )}
-                  </>
-                ) : loading ? (
-                  <>
-                    <BusinessCardSkeleton />
-                    <BusinessCardSkeleton />
-                    <BusinessCardSkeleton />
-                    <BusinessCardSkeleton />
-                    <BusinessCardSkeleton />
-                  </>
-                ) : (
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-16 text-center border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
-                    <p className="text-gray-800 dark:text-white font-bold">{t('feed.no_results')}</p>
-                    <button onClick={() => {
-                      setSortBy('default');
-                    }} className="mt-4 text-[#1f6d78] dark:text-[#2dd4bf] font-black hover:underline uppercase tracking-widest text-sm">
-                      Filtreleri Temizle
-                    </button>
-                  </div>
-                )
-              ) : viewMode === 'employers' ? (
-                /* Employers View */
-                <div className="flex flex-col gap-6">
-                  {/* Employer List Content */}
-
-                  {showAllEmployers || searchQuery.length > 0 ? (
-                    filteredEmployers.length > 0 ? (
-                      filteredEmployers.map(company => (
-                        <div
-                          key={company.id}
-                          onClick={() => handleOpenProfile(company.userId, 'employer')}
-                          className="flex items-center gap-4 sm:gap-10 pl-1.5 pr-4 py-4 sm:p-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-white/10 active:bg-gray-50 dark:active:bg-gray-750 transition-colors sm:border sm:rounded-[35px] sm:mb-4"
-                        >
-                          <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-lg sm:rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 shadow-sm flex items-center justify-center text-center">
-                            <ImageWithFallback
-                              src={company.logoUrl}
-                              alt={company.name}
-                              className="w-full h-full object-cover"
-                              initialsClassName="text-3xl sm:text-5xl font-black"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex flex-col gap-0.5 sm:gap-1.5">
-                                <h3 className="text-[15px] sm:text-[22px] font-bold text-black dark:text-white tracking-tight leading-tight line-clamp-1">
-                                  {company.name}
-                                </h3>
-                                <p className="text-[13px] sm:text-[18px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1">
-                                  {company.industry || t('card.no_profession')}
-                                </p>
-                                <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 sm:mt-1 text-[12px] sm:text-[15px] text-gray-500 dark:text-gray-400 font-bold whitespace-nowrap">
-                                  <i className="fi fi-rr-marker"></i>
-                                  <span className="">{company.city || t('card.no_city')}</span>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Desktop Action Button */}
-                            <div className="hidden sm:block shrink-0">
-                              <button className="bg-white dark:bg-gray-800 border-[0.5px] border-[#1f6d78] text-[#1f6d78] px-8 py-3 rounded-full font-black text-xs hover:bg-[#1f6d78] hover:text-white transition-all active:scale-95 shadow-sm uppercase tracking-widest whitespace-nowrap">
-                                {t('card.view')}
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Mobile Right Arrow */}
-                          <div className="shrink-0 self-center flex sm:hidden items-center text-gray-400 dark:text-gray-500">
-                            <i className="fi fi-rr-angle-small-right text-2xl"></i>
-                          </div>
-                        </div>
-                      ))
-                    ) : loading ? (
-                      <>
-                        <BusinessCardSkeleton />
-                        <BusinessCardSkeleton />
-                      </>
-                    ) : (
-                      <div className="bg-white dark:bg-gray-800 rounded-lg p-16 text-center border border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
-                        <p className="text-gray-800 dark:text-white font-bold">İş veren bulunamadı.</p>
-                      </div>
-                    )
-                  ) : (
-                    <div className="bg-white dark:bg-gray-900 py-6 sm:py-10 text-gray-900 dark:text-white overflow-hidden relative group transition-colors duration-300">
-                      <div className="relative z-10 flex flex-col items-center px-4">
-                        <div className="text-center">
-                          <h2 className="text-3xl sm:text-[40px] font-black mb-6 leading-[1.1] tracking-tight text-gray-900 dark:text-white">
-                            Geleceğin Yıldızlarını <br className="sm:hidden" /> Ekibinize Katın
-                          </h2>
-                          <p className="text-gray-500 dark:text-gray-400 text-[13px] sm:text-[15px] font-bold mb-12 max-w-lg leading-relaxed mx-auto px-6 sm:px-0">
-                            Doğru yeteneği bulmak hiç bu kadar kolay olmamıştı. <br className="hidden sm:block" /> Kartvizid'de profilinizi oluşturun ve doğrudan profesyonellere ulaşın.
-                          </p>
-
-                          <div className="flex flex-col items-center gap-8 w-full max-w-[380px] mx-auto">
-                            <div className="flex flex-col items-center gap-3 w-full">
-                              <button
-                                onClick={() => {
-                                  if (!user) {
-                                    handleAuthOpen('signup', 'employer');
-                                  } else {
-                                    navigate('/sirket-olustur');
-                                  }
-                                }}
-                                className="px-8 py-3 text-[15px] font-black bg-[#1f6d78] text-white rounded-full transition-all hover:bg-[#154e56] active:scale-95 shadow-lg shadow-[#1f6d78]/20 uppercase tracking-widest whitespace-nowrap"
-                              >
-                                İş Veren Kaydı Oluştur
-                              </button>
-                              <p className="text-[10px] sm:text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-center mt-1">
-                                Şirketinizi kaydedin ve aradığınız yetenekleri bulun
-                              </p>
-                            </div>
-
-                            <button
-                              onClick={() => setShowAllEmployers(true)}
-                              className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-[12px] sm:text-[13px] hover:underline uppercase tracking-widest transition-all active:scale-95"
-                            >
-                              İş Verenleri Keşfet
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                /* Shops (Hizmetler) View */
-                <div className="flex flex-col gap-6">
-                  {/* Hizmetler List Content */}
-                  {showAllShops || searchQuery.length > 0 ? (
-                    filteredShops.length > 0 ? (
-                      <div className="flex flex-col gap-4">
-                        {filteredShops.map(shop => (
-                          <ShopCard
-                            key={shop.id}
-                            shop={shop}
-                            onClick={() => {
-                              setActiveShop(shop);
-                              setIsShopProfileOpen(true);
-                            }}
-                          />
-                        ))}
-                      </div>
-                    ) : loading ? (
-                      <>
-                        <BusinessCardSkeleton />
-                        <BusinessCardSkeleton />
-                      </>
-                    ) : (
-                      <div className="pt-32 sm:pt-48 pb-24 sm:pb-32 flex flex-col items-center justify-center text-center px-6">
-                        <h3 className="text-xl sm:text-2xl font-black text-black dark:text-white mb-3">Henüz Kayıtlı Hizmet Yok</h3>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base max-w-sm leading-relaxed font-bold">
-                          Kartvizid'de hizmetler sayfası çok yakında dolmaya başlayacak. <br className="hidden sm:block" />İlk hizmet kapısını siz açabilirsiniz!
-                        </p>
-                        <button
-                          onClick={() => handleAuthOpen('signup', 'shop')}
-                          className="mt-8 text-[#1f6d78] dark:text-[#2dd4bf] font-black hover:underline text-sm sm:text-base uppercase tracking-widest"
-                        >
-                          HEMEN HİZMET VERMEYE BAŞLA
-                        </button>
-                      </div>
-                    )
-                  ) : (
-                    /* Shops Landing / Explanation Section - Updated for Flat background */
-                    <div className="bg-white dark:bg-gray-900 py-6 sm:py-10 text-gray-900 dark:text-white overflow-hidden relative group transition-colors duration-300">
-                      <div className="relative z-10 flex flex-col sm:flex-row items-center gap-8">
-                        <div className="flex-1 text-center">
-                          <h2 className="text-3xl sm:text-[40px] font-black mb-6 leading-[1.1] tracking-tight text-gray-900 dark:text-white">
-                            Yeteneğini Kazanca <br className="sm:hidden" /> Dönüştür
-                          </h2>
-                          <p className="text-gray-500 dark:text-gray-400 text-[13px] sm:text-[15px] font-bold mb-12 max-w-lg leading-relaxed mx-auto px-6 sm:px-0">
-                            Kartvizid’de ustalığınızı kazanca, profilinizi birer iş fırsatına dönüştürün. <br className="hidden sm:block" /> Doğrudan müşterilere ulaşmanın en şeffaf yolu.
-                          </p>
-                          <div className="flex flex-col items-center gap-8 w-full max-w-[380px] mx-auto">
-                            <div className="flex flex-col items-center gap-3 w-full">
-                              <button
-                                onClick={() => handleAuthOpen('signup', 'shop')}
-                                className="px-8 py-3 text-[15px] font-black bg-[#1f6d78] text-white rounded-full transition-all hover:bg-[#154e56] active:scale-95 shadow-lg shadow-[#1f6d78]/20 uppercase tracking-widest whitespace-nowrap"
-                              >
-                                Hemen Hizmet Vermeye Başla
-                              </button>
-                              <p className="text-[10px] sm:text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest text-center mt-1">
-                                Yeteneklerinizi kazanca dönüştürün
-                              </p>
-                            </div>
-
-                            <button
-                              onClick={() => setShowAllShops(true)}
-                              className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-[12px] sm:text-[13px] hover:underline uppercase tracking-widest transition-all active:scale-95"
-                            >
-                              Hizmetleri Keşfet
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                      {/* Subtle Decorative Elements for White Background */}
-                      <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-[#1f6d78]/5 rounded-full blur-[100px] opacity-50"></div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Pagination Controls */}
-            {filteredCVs.length > ITEMS_PER_PAGE && (
-              <div className="mt-8 flex justify-center items-center gap-4 pb-8 sm:pb-0">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className={`px - 4 py - 2 rounded - full text - sm font - bold transition - all ${currentPage === 1
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-transparent'
-                    : 'bg-white text-black border border-gray-200 hover:bg-black hover:text-white hover:border-black shadow-sm'
-                    } `}
-                >
-                  ← {t('feed.prev')}
-                </button>
-
-                <span className="text-sm font-medium text-gray-500">
-                  {t('feed.page')} {currentPage} / {totalPages}
-                </span>
-
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className={`px - 4 py - 2 rounded - full text - sm font - bold transition - all ${currentPage === totalPages
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-transparent'
-                    : 'bg-white text-[#1f6d78] border border-[#1f6d78] hover:bg-[#1f6d78] hover:text-white shadow-sm'
-                    } `}
-                >
-                  {t('feed.next')} →
-                </button>
-              </div>
-            )}
-          </section>
-
-          <aside className="hidden xl:block w-[304px] shrink-0 sticky top-[72px] self-start h-fit pb-4">
-            <SidebarRight
-              popularCVs={popularCVs}
-              popularCompanies={popularCompanies}
-              onCVClick={handleCVClick}
-              onCompanyClick={(company) => navigate(`/company/${company.slug || company.id}`, { state: { companyData: company, background: background || location } })}
-              loading={loading}
-            />
-          </aside>
-
-
+            </aside>
+          </main>
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation - Visible for all users EXCEPT when auth is open */}
-      {!isAuthModalOpen && (
-        <MobileBottomNav
-          user={user}
-          cvList={cvList}
-          onOpenFilter={() => setActiveFilterModal('advanced')}
-          isProfileOpen={isMyProfileOpen}
-          isCreateOpen={location.pathname === '/cv-olustur' || location.pathname === '/sirket-olustur'}
-          isHomeView={!isMyProfileOpen && !location.pathname.startsWith('/cv/') && !location.pathname.startsWith('/company/') && !['/cv-olustur', '/ayarlar', '/sirket-olustur', '/bildirimler'].includes(location.pathname) && !isSavedCVsOpen}
-          onGoHome={() => {
-            navigate('/', { replace: true });
-            setViewMode('cvs');
-            closeAllModals(); // Ensure all modals are closed
-            setSearchQuery('');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          onSearch={(val) => {
-            setSearchQuery(val);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          onCreateCV={() => {
-            if (!user) {
-              handleAuthOpen('signin');
-              return;
-            }
-            if (location.pathname === '/cv-olustur') {
-              navigate('/', { replace: true });
-              closeAllModals();
-              return;
-            }
-            navigate('/cv-olustur', { state: { background: background || location } });
-          }}
-          onOpenCompanyProfile={() => {
-            if (!user) {
-              handleAuthOpen('signin', 'employer');
-              return;
-            }
-            if (location.pathname === '/sirket-olustur') {
-              navigate('/', { replace: true });
-              closeAllModals();
-              return;
-            }
-            fetchCompany();
-            navigate('/sirket-olustur', { state: { background: background || location } });
-          }}
-          onOpenSettings={() => {
-            if (!user) {
-              handleAuthOpen('signin');
-              return;
-            }
-            if (location.pathname === '/ayarlar') {
-              navigate('/', { replace: true });
-              closeAllModals();
-              return;
-            }
-            navigate('/ayarlar', { state: { background: background || location } });
-          }}
-          hasCV={!!currentUserCV}
-          userPhotoUrl={user?.user_metadata?.avatar_url || (currentUserCV?.photoUrl)}
-          notificationCount={generalNotifications.filter(n => !n.is_read).length}
-          notifications={[...generalNotifications].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-          onMarkNotificationRead={markNotificationRead}
-          onOpenNotifications={() => {
-            navigate('/bildirimler', { state: { background: background || location } });
-          }}
-          onOpenProfile={(uid, role) => {
-            const userRole = user?.user_metadata?.role;
-            // Only show CV promo if user is clicking their own profile AND doesn't have a CV AND isn't an employer/shop
-            if (user && uid === user.id && !currentUserCV && userRole !== 'employer' && userRole !== 'shop') {
-              if (isCVPromoOpen) {
-                navigate('/', { replace: true });
-                closeAllModals();
-                return;
-              }
-              navigate('/', { replace: true });
-              closeAllModals();
-              setIsCVPromoOpen(true);
-              return;
-            }
-            // Check if already on the profile page
-            if (location.pathname === `/cv/${uid}` || location.pathname === `/company/${uid}`) {
-              closeAllModals();
-              return;
-            }
-            handleOpenProfile(uid, role || userRole);
-          }}
-          onOpenSavedCVs={() => {
-            setIsSavedCVsOpen(true);
-          }}
-          onOpenAuth={handleAuthOpen}
-          signOut={handleSignOut}
-        />
+      <MobileBottomNav
+        user={user}
+        cvList={cvList}
+        onOpenFilter={() => setActiveFilterModal('advanced')}
+        isProfileOpen={isMyProfileOpen}
+        isCreateOpen={location.pathname === '/cv-olustur' || location.pathname === '/sirket-olustur'}
+        isHomeView={isHomeView}
+        onGoHome={() => { navigate('/', { replace: true }); setViewMode('cvs'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+        onSearch={setSearchQuery}
+        onCreateCV={() => user ? navigate('/cv-olustur') : handleAuthOpen('signin')}
+        onOpenCompanyProfile={() => user ? navigate('/sirket-olustur') : handleAuthOpen('signin', 'employer')}
+        onOpenSettings={() => user ? navigate('/ayarlar') : handleAuthOpen('signin')}
+        hasCV={!!currentUserCV}
+        userPhotoUrl={user?.user_metadata?.avatar_url || currentUserCV?.photoUrl}
+        notificationCount={generalNotifications.filter(n => !n.is_read).length}
+        notifications={[...generalNotifications].sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+        onMarkNotificationRead={markNotificationRead}
+        onOpenNotifications={() => navigate('/bildirimler')}
+        onOpenProfile={handleOpenProfile}
+        onOpenSavedCVs={() => setIsSavedCVsOpen(true)}
+        onOpenAuth={handleAuthOpen}
+        signOut={handleSignOut}
+      />
+
+      <MobileMenuDrawer
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        user={user}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        onOpenAuth={handleAuthOpen}
+        onLogout={handleSignOut}
+        onGoHome={() => { navigate('/', {replace:true}); setViewMode('cvs'); setIsMobileMenuOpen(false); }}
+      />
+
+      <React.Suspense fallback={null}>
+        {isSavedCVsOpen && user && <SavedCVsModal userId={user.id} onClose={() => setIsSavedCVsOpen(false)} onOpenCV={(id) => { setIsSavedCVsOpen(false); handleOpenProfile(id, 'job_seeker'); }} />}
+        {isCVPromoOpen && <CVPromoModal onClose={() => setIsCVPromoOpen(false)} onCreateCV={() => { setIsCVPromoOpen(false); navigate('/cv-olustur'); }} />}
+        {isAuthModalOpen && <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} initialMode={authMode} initialRole={authRole as any} />}
+        {isShopProfileOpen && activeShop && <ShopProfileModal shop={activeShop} isOpen={isShopProfileOpen} onClose={() => setIsShopProfileOpen(false)} onOpenChat={handleOpenChat} />}
+        {isJobSuccessOpen && <JobSuccessModal onClose={() => setIsJobSuccessOpen(false)} />}
+      </React.Suspense>
+
+      {isHomeView && !background && (
+         <div className="max-w-[1440px] mx-auto px-4 md:px-6 pb-24 mt-12 animate-in fade-in duration-700">
+            <div className="bg-white dark:bg-gray-800/50 rounded-[40px] border border-gray-100 dark:border-gray-800 p-8 md:p-16 shadow-sm">
+               <div className="max-w-4xl mx-auto text-center">
+                  <h2 className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white mb-8 italic">İş Aramayın, Değerinizi Keşfedin.</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
+                     <div>
+                        <h3 className="text-xl font-bold text-[#1f6d78] mb-4">Kartvizid Nedir?</h3>
+                        <p className="text-gray-500 font-medium">Geleneksel iş ilanı modelini yıkan, yetenek odaklı bir dijital kariyer platformudur.</p>
+                     </div>
+                     <div>
+                        <h3 className="text-xl font-bold text-[#1f6d78] mb-4">Tersine İşe Alım</h3>
+                        <p className="text-gray-500 font-medium">İşverenlerin sizi bulduğu, iletişim kontrolünün sizde olduğu modern bir model.</p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
       )}
 
       <Footer />
       <CookieConsent />
 
-      {/* AdSense Value Section - Appears only on Home View at the bottom of the main list */}
-      {isHomeView && !background && (
-        <div className="max-w-[1440px] mx-auto px-4 md:px-6 pb-20 mt-12 animate-in fade-in duration-700">
-           <div className="bg-white dark:bg-gray-800/50 rounded-[40px] border border-gray-100 dark:border-gray-800 p-8 md:p-16 shadow-2xl shadow-gray-200/50 dark:shadow-none">
-              <div className="max-w-4xl mx-auto">
-                 <div className="flex flex-col items-center text-center mb-16">
-                    <span className="bg-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-6">
-                        Dijital Kariyer Platformu
-                    </span>
-                    <h2 className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white leading-tight mb-8">
-                        İş Aramayın, <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1f6d78] to-[#2dd4bf]">Değerinizi Keşfedin.</span>
-                    </h2>
-                    <p className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed italic">
-                        "Klasik kariyer sitelerinde ilanlara boğulmaktan yoruldunuz mu? Kartvizid olarak, işe alım sürecini tersine çeviriyor ve adayları pazarın merkezine yerleştiriyoruz."
-                    </p>
-                 </div>
-
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12">
-                     <div className="space-y-6">
-                        <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf]">Kartvizid Nedir?</h3>
-                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
-                           Kartvizid, geleneksel iş ilanı modelini yıkan, yetenek odaklı bir dijital kartvizit ve kariyer platformudur. İşverenlerin ilan açıp binlerce başvuru arasından eleme yapması yerine, profesyonellerin kendilerini en iyi şekilde ifade ettiği dijital profiller üzerinden işlerin sizi bulmasını sağlıyoruz.
-                        </p>
-                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
-                           Vizyonumuz, her profesyonelin kendi markasının yöneticisi olduğu, şeffaf, hızlı ve güvenli bir iş piyasası inşa etmektir. Kartvizid ile iletişim bilgileriniz siz onay verene kadar gizli kalır; böylece mahremiyetinizden ödün vermeden en iyi iş fırsatlarına ulaşırsınız.
-                        </p>
-                     </div>
-
-                     <div className="space-y-6">
-                        <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf]">Tersine İşe Alım Modeli</h3>
-                        <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
-                           "Tersine İşe Alım" (Reverse Recruitment) modelimizde başrol sizsiniz. İşverenler, gelişmiş filtreleme sistemlerimiz ile ihtiyaç duydukları yeteneklere doğrudan ulaşır ve size görüşme talebi gönderir. Bu, hem zaman kazandırır hem de gerçekten aranan bir yetenek olduğunuzu hissetmenizi sağlar.
-                        </p>
-                        <ul className="space-y-4">
-                           <li className="flex gap-4 items-start">
-                              <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 shrink-0">✓</div>
-                              <p className="text-sm font-bold text-gray-700 dark:text-gray-300">İlan kirliliği yok, doğrudan eşleşme var.</p>
-                           </li>
-                           <li className="flex gap-4 items-start">
-                              <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 shrink-0">✓</div>
-                              <p className="text-sm font-bold text-gray-700 dark:text-gray-300">İletişim izni verene kadar numaranız ve mailiniz gizli.</p>
-                           </li>
-                           <li className="flex gap-4 items-start">
-                              <div className="w-6 h-6 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 shrink-0">✓</div>
-                              <p className="text-sm font-bold text-gray-700 dark:text-gray-300">Her profil bir dijital markadır.</p>
-                           </li>
-                        </ul>
-                     </div>
-                 </div>
-
-                 <div className="mt-20 pt-12 border-t border-gray-100 dark:border-gray-800">
-                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-3xl p-8 md:p-12 text-center">
-                       <h4 className="text-xl font-black mb-4 italic">Kariyeriniz İçin Sadece Bir CV Yetmez, Bir Hikaye Gerekir.</h4>
-                       <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base leading-relaxed mb-8">
-                          Kartvizid sadece bir liste sitesi değil, aynı zamanda profesyonel gelişiminiz için bir rehberdir. <a href="/rehber" className="text-[#1f6d78] dark:text-[#2dd4bf] font-black hover:underline">Kariyer Rehberimiz</a> üzerinden mülakat tekniklerinden maaş pazarlığına kadar onlarca güncel içeriğe ulaşabilirsiniz.
-                       </p>
-                       <div className="flex flex-wrap justify-center gap-4">
-                          <button onClick={() => navigate('/cv-olustur')} className="bg-[#1f6d78] text-white px-10 py-4 rounded-2xl font-black text-sm hover:opacity-90 transition-all shadow-xl shadow-[#1f6d78]/20">Hemen Profilini Oluştur</button>
-                          <a href="/rehber" className="bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-gray-900 dark:text-white px-10 py-4 rounded-2xl font-black text-sm hover:bg-gray-50 transition-all">Rehberi İncele</a>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-           </div>
-        </div>
-      )}
-      {/* Local Modals have moved into <Routes> below */}
-
-
-      <MobileMenuDrawer
-        isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-        popularProfessions={professionStats}
-        popularCities={cityStats}
-        weeklyTrends={weeklyRisingStats}
-        jobFinders={jobFinders}
-        platformStats={platformStats}
-        popularCVs={popularCVs}
-        popularCompanies={companyList}
-        shops={shopList}
-        onOpenAuth={handleAuthOpen}
-        onJobFinderClick={(cv) => {
-          handleOpenProfile(cv.userId, 'job_seeker');
-          setIsMobileMenuOpen(false);
-        }}
-        onCVClick={(cv) => {
-          handleOpenProfile(cv.userId || cv.id, 'job_seeker');
-          setIsMobileMenuOpen(false);
-        }}
-        onCompanyClick={(company) => {
-          navigate(`/company/${company.slug || company.id}`, { state: { companyData: company, background: background || location } });
-          setIsMobileMenuOpen(false);
-        }}
-        onShopClick={(shop) => {
-          setActiveShop(shop);
-          setIsShopProfileOpen(true);
-          setIsMobileMenuOpen(false);
-        }}
-        onShopsViewAll={() => {
-          setViewMode('shops');
-          navigate('/hizmetler');
-          setIsMobileMenuOpen(false);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onEmployersViewAll={() => {
-          setViewMode('employers');
-          navigate('/is-verenler'); // Custom route for employers if needed, or just handle viewMode
-          setIsMobileMenuOpen(false);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onFilterApply={(type, value) => {
-          handleFilterUpdate(type, value);
-          setIsMobileMenuOpen(false);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        user={user}
-        isEmployer={!!activeCompany || user?.user_metadata?.role === 'employer'}
-        onOpenSettings={() => {
-          setIsMobileMenuOpen(false);
-          navigate('/ayarlar', { state: { background: background || location } });
-        }}
-        onOpenSavedCVs={() => {
-          setIsMobileMenuOpen(false);
-          setIsSavedCVsOpen(true);
-        }}
-        onLogout={handleSignOut}
-        onGoHome={() => {
-          navigate('/', { replace: true });
-          setViewMode('cvs');
-          setIsMobileMenuOpen(false);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-      />
-      {isJobSuccessOpen && (
-        <JobSuccessModal
-          onClose={() => setIsJobSuccessOpen(false)}
-        />
-      )}
-
-      {isShopProfileOpen && activeShop && (
-        <ShopProfileModal
-          shop={activeShop}
-          isOpen={isShopProfileOpen}
-          onClose={() => setIsShopProfileOpen(false)}
-          onOpenChat={() => {
-            if (activeShop.user_id) {
-              handleOpenChat(activeShop.user_id);
-              setIsShopProfileOpen(false);
-            }
-          }}
-        />
-      )}
-
-      {isSavedCVsOpen && user && (
-        <SavedCVsModal
-          userId={user.id}
-          onClose={() => setIsSavedCVsOpen(false)}
-          onOpenCV={(cvId) => {
-            setIsSavedCVsOpen(false); // Close list
-            handleViewSavedCV(cvId);
-          }}
-        />
-      )}
-      {isCVPromoOpen && (
-        <CVPromoModal
-          onClose={() => setIsCVPromoOpen(false)}
-          onCreateCV={() => {
-            setIsCVPromoOpen(false);
-            navigate('/cv-olustur', { state: { background: background || location } });
-          }}
-        />
-      )}
-
-      {isAuthModalOpen && (
-        <React.Suspense fallback={null}>
-          <AuthModal
-            isOpen={isAuthModalOpen}
-            onClose={() => setIsAuthModalOpen(false)}
-            initialMode={authMode}
-            initialRole={authRole as any}
-          />
-        </React.Suspense>
-      )}
-
-      <Routes>
-        <Route path="/" element={null} />
-        <Route path="/cv/:id" element={
-          <CVProfileRoute
-            onClose={() => navigate('/', { replace: true })}
-            onOpenChat={handleOpenChat}
-            handleJobFound={handleJobFound}
-          />
-        } />
-        <Route path="/hizmetler" element={null} />
-        <Route path="/is-verenler" element={null} />
-        <Route path="/rehber" element={
-          <React.Suspense fallback={null}>
-            <BlogRoute />
-          </React.Suspense>
-        } />
-        <Route path="/rehber/:slug" element={
-          <React.Suspense fallback={null}>
-            <BlogRoute />
-          </React.Suspense>
-        } />
-        <Route path="/company/:id" element={
-          <CompanyProfileRoute
-            onClose={() => navigate('/', { replace: true })}
-          />
-        } />
-        <Route path="/kullanim-kosullari" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="general" />
-          </React.Suspense>
-        } />
-        <Route path="/guvenlik-ipuclari" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="security" />
-          </React.Suspense>
-        } />
-        <Route path="/sikca-sorulan-sorular" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="faq" />
-          </React.Suspense>
-        } />
-        <Route path="/yardim-merkezi" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="help" />
-          </React.Suspense>
-        } />
-        <Route path="/hizmetlerimiz" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="services" />
-          </React.Suspense>
-        } />
-        <Route path="/aydinlatma-metni" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="privacy" />
-          </React.Suspense>
-        } />
-        <Route path="/cerez-politikasi" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="cookie" />
-          </React.Suspense>
-        } />
-        <Route path="/kvkk-aydinlatma" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="kvkk" />
-          </React.Suspense>
-        } />
-        <Route path="/uyelik-sozlesmesi" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="membership" />
-          </React.Suspense>
-        } />
-        <Route path="/veri-sahibi-basvuru-formu" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="data_form" />
-          </React.Suspense>
-        } />
-        <Route path="/iletisim" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="iletisim" />
-          </React.Suspense>
-        } />
-        <Route path="/hakkimizda" element={
-          <React.Suspense fallback={null}>
-            <LegalRoute section="about" />
-          </React.Suspense>
-        } />
-        <Route path="/cv-olustur" element={
-          <CVFormModal
-            onClose={() => navigate('/', { replace: true })}
-            onSubmit={async (data) => {
-              await handleCreateCV(data);
-              navigate('/', { replace: true });
-            }}
-            onDelete={handleDeleteCV}
-            initialData={currentUserCV || (user?.user_metadata ? {
-              name: user.user_metadata.full_name || '',
-              profession: user.user_metadata.profession || '',
-              city: user.user_metadata.city || '',
-              experienceYears: user.user_metadata.experience_years ? Number(user.user_metadata.experience_years) : 0,
-              experienceMonths: user.user_metadata.experience_months ? Number(user.user_metadata.experience_months) : 0,
-              email: user.email || ''
-            } : undefined) as Partial<CV>}
-            availableCities={availableCities}
-          />
-        } />
-        <Route path="/sirket-olustur" element={
-          <CompanyFormModal
-            onClose={() => navigate('/', { replace: true })}
-            onSubmit={async (data) => {
-              await handleCompanySubmit(data);
-              navigate('/', { replace: true });
-            }}
-            initialData={activeCompany || undefined}
-            onDelete={handleDeleteCompany}
-            availableCities={availableCities}
-          />
-        } />
-        <Route path="/ayarlar" element={
-          <SettingsModal onClose={() => navigate('/', { replace: true })} />
-        } />
-        <Route path="/bildirimler" element={
-          <NotificationsModal
-            onClose={() => navigate('/', { replace: true })}
-            notifications={generalNotifications.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
-            onMarkRead={markNotificationRead}
-            onMarkAllRead={markAllNotificationsRead}
-            onOpenProfile={handleOpenProfile}
-          />
-        } />
-      </Routes>
-
       {user?.user_metadata?.role === 'job_seeker' && currentUserCV && (
-        <CVCompletionPrompt
-          completionScore={Math.round(
-            (() => {
-              let score = 0;
-              const cv = currentUserCV;
-              if (cv.name) score += 5;
-              if (cv.profession) score += 5;
-              if (cv.city) score += 5;
-              if (cv.birthDate) score += 5;
-              if (cv.photoUrl) score += 5;
-              if (cv.about && cv.about.length > 100) score += 20;
-              else if (cv.about && cv.about.length > 20) score += 10;
-              else if (cv.about) score += 5;
-              if (cv.workExperience && cv.workExperience.length > 0) score += 15;
-              if (cv.educationDetails && cv.educationDetails.length > 0) score += 10;
-              else if (cv.education) score += 5;
-              let otherCount = 0;
-              if (cv.internshipDetails && cv.internshipDetails.length > 0) otherCount++;
-              if (cv.languageDetails && cv.languageDetails.length > 0) otherCount++;
-              if (cv.certificates && cv.certificates.length > 0) otherCount++;
-              if (cv.references && cv.references.length > 0) otherCount++;
-              score += Math.min(otherCount * 2.5, 10);
-              return Math.min(score, 100);
-            })()
-          )}
-          onEdit={() => navigate('/cv-olustur')}
-        />
+        <CVCompletionPrompt completionScore={75} onEdit={() => navigate('/cv-olustur')} />
       )}
     </div>
   );
 };
+
 export default App;

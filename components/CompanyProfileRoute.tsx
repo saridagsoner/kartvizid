@@ -7,10 +7,12 @@ import CompanyProfileModal from './CompanyProfileModal';
 
 interface CompanyProfileRouteProps {
     onClose?: () => void;
+    isInline?: boolean;
 }
 
 const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
-    onClose
+    onClose,
+    isInline = false
 }) => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -75,7 +77,7 @@ const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
 
     if (loading) {
         return (
-            <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 ">
+            <div className={isInline ? "w-full h-full flex items-center justify-center p-12" : "fixed inset-0 z-[250] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60"}>
                 <div className="w-16 h-16 border-4 border-[#1f6d78]/20 border-t-[#1f6d78] rounded-full animate-spin"></div>
             </div>
         );
@@ -83,8 +85,8 @@ const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
 
     if (error || !company) {
         return (
-            <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60 ">
-                <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center">
+            <div className={isInline ? "w-full h-full flex items-center justify-center p-6 sm:p-12" : "fixed inset-0 z-[250] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60"}>
+                <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border border-gray-100 dark:border-white/10">
                     <div className="text-4xl mb-4">😢</div>
                     <h2 className="text-xl font-black text-gray-900 dark:text-white mb-2">Hata</h2>
                     <p className="text-gray-500 mb-6 font-medium text-sm">{error || 'Bu şirket profili yayından kaldırılmış veya bulunamadı.'}</p>
@@ -100,6 +102,7 @@ const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
         <CompanyProfileModal
             company={company}
             onClose={handleClose}
+            isInline={isInline}
         />
     );
 };

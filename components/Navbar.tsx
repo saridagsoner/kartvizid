@@ -27,6 +27,8 @@ interface NavbarProps {
   onOpenMenu?: () => void;
   unreadMessageCount?: number;
   onOpenMessages?: () => void;
+  onToggleFilter?: () => void;
+  isFilterOpen?: boolean;
 }
 
 const Navbar: React.FC<NavbarProps & {
@@ -38,7 +40,8 @@ const Navbar: React.FC<NavbarProps & {
   onOpenSavedCVs?: () => void;
 }> = ({
   onSearch, onCreateCV, onOpenCompanyProfile, onOpenSettings, hasCV, userPhotoUrl, notificationCount = 0, notifications = [], onNotificationAction, onMarkNotificationRead,
-  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole, onMarkAllRead, onOpenProfile, onOpenSavedCVs, onOpenMenu, unreadMessageCount = 0, onOpenMessages
+  onOpenAuth, isAuthModalOpen, onCloseAuth, authMode, authRole, onMarkAllRead, onOpenProfile, onOpenSavedCVs, onOpenMenu, unreadMessageCount = 0, onOpenMessages,
+  onToggleFilter, isFilterOpen
 }) => {
     const { user, loading, signOut } = useAuth();
     const { t } = useLanguage();
@@ -110,22 +113,40 @@ const Navbar: React.FC<NavbarProps & {
             </div>
 
             {/* Center Section: Search Bar */}
-            <div className="flex-1 relative group px-2 lg:px-0 hidden md:block">
-              <div className="absolute left-6 lg:left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                <i className="fi fi-br-search text-gray-500 dark:text-gray-400 text-sm"></i>
+            <div className="flex-1 px-2 lg:px-8 hidden md:flex items-center gap-3">
+              <div className="flex-1 relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <i className="fi fi-rr-search text-gray-400 dark:text-gray-500 text-sm"></i>
+                </div>
+                <input
+                  type="text"
+                  value={query}
+                  onChange={handleSearchChange}
+                  placeholder={t('nav.search_placeholder')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.currentTarget.blur();
+                    }
+                  }}
+                  className="w-full bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all outline-none rounded-2xl px-12 py-3 text-[15px] font-medium text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-white/5 focus:border-[#1f6d78] focus:ring-1 focus:ring-[#1f6d78] shadow-sm placeholder-gray-400 dark:placeholder-gray-500"
+                />
               </div>
-              <input
-                type="text"
-                value={query}
-                onChange={handleSearchChange}
-                placeholder={t('nav.search_placeholder')}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.currentTarget.blur();
-                  }
+
+              {/* Discovery Filter Toggle */}
+              <button
+                onClick={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  onToggleFilter?.();
                 }}
-                className="w-full bg-[#F0F2F5] dark:bg-gray-700 hover:bg-[#E8EAED] dark:hover:bg-gray-600 focus:bg-white dark:focus:bg-gray-800 focus:ring-1 focus:ring-[#1f6d78] dark:focus:ring-[#2dd4bf] transition-all outline-none rounded-lg px-12 py-2.5 text-[16px] lg:text-sm font-light text-gray-800 dark:text-gray-100 border border-gray-300 dark:border-gray-600 focus:border-[#1f6d78]/20 shadow-sm placeholder-gray-500 dark:placeholder-gray-400 placeholder:font-light"
-              />
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
+                  isFilterOpen 
+                  ? 'bg-[#1f6d78] text-white shadow-lg shadow-[#1f6d78]/20' 
+                  : 'bg-gray-50 dark:bg-gray-800/50 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-100 dark:border-white/5'
+                }`}
+                title="Filtrele"
+              >
+                <i className="fi fi-rr-settings-sliders text-lg"></i>
+              </button>
             </div>
 
             {/* Right Section: Actions */}
