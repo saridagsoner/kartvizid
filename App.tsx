@@ -1800,7 +1800,7 @@ const App: React.FC = () => {
       )}
 
       {/* Desktop Category Title & Sort */}
-      <div className="hidden sm:block mt-8 mb-8 lg:pl-4 px-1">
+      <div className="hidden sm:block mt-8 mb-8 lg:pl-10 px-1">
         <div className="flex items-center justify-start gap-4">
           <h1 className="text-[28px] font-black tracking-tighter text-black dark:text-white leading-none">
             {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
@@ -1809,7 +1809,7 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-col sm:gap-0 -mt-1 sm:mt-0 lg:pl-4">
+      <div className="flex flex-col sm:gap-0 -mt-1 sm:mt-0 lg:pl-0">
         {viewMode === 'cvs' ? (
           currentItems.length > 0 ? (
             <>
@@ -1901,7 +1901,7 @@ const App: React.FC = () => {
         <div className="max-w-[1600px] w-full flex items-start pb-12 lg:px-12">
           
           {/* COLUMN 1: LEFT NAVIGATION (Desktop Only) */}
-          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/20 pr-2 pl-[80px] transition-colors duration-300 no-scrollbar">
+          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/10 pr-6 transition-colors duration-300 no-scrollbar">
             <DesktopNav 
               viewMode={viewMode}
               onViewModeChange={setViewMode}
@@ -1910,11 +1910,17 @@ const App: React.FC = () => {
               onOpenAuth={handleAuthOpen}
               onSignOut={handleSignOut}
               onOpenSavedCVs={() => setIsSavedCVsOpen(true)}
+              popularProfessions={professionStats}
+              popularCities={cityStats}
+              platformStats={platformStats}
+              jobFinders={jobFinders}
+              onCVClick={handleCVClick}
+              loading={loading}
             />
           </aside>
 
           {/* MAIN CONTENT AREA */}
-          <main className="flex-1 flex items-start min-w-0 h-full">
+          <main className="flex-1 flex items-start min-w-0 h-full lg:pl-4">
             
             {/* COLUMN 2: MIDDLE CONTENT (Feed or Full Page) */}
             <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 ${
