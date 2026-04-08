@@ -74,7 +74,7 @@ const Navbar: React.FC<NavbarProps & {
           <div className="max-w-[1600px] w-full px-4 md:px-6 lg:px-12 flex items-center justify-between h-full gap-2 md:gap-0">
 
             {/* Left Section: Logo & Mobile Menu */}
-            <div className="lg:w-[280px] shrink-0 flex items-center gap-1 lg:pl-[126px]">
+            <div className="lg:w-[280px] shrink-0 flex items-center gap-1 lg:pl-[106px]">
               {/* Mobile Menu Button */}
               <button
                 onClick={onOpenMenu}
@@ -106,7 +106,7 @@ const Navbar: React.FC<NavbarProps & {
             </div>
 
             {/* Center Section: Search Bar */}
-            <div className="flex-1 px-2 lg:px-8 hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-3 lg:-ml-[300px] shrink-0 w-[540px]">
               <div className="flex-1 relative group">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                   <i className="fi fi-rr-search text-gray-400 dark:text-gray-500 text-sm"></i>
@@ -121,7 +121,7 @@ const Navbar: React.FC<NavbarProps & {
                       e.currentTarget.blur();
                     }
                   }}
-                  className="w-full bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all outline-none rounded-2xl px-12 py-3 text-[15px] font-medium text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-white/5 focus:border-[#1f6d78] focus:ring-1 focus:ring-[#1f6d78] shadow-sm placeholder-gray-400 dark:placeholder-gray-500"
+                  className="w-full bg-white dark:bg-gray-800 transition-all outline-none rounded-2xl px-12 py-3 text-[15px] font-medium text-gray-800 dark:text-gray-100 border-[0.5px] border-black dark:border-white/20 focus:ring-1 focus:ring-[#1f6d78] shadow-none placeholder-gray-400 dark:placeholder-gray-500"
                 />
               </div>
 
@@ -134,7 +134,7 @@ const Navbar: React.FC<NavbarProps & {
                 className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
                   isFilterOpen 
                   ? 'bg-[#1f6d78] text-white shadow-lg shadow-[#1f6d78]/20' 
-                  : 'bg-gray-50 dark:bg-gray-800/50 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-100 dark:border-white/5'
+                  : 'bg-white dark:bg-gray-800 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 border-none'
                 }`}
                 title="Filtrele"
               >

@@ -59,13 +59,13 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             <div className="flex items-center gap-4">
                 <i className={`fi ${active ? icon.replace('fi-rr-', 'fi-sr-') : icon} transition-all duration-300 group-hover:scale-110 ${
                     active 
-                    ? 'text-[21px] text-black dark:text-white font-black' 
-                    : 'text-[19px] text-black dark:text-gray-300 font-medium'
+                    ? 'text-[22px] text-black dark:text-white font-black' 
+                    : 'text-[20px] text-black dark:text-gray-300 font-medium'
                 }`}></i>
                 <span className={`tracking-tight transition-all duration-300 ${
                     active 
-                    ? 'text-[16px] font-black text-black dark:text-white' 
-                    : 'text-[15px] font-medium text-black dark:text-gray-200'
+                    ? 'text-[17px] font-black text-black dark:text-white' 
+                    : 'text-[16px] font-medium text-black dark:text-gray-200'
                 }`}>{label}</span>
             </div>
             <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
 
 
     return (
-        <div className="flex flex-col h-full py-4 pr-4 no-scrollbar overflow-y-auto">
+        <div className="flex flex-col h-full pt-8 pb-8 pl-20 pr-0 no-scrollbar overflow-y-auto">
             {/* Main Navigation */}
             <NavItem 
                 label="İş Arayanlar" 
@@ -136,7 +136,6 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 icon="fi-rr-book-alt" 
                 active={isActive('/rehber')}
                 onClick={() => navigate('/rehber')}
-                badge="Yeni"
             />
             <NavItem 
                 label="Kartvizid" 

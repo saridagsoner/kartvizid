@@ -1,21 +1,33 @@
 import React from 'react';
 
 export const BusinessCardSkeleton = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-[2.5rem] p-3 sm:p-6 border border-gray-200 dark:border-gray-700 animate-pulse shadow-sm">
-        <div className="flex flex-row items-start gap-2.5 sm:gap-8">
-            {/* Photo */}
-            <div className="w-12 h-12 sm:w-24 sm:h-28 rounded-lg sm:rounded-[1.75rem] bg-gray-200 dark:bg-gray-700 shrink-0" />
+    <div className="bg-transparent pl-1.5 pr-4 py-5 sm:py-4 relative animate-pulse">
+        {/* Divider Line */}
+        <div className="absolute bottom-0 right-4 sm:right-10 left-[66px] sm:left-[70px] border-b border-gray-100 dark:border-white/5" />
 
-            {/* Content */}
-            <div className="flex-1 space-y-3 py-1">
-                <div className="h-4 sm:h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
-                <div className="h-3 sm:h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
-                <div className="flex gap-2 pt-2">
-                    <div className="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded-full" />
-                    <div className="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded-full" />
-                    <div className="h-6 w-16 bg-gray-200 dark:bg-gray-700 rounded-full hidden sm:block" />
+        <div className="flex items-start gap-4 sm:gap-5.5">
+            {/* Photo Section */}
+            <div className="w-[46px] h-[55px] sm:w-[54px] sm:h-[65px] rounded-lg sm:rounded-xl bg-gray-100 dark:bg-gray-800 shrink-0" />
+
+            {/* Main Content Layout */}
+            <div className="flex-1 min-w-0 flex flex-col justify-between py-0 min-h-[55px] sm:min-h-[65px]">
+                <div className="flex flex-col gap-2 sm:gap-3">
+                    {/* Name */}
+                    <div className="h-4 sm:h-5 bg-gray-100 dark:bg-gray-800 rounded w-1/3" />
+                    
+                    {/* Profession */}
+                    <div className="h-3 sm:h-3.5 bg-gray-100 dark:bg-gray-800/60 rounded w-1/2" />
+
+                    {/* Details Row */}
+                    <div className="flex gap-4 mt-1">
+                        <div className="h-2.5 w-16 bg-gray-100 dark:bg-gray-800/40 rounded" />
+                        <div className="h-2.5 w-24 bg-gray-100 dark:bg-gray-800/40 rounded" />
+                    </div>
                 </div>
             </div>
+
+            {/* Arrow Placeholder */}
+            <div className="shrink-0 self-center w-5 h-5 bg-gray-100 dark:bg-gray-800/30 rounded-full" />
         </div>
     </div>
 );

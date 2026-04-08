@@ -1800,7 +1800,7 @@ const App: React.FC = () => {
       )}
 
       {/* Desktop Category Title & Sort */}
-      <div className="hidden sm:block mt-8 mb-8 lg:pl-10 px-1">
+      <div className="hidden sm:block mt-6 mb-3 lg:pl-1.5 px-1">
         <div className="flex items-center justify-start gap-4">
           <h1 className="text-[28px] font-black tracking-tighter text-black dark:text-white leading-none">
             {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
@@ -1810,7 +1810,15 @@ const App: React.FC = () => {
       </div>
 
       <div className="flex flex-col sm:gap-0 -mt-1 sm:mt-0 lg:pl-0">
-        {viewMode === 'cvs' ? (
+        {loading ? (
+          <div className="space-y-6">
+            <BusinessCardSkeleton />
+            <BusinessCardSkeleton />
+            <BusinessCardSkeleton />
+            <BusinessCardSkeleton />
+            <BusinessCardSkeleton />
+          </div>
+        ) : viewMode === 'cvs' ? (
           currentItems.length > 0 ? (
             <>
               {currentItems.map(cv => (
@@ -1901,7 +1909,7 @@ const App: React.FC = () => {
         <div className="max-w-[1600px] w-full flex items-start pb-12 lg:px-12">
           
           {/* COLUMN 1: LEFT NAVIGATION (Desktop Only) */}
-          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/10 pr-6 transition-colors duration-300 no-scrollbar">
+          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/10 pr-2 transition-colors duration-300 no-scrollbar">
             <DesktopNav 
               viewMode={viewMode}
               onViewModeChange={setViewMode}
@@ -1920,11 +1928,11 @@ const App: React.FC = () => {
           </aside>
 
           {/* MAIN CONTENT AREA */}
-          <main className="flex-1 flex items-start min-w-0 h-full lg:pl-4">
+          <main className="flex-1 flex items-start min-w-0 h-full lg:pl-7">
             
             {/* COLUMN 2: MIDDLE CONTENT (Feed or Full Page) */}
             <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 ${
-              isDiscoveryView ? 'lg:max-w-[500px] border-r border-gray-100 dark:border-gray-800/10' : 'w-full'
+              isDiscoveryView ? 'lg:max-w-[540px] border-r border-gray-100 dark:border-gray-800/10' : 'w-full'
             }`}>
               <Routes>
                 {/* Discovery Routes (List View) */}
@@ -1945,7 +1953,7 @@ const App: React.FC = () => {
             </section>
 
             {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
-            <aside className={`hidden lg:block w-[600px] min-w-0 h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-r border-gray-100 dark:border-gray-800/10 lg:ml-4 lg:mr-20 ${
+            <aside className={`hidden lg:block w-[585px] min-w-0 h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-r border-gray-100 dark:border-gray-800/10 lg:ml-4 lg:mr-20 ${
               isDiscoveryView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
             }`}>
               <div className="h-full">
@@ -2011,25 +2019,7 @@ const App: React.FC = () => {
         {isJobSuccessOpen && <JobSuccessModal onClose={() => setIsJobSuccessOpen(false)} />}
       </React.Suspense>
 
-      {isHomeView && !background && (
-         <div className="max-w-[1440px] mx-auto px-4 md:px-6 pb-24 mt-12 animate-in fade-in duration-700">
-            <div className="bg-white dark:bg-gray-800/50 rounded-[40px] border border-gray-100 dark:border-gray-800 p-8 md:p-16 shadow-sm">
-               <div className="max-w-4xl mx-auto text-center">
-                  <h2 className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white mb-8 italic">İş Aramayın, Değerinizi Keşfedin.</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
-                     <div>
-                        <h3 className="text-xl font-bold text-[#1f6d78] mb-4">Kartvizid Nedir?</h3>
-                        <p className="text-gray-500 font-medium">Geleneksel iş ilanı modelini yıkan, yetenek odaklı bir dijital kariyer platformudur.</p>
-                     </div>
-                     <div>
-                        <h3 className="text-xl font-bold text-[#1f6d78] mb-4">Tersine İşe Alım</h3>
-                        <p className="text-gray-500 font-medium">İşverenlerin sizi bulduğu, iletişim kontrolünün sizde olduğu modern bir model.</p>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      )}
+
 
       <Footer />
       <CookieConsent />
