@@ -131,10 +131,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
         <div className={isInline ? "w-full h-full relative flex flex-col overflow-hidden bg-white dark:bg-[#0f172a]" : "w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-black border-none sm:border border-gray-100 dark:border-white/10"}>
           {/* Header (Always Fixed) */}
           <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-black shrink-0">
-            <div className={`p-4 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-white dark:bg-black gap-4 ${isInline ? 'sm:p-5' : 'sm:p-8'}`}>
+            <div className={`py-3 px-4 sm:py-4 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-white dark:bg-black gap-4 ${isInline ? 'sm:px-6' : 'sm:px-10'}`}>
               <button
                 onClick={onClose}
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all active:scale-95 sm:order-2"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all active:scale-95 sm:order-2"
               >
                 <span className="sr-only">{t('profile.close')}</span>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="block sm:hidden">
@@ -142,8 +142,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                 </svg>
                 <span className="hidden sm:block text-2xl leading-none">×</span>
               </button>
-              <div className="flex-1 sm:order-1 text-center sm:text-left">
-                <h2 className={`${isInline ? 'text-[17px] sm:text-xl' : 'text-[19px] sm:text-2xl'} font-black text-black dark:text-white tracking-tight truncate`}>{t('profile.cv_title')}</h2>
+              <div className="flex-1 sm:order-1 text-center">
+                <h2 className={`${isInline ? 'text-[16px] sm:text-lg' : 'text-[18px] sm:text-xl'} font-black text-black dark:text-white tracking-tight truncate uppercase logo-font`}>{t('profile.cv_title')}</h2>
               </div>
               <div className="w-10 sm:hidden"></div>
             </div>

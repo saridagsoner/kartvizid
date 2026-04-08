@@ -298,7 +298,7 @@ const translations: Record<Language, Record<string, string>> = {
 
 
         // Profile View (CV & Company)
-        'profile.cv_title': 'Dijital Kartvizid Profili',
+        'profile.cv_title': 'Özgeçmiş',
         'profile.cv_subtitle': 'KAPSAMLI KARİYER ÖZETİ VE PROFESYONEL YETKİNLİKLER',
         'profile.company_title': 'İş Veren Profili',
         'profile.company_subtitle': 'Kurumsal bilgiler ve detaylar',
