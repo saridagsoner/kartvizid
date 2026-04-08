@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -9,6 +9,8 @@ interface DesktopNavProps {
     user?: any;
     isEmployer?: boolean;
     onOpenAuth?: (mode: 'signin' | 'signup', role?: string) => void;
+    onSignOut?: () => void;
+    onOpenSavedCVs?: () => void;
 }
 
 const DesktopNav: React.FC<DesktopNavProps> = ({
@@ -16,48 +18,70 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
     onViewModeChange,
     user,
     isEmployer,
-    onOpenAuth
+    onOpenAuth,
+    onSignOut,
+    onOpenSavedCVs
 }) => {
     const { t } = useLanguage();
     const navigate = useNavigate();
     const location = useLocation();
+    const [isKartvizidOpen, setIsKartvizidOpen] = useState(false);
 
     const isActive = (path: string) => location.pathname === path;
     const isModeActive = (mode: string) => viewMode === mode && (location.pathname === '/' || location.pathname === '');
 
-    const NavItem = ({ label, icon, onClick, active, badge }: { label: string, icon: string, onClick: () => void, active?: boolean, badge?: string }) => (
+    const NavItem = ({ label, icon, onClick, active, badge, hasChildren, isOpen }: { label: string, icon: string, onClick: () => void, active?: boolean, badge?: string, hasChildren?: boolean, isOpen?: boolean }) => (
         <button
             onClick={onClick}
-            className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 group mb-1 ${
+            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-2xl transition-all duration-300 group mb-1 ${
                 active 
-                ? 'bg-gray-50 dark:bg-gray-800/50 text-black dark:text-white translate-x-1.5' 
+                ? 'text-black dark:text-white translate-x-1' 
                 : 'text-black dark:text-gray-200 hover:bg-gray-50/50 dark:hover:bg-gray-800/30'
             }`}
         >
             <div className="flex items-center gap-4">
-                <i className={`fi ${icon} text-xl transition-transform group-hover:scale-110 ${active ? 'text-black dark:text-white font-black' : 'text-black dark:text-gray-300'}`}></i>
-                <span className={`text-[15px] tracking-tight ${active ? 'font-black' : 'font-normal'}`}>{label}</span>
+                <i className={`fi ${active ? icon.replace('fi-rr-', 'fi-sr-') : icon} transition-all duration-300 group-hover:scale-110 ${
+                    active 
+                    ? 'text-[21px] text-black dark:text-white font-black' 
+                    : 'text-[19px] text-black dark:text-gray-300 font-medium'
+                }`}></i>
+                <span className={`tracking-tight transition-all duration-300 ${
+                    active 
+                    ? 'text-[16px] font-black text-black dark:text-white' 
+                    : 'text-[15px] font-medium text-black dark:text-gray-200'
+                }`}>{label}</span>
             </div>
-            {badge && (
-                <span className="bg-[#1f6d78] text-white text-[10px] px-2 py-0.5 rounded-full font-black uppercase">
-                    {badge}
-                </span>
-            )}
+            <div className="flex items-center gap-2">
+                {badge && (
+                    <span className="bg-[#1f6d78] text-white text-[10px] px-2 py-0.5 rounded-full font-black uppercase">
+                        {badge}
+                    </span>
+                )}
+                {hasChildren && (
+                    <i className={`fi fi-rr-angle-small-down transition-transform duration-300 text-gray-400 ${isOpen ? 'rotate-180' : ''}`}></i>
+                )}
+            </div>
         </button>
     );
 
-    const SectionTitle = ({ title, first }: { title: string, first?: boolean }) => (
-        <div className={`px-4 mb-3 ${first ? 'mt-2' : 'mt-8'}`}>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-600">
-                {title}
-            </span>
-        </div>
+    const SubNavItem = ({ label, onClick, active }: { label: string, onClick: () => void, active?: boolean }) => (
+        <button
+            onClick={onClick}
+            className={`w-[calc(100%-16px)] ml-10 flex items-center px-4 py-2 rounded-xl transition-all duration-200 mb-0.5 ${
+                active 
+                ? 'bg-gray-50 dark:bg-gray-800/50 text-black dark:text-white font-bold' 
+                : 'text-gray-500 hover:text-black hover:bg-gray-50/50 dark:hover:bg-gray-800/30'
+            }`}
+        >
+            <span className="text-[13.5px] tracking-tight">{label}</span>
+        </button>
     );
 
+
+
     return (
-        <div className="flex flex-col h-full py-2 pr-4 custom-scrollbar overflow-y-auto">
+        <div className="flex flex-col h-full py-4 pr-4 no-scrollbar overflow-y-auto">
             {/* Main Navigation */}
-            <SectionTitle title="KEŞFET" first />
             <NavItem 
                 label="İş Arayanlar" 
                 icon="fi-rr-users" 
@@ -86,7 +110,9 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 }}
             />
 
-            <SectionTitle title="İÇERİK" />
+            <div className="my-2 border-t border-gray-100 dark:border-gray-800/30"></div>
+
+
             <NavItem 
                 label="Kariyer Rehberi" 
                 icon="fi-rr-book-alt" 
@@ -95,13 +121,72 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 badge="Yeni"
             />
             <NavItem 
-                label="Hakkımızda" 
-                icon="fi-rr-info" 
-                active={isActive('/hakkimizda')}
-                onClick={() => navigate('/hakkimizda')}
+                label="Kartvizid" 
+                icon="fi-rr-document-signed" 
+                active={isKartvizidOpen || isActive('/hakkimizda')}
+                onClick={() => setIsKartvizidOpen(!isKartvizidOpen)}
+                hasChildren
+                isOpen={isKartvizidOpen}
             />
 
-            <SectionTitle title="DESTEK & YASAL" />
+            {isKartvizidOpen && (
+                <div className="mb-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <SubNavItem 
+                        label="Kartvizid Nedir?" 
+                        active={isActive('/hakkimizda')}
+                        onClick={() => navigate('/hakkimizda')}
+                    />
+                    <SubNavItem 
+                        label="İş Bulanlar" 
+                        active={false}
+                        onClick={() => {}}
+                    />
+                    <SubNavItem 
+                        label="Popüler Meslekler" 
+                        active={false}
+                        onClick={() => {}}
+                    />
+                    <SubNavItem 
+                        label="Öne Çıkan Şehirler" 
+                        active={false}
+                        onClick={() => {}}
+                    />
+                    <SubNavItem 
+                        label="En Çok Görüntülenenler" 
+                        active={false}
+                        onClick={() => {}}
+                    />
+                    <SubNavItem 
+                        label="Platform İstatistikleri" 
+                        active={false}
+                        onClick={() => {}}
+                    />
+                </div>
+            )}
+            <NavItem 
+                label="Ayarlar" 
+                icon="fi-rr-settings" 
+                active={isActive('/ayarlar')}
+                onClick={() => navigate('/ayarlar')}
+            />
+
+            {isEmployer && onOpenSavedCVs && (
+                <NavItem 
+                    label="Kaydettiklerim" 
+                    icon="fi-rr-bookmark" 
+                    active={false}
+                    onClick={onOpenSavedCVs}
+                />
+            )}
+
+            <NavItem 
+                label="Premium" 
+                icon="fi-rr-membership-vip" 
+                active={false}
+                onClick={() => {}}
+            />
+
+            <div className="my-2 border-t border-gray-100 dark:border-gray-800/30"></div>
             <NavItem 
                 label="Bize Ulaşın" 
                 icon="fi-rr-envelope" 
@@ -109,7 +194,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 onClick={() => navigate('/iletisim')}
             />
             <NavItem 
-                label="Site Haritası" 
+                label="Site Kullanımı" 
                 icon="fi-rr-map-marker" 
                 active={isActive('/sitemap')}
                 onClick={() => navigate('/sitemap')}
@@ -126,27 +211,31 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 active={isActive('/guvenlik-ipuclari')}
                 onClick={() => navigate('/guvenlik-ipuclari')}
             />
+            <NavItem 
+                label="Mobil Uygulama" 
+                icon="fi-rr-mobile-button" 
+                active={false}
+                onClick={() => {}}
+            />
 
             {/* Account Management (Contextual) */}
             <div className="mt-auto pt-8">
                 {!user ? (
                     <button 
                         onClick={() => onOpenAuth?.('signin')}
-                        className="w-full bg-[#1f6d78] text-white py-4 rounded-2xl font-black text-sm hover:opacity-90 transition-all shadow-xl shadow-[#1f6d78]/20 flex items-center justify-center gap-3"
+                        className="w-full bg-[#1f6d78] text-white py-3.5 rounded-2xl font-black text-sm hover:opacity-90 transition-all shadow-lg shadow-[#1f6d78]/10 flex items-center justify-center gap-3"
                     >
                         <i className="fi fi-rr-sign-in-alt"></i>
                         Giriş Yap
                     </button>
                 ) : (
-                    <div className="bg-gray-50 dark:bg-gray-800/30 rounded-3xl p-4 border border-gray-100 dark:border-gray-800">
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Hesabınız</p>
-                        <NavItem 
-                            label="Ayarlar" 
-                            icon="fi-rr-settings" 
-                            active={isActive('/ayarlar')}
-                            onClick={() => navigate('/ayarlar')}
-                        />
-                    </div>
+                    <button 
+                        onClick={onSignOut}
+                        className="w-full bg-white dark:bg-transparent text-black dark:text-white py-3 rounded-2xl font-black text-sm border border-black dark:border-white/20 hover:bg-gray-50 dark:hover:bg-white/5 transition-all flex items-center justify-center gap-3"
+                    >
+                        <i className="fi fi-rr-sign-out-alt"></i>
+                        Çıkış Yap
+                    </button>
                 )}
             </div>
         </div>

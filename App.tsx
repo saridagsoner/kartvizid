@@ -1800,7 +1800,7 @@ const App: React.FC = () => {
       )}
 
       {/* Desktop Category Title & Sort */}
-      <div className="hidden sm:block mt-8 mb-4 lg:pl-4 px-1">
+      <div className="hidden sm:block mt-8 mb-8 lg:pl-4 px-1">
         <div className="flex items-center justify-start gap-4">
           <h1 className="text-[28px] font-black tracking-tighter text-black dark:text-white leading-none">
             {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
@@ -1809,7 +1809,7 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-col sm:gap-0 -mt-2 sm:mt-0 lg:pl-4">
+      <div className="flex flex-col sm:gap-0 -mt-1 sm:mt-0 lg:pl-4">
         {viewMode === 'cvs' ? (
           currentItems.length > 0 ? (
             <>
@@ -1901,13 +1901,15 @@ const App: React.FC = () => {
         <div className="max-w-[1600px] w-full flex items-start pb-12 lg:px-12">
           
           {/* COLUMN 1: LEFT NAVIGATION (Desktop Only) */}
-          <aside className="hidden lg:block w-[320px] shrink-0 sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/20 pr-2 pl-12 transition-colors duration-300">
+          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/20 pr-2 pl-[80px] transition-colors duration-300 no-scrollbar">
             <DesktopNav 
               viewMode={viewMode}
               onViewModeChange={setViewMode}
               user={user}
               isEmployer={!!activeCompany || user?.user_metadata?.role === 'employer'}
               onOpenAuth={handleAuthOpen}
+              onSignOut={handleSignOut}
+              onOpenSavedCVs={() => setIsSavedCVsOpen(true)}
             />
           </aside>
 
@@ -1937,7 +1939,7 @@ const App: React.FC = () => {
             </section>
 
             {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
-            <aside className={`hidden lg:block w-[550px] min-w-0 h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-x border-gray-100 dark:border-gray-800 ${
+            <aside className={`hidden lg:block w-[650px] min-w-0 h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-x border-gray-100 dark:border-gray-800 ${
               isDiscoveryView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
             }`}>
               <div className="h-full">

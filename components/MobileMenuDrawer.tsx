@@ -724,6 +724,14 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                             }}
                             icon={<i className="fi fi-rr-book-alt text-[#1f6d78] dark:text-[#2dd4bf]"></i>}
                         />
+                        <MenuItem
+                            label="Bize Ulaşın"
+                            onClick={() => {
+                                window.location.href = '/iletisim';
+                                onClose();
+                            }}
+                            icon={<i className="fi fi-rr-envelope"></i>}
+                        />
 
                         {isEmployer && (
                             <MenuItem

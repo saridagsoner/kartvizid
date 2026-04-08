@@ -71,10 +71,10 @@ const Navbar: React.FC<NavbarProps & {
     return (
       <>
         <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-black border-b border-gray-100 dark:border-white/5 z-50 flex items-center justify-center transition-colors duration-300">
-          <div className="max-w-[1440px] w-full px-4 md:px-6 flex items-center justify-between h-full gap-2 md:gap-0">
+          <div className="max-w-[1600px] w-full px-4 md:px-6 lg:px-12 flex items-center justify-between h-full gap-2 md:gap-0">
 
             {/* Left Section: Logo & Mobile Menu */}
-            <div className="lg:w-[290px] shrink-0 flex items-center gap-1">
+            <div className="lg:w-[280px] shrink-0 flex items-center gap-1 lg:pl-[126px]">
               {/* Mobile Menu Button */}
               <button
                 onClick={onOpenMenu}
@@ -93,23 +93,16 @@ const Navbar: React.FC<NavbarProps & {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }} className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
-                <div className="flex items-center text-[#2b2b2b] dark:text-white text-[27px] md:text-[36px] font-bold tracking-tight rounded-font leading-none">
+                <div className="flex items-center text-[#2b2b2b] dark:text-white text-[27px] md:text-[36px] font-black tracking-tight rounded-font leading-none">
                   <span>Kartvizi</span>
                   <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                 </div>
-                <span className="hidden sm:block text-[12px] font-medium text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
+                <span className="hidden sm:block text-[12px] font-black text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
                   dijital cv & doğru eşleşme
                 </span>
               </Link>
               
-              <Link 
-                to="/rehber" 
-                className="hidden lg:flex items-center gap-2 ml-8 px-4 py-2 text-sm font-black text-gray-500 hover:text-[#1f6d78] dark:text-gray-400 dark:hover:text-[#2dd4bf] transition-colors group"
-              >
-                <i className="fi fi-rr-book-alt translate-y-[1px]"></i>
-                <span>REHBER</span>
-                <span className="w-1.5 h-1.5 bg-[#1f6d78] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
-              </Link>
+
             </div>
 
             {/* Center Section: Search Bar */}
