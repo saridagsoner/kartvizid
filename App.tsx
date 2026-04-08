@@ -1945,7 +1945,7 @@ const App: React.FC = () => {
             </section>
 
             {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
-            <aside className={`hidden lg:block w-[650px] min-w-0 h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-x border-gray-100 dark:border-gray-800 lg:ml-6 ${
+            <aside className={`hidden lg:block w-[650px] min-w-0 h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-x border-gray-100 dark:border-gray-800 lg:ml-12 ${
               isDiscoveryView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
             }`}>
               <div className="h-full">
