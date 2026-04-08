@@ -150,8 +150,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
           </div>
 
           {/* Modal Body (Scrollable Middle Section) */}
-          <div className={`flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-black ${isInline ? 'px-8 py-6 sm:px-14 sm:py-8' : 'p-5 sm:p-10'}`}>
-            <div className={isInline ? "max-w-[800px] mx-auto space-y-8" : "space-y-8 sm:space-y-12"}>
+          <div className={`flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-black ${isInline ? 'pl-4 pr-8 py-6 sm:pl-6 sm:pr-14 sm:py-8' : 'p-5 sm:p-10'}`}>
+            <div className={isInline ? "max-w-[800px] space-y-8" : "space-y-8 sm:space-y-12"}>
               {/* Basic Info */}
               <section>
                 <SectionTitle title={t('profile.basic_info')} />
