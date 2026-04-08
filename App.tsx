@@ -1924,7 +1924,7 @@ const App: React.FC = () => {
             
             {/* COLUMN 2: MIDDLE CONTENT (Feed or Full Page) */}
             <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 ${
-              isDiscoveryView ? 'lg:max-w-[500px] border-r border-gray-100 dark:border-gray-800/20' : 'w-full'
+              isDiscoveryView ? 'lg:max-w-[500px] border-r border-gray-100 dark:border-gray-800/10' : 'w-full'
             }`}>
               <Routes>
                 {/* Discovery Routes (List View) */}
@@ -1945,7 +1945,7 @@ const App: React.FC = () => {
             </section>
 
             {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
-            <aside className={`hidden lg:block w-[650px] min-w-0 h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-x border-gray-100 dark:border-gray-800 lg:ml-12 ${
+            <aside className={`hidden lg:block w-[650px] min-w-0 h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 lg:ml-12 lg:mr-12 ${
               isDiscoveryView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
             }`}>
               <div className="h-full">
