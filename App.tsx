@@ -1822,7 +1822,12 @@ const App: React.FC = () => {
           currentItems.length > 0 ? (
             <>
               {currentItems.map(cv => (
-                <BusinessCard key={cv.id} cv={cv} onClick={() => handleCVClick(cv)} />
+                <BusinessCard 
+                  key={cv.id} 
+                  cv={cv} 
+                  onClick={() => handleCVClick(cv)} 
+                  isActive={location.pathname === `/cv/${cv.slug}` || location.pathname === `/cv/${cv.id}`}
+                />
               ))}
               {currentPage === totalPages && showEndMessage && (
                 <div className="mt-4 mb-12 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -1853,7 +1858,14 @@ const App: React.FC = () => {
         ) : (
           <div className="flex flex-col gap-6">
             {showAllShops || searchQuery.length > 0 ? (
-              filteredShops.length > 0 ? filteredShops.map(shop => <ShopCard key={shop.id} shop={shop} onClick={() => { setActiveShop(shop); setIsShopProfileOpen(true); }} />) : <div className="p-16 text-center font-black italic opacity-50">Henüz Kayıtlı Hizmet Yok</div>
+              filteredShops.length > 0 ? filteredShops.map(shop => (
+                <ShopCard 
+                  key={shop.id} 
+                  shop={shop} 
+                  onClick={() => { setActiveShop(shop); setIsShopProfileOpen(true); }} 
+                  isActive={activeShop?.id === shop.id && isShopProfileOpen}
+                />
+              )) : <div className="p-16 text-center font-black italic opacity-50">Henüz Kayıtlı Hizmet Yok</div>
             ) : (
               <div className="bg-white dark:bg-gray-900 p-10 text-center rounded-[35px]">
                 <h2 className="text-[40px] font-black text-gray-900 dark:text-white">Yeteneğini Kazanca Dönüştür</h2>

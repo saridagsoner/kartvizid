@@ -14,17 +14,31 @@ interface ShopCardProps {
     description?: string;
   };
   onClick: () => void;
+  isActive?: boolean;
 }
 
-const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick }) => {
+const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick, isActive }) => {
   const { t } = useLanguage();
 
   return (
     <div
       onClick={onClick}
-      className="flex items-center gap-4 sm:gap-10 pl-1.5 pr-4 py-4 sm:p-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-750 transition-colors sm:border sm:rounded-[35px] sm:mb-4 cursor-pointer group"
+      className={`flex items-center gap-5 sm:gap-11 pl-1.5 pr-4 py-6 sm:p-8 border-b border-gray-100 dark:border-gray-700 transition-all duration-500 sm:border sm:rounded-[35px] sm:mb-4 cursor-pointer group relative ${
+        isActive 
+          ? 'bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 border-[#1f6d78]/20' 
+          : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750'
+      }`}
     >
-      <div className="w-14 h-16 sm:w-24 sm:h-28 rounded-xl sm:rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 bg-white dark:bg-gray-700 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+      {/* Active Selection Styling (Bridge & Background) */}
+      <div className={`absolute inset-0 left-[-28px] transition-opacity duration-500 pointer-events-none sm:rounded-[35px] ${
+        isActive ? 'opacity-100 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' : 'opacity-0'
+      }`} />
+
+      {/* Active Indicator Line */}
+      <div className={`absolute left-[-28px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-50 transition-all duration-500 ease-in-out origin-center ${
+        isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
+      }`} />
+      <div className="w-[60px] h-[68px] sm:w-[104px] sm:h-[118px] rounded-xl sm:rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 bg-white dark:bg-gray-700 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
         <ImageWithFallback 
           src={shop.logo_url} 
           alt={shop.name} 
@@ -33,10 +47,10 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick }) => {
         />
       </div>
 
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 min-h-[68px] sm:min-h-[118px] flex flex-col justify-between py-0.5">
         <div className="flex flex-col gap-0.5 sm:gap-1.5">
           <div className="flex items-center justify-between">
-            <h3 className="text-[15px] sm:text-[22px] font-bold text-black dark:text-white tracking-tight leading-tight line-clamp-1 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors">
+            <h3 className="text-[16px] sm:text-[24px] font-bold text-black dark:text-white tracking-tight leading-tight line-clamp-1 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors">
               {shop.name}
             </h3>
             <span className="text-[10px] sm:text-xs font-bold text-[#1f6d78] dark:text-[#2dd4bf] bg-[#1f6d78]/5 dark:bg-[#1f6d78]/20 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full whitespace-nowrap">
@@ -44,14 +58,14 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick }) => {
             </span>
           </div>
           
-          <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-sm font-bold text-gray-500 dark:text-gray-400">
+          <div className="flex items-center gap-1.5 sm:gap-2 text-[12px] sm:text-[15px] font-bold text-gray-500 dark:text-gray-400">
             <i className="fi fi-rr-briefcase translate-y-[0.5px]"></i>
             <span className="truncate uppercase tracking-wider">{shop.profession || t('card.no_profession')}</span>
           </div>
 
           <div className="flex items-center gap-3 mt-0.5">
-            <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-bold text-gray-400 dark:text-gray-500 whitespace-nowrap">
-              <i className="fi fi-rr-marker"></i>
+            <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-[13px] font-bold text-gray-500 dark:text-gray-400 whitespace-nowrap">
+              <i className="fi fi-rr-marker text-[10px] sm:text-[11px]"></i>
               <span>{shop.city || t('card.no_city')}{shop.district ? `, ${shop.district}` : ''}</span>
             </div>
             
