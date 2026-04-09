@@ -40,6 +40,8 @@ import KartvizidList from './components/KartvizidList';
 import BlogRoute from './components/BlogRoute';
 import LegalList from './components/LegalList';
 import LegalRoute from './components/LegalRoute';
+import ConversationsList from './components/ConversationsList';
+import ChatDetailView from './components/ChatDetailView';
 
 // Lazy loaded auxiliary modals
 const JobSuccessModal = React.lazy(() => import('./components/JobSuccessModal'));
@@ -122,6 +124,7 @@ const App: React.FC = () => {
             path === '/hizmetler' ||
             path.startsWith('/rehber') ||
             path.startsWith('/kartvizid/') ||
+            path.startsWith('/mesajlar') ||
             legalPaths.includes(path);
   }, [location.pathname]);
 
@@ -1384,7 +1387,13 @@ const App: React.FC = () => {
       }
 
       setActiveConversationId(conv.id);
-      setIsMessagesOpen(true);
+      
+      const isDesktop = window.innerWidth >= 1024; // Simple check or use useMediaQuery hook logic
+      if (isDesktop) {
+        navigate(`/mesajlar/${conv.id}`);
+      } else {
+        setIsMessagesOpen(true);
+      }
     } catch (err) {
       console.error('Error opening chat:', err);
       showToast('Sohbet başlatılamadı: ' + ((err as any)?.message || 'Bilinmeyen Hata'), 'error');
@@ -1913,7 +1922,13 @@ const App: React.FC = () => {
         onOpenSavedCVs={() => setIsSavedCVsOpen(true)}
         onOpenMenu={() => setIsMobileMenuOpen(true)}
         unreadMessageCount={unreadMessageCount}
-        onOpenMessages={() => setIsMessagesOpen(true)}
+        onOpenMessages={() => {
+          if (window.innerWidth >= 1024) {
+            navigate('/mesajlar');
+          } else {
+            setIsMessagesOpen(true);
+          }
+        }}
         onToggleFilter={() => setIsDesktopFilterOpen(!isDesktopFilterOpen)}
         isFilterOpen={isDesktopFilterOpen}
       />
@@ -1927,11 +1942,11 @@ const App: React.FC = () => {
         onRefreshConversations={fetchConversations}
       />
 
-      <div className="flex-1 flex justify-center pt-[68px] md:pt-[64px] px-0 sm:px-2 md:px-6">
-        <div className="max-w-[1600px] w-full flex items-start pb-12 lg:px-12">
+      <div className="flex-1 flex justify-center pt-[68px] md:pt-[64px] px-0 sm:px-2 md:px-0">
+        <div className="max-w-[1600px] w-full flex items-start pb-12 lg:px-6 xl:px-12 gap-x-4 xl:gap-x-6">
           
           {/* COLUMN 1: LEFT NAVIGATION (Desktop Only) */}
-          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/10 pr-2 transition-colors duration-300 no-scrollbar">
+          <aside className="hidden lg:block lg:w-[240px] xl:w-[280px] shrink sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/10 pr-2 transition-all duration-300 no-scrollbar">
             <DesktopNav 
               viewMode={viewMode}
               onViewModeChange={setViewMode}
@@ -1946,6 +1961,7 @@ const App: React.FC = () => {
               jobFinders={jobFinders}
               onCVClick={handleCVClick}
               loading={loading}
+              unreadMessageCount={unreadMessageCount}
             />
           </aside>
 
@@ -1953,7 +1969,7 @@ const App: React.FC = () => {
           <main className="flex-1 flex items-start min-w-0 h-full">
             
             {/* COLUMN 2: MIDDLE CONTENT (Feed or Full Page) */}
-            <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 ${
+            <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 overflow-hidden ${
               isDiscoveryView ? 'lg:max-w-[540px] border-r border-gray-100 dark:border-gray-800/10' : 'w-full'
             }`}>
               <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth lg:pl-5">
@@ -1987,6 +2003,10 @@ const App: React.FC = () => {
                   <Route path="/kartvizid/en-cok-gorununtulenenler" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
                   <Route path="/kartvizid/istatistikler" element={<KartvizidList type="stats" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
 
+                  {/* Messaging Discovery Routes */}
+                  <Route path="/mesajlar" element={<ConversationsList conversations={conversations} activeConversationId={activeConversationId} onRefreshConversations={fetchConversations} />} />
+                  <Route path="/mesajlar/:id" element={<ConversationsList conversations={conversations} activeConversationId={activeConversationId} onRefreshConversations={fetchConversations} />} />
+
                   {/* Page Routes (Full Width on Desktop) */}
                   <Route path="/ayarlar" element={<SettingsModal onClose={() => navigate('/', { replace: true })} />} />
                   <Route path="/bildirimler" element={<NotificationsModal onClose={() => navigate('/', { replace: true })} notifications={generalNotifications} onMarkRead={markNotificationRead} onOpenProfile={handleOpenProfile} />} />
@@ -1998,7 +2018,7 @@ const App: React.FC = () => {
             </section>
 
             {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
-            <aside className={`hidden lg:block w-[585px] min-w-0 h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-r border-gray-100 dark:border-gray-800/10 lg:ml-4 lg:mr-20 ${
+            <aside className={`hidden lg:block flex-1 max-w-[585px] min-w-[320px] h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-r border-gray-100 dark:border-gray-800/10 ${
               isDiscoveryView || location.pathname.startsWith('/rehber/') ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
             }`}>
               <div className="h-full">
@@ -2020,6 +2040,10 @@ const App: React.FC = () => {
                   <Route path="/veri-sahibi-basvuru-formu" element={<LegalRoute section="data_form" isInline={true} />} />
                   <Route path="/iletisim" element={<LegalRoute section="iletisim" isInline={true} />} />
                   <Route path="/hakkimizda" element={<LegalRoute section="about" isInline={true} />} />
+                  
+                  {/* Messaging Detail Routes */}
+                  <Route path="/mesajlar" element={<ChatDetailView conversations={conversations} onRefreshConversations={fetchConversations} />} />
+                  <Route path="/mesajlar/:id" element={<ChatDetailView conversations={conversations} onRefreshConversations={fetchConversations} />} />
                   
                   {/* Kartvizid detail routes can reuse CV detail for job finders/most viewed */}
                   <Route path="/kartvizid/is-bulanlar/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} />} />
@@ -2107,6 +2131,16 @@ const App: React.FC = () => {
         {isAuthModalOpen && <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} initialMode={authMode} initialRole={authRole as any} />}
         {isShopProfileOpen && activeShop && <ShopProfileModal shop={activeShop} isOpen={isShopProfileOpen} onClose={() => setIsShopProfileOpen(false)} onOpenChat={handleOpenChat} />}
         {isJobSuccessOpen && <JobSuccessModal onClose={() => setIsJobSuccessOpen(false)} />}
+        {isMessagesOpen && window.innerWidth < 1024 && (
+          <MessagesModal 
+            isOpen={isMessagesOpen} 
+            onClose={() => setIsMessagesOpen(false)}
+            conversations={conversations}
+            activeConversationId={activeConversationId}
+            onSelectConversation={setActiveConversationId}
+            onRefreshConversations={fetchConversations}
+          />
+        )}
       </React.Suspense>
 
 

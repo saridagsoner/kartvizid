@@ -71,10 +71,10 @@ const Navbar: React.FC<NavbarProps & {
     return (
       <>
         <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-black border-b border-gray-100 dark:border-white/5 z-50 flex items-center justify-center transition-colors duration-300">
-          <div className="max-w-[1600px] w-full px-4 md:px-6 lg:px-12 flex items-center justify-between h-full gap-2 md:gap-0">
+          <div className="max-w-[1600px] w-full px-4 md:px-6 lg:px-6 xl:px-12 flex items-center justify-between h-full gap-x-4 md:gap-x-8">
 
             {/* Left Section: Logo & Mobile Menu */}
-            <div className="lg:w-[280px] shrink-0 flex items-center gap-1 lg:pl-[95px]">
+            <div className="lg:w-[240px] xl:w-[280px] shrink-0 flex items-center gap-2">
               {/* Mobile Menu Button */}
               <button
                 onClick={onOpenMenu}
@@ -106,7 +106,7 @@ const Navbar: React.FC<NavbarProps & {
             </div>
 
             {/* Center Section: Search Bar */}
-            <div className="hidden md:flex items-center gap-3 lg:-ml-[300px] shrink-0 w-[540px]">
+            <div className="hidden md:flex items-center gap-3 shrink-1 flex-1 max-w-[540px]">
               <div className="flex-1 relative group">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                   <i className="fi fi-rr-search text-gray-400 dark:text-gray-500 text-sm"></i>
@@ -143,7 +143,7 @@ const Navbar: React.FC<NavbarProps & {
             </div>
 
             {/* Right Section: Actions */}
-            <div className={`${loading ? 'flex' : 'flex'} md:w-[330px] shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto lg:ml-0 lg:pr-[95px]`}>
+            <div className={`${loading ? 'flex' : 'flex'} flex-1 shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto`}>
               {loading ? (
                 <div className="flex items-center gap-6 opacity-50 pr-4">
                   <div className="w-16 md:w-20 h-5 bg-gray-100 dark:bg-gray-700 animate-pulse rounded-full"></div>

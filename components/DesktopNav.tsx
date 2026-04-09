@@ -21,6 +21,7 @@ interface DesktopNavProps {
     jobFinders?: CV[];
     onCVClick?: (cv: CV) => void;
     loading?: boolean;
+    unreadMessageCount?: number;
 }
 
 const DesktopNav: React.FC<DesktopNavProps> = ({
@@ -36,7 +37,8 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
     platformStats = [],
     jobFinders = [],
     onCVClick,
-    loading = false
+    loading = false,
+    unreadMessageCount = 0
 }) => {
     const { t } = useLanguage();
     const navigate = useNavigate();
@@ -61,16 +63,16 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 : 'text-black dark:text-gray-200 hover:bg-gray-50/10 dark:hover:bg-gray-800/10'
             }`}
         >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-x-[clamp(8px,1vw,16px)]">
                 <i className={`fi ${active ? icon.replace('fi-rr-', 'fi-sr-') : icon} transition-all duration-300 group-hover:scale-110 ${
                     active 
-                    ? 'text-[22px] text-black dark:text-white font-black' 
-                    : 'text-[20px] text-black dark:text-gray-300 font-medium'
+                    ? 'text-[clamp(18px,1.4vw,22px)] text-black dark:text-white font-black' 
+                    : 'text-[clamp(16px,1.2vw,20px)] text-black dark:text-gray-300 font-medium'
                 }`}></i>
                 <span className={`tracking-tight transition-all duration-300 ${
                     active 
-                    ? 'text-[17px] font-black text-black dark:text-white' 
-                    : 'text-[16px] font-medium text-black dark:text-gray-200'
+                    ? 'text-[clamp(14px,1.1vw,17px)] font-black text-black dark:text-white' 
+                    : 'text-[clamp(13px,1vw,16px)] font-medium text-black dark:text-gray-200'
                 }`}>{label}</span>
             </div>
             <div className="flex items-center gap-2">
@@ -86,24 +88,23 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
         </button>
     );
 
-    const SubNavItem = ({ label, onClick, active, icon }: { label: string, onClick: () => void, active?: boolean, icon?: string }) => (
+    const SubNavItem = ({ label, onClick, active }: { label: string, onClick: () => void, active?: boolean }) => (
         <button
             onClick={onClick}
-            className={`w-[calc(100%-16px)] ml-10 flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-200 mb-0.5 ${
+            className={`w-[calc(100%-24px)] ml-6 flex items-center px-4 py-2 rounded-xl transition-all duration-200 mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis ${
                 active 
                 ? 'bg-gray-50 dark:bg-gray-800/50 text-black dark:text-white font-bold' 
                 : 'text-gray-500 hover:text-black hover:bg-gray-50/50 dark:hover:bg-gray-800/30'
             }`}
         >
-            {icon && <i className={`fi ${icon} text-[14px]`}></i>}
-            <span className="text-[13.5px] tracking-tight">{label}</span>
+            <span className="text-[clamp(12px,0.9vw,14px)] leading-none transform translate-y-[1px]">{label}</span>
         </button>
     );
 
 
 
     return (
-        <div className="flex flex-col h-full pt-8 pb-8 pl-20 pr-0 no-scrollbar overflow-y-auto">
+        <div className="flex flex-col h-full pt-8 pb-8 lg:pl-6 xl:pl-12 pr-0 no-scrollbar overflow-y-auto">
             {/* Main Navigation */}
             <NavItem 
                 label="İş Arayanlar" 
@@ -152,37 +153,31 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 <div className="mb-4 animate-in fade-in slide-in-from-top-2 duration-300 space-y-0.5">
                     <SubNavItem 
                         label="Kartvizid Nedir?" 
-                        icon="fi-rr-info" 
                         onClick={() => navigate('/hakkimizda')} 
                         active={isActive('/hakkimizda')} 
                     />
                     <SubNavItem 
                         label={t('sidebar.job_finders')} 
-                        icon="fi-rr-user-check" 
                         onClick={() => navigate('/kartvizid/is-bulanlar')} 
                         active={location.pathname.startsWith('/kartvizid/is-bulanlar')} 
                     />
                     <SubNavItem 
                         label={t('sidebar.popular_professions')} 
-                        icon="fi-rr-briefcase" 
                         onClick={() => navigate('/kartvizid/populer-meslekler')} 
                         active={location.pathname === '/kartvizid/populer-meslekler'} 
                     />
                     <SubNavItem 
                         label={t('sidebar.featured_cities')} 
-                        icon="fi-rr-map-marker" 
                         onClick={() => navigate('/kartvizid/one-cikan-sehirler')} 
                         active={location.pathname === '/kartvizid/one-cikan-sehirler'} 
                     />
                     <SubNavItem 
                         label={t('sidebar.most_viewed')} 
-                        icon="fi-rr-eye" 
                         onClick={() => navigate('/kartvizid/en-cok-gorununtulenenler')} 
                         active={location.pathname.startsWith('/kartvizid/en-cok-gorununtulenenler')} 
                     />
                     <SubNavItem 
                         label={t('sidebar.platform_stats')} 
-                        icon="fi-rr-stats" 
                         onClick={() => navigate('/kartvizid/istatistikler')} 
                         active={location.pathname === '/kartvizid/istatistikler'} 
                     />
@@ -193,6 +188,14 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 icon="fi-rr-settings" 
                 active={isActive('/ayarlar')}
                 onClick={() => navigate('/ayarlar')}
+            />
+
+            <NavItem 
+                label="Mesajlar" 
+                icon="fi-rr-comment" 
+                active={location.pathname.startsWith('/mesajlar')}
+                onClick={() => navigate('/mesajlar')}
+                badge={unreadMessageCount > 0 ? unreadMessageCount.toString() : undefined}
             />
 
             {isEmployer && onOpenSavedCVs && (
