@@ -86,16 +86,16 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                 </span>
                 <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{article.publishedAt} • {article.readTime} okuma</span>
               </div>
-              <h1 className="text-2xl md:text-5xl font-black text-gray-900 dark:text-white leading-tight mb-6 tracking-tight">
+              <h1 className="text-xl md:text-3xl font-black text-gray-900 dark:text-white leading-tight mb-4 tracking-tight">
                 {article.title}
               </h1>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed font-bold italic border-l-4 border-[#1f6d78] pl-6">
+              <p className="text-[17px] md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed font-bold italic border-l-4 border-[#1f6d78] pl-6">
                 {article.excerpt}
               </p>
             </header>
     
             <article 
-              className="prose prose-base md:prose-lg dark:prose-invert max-w-none 
+              className="prose prose-sm md:prose-base dark:prose-invert max-w-none 
               prose-headings:font-black prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:tracking-tight
               prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:font-medium
               prose-strong:text-[#1f6d78] dark:prose-strong:text-[#2dd4bf]
