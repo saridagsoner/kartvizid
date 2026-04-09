@@ -26,6 +26,7 @@ import CompanyProfileModal from './components/CompanyProfileModal';
 import CVFormModal from './components/CVFormModal';
 import SettingsModal from './components/SettingsModal';
 import CompanyFormModal from './components/CompanyFormModal';
+import SettingsDetailView from './components/SettingsDetailView';
 import NotificationsModal from './components/NotificationsModal';
 import CVProfileRoute from './components/CVProfileRoute';
 import CompanyProfileRoute from './components/CompanyProfileRoute';
@@ -125,6 +126,8 @@ const App: React.FC = () => {
             path.startsWith('/rehber') ||
             path.startsWith('/kartvizid/') ||
             path.startsWith('/mesajlar') ||
+            path === '/premium' ||
+            path.startsWith('/ayarlar') ||
             legalPaths.includes(path);
   }, [location.pathname]);
 
@@ -1946,7 +1949,7 @@ const App: React.FC = () => {
         <div className="max-w-[1600px] w-full flex items-start pb-12 lg:pl-[58px] lg:pr-6 xl:pl-[84px] xl:pr-12 gap-0">
           
           {/* COLUMN 1: LEFT NAVIGATION (Desktop Only) */}
-          <aside className="hidden lg:block lg:w-[220px] xl:w-[255px] shrink sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/10 pr-2 transition-all duration-300 no-scrollbar">
+          <aside className="hidden lg:block lg:w-[220px] xl:w-[255px] shrink sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-200/70 dark:border-white/10 pr-2 transition-all duration-300 no-scrollbar">
             <DesktopNav 
               viewMode={viewMode}
               onViewModeChange={setViewMode}
@@ -1969,8 +1972,8 @@ const App: React.FC = () => {
           <main className="flex-1 flex items-start min-w-0 h-full">
             
             {/* COLUMN 2: MIDDLE CONTENT (Feed or Full Page) */}
-            <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 overflow-hidden ${
-              isDiscoveryView ? 'lg:max-w-[520px] xl:max-w-[525px] border-r border-gray-100 dark:border-gray-800/10' : 'w-full'
+            <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 overflow-hidden h-[calc(100vh-64px)] ${
+              isDiscoveryView ? 'lg:max-w-[520px] xl:max-w-[525px] border-r border-gray-200/70 dark:border-white/10' : 'w-full'
             }`}>
               <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth lg:pl-2">
                 <Routes>
@@ -1997,18 +2000,24 @@ const App: React.FC = () => {
                   <Route path="/hakkimizda" element={<LegalList />} />
 
                   {/* Kartvizid Discovery Routes */}
-                  <Route path="/kartvizid/is-bulanlar" element={<KartvizidList type="job-finders" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/kartvizid/populer-meslekler" element={<KartvizidList type="professions" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/kartvizid/one-cikan-sehirler" element={<KartvizidList type="cities" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/kartvizid/en-cok-gorununtulenenler" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/kartvizid/istatistikler" element={<KartvizidList type="stats" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/is-bulanlar" element={<KartvizidList type="job-finders" jobFinders={cvList.filter(cv => cv.isPlaced || cv.workingStatus === 'active')} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/is-bulanlar/:id" element={<KartvizidList type="job-finders" jobFinders={cvList.filter(cv => cv.isPlaced || cv.workingStatus === 'active')} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/populer-meslekler" element={<KartvizidList type="professions" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/one-cikan-sehirler" element={<KartvizidList type="cities" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/en-cok-gorununtulenenler" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/en-cok-gorununtulenenler/:id" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/istatistikler" element={<KartvizidList type="stats" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/premium" element={<KartvizidList type="premium" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
 
                   {/* Messaging Discovery Routes */}
                   <Route path="/mesajlar" element={<ConversationsList conversations={conversations} activeConversationId={activeConversationId} onRefreshConversations={fetchConversations} />} />
                   <Route path="/mesajlar/:id" element={<ConversationsList conversations={conversations} activeConversationId={activeConversationId} onRefreshConversations={fetchConversations} />} />
 
-                  {/* Page Routes (Full Width on Desktop) */}
-                  <Route path="/ayarlar" element={<SettingsModal onClose={() => navigate('/', { replace: true })} />} />
+                  {/* Page Routes (Full Width on Desktop or Modal) */}
+                  <Route path="/ayarlar" element={
+                    window.innerWidth >= 1024 ? <KartvizidList type="settings" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} /> : <SettingsModal onClose={() => navigate('/', { replace: true })} />
+                  } />
+                  <Route path="/ayarlar/:tab" element={<KartvizidList type="settings" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
                   <Route path="/bildirimler" element={<NotificationsModal onClose={() => navigate('/', { replace: true })} notifications={generalNotifications} onMarkRead={markNotificationRead} onOpenProfile={handleOpenProfile} />} />
                   <Route path="/cv-olustur" element={<CVFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCreateCV} initialData={currentUserCV || {}} availableCities={availableCities} />} />
                   <Route path="/sirket-olustur" element={<CompanyFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCompanySubmit} initialData={activeCompany || {}} availableCities={availableCities} />} />
@@ -2018,7 +2027,7 @@ const App: React.FC = () => {
             </section>
 
             {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
-            <aside className={`hidden lg:block flex-1 max-w-[585px] min-w-[320px] h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-r border-gray-100 dark:border-gray-800/10 ${
+            <aside className={`hidden lg:block flex-1 max-w-[585px] min-w-[320px] h-[calc(100vh-64px)] sticky top-[64px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-r border-gray-200/70 dark:border-white/10 ${
               isDiscoveryView || location.pathname.startsWith('/rehber/') ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
             }`}>
               <div className="h-full">
@@ -2045,9 +2054,103 @@ const App: React.FC = () => {
                   <Route path="/mesajlar" element={<ChatDetailView conversations={conversations} onRefreshConversations={fetchConversations} />} />
                   <Route path="/mesajlar/:id" element={<ChatDetailView conversations={conversations} onRefreshConversations={fetchConversations} />} />
                   
+                  {/* Settings Detail Routes */}
+                  <Route path="/ayarlar" element={<SettingsDetailView activeTab="account" />} />
+                  <Route path="/ayarlar/hesap" element={<SettingsDetailView activeTab="account" />} />
+                  <Route path="/ayarlar/genel" element={<SettingsDetailView activeTab="general" />} />
+                  <Route path="/ayarlar/guvenlik" element={<SettingsDetailView activeTab="security" />} />
+                  <Route path="/ayarlar/bildirimler" element={<SettingsDetailView activeTab="notifications" />} />
+                  
                   {/* Kartvizid detail routes can reuse CV detail for job finders/most viewed */}
+                  <Route path="/kartvizid/is-bulanlar" element={
+                    <div className="h-full flex flex-col items-center justify-center p-12 text-center">
+                        <div className="w-24 h-24 bg-green-50 dark:bg-green-900/10 rounded-[2.5rem] flex items-center justify-center mb-8">
+                            <i className="fi fi-rr-medal text-4xl text-green-600 dark:text-green-400"></i>
+                        </div>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">Kartvizid Başarıları</h3>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
+                            Bu alanda, Kartvizid platformu aracılığıyla hayalindeki işe kavuşan ve kariyer yolculuğunda yeni bir sayfa açan kullanıcılarımızı görüyorsunuz.
+                            <br /><br />
+                            Siz de dijital kartvizitinizi güncel tutarak işverenlerin dikkatini çekebilir ve bu başarı listesinde yerinizi alabilirsiniz.
+                        </p>
+                    </div>
+                  } />
                   <Route path="/kartvizid/is-bulanlar/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} />} />
                   <Route path="/kartvizid/en-cok-gorununtulenenler/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} />} />
+                  
+                  <Route path="/kartvizid/en-cok-gorununtulenenler" element={
+                    <div className="h-full flex flex-col items-center justify-center p-12 text-center">
+                        <div className="w-24 h-24 bg-orange-50 dark:bg-orange-900/10 rounded-[2.5rem] flex items-center justify-center mb-8">
+                            <i className="fi fi-rr-fire text-4xl text-orange-500 dark:text-orange-400"></i>
+                        </div>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">En Popüler Kartvizitler</h3>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
+                            Platformun en çok ilgi gören ve en çok tıklanan profilleri burada listelenmektedir. 
+                            <br /><br />
+                            Profilinizi optimize ederek ve sosyal medyanızda paylaşarak siz de görünürlüğünüzü artırabilirsiniz.
+                        </p>
+                    </div>
+                  } />
+                  
+                  {/* Informational Detail for Popular Professions */}
+                  <Route path="/kartvizid/populer-meslekler" element={
+                    <div className="h-full flex flex-col items-center justify-center p-12 text-center">
+                        <div className="w-24 h-24 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 rounded-[2.5rem] flex items-center justify-center mb-8">
+                            <i className="fi fi-rr-chart-user text-4xl text-[#1f6d78] dark:text-[#2dd4bf]"></i>
+                        </div>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">Meslek Trendleri</h3>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
+                            Bu listede yer alan meslekler, Kartvizid platformu üzerindeki CV görüntülenme sayıları ve işverenlerin arama trendlerine göre anlık olarak güncellenmektedir. 
+                            <br /><br />
+                            Hangi alanlarda yoğunluk olduğunu analiz ederek kariyer yolculuğunuzu daha bilinçli şekillendirebilirsiniz.
+                        </p>
+                    </div>
+                  } />
+
+                   <Route path="/kartvizid/one-cikan-sehirler" element={
+                    <div className="h-full flex flex-col items-center justify-center p-12 text-center">
+                        <div className="w-24 h-24 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 rounded-[2.5rem] flex items-center justify-center mb-8">
+                            <i className="fi fi-rr-world text-4xl text-[#1f6d78] dark:text-[#2dd4bf]"></i>
+                        </div>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">Şehir İstatistikleri</h3>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
+                            Platformdaki dijital kartvizitlerin coğrafi dağılımını buradan takip edebilirsiniz. Yeni yeteneklerin hangi şehirlerde yoğunlaştığını ve bölgesel iş gücü potansiyelini analiz edebilmeniz için hazırlanmıştır.
+                        </p>
+                    </div>
+                  } />
+
+                  <Route path="/kartvizid/istatistikler" element={
+                    <div className="h-full flex flex-col items-center justify-center p-12 text-center text-gray-400 dark:text-gray-600">
+                        <div className="w-24 h-24 bg-blue-50 dark:bg-blue-900/10 rounded-[2.5rem] flex items-center justify-center mb-8">
+                            <i className="fi fi-rr-stats text-4xl text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">Platform Verileri</h3>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
+                            Kartvizid platformunun büyüme ve etkileşim verilerini buradan şeffaf bir şekilde takip edebilirsiniz.
+                            <br /><br />
+                            Kayıtlı kullanıcı sayısından haftalık yeni katılım oranlarına kadar tüm veriler, platformun gerçek zamanlı performansını yansıtmaktadır.
+                        </p>
+                    </div>
+                  } />
+
+                  <Route path="/premium" element={
+                    <div className="h-full flex flex-col items-center justify-center p-12 text-center">
+                        <div className="w-24 h-24 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 rounded-[2.5rem] flex items-center justify-center mb-8 group overflow-hidden relative">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-[#1f6d78]/20 to-transparent scale-0 group-hover:scale-150 transition-transform duration-700"></div>
+                            <i className="fi fi-rr-membership-vip text-4xl text-[#1f6d78] dark:text-[#2dd4bf] relative z-10 transition-transform duration-500 group-hover:scale-110"></i>
+                        </div>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">Geleceğin Kariyer Deneyimi</h3>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
+                            Kartvizid Premium, hem adaylar hem de işverenler için sınırları ortadan kaldıran bir ekosistem olarak tasarlanıyor. 
+                            <br /><br />
+                            Adayların daha görünür olduğu, işverenlerin ise doğru yeteneğe anında ulaştığı bu yeni deneyimle yakında tanışacaksınız. Kariyer yolculuğunuzu bir üst seviyeye taşımak için heyecan verici özellikler hazırlıyoruz.
+                        </p>
+                        <div className="mt-8 flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-white/5">
+                           <span className="w-1.5 h-1.5 rounded-full bg-[#1f6d78] dark:bg-[#2dd4bf] animate-pulse"></span>
+                           <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">Çok Yakında</span>
+                        </div>
+                    </div>
+                  } />
 
                   <Route path="*" element={
                     <div className="h-full flex flex-col items-center justify-center p-12 text-center text-gray-400 dark:text-gray-600">

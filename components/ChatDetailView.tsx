@@ -148,16 +148,14 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
   if (!id) {
     return (
       <div className="h-full flex flex-col items-center justify-center p-12 text-center bg-white dark:bg-[#0f172a]">
-        <div className="w-32 h-32 rounded-full bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center mb-8 border border-gray-100 dark:border-white/5 shadow-inner group">
-           <i className="fi fi-rr-comment-quote text-5xl text-gray-200 dark:text-gray-700 transition-transform group-hover:scale-110 group-hover:rotate-6"></i>
+        <div className="w-24 h-24 rounded-[2rem] bg-gray-50 dark:bg-gray-900/50 flex items-center justify-center mb-10 border border-gray-100 dark:border-white/5 relative group">
+           <div className="absolute inset-0 bg-[#1f6d78]/5 dark:bg-[#2dd4bf]/5 rounded-[2rem] scale-0 group-hover:scale-100 transition-transform duration-500"></div>
+           <i className="fi fi-rr-comment-info text-4xl text-[#1f6d78] dark:text-[#2dd4bf] relative z-10 transition-transform duration-500 group-hover:rotate-6"></i>
         </div>
-        <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-3 tracking-tighter uppercase">Kariyer Sohbetleri</h3>
-        <p className="text-sm font-semibold text-gray-400 max-w-[320px] leading-relaxed uppercase tracking-wide">
-          İş arayanlar ve iş verenlerin profesyonel bir ortamda buluştuğu güvenli mesajlaşma merkezi.
+        <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter uppercase">İş Görüşmeleriniz</h3>
+        <p className="text-[13px] font-medium text-gray-500 dark:text-gray-400 max-w-[340px] leading-[1.8] uppercase tracking-[0.05em]">
+          Bir işveren profilinizi inceleyip sizinle iletişime geçmek istediğinde veya bir görüşme başlattığınızda süreci bu profesyonel panel üzerinden yönetebilirsiniz.
         </p>
-        <div className="mt-10 px-6 py-2 rounded-full border border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-gray-900/50">
-          <span className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em]">Sohbet Seçerek Başlayın</span>
-        </div>
       </div>
     );
   }

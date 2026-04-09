@@ -25,9 +25,6 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
           <h2 className="text-[28px] font-black text-black dark:text-white tracking-tighter leading-tight">
             İş Görüşmeleri
           </h2>
-          <div className="w-8 h-8 rounded-xl bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] border border-gray-100 dark:border-white/5">
-            <i className="fi fi-rr-comment-dots text-sm"></i>
-          </div>
         </div>
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
           Görüşmelerinizi buradan takip edin.
@@ -36,15 +33,12 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 
       <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
         {conversations.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center px-10 py-16">
-            <div className="w-20 h-24 rounded-2xl bg-gray-50 dark:bg-gray-900 flex items-center justify-center mb-6 border border-gray-100 dark:border-white/5">
-              <i className="fi fi-rr-comment-dots text-4xl text-gray-200 dark:text-gray-700"></i>
-            </div>
+          <div className="flex flex-col items-center justify-start h-full text-center px-10 pt-20">
             <h3 className="text-lg font-black text-black dark:text-white mb-2 uppercase tracking-tight">
               Henüz Bir Görüşme Başlamadı
             </h3>
             <p className="text-sm text-gray-400 font-medium leading-relaxed max-w-[240px]">
-              İşverenler sizinle iletişime geçtiğinde veya siz bir sohbet başlattığınızda mesajlarınız burada görünecektir.
+              İşverenler sizinle iletişime geçtiğinde veya siz bir görüşme başlattığınızda süreci buradan yönetebilirsiniz.
             </p>
           </div>
         ) : (

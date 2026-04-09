@@ -63,13 +63,13 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 : 'text-black dark:text-gray-200 hover:bg-gray-50/10 dark:hover:bg-gray-800/10'
             }`}
         >
-            <div className="flex items-center gap-x-[clamp(8px,1vw,16px)]">
-                <i className={`fi ${active ? icon.replace('fi-rr-', 'fi-sr-') : icon} transition-all duration-300 group-hover:scale-110 ${
+            <div className="flex items-center gap-x-[clamp(8px,1vw,16px)] overflow-hidden">
+                <i className={`fi ${active ? icon.replace('fi-rr-', 'fi-sr-') : icon} transition-all duration-300 group-hover:scale-110 flex-shrink-0 ${
                     active 
                     ? 'text-[clamp(18px,1.4vw,22px)] text-black dark:text-white font-black' 
                     : 'text-[clamp(16px,1.2vw,20px)] text-black dark:text-gray-300 font-medium'
                 }`}></i>
-                <span className={`tracking-tight transition-all duration-300 ${
+                <span className={`tracking-tight transition-all duration-300 truncate ${
                     active 
                     ? 'text-[clamp(14px,1.1vw,17px)] font-black text-black dark:text-white' 
                     : 'text-[clamp(13px,1vw,16px)] font-medium text-black dark:text-gray-200'
@@ -91,13 +91,13 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
     const SubNavItem = ({ label, onClick, active }: { label: string, onClick: () => void, active?: boolean }) => (
         <button
             onClick={onClick}
-            className={`w-[calc(100%-24px)] ml-6 flex items-center px-4 py-2 rounded-xl transition-all duration-200 mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis ${
+            className={`w-[calc(100%-24px)] ml-6 flex items-center px-4 py-2 rounded-xl transition-all duration-200 mb-0.5 group overflow-hidden ${
                 active 
                 ? 'bg-gray-50 dark:bg-gray-800/50 text-black dark:text-white font-bold' 
                 : 'text-gray-500 hover:text-black hover:bg-gray-50/50 dark:hover:bg-gray-800/30'
             }`}
         >
-            <span className="text-[clamp(12px,0.9vw,14px)] leading-none transform translate-y-[1px]">{label}</span>
+            <span className="text-[clamp(12px,0.9vw,14px)] leading-none transform translate-y-[1px] truncate">{label}</span>
         </button>
     );
 
@@ -131,7 +131,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 }}
             />
 
-            <div className="my-2 border-t border-gray-100 dark:border-gray-800/30"></div>
+            <div className="my-2 border-t border-gray-200/70 dark:border-white/10"></div>
 
 
             <NavItem 
@@ -143,7 +143,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             <NavItem 
                 label="Kartvizid" 
                 icon="fi-rr-document-signed" 
-                active={isKartvizidOpen || isActive('/hakkimizda')}
+                active={isKartvizidOpen || location.pathname.startsWith('/kartvizid/')}
                 onClick={() => setIsKartvizidOpen(!isKartvizidOpen)}
                 hasChildren
                 isOpen={isKartvizidOpen}
@@ -151,11 +151,6 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
 
             {isKartvizidOpen && (
                 <div className="mb-4 animate-in fade-in slide-in-from-top-2 duration-300 space-y-0.5">
-                    <SubNavItem 
-                        label="Kartvizid Nedir?" 
-                        onClick={() => navigate('/hakkimizda')} 
-                        active={isActive('/hakkimizda')} 
-                    />
                     <SubNavItem 
                         label={t('sidebar.job_finders')} 
                         onClick={() => navigate('/kartvizid/is-bulanlar')} 
@@ -183,15 +178,9 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                     />
                 </div>
             )}
-            <NavItem 
-                label="Ayarlar" 
-                icon="fi-rr-settings" 
-                active={isActive('/ayarlar')}
-                onClick={() => navigate('/ayarlar')}
-            />
 
             <NavItem 
-                label="Mesajlar" 
+                label="İş Görüşmeleri" 
                 icon="fi-rr-comment" 
                 active={location.pathname.startsWith('/mesajlar')}
                 onClick={() => navigate('/mesajlar')}
@@ -210,59 +199,31 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             <NavItem 
                 label="Premium" 
                 icon="fi-rr-membership-vip" 
-                active={false}
-                onClick={() => {}}
+                active={location.pathname === '/premium'}
+                onClick={() => navigate('/premium')}
             />
 
-            <div className="my-2 border-t border-gray-100 dark:border-gray-800/30"></div>
-            <NavItem 
-                label="Destek & Yasal" 
-                icon="fi-rr-interrogation" 
-                active={isSupportOpen || [
-                    '/iletisim', '/sikca-sorulan-sorular', '/yardim-merkezi', 
-                    '/hizmetlerimiz', '/aydinlatma-metni', '/cerez-politikasi', 
-                    '/kvkk-aydinlatma', '/uyelik-sozlesmesi', '/veri-sahibi-basvuru-formu'
-                ].includes(location.pathname)}
-                onClick={() => setIsSupportOpen(!isSupportOpen)}
-                hasChildren
-                isOpen={isSupportOpen || [
-                    '/iletisim', '/sikca-sorulan-sorular', '/yardim-merkezi', 
-                    '/hizmetlerimiz', '/aydinlatma-metni', '/cerez-politikasi', 
-                    '/kvkk-aydinlatma', '/uyelik-sozlesmesi', '/veri-sahibi-basvuru-formu'
-                ].includes(location.pathname)}
-            />
-
-            {isSupportOpen && (
-                <div className="mb-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <SubNavItem 
-                        label="Bize Ulaşın" 
-                        active={isActive('/iletisim')}
-                        onClick={() => navigate('/iletisim')}
-                    />
-                    <SubNavItem 
-                        label="Site Kullanımı" 
-                        active={isActive('/sitemap')}
-                        onClick={() => navigate('/sitemap')}
-                    />
-                    <SubNavItem 
-                        label="KVKK Aydınlatma" 
-                        active={isActive('/kvkk-aydinlatma')}
-                        onClick={() => navigate('/kvkk-aydinlatma')}
-                    />
-                    <SubNavItem 
-                        label="Gizlilik & Güvenlik" 
-                        active={isActive('/guvenlik-ipuclari')}
-                        onClick={() => navigate('/guvenlik-ipuclari')}
-                    />
-                </div>
-            )}
+            <div className="my-2 border-t border-gray-200/70 dark:border-white/10"></div>
 
             <NavItem 
-                label="Mobil Uygulama" 
-                icon="fi-rr-mobile-button" 
-                active={false}
-                onClick={() => {}}
+                label="Ayarlar" 
+                icon="fi-rr-settings" 
+                active={isActive('/ayarlar')}
+                onClick={() => navigate('/ayarlar')}
             />
+
+            <NavItem 
+                label="Kurumsal" 
+                icon="fi-rr-info" 
+                active={[
+                    '/iletisim', '/sikca-sorulan-sorular', '/yardim-merkezi', 
+                    '/hizmetlerimiz', '/aydinlatma-metni', '/cerez-politikasi', 
+                    '/kvkk-aydinlatma', '/uyelik-sozlesmesi', '/veri-sahibi-basvuru-formu',
+                    '/hakkimizda', '/kullanim-kosullari', '/guvenlik-ipuclari'
+                ].includes(location.pathname)}
+                onClick={() => navigate('/iletisim')}
+            />
+
 
             {/* Account Management (Contextual) */}
             <div className="mt-auto pt-8">

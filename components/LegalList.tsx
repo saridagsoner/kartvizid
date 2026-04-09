@@ -14,7 +14,7 @@ const LegalList: React.FC = () => {
     <div className="bg-white dark:bg-black">
       <div className="hidden sm:block mt-8 mb-4 lg:pl-1.5 px-6">
         <h1 className="text-[24px] font-black tracking-tighter text-black dark:text-white leading-none">
-            Destek & Yasal
+            Kurumsal
         </h1>
       </div>
 

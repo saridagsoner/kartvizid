@@ -400,7 +400,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
                             <h2 className={`${isInline ? 'text-[15px]' : 'text-2xl'} font-black text-gray-900 dark:text-white tracking-tight truncate uppercase leading-none`}>
                                 {LEGAL_CONTENT[activeSection].title}
                             </h2>
-                            {isInline && <span className="text-[9px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em] mt-0.5 block leading-none">Destek & Yasal</span>}
+                            {isInline && <span className="text-[9px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em] mt-0.5 block leading-none">Kurumsal</span>}
                         </div>
                     </div>
                     

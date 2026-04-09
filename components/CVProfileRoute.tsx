@@ -131,9 +131,16 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
             onClose();
             return;
         }
-        // Use a standard push instead of replace to ensure browser simulators
-        // properly detect the URL change and update their simulated address bars.
-        navigate('/', { replace: true });
+
+        // Contextual navigation: Return to the parent list instead of always going back to home
+        if (location.pathname.startsWith('/kartvizid/is-bulanlar/')) {
+            navigate('/kartvizid/is-bulanlar');
+        } else if (location.pathname.startsWith('/kartvizid/en-cok-gorununtulenenler/')) {
+            navigate('/kartvizid/en-cok-gorununtulenenler');
+        } else {
+            // Default behavior for standard discovery or other paths
+            navigate('/', { replace: true });
+        }
     };
 
     if (loading) {

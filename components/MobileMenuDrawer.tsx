@@ -541,20 +541,76 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             case 'premium':
                 title = "Premium";
                 content = (
-                    <div className="flex flex-col p-8 items-center text-center space-y-6">
-                        <div className="w-24 h-24 bg-gradient-to-br from-[#1f6d78]/10 to-[#2dd4bf]/10 rounded-[32px] flex items-center justify-center text-[#1f6d78] border border-[#1f6d78]/20 shadow-inner">
-                            <i className="fi fi-rr-membership-vip text-5xl"></i>
+                    <div className="flex flex-col p-6 pb-20 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                        <div className="flex flex-col items-center text-center space-y-4">
+                            <div className="w-20 h-20 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 rounded-[28px] flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78]/10 shadow-sm transition-transform duration-500 hover:scale-105">
+                                <i className="fi fi-rr-membership-vip text-4xl"></i>
+                            </div>
+                            <div className="space-y-2">
+                                <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight leading-tight uppercase">Geleceğin Kariyer Vizyonu</h3>
+                                <p className="text-gray-500 dark:text-gray-400 text-[13.5px] leading-relaxed max-w-[300px] mx-auto">
+                                    Kartvizid Premium, hem adaylar hem de işverenler için sınırları ortadan kaldıran bir ekosistem olarak tasarlanıyor.
+                                </p>
+                            </div>
                         </div>
-                        <div className="space-y-3">
-                            <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Premium Özellikler Yakında!</h3>
-                            <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-[280px] mx-auto">
-                                İş arama deneyiminizi bir üst seviyeye taşıyacak, size özel avantajlar ve öne çıkmanızı sağlayacak premium özellikler üzerinde çalışıyoruz.
-                            </p>
+
+                        <div className="space-y-6">
+                            <div>
+                                <div className="px-4 mb-4">
+                                    <span className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.3em]">Adaylar İçin</span>
+                                </div>
+                                <div className="grid gap-4">
+                                    {[
+                                        { icon: 'fi-rr-star', title: 'Vitrin Özelliği', desc: 'Aramalarda en üstte görünün.' },
+                                        { icon: 'fi-rr-badge-check', title: 'Pro Rozeti', desc: 'Profesyonelliğinizi kanıtlayın.' },
+                                        { icon: 'fi-rr-palette', title: 'Özel Tasarım', desc: 'Profilinizi tarzınıza göre özelleştirin.' }
+                                    ].map((item, idx) => (
+                                        <div key={idx} className="flex items-start space-x-4 p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-2xl border border-gray-100/50 dark:border-gray-700/50">
+                                            <div className="flex-shrink-0 w-10 h-10 bg-white dark:bg-gray-900 rounded-xl flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] shadow-sm">
+                                                <i className={`fi ${item.icon} text-lg`}></i>
+                                            </div>
+                                            <div className="space-y-0.5">
+                                                <h4 className="text-[14px] font-black text-gray-900 dark:text-gray-100">{item.title}</h4>
+                                                <p className="text-[12px] text-gray-500 dark:text-gray-400 font-medium leading-tight">{item.desc}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <div className="px-4 mb-4">
+                                    <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em]">İşverenler İçin</span>
+                                </div>
+                                <div className="grid gap-4">
+                                    {[
+                                        { icon: 'fi-rr-filter', title: 'Gelişmiş Filtreleme', desc: 'Adayları saniyeler içinde bulun.' },
+                                        { icon: 'fi-rr-messages', title: 'Sınırsız İletişim', desc: 'Adaylarla doğrudan bağlantı kurun.' },
+                                        { icon: 'fi-rr-chart-line-up', title: 'Veri Analitiği', desc: 'Sektörel yetenek trendlerini izleyin.' }
+                                    ].map((item, idx) => (
+                                        <div key={idx} className="flex items-start space-x-4 p-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl border border-blue-100/50 dark:border-blue-500/10">
+                                            <div className="flex-shrink-0 w-10 h-10 bg-white dark:bg-gray-900 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm">
+                                                <i className={`fi ${item.icon} text-lg`}></i>
+                                            </div>
+                                            <div className="space-y-0.5">
+                                                <h4 className="text-[14px] font-black text-gray-900 dark:text-gray-100">{item.title}</h4>
+                                                <p className="text-[12px] text-gray-500 dark:text-gray-400 font-medium leading-tight">{item.desc}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-800/50 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 w-full">
-                            <p className="text-[#1f6d78] dark:text-[#2dd4bf] text-[13px] font-bold">
-                                Çok yakında iş arayanlar için devrim niteliğinde yeniliklerle burada olacağız.
-                            </p>
+
+                        <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-[24px] border border-gray-100 dark:border-gray-700 text-center relative overflow-hidden group">
+                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#1f6d78]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                           <div className="flex items-center justify-center gap-2 mb-2">
+                               <span className="w-1.5 h-1.5 rounded-full bg-[#1f6d78] dark:bg-[#2dd4bf] animate-pulse"></span>
+                               <span className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em]">Platform Gelişimi</span>
+                           </div>
+                           <p className="text-gray-600 dark:text-gray-300 text-[13px] font-bold relative z-10">
+                               Kariyerinizi bir üst seviyeye taşımak için devrim niteliğinde yeniliklerle çok yakında buradayız.
+                           </p>
                         </div>
                     </div>
                 );
