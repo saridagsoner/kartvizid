@@ -84,7 +84,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                 </button>
                 <div className="flex-1 min-w-0">
                     <h2 className="text-[15px] font-black text-black dark:text-white truncate tracking-tight uppercase leading-none">{article.title}</h2>
-                    {isInline && <span className="text-[9px] font-black uppercase tracking-[0.2em] mt-0.5 block" style={{ color }}>Kariyer Rehberi</span>}
+                    {isInline && <span className="text-[9px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em] mt-0.5 block">Kariyer Rehberi</span>}
                 </div>
             </div>
             {!isInline && (
@@ -101,7 +101,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
           <div className={`max-w-4xl mx-auto px-6 py-4 md:py-8 ${isInline ? '' : ''}`}>
             <header className="mb-10">
               <div className="flex items-center gap-4 mb-4">
-                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style={{ backgroundColor: `${color}15`, color }}>
+                <span className="bg-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
                   {article.category}
                 </span>
                 <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{article.publishedAt} • {article.readTime} okuma</span>
@@ -109,7 +109,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
               <h1 className="text-xl md:text-3xl font-black text-gray-900 dark:text-white leading-tight mb-4 tracking-tight">
                 {article.title}
               </h1>
-              <p className="text-[17px] md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed font-bold italic border-l-4 pl-6" style={{ borderColor: color }}>
+              <p className="text-[17px] md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed font-bold italic border-l-4 border-[#1f6d78] pl-6">
                 {article.excerpt}
               </p>
             </header>
@@ -118,19 +118,14 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
               className="prose prose-sm md:prose-base dark:prose-invert max-w-none 
               prose-headings:font-black prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:tracking-tight
               prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:font-medium
+              prose-strong:text-[#1f6d78] dark:prose-strong:text-[#2dd4bf]
               prose-img:rounded-3xl prose-img:shadow-2xl"
-              style={{
-                '--tw-prose-bold': color,
-                '--tw-prose-invert-bold': color,
-                 // @ts-ignore
-                '--tw-prose-headings': color
-              } as any}
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
     
             <footer className="mt-20 pt-10 border-t border-gray-50 dark:border-white/5">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-xl font-black shrink-0 border border-gray-100 dark:border-gray-700" style={{ color }}>
+                  <div className="w-12 h-12 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] text-xl font-black shrink-0 border border-gray-100 dark:border-gray-700">
                     K
                   </div>
                   <div>
@@ -151,8 +146,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                             navigator.share({ title: article.title, url: window.location.href });
                         }
                     }}
-                    className="flex-1 text-white py-3.5 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all text-center"
-                    style={{ backgroundColor: color, boxShadow: `0 10px 15px -3px ${color}33` }}
+                    className="flex-1 bg-[#1f6d78] text-white py-3.5 rounded-2xl font-black text-sm shadow-lg shadow-[#1f6d78]/20 active:scale-95 transition-all text-center"
                 >
                     Makaleyi Paylaş
                 </button>
@@ -251,7 +245,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                       </div>
                       <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
                           <div className="flex items-center gap-2 mb-0.5">
-                              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider" style={{ color: style.color }}>{article.category}</span>
+                              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#1f6d78] dark:text-[#2dd4bf]">{article.category}</span>
                           </div>
                           <h3 className="text-[15px] sm:text-[16px] font-semibold text-gray-900 dark:text-white truncate tracking-tight leading-tight">{article.title}</h3>
                       </div>
@@ -268,7 +262,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                       </div>
                       <div className="p-8 flex-1 flex flex-col">
                           <div className="flex items-center gap-3 mb-4">
-                          <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: style.color }}>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-[#1f6d78] dark:text-[#2dd4bf]">
                               {article.category}
                           </span>
                           <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
@@ -280,7 +274,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                           <p className="text-gray-500 text-sm font-medium line-clamp-3 mb-6">
                           {article.excerpt}
                           </p>
-                          <div className="mt-auto flex items-center gap-2 font-black text-sm group-hover:translate-x-2 transition-transform" style={{ color: style.color }}>
+                          <div className="mt-auto flex items-center gap-2 text-[#1f6d78] font-black text-sm group-hover:translate-x-2 transition-transform">
                           Devamını Oku
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                               <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -289,18 +283,11 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                           </div>
                       </div>
                   </>
-                );
-              })}
+                )}
+              </Link>
             );
           })}
         </div>
-      </div>
-    </div>
-  );
-};
-
-export default BlogRoute;
-
       </div>
     </div>
   );
