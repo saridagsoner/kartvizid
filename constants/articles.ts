@@ -317,19 +317,3 @@ export const BLOG_ARTICLES: Article[] = [
     `
   }
 ];
-tik yolları.',
-    category: 'Psikoloji',
-    publishedAt: '2026-04-12',
-    readTime: '14 dk',
-    content: `
-      <h2>Stres Bir Düşman Değil, Bir Sinyaldir</h2>
-      <p>Hafif düzeyde stres odaklanmayı artırabilir, ancak kronik stres yaratıcılığı öldürür. Önemli olan stresi yönetmektir.</p>
-      
-      <h3>1. Önceliklendirme: Eisenhower Matrisi</h3>
-      <p>Görevlerinizi "Acil" ve "Önemli" olarak sınıflandırın. Her şeyi aynı anda yapmaya çalışmak en büyük stres kaynağıdır.</p>
-      
-      <h3>2. Molaların Gücü (Pomodoro)</h3>
-      <p>25 dakikalık odaklı çalışma ve 5 dakikalık molalar, zihninizin tazelenmesini sağlar. Çay molasını bir lüks değil, bir ihtiyaç olarak görün.</p>
-    `
-  }
-];
