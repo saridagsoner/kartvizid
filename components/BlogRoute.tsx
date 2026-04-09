@@ -9,11 +9,29 @@ interface BlogRouteProps {
   viewType?: 'list' | 'detail'; // Specifically force list or detail
 }
 
+const CATEGORY_STYLES: Record<string, { icon: string; color: string }> = {
+  'İş Arayışında Uzmanlık': { icon: 'fi-rr-search-alt', color: '#3b82f6' },
+  'Mülakat Teknikleri': { icon: 'fi-rr-comment-user', color: '#8b5cf6' },
+  'Networking ve Kişisel Marka': { icon: 'fi-rr-users', color: '#ec4899' },
+  'Teknoloji ve Gelecek': { icon: 'fi-rr-rocket-lunch', color: '#f59e0b' },
+  'Kariyer Dönüşümü': { icon: 'fi-rr-refresh', color: '#ef4444' },
+  'Maaş ve Finans': { icon: 'fi-rr-bank', color: '#10b981' },
+  'Yaşam Tarzı': { icon: 'fi-rr-leaf', color: '#84cc16' },
+  'Yönetim': { icon: 'fi-rr-user-gear', color: '#6366f1' },
+  'İş Yeri Psikolojisi': { icon: 'fi-rr-brain', color: '#06b6d4' },
+  'Kişisel Gelişim': { icon: 'fi-rr-book-open-reader', color: '#f97316' },
+  'Gelecek ve Gençler': { icon: 'fi-rr-graduation-cap', color: '#14b8a6' },
+  'Global Kariyer': { icon: 'fi-rr-world', color: '#0ea5e9' },
+  'def': { icon: 'fi-rr-star', color: '#1f6d78' }
+};
+
 const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => {
   const { slug } = useParams<{ slug?: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useLanguage();
+
+  const getStyle = (category: string) => CATEGORY_STYLES[category] || CATEGORY_STYLES['def'];
 
   // Robustly determine active slug from params or URL path
   const currentPath = location.pathname;
@@ -40,6 +58,8 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
       );
     }
 
+    const { color } = getStyle(article.category);
+
     return (
       <div className={isInline ? "h-full flex flex-col overflow-hidden bg-white dark:bg-black" : "fixed inset-0 z-[200] bg-white dark:bg-gray-900 overflow-y-auto custom-scrollbar animate-in slide-in-from-right duration-300"}>
         {!isInline && (
@@ -64,7 +84,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                 </button>
                 <div className="flex-1 min-w-0">
                     <h2 className="text-[15px] font-black text-black dark:text-white truncate tracking-tight uppercase leading-none">{article.title}</h2>
-                    {isInline && <span className="text-[9px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em] mt-0.5 block">Kariyer Rehberi</span>}
+                    {isInline && <span className="text-[9px] font-black uppercase tracking-[0.2em] mt-0.5 block" style={{ color }}>Kariyer Rehberi</span>}
                 </div>
             </div>
             {!isInline && (
@@ -81,7 +101,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
           <div className={`max-w-4xl mx-auto px-6 py-4 md:py-8 ${isInline ? '' : ''}`}>
             <header className="mb-10">
               <div className="flex items-center gap-4 mb-4">
-                <span className="bg-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style={{ backgroundColor: `${color}15`, color }}>
                   {article.category}
                 </span>
                 <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{article.publishedAt} • {article.readTime} okuma</span>
@@ -89,7 +109,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
               <h1 className="text-xl md:text-3xl font-black text-gray-900 dark:text-white leading-tight mb-4 tracking-tight">
                 {article.title}
               </h1>
-              <p className="text-[17px] md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed font-bold italic border-l-4 border-[#1f6d78] pl-6">
+              <p className="text-[17px] md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed font-bold italic border-l-4 pl-6" style={{ borderColor: color }}>
                 {article.excerpt}
               </p>
             </header>
@@ -98,14 +118,19 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
               className="prose prose-sm md:prose-base dark:prose-invert max-w-none 
               prose-headings:font-black prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:tracking-tight
               prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:font-medium
-              prose-strong:text-[#1f6d78] dark:prose-strong:text-[#2dd4bf]
               prose-img:rounded-3xl prose-img:shadow-2xl"
+              style={{
+                '--tw-prose-bold': color,
+                '--tw-prose-invert-bold': color,
+                 // @ts-ignore
+                '--tw-prose-headings': color
+              } as any}
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
     
             <footer className="mt-20 pt-10 border-t border-gray-50 dark:border-white/5">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] text-xl font-black shrink-0 border border-gray-100 dark:border-gray-700">
+                  <div className="w-12 h-12 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-xl font-black shrink-0 border border-gray-100 dark:border-gray-700" style={{ color }}>
                     K
                   </div>
                   <div>
@@ -126,7 +151,8 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                             navigator.share({ title: article.title, url: window.location.href });
                         }
                     }}
-                    className="flex-1 bg-[#1f6d78] text-white py-3.5 rounded-2xl font-black text-sm shadow-lg shadow-[#1f6d78]/20 active:scale-95 transition-all text-center"
+                    className="flex-1 text-white py-3.5 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all text-center"
+                    style={{ backgroundColor: color, boxShadow: `0 10px 15px -3px ${color}33` }}
                 >
                     Makaleyi Paylaş
                 </button>
@@ -186,91 +212,95 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
         )}
 
         <div className={isInline ? "flex flex-col first:pt-0" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32"}>
-          {BLOG_ARTICLES.map(article => (
-            <Link 
-              key={article.id} 
-              to={`/rehber/${article.slug}`}
-              className={`pl-0 pr-4 py-6 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
-                activeSlug === article.slug 
-                  ? 'bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' 
-                  : 'bg-transparent hover:bg-gray-50/50 dark:hover:bg-white/[0.02]'
-              } ${!isInline ? 'group flex flex-col bg-white dark:bg-gray-800 rounded-[32px] overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500' : ''}`}
-            >
-              {/* Active Selection Styling (Bridge Background) */}
-              {isInline && (
-                <div className={`absolute inset-y-0 left-[-20px] w-[20px] transition-opacity duration-500 pointer-events-none ${
-                    activeSlug === article.slug ? 'opacity-100 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' : 'opacity-0'
-                }`} />
-              )}
+          {BLOG_ARTICLES.map(article => {
+            const style = getStyle(article.category);
+            return (
+              <Link 
+                key={article.id} 
+                to={`/rehber/${article.slug}`}
+                className={`pl-0 pr-4 py-6 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
+                  activeSlug === article.slug 
+                    ? 'bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' 
+                    : 'bg-transparent hover:bg-gray-50/50 dark:hover:bg-white/[0.02]'
+                } ${!isInline ? 'group flex flex-col bg-white dark:bg-gray-800 rounded-[32px] overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500' : ''}`}
+              >
+                {/* Active Selection Styling (Bridge Background) */}
+                {isInline && (
+                  <div className={`absolute inset-y-0 left-[-20px] w-[20px] transition-opacity duration-500 pointer-events-none ${
+                      activeSlug === article.slug ? 'opacity-100 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' : 'opacity-0'
+                  }`} />
+                )}
 
-              {/* Active Indicator Line */}
-              {isInline && (
-                <div className={`absolute left-[-20px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-50 transform transition-all duration-500 ease-in-out origin-center ${
-                    activeSlug === article.slug ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
-                }`} />
-              )}
+                {/* Active Indicator Line */}
+                {isInline && (
+                  <div className={`absolute left-[-20px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-50 transform transition-all duration-500 ease-in-out origin-center ${
+                      activeSlug === article.slug ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
+                  }`} />
+                )}
 
-              {/* Divider Line */}
-              {isInline && (
-                <div className="absolute bottom-0 right-4 sm:right-10 left-[58px] sm:left-[62px] border-b border-gray-200 dark:border-white/10" />
-              )}
+                {/* Divider Line */}
+                {isInline && (
+                  <div className="absolute bottom-0 right-4 sm:right-10 left-[58px] sm:left-[62px] border-b border-gray-200 dark:border-white/10" />
+                )}
 
-              {isInline ? (
-                <>
-                  <div className="flex items-start gap-3 sm:gap-4 w-full">
-                    <div className="w-12 h-12 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] shrink-0 group-hover:scale-110 transition-transform">
-                        <i className={`fi ${
-                            article.category === 'Mülakat Teknikleri' ? 'fi-rr-comment-user' : 
-                            article.category === 'Kariyer Tavsiyeleri' ? 'fi-rr-briefcase' : 'fi-rr-star'
-                        } text-2xl`}></i>
+                {isInline ? (
+                  <>
+                    <div className="flex items-start gap-3 sm:gap-4 w-full">
+                      <div className="w-12 h-12 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform" style={{ color: style.color }}>
+                          <i className={`fi ${style.icon} text-2xl`}></i>
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
+                          <div className="flex items-center gap-2 mb-0.5">
+                              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider" style={{ color: style.color }}>{article.category}</span>
+                          </div>
+                          <h3 className="text-[15px] sm:text-[16px] font-semibold text-gray-900 dark:text-white truncate tracking-tight leading-tight">{article.title}</h3>
+                      </div>
+                      <div className="shrink-0 self-center flex items-center text-gray-400 dark:text-gray-500 ml-2">
+                          <i className="fi fi-rr-angle-small-right text-xl"></i>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
-                        <div className="flex items-center gap-2 mb-0.5">
-                            <span className="text-[10px] sm:text-[11px] font-black uppercase text-[#1f6d78] dark:text-[#2dd4bf] tracking-wider">{article.category}</span>
-                        </div>
-                        <h3 className="text-[15px] sm:text-[16px] font-semibold text-gray-900 dark:text-white truncate tracking-tight leading-tight">{article.title}</h3>
-                    </div>
-                    <div className="shrink-0 self-center flex items-center text-gray-400 dark:text-gray-500 ml-2">
-                        <i className="fi fi-rr-angle-small-right text-xl"></i>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                    <div className="h-48 bg-[#F0F2F5] dark:bg-gray-700 flex items-center justify-center relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#1f6d78]/20 to-transparent group-hover:scale-110 transition-transform duration-700"></div>
-                        <i className={`fi ${
-                            article.category === 'Mülakat Teknikleri' ? 'fi-rr-comment-user' : 
-                            article.category === 'Kariyer Tavsiyeleri' ? 'fi-rr-briefcase' : 'fi-rr-star'
-                        } text-5xl text-[#1f6d78] dark:text-[#2dd4bf] opacity-80`}></i>
-                    </div>
-                    <div className="p-8 flex-1 flex flex-col">
-                        <div className="flex items-center gap-3 mb-4">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-[#1f6d78] dark:text-[#2dd4bf]">
-                            {article.category}
-                        </span>
-                        <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{article.readTime} okuma</span>
-                        </div>
-                        <h3 className="text-2xl font-black mb-4 group-hover:text-[#1f6d78] transition-colors line-clamp-2 leading-tight">
-                        {article.title}
-                        </h3>
-                        <p className="text-gray-500 text-sm font-medium line-clamp-3 mb-6">
-                        {article.excerpt}
-                        </p>
-                        <div className="mt-auto flex items-center gap-2 text-[#1f6d78] font-black text-sm group-hover:translate-x-2 transition-transform">
-                        Devamını Oku
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                        </div>
-                    </div>
-                </>
-              )}
-            </Link>
-          ))}
+                  </>
+                ) : (
+                  <>
+                      <div className="h-48 flex items-center justify-center relative overflow-hidden" style={{ backgroundColor: `${style.color}10` }}>
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent group-hover:scale-110 transition-transform duration-700"></div>
+                          <i className={`fi ${style.icon} text-5xl opacity-80`} style={{ color: style.color }}></i>
+                      </div>
+                      <div className="p-8 flex-1 flex flex-col">
+                          <div className="flex items-center gap-3 mb-4">
+                          <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: style.color }}>
+                              {article.category}
+                          </span>
+                          <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{article.readTime} okuma</span>
+                          </div>
+                          <h3 className="text-2xl font-black mb-4 group-hover:text-[#1f6d78] transition-colors line-clamp-2 leading-tight">
+                          {article.title}
+                          </h3>
+                          <p className="text-gray-500 text-sm font-medium line-clamp-3 mb-6">
+                          {article.excerpt}
+                          </p>
+                          <div className="mt-auto flex items-center gap-2 font-black text-sm group-hover:translate-x-2 transition-transform" style={{ color: style.color }}>
+                          Devamını Oku
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="5" y1="12" x2="19" y2="12"></line>
+                              <polyline points="12 5 19 12 12 19"></polyline>
+                          </svg>
+                          </div>
+                      </div>
+                  </>
+                );
+              })}
+            );
+          })}
         </div>
+      </div>
+    </div>
+  );
+};
+
+export default BlogRoute;
+
       </div>
     </div>
   );
