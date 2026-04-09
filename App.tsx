@@ -35,6 +35,12 @@ import CVCompletionPrompt from './components/CVCompletionPrompt';
 import CookieConsent from './components/CookieConsent';
 import DesktopNav from './components/DesktopNav';
 
+import SelectionModal from './components/SelectionModal';
+import KartvizidList from './components/KartvizidList';
+import BlogRoute from './components/BlogRoute';
+import LegalList from './components/LegalList';
+import LegalRoute from './components/LegalRoute';
+
 // Lazy loaded auxiliary modals
 const JobSuccessModal = React.lazy(() => import('./components/JobSuccessModal'));
 const SavedCVsModal = React.lazy(() => import('./components/SavedCVsModal'));
@@ -42,9 +48,6 @@ const AdvancedFilterModal = React.lazy(() => import('./components/AdvancedFilter
 const ResetPasswordModal = React.lazy(() => import('./components/ResetPasswordModal'));
 const CVPromoModal = React.lazy(() => import('./components/CVPromoModal'));
 const AuthModal = React.lazy(() => import('./components/AuthModal'));
-const LegalRoute = React.lazy(() => import('./components/LegalRoute'));
-const BlogRoute = React.lazy(() => import('./components/BlogRoute'));
-const LegalList = React.lazy(() => import('./components/LegalList'));
 
 const getFriendlyErrorMessage = (error: any): string => {
   const message = error.message || error.toString();
@@ -111,14 +114,15 @@ const App: React.FC = () => {
       '/veri-sahibi-basvuru-formu', '/iletisim', '/hakkimizda'
     ];
     
-    return path === '/' || 
-           path === '' ||
-           path.startsWith('/cv/') || 
-           path.startsWith('/company/') || 
-           path === '/is-verenler' || 
-           path === '/hizmetler' ||
-           path.startsWith('/rehber') ||
-           legalPaths.includes(path);
+     return path === '/' || 
+            path === '' ||
+            path.startsWith('/cv/') || 
+            path.startsWith('/company/') || 
+            path === '/is-verenler' || 
+            path === '/hizmetler' ||
+            path.startsWith('/rehber') ||
+            path.startsWith('/kartvizid/') ||
+            legalPaths.includes(path);
   }, [location.pathname]);
 
   const isHomeView = useMemo(() => location.pathname === '/', [location.pathname]);
@@ -1976,6 +1980,13 @@ const App: React.FC = () => {
                   <Route path="/iletisim" element={<LegalList />} />
                   <Route path="/hakkimizda" element={<LegalList />} />
 
+                  {/* Kartvizid Discovery Routes */}
+                  <Route path="/kartvizid/is-bulanlar" element={<KartvizidList type="job-finders" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/populer-meslekler" element={<KartvizidList type="professions" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/one-cikan-sehirler" element={<KartvizidList type="cities" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/en-cok-gorununtulenenler" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/istatistikler" element={<KartvizidList type="stats" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={cvList} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+
                   {/* Page Routes (Full Width on Desktop) */}
                   <Route path="/ayarlar" element={<SettingsModal onClose={() => navigate('/', { replace: true })} />} />
                   <Route path="/bildirimler" element={<NotificationsModal onClose={() => navigate('/', { replace: true })} notifications={generalNotifications} onMarkRead={markNotificationRead} onOpenProfile={handleOpenProfile} />} />
@@ -2009,6 +2020,10 @@ const App: React.FC = () => {
                   <Route path="/veri-sahibi-basvuru-formu" element={<LegalRoute section="data_form" isInline={true} />} />
                   <Route path="/iletisim" element={<LegalRoute section="iletisim" isInline={true} />} />
                   <Route path="/hakkimizda" element={<LegalRoute section="about" isInline={true} />} />
+                  
+                  {/* Kartvizid detail routes can reuse CV detail for job finders/most viewed */}
+                  <Route path="/kartvizid/is-bulanlar/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} />} />
+                  <Route path="/kartvizid/en-cok-gorununtulenenler/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} />} />
 
                   <Route path="*" element={
                     <div className="h-full flex flex-col items-center justify-center p-12 text-center text-gray-400 dark:text-gray-600">

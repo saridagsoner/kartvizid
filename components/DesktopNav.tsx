@@ -149,65 +149,43 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             />
 
             {isKartvizidOpen && (
-                <div className="mb-4 animate-in fade-in slide-in-from-top-2 duration-300 space-y-4">
-                    <div className="space-y-0.5">
-                        <SubNavItem 
-                            label="Kartvizid Nedir?" 
-                            active={isActive('/hakkimizda')}
-                            onClick={() => navigate('/hakkimizda')}
-                            icon="fi-rr-info"
-                        />
-                        
-                        {/* İş Bulanlar Minimized List */}
-                        <div className="ml-10 mt-3 mb-2">
-                            <h4 className="text-[11px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-widest mb-2 px-4">{t('sidebar.job_finders')}</h4>
-                            <div className="space-y-2">
-                                {loading ? (
-                                    <div className="px-4"><JobFinderSkeleton /></div>
-                                ) : jobFinders.slice(0, 3).map((cv) => (
-                                    <div
-                                        key={cv.id}
-                                        onClick={() => onCVClick?.(cv)}
-                                        className="flex items-center gap-3 group cursor-pointer p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all"
-                                    >
-                                        <div className="w-8 h-8 rounded-full border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0">
-                                            <img src={cv.photoUrl} alt={cv.name} className="w-full h-full object-cover" />
-                                        </div>
-                                        <div className="min-w-0">
-                                            <p className="font-bold text-[11px] truncate leading-tight text-black dark:text-white">{cv.name}</p>
-                                            <p className="text-gray-400 text-[9px] truncate">{cv.profession}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Popüler Meslekler */}
-                        <div className="ml-10 mt-3 mb-2">
-                            <h4 className="text-[11px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-widest mb-2 px-4">{t('sidebar.popular_professions')}</h4>
-                            <div className="px-4 space-y-1.5">
-                                {popularProfessions.slice(0, 3).map((prof, i) => (
-                                    <div key={i} className="flex items-center justify-between text-[11px]">
-                                        <span className="text-gray-600 dark:text-gray-400 font-medium">{prof.label}</span>
-                                        <span className="text-gray-400 dark:text-gray-500">{prof.count}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Platform Stats */}
-                        <div className="ml-10 mt-3 mb-2">
-                            <h4 className="text-[11px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-widest mb-2 px-4">{t('sidebar.platform_stats')}</h4>
-                            <div className="px-4 space-y-1.5">
-                                {platformStats.slice(0, 3).map((stat, i) => (
-                                    <div key={i} className="flex justify-between items-center text-[11px]">
-                                        <span className="text-gray-500 dark:text-gray-400 font-medium">{stat.label}</span>
-                                        <span className="font-bold text-[#1f6d78] dark:text-[#2dd4bf]">{stat.value}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                <div className="mb-4 animate-in fade-in slide-in-from-top-2 duration-300 space-y-0.5">
+                    <SubNavItem 
+                        label="Kartvizid Nedir?" 
+                        icon="fi-rr-info" 
+                        onClick={() => navigate('/hakkimizda')} 
+                        active={isActive('/hakkimizda')} 
+                    />
+                    <SubNavItem 
+                        label={t('sidebar.job_finders')} 
+                        icon="fi-rr-user-check" 
+                        onClick={() => navigate('/kartvizid/is-bulanlar')} 
+                        active={location.pathname.startsWith('/kartvizid/is-bulanlar')} 
+                    />
+                    <SubNavItem 
+                        label={t('sidebar.popular_professions')} 
+                        icon="fi-rr-briefcase" 
+                        onClick={() => navigate('/kartvizid/populer-meslekler')} 
+                        active={location.pathname === '/kartvizid/populer-meslekler'} 
+                    />
+                    <SubNavItem 
+                        label={t('sidebar.featured_cities')} 
+                        icon="fi-rr-map-marker" 
+                        onClick={() => navigate('/kartvizid/one-cikan-sehirler')} 
+                        active={location.pathname === '/kartvizid/one-cikan-sehirler'} 
+                    />
+                    <SubNavItem 
+                        label={t('sidebar.most_viewed')} 
+                        icon="fi-rr-eye" 
+                        onClick={() => navigate('/kartvizid/en-cok-gorununtulenenler')} 
+                        active={location.pathname.startsWith('/kartvizid/en-cok-gorununtulenenler')} 
+                    />
+                    <SubNavItem 
+                        label={t('sidebar.platform_stats')} 
+                        icon="fi-rr-stats" 
+                        onClick={() => navigate('/kartvizid/istatistikler')} 
+                        active={location.pathname === '/kartvizid/istatistikler'} 
+                    />
                 </div>
             )}
             <NavItem 

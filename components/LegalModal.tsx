@@ -24,19 +24,119 @@ interface LegalModalProps {
 
 export const LEGAL_CONTENT: Record<LegalSection, { title: string; content: React.ReactNode }> = {
     about: {
-        title: "Hakkımızda",
+        title: "Kartvizid Nedir?",
         content: (
-            <div className="space-y-6">
-                <p className="text-lg font-bold text-[#1f6d78] dark:text-[#2dd4bf]">Kartvizid.com: Dijital Kariyerinizin Yeni Nesil Yüzü</p>
-                <p className="font-medium text-gray-700 dark:text-gray-300">Kartvizid, modern iş dünyasının en büyük problemlerinden biri olan "doğru aday ve doğru işveren eşleşmesi" sorununa yenilikçi bir çözüm sunmak amacıyla kurulmuş bir "Tersine İşe Alım" platformudur.</p>
-                
-                <h4 className="font-black text-gray-900 dark:text-white uppercase tracking-tight">Vizyonumuz</h4>
-                <p className="font-medium text-gray-700 dark:text-gray-300">İş arama sürecini, adayların birer "başvuru numarası" olmaktan çıkıp, kendi yeteneklerini ve profesyonel kimliklerini sergiledikleri bir dijital vitrine dönüştürmektir. Bizim dünyamızda işler adayları bulur, adaylar ise sadece kendilerine en uygun olanı seçer.</p>
+            <div className="flex flex-col">
+                <div className="text-center mb-10">
+                    <span className="inline-block py-1.5 px-4 rounded-full bg-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] text-[10px] font-black mb-4 tracking-widest uppercase">
+                        Ezber Bozan Model
+                    </span>
+                    <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-4 tracking-tight leading-none">
+                        İş Aramayın, <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1f6d78] to-[#2dd4bf]">
+                            Bırakın İş Sizi Bulsun.
+                        </span>
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-400 text-base font-medium leading-relaxed max-w-2xl mx-auto">
+                        Diğer sitelerde binlerce ilana başvurup cevap beklemekten yoruldunuz mu?
+                        Kartvizid'de işverenler ilan açamaz, sadece adayları arar. Kontrolün sizde olduğu bir dünyaya hoş geldiniz.
+                    </p>
+                </div>
 
-                <h4 className="font-black text-gray-900 dark:text-white uppercase tracking-tight">Neden Kartvizid?</h4>
-                <p className="font-medium text-gray-700 dark:text-gray-300">Geleneksel iş ilanları arasında kaybolmak, yüzlerce yere başvurup yanıt alamamak yorucudur. Kartvizid ile bir kez profilinizi oluşturursunuz ve işverenlerin gelişmiş filtreleme sistemimizle size ulaşmasını sağlarsınız.</p>
-                
-                <p className="font-medium text-gray-700 dark:text-gray-300">2026 yılı itibariyle dijitalleşen iş dünyasında, kağıt üzerindeki CV'lerin yerini interaktif, paylaşılabilir ve karekod destekli dijital kartvizitler alıyor. Biz bu geleceğin öncüsü olmayı hedefliyoruz.</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                    <div className="bg-gray-50 dark:bg-gray-900/50 rounded-[2.5rem] p-8 border border-gray-100 dark:border-white/5 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform">
+                            <i className="fi fi-rr-cross-circle text-6xl text-red-500"></i>
+                        </div>
+                        <h4 className="text-lg font-black text-gray-400 dark:text-gray-600 mb-1 uppercase tracking-tight">Eski Yöntem</h4>
+                        <p className="text-gray-500 dark:text-gray-500 text-xs font-bold mb-6">Klasik Kariyer Siteleri</p>
+                        <ul className="space-y-4">
+                            <li className="flex items-start gap-3 text-gray-600 dark:text-gray-400 text-sm font-bold">
+                                <span className="shrink-0 text-red-400 font-black">✕</span>
+                                <span>İşveren ilan açar, kraldır.</span>
+                            </li>
+                            <li className="flex items-start gap-3 text-gray-600 dark:text-gray-400 text-sm font-bold">
+                                <span className="shrink-0 text-red-400 font-black">✕</span>
+                                <span>Binlerce kişi aynı ilana saldırır.</span>
+                            </li>
+                            <li className="flex items-start gap-3 text-gray-600 dark:text-gray-400 text-sm font-bold">
+                                <span className="shrink-0 text-red-400 font-black">✕</span>
+                                <span>Cevap bile alamazsınız.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div className="bg-[#1f6d78] rounded-[2.5rem] p-8 text-white shadow-2xl shadow-[#1f6d78]/20 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-6 opacity-20 group-hover:scale-110 transition-transform">
+                            <i className="fi fi-rr-check-circle text-6xl text-[#2dd4bf]"></i>
+                        </div>
+                        <h4 className="text-lg font-black text-white mb-1 uppercase tracking-tight">Kartvizid Yöntemi</h4>
+                        <p className="text-white/60 text-xs font-bold mb-6">Değer Gören Adaylar</p>
+                        <ul className="space-y-4">
+                            <li className="flex items-start gap-3 text-white/95 text-sm font-bold">
+                                <span className="shrink-0 text-[#2dd4bf] font-black">✓</span>
+                                <span>İşveren sizi arar ve bulur.</span>
+                            </li>
+                            <li className="flex items-start gap-3 text-white/95 text-sm font-bold">
+                                <span className="shrink-0 text-[#2dd4bf] font-black">✓</span>
+                                <span>İletişim bilgileriniz gizlidir.</span>
+                            </li>
+                            <li className="flex items-start gap-3 text-white/95 text-sm font-bold">
+                                <span className="shrink-0 text-[#2dd4bf] font-black">✓</span>
+                                <span>Patron sizsiniz, onayla veya reddet.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-900/40 rounded-[3rem] p-8 md:p-12 border border-gray-100 dark:border-white/5">
+                    <h4 className="font-black text-gray-900 dark:text-white mb-10 text-xl tracking-tight text-center uppercase">Peki, Nasıl Çalışır?</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                        <div className="flex gap-5 items-start">
+                            <div className="w-14 h-14 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center shrink-0 border border-gray-100 dark:border-white/5 text-[#1f6d78] dark:text-[#2dd4bf] shadow-sm">
+                                <i className="fi fi-rr-user text-2xl"></i>
+                            </div>
+                            <div>
+                                <h5 className="font-black text-gray-900 dark:text-white text-[15px] mb-1 uppercase tracking-tight">1. Profilini Oluştur</h5>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">Seni en iyi yansıtan, yeteneklerini öne çıkaran dijital CV'ni saniyeler içinde hazırla.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-5 items-start">
+                            <div className="w-14 h-14 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center shrink-0 border border-gray-100 dark:border-white/5 text-[#1f6d78] dark:text-[#2dd4bf] shadow-sm">
+                                <i className="fi fi-rr-search text-2xl"></i>
+                            </div>
+                            <div>
+                                <h5 className="font-black text-gray-900 dark:text-white text-[15px] mb-1 uppercase tracking-tight">2. Keşfedil</h5>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">İşverenler gelişmiş filtreleme sistemimizle tam da aradıkları kriterlere uygun olarak seni bulur.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-5 items-start">
+                            <div className="w-14 h-14 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center shrink-0 border border-gray-100 dark:border-white/5 text-[#1f6d78] dark:text-[#2dd4bf] shadow-sm">
+                                <i className="fi fi-rr-lock text-2xl"></i>
+                            </div>
+                            <div>
+                                <h5 className="font-black text-gray-900 dark:text-white text-[15px] mb-1 uppercase tracking-tight">3. Gizliliğini Koru</h5>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">Sen onay verene kadar iletişim bilgilerin (telefon, e-posta) işverenlerden gizli kalır.</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-5 items-start">
+                            <div className="w-14 h-14 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center shrink-0 border border-gray-100 dark:border-white/5 text-[#1f6d78] dark:text-[#2dd4bf] shadow-sm">
+                                <i className="fi fi-rr-rocket-lunch text-2xl"></i>
+                            </div>
+                            <div>
+                                <h5 className="font-black text-gray-900 dark:text-white text-[15px] mb-1 uppercase tracking-tight">4. Karar Senin</h5>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed font-medium">Gelen iletişim taleplerini incele, dilediğini onayla veya reddet. Kariyer yolculuğunu sen yönet.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-12 flex flex-col items-center">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6 italic">Geleceğin dünyasında CV değil, kartvizid konuşur.</p>
+                    <div className="w-full max-w-lg aspect-video bg-gray-100 dark:bg-gray-900 rounded-[3rem] overflow-hidden border border-gray-100 dark:border-white/5 shadow-inner flex items-center justify-center text-gray-300">
+                        <i className="fi fi-rr-play text-4xl"></i>
+                    </div>
+                </div>
             </div>
         )
     },
