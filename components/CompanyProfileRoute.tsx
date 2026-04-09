@@ -18,8 +18,21 @@ const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
     const navigate = useNavigate();
     const location = useLocation();
     const [company, setCompany] = useState<Company | null>(location.state?.companyData || null);
-    const [loading, setLoading] = useState(!location.state?.companyData);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Synchronize state with location state or reset when ID changes
+    useEffect(() => {
+        if (location.state?.companyData) {
+            setCompany(location.state.companyData);
+            setLoading(false);
+            setError(null);
+        } else if (id) {
+            // Only clear if we don't have synchronized state to trigger a fetch
+            setCompany(null);
+            setError(null);
+        }
+    }, [id, location.state?.companyData]);
 
     useEffect(() => {
         // If the modal was accessed directly via URL, we fetch the Company

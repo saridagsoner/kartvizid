@@ -45,15 +45,20 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
     const [isSupportOpen, setIsSupportOpen] = useState(false);
 
     const isActive = (path: string) => location.pathname === path;
-    const isModeActive = (mode: string) => viewMode === mode && (location.pathname === '/' || location.pathname === '');
+    const isModeActive = (mode: string) => {
+        if (mode === 'cvs') return location.pathname === '/' || location.pathname === '' || location.pathname.startsWith('/cv/');
+        if (mode === 'employers') return location.pathname === '/is-verenler' || location.pathname.startsWith('/company/');
+        if (mode === 'shops') return location.pathname === '/hizmetler';
+        return false;
+    };
 
     const NavItem = ({ label, icon, onClick, active, badge, hasChildren, isOpen }: { label: string, icon: string, onClick: () => void, active?: boolean, badge?: string, hasChildren?: boolean, isOpen?: boolean }) => (
         <button
             onClick={onClick}
-            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-2xl transition-all duration-300 group mb-1 ${
+            className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-300 group mb-1 ${
                 active 
-                ? 'text-black dark:text-white translate-x-1' 
-                : 'text-black dark:text-gray-200 hover:bg-gray-50/50 dark:hover:bg-gray-800/30'
+                ? 'text-black dark:text-white translate-x-1.5' 
+                : 'text-black dark:text-gray-200 hover:bg-gray-50/10 dark:hover:bg-gray-800/10'
             }`}
         >
             <div className="flex items-center gap-4">
@@ -105,7 +110,6 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 icon="fi-rr-users" 
                 active={isModeActive('cvs')}
                 onClick={() => {
-                    onViewModeChange('cvs');
                     navigate('/');
                 }}
             />
@@ -114,8 +118,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 icon="fi-rr-briefcase" 
                 active={isModeActive('employers')}
                 onClick={() => {
-                    onViewModeChange('employers');
-                    navigate('/');
+                    navigate('/is-verenler');
                 }}
             />
             <NavItem 
@@ -123,7 +126,6 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 icon="fi-rr-shop" 
                 active={isModeActive('shops')}
                 onClick={() => {
-                    onViewModeChange('shops');
                     navigate('/hizmetler');
                 }}
             />
@@ -134,7 +136,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             <NavItem 
                 label="Kariyer Rehberi" 
                 icon="fi-rr-book-alt" 
-                active={isActive('/rehber')}
+                active={location.pathname.startsWith('/rehber')}
                 onClick={() => navigate('/rehber')}
             />
             <NavItem 
@@ -235,10 +237,18 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             <NavItem 
                 label="Destek & Yasal" 
                 icon="fi-rr-interrogation" 
-                active={isSupportOpen || isActive('/iletisim') || isActive('/sitemap') || isActive('/kvkk-aydinlatma') || isActive('/guvenlik-ipuclari')}
+                active={isSupportOpen || [
+                    '/iletisim', '/sikca-sorulan-sorular', '/yardim-merkezi', 
+                    '/hizmetlerimiz', '/aydinlatma-metni', '/cerez-politikasi', 
+                    '/kvkk-aydinlatma', '/uyelik-sozlesmesi', '/veri-sahibi-basvuru-formu'
+                ].includes(location.pathname)}
                 onClick={() => setIsSupportOpen(!isSupportOpen)}
                 hasChildren
-                isOpen={isSupportOpen}
+                isOpen={isSupportOpen || [
+                    '/iletisim', '/sikca-sorulan-sorular', '/yardim-merkezi', 
+                    '/hizmetlerimiz', '/aydinlatma-metni', '/cerez-politikasi', 
+                    '/kvkk-aydinlatma', '/uyelik-sozlesmesi', '/veri-sahibi-basvuru-formu'
+                ].includes(location.pathname)}
             />
 
             {isSupportOpen && (

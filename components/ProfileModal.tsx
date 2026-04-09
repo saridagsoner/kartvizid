@@ -131,8 +131,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
         <div className={isInline ? "w-full h-full relative flex flex-col overflow-hidden bg-white dark:bg-[#0f172a]" : "w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-black border-none sm:border border-gray-100 dark:border-white/10"}>
           {/* Header (Always Fixed) */}
           <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-black shrink-0">
-            <div className={`py-2 px-4 sm:py-3 border-b border-gray-100 dark:border-white/10 flex items-center bg-white dark:bg-black gap-2 sm:gap-4 ${isInline ? 'sm:px-6' : 'sm:px-10'}`}>
-              <div className="w-10 sm:w-11 shrink-0">
+            <div className={`pt-0.5 pb-2 px-4 sm:pt-1 sm:pb-2.5 border-b border-gray-100 dark:border-white/10 flex items-center bg-white dark:bg-black gap-2 sm:gap-4 ${isInline ? 'sm:px-6' : 'sm:px-10'}`}>
+              <div className="w-8 sm:w-9 shrink-0">
                 {/* Balancing spacer for horizontal centering */}
               </div>
               <div className="flex-1 text-center min-w-0">
@@ -142,13 +142,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
               </div>
               <button
                 onClick={onClose}
-                className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-full bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all active:scale-95"
+                className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all active:scale-95"
               >
                 <span className="sr-only">{t('profile.close')}</span>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="block sm:hidden">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="block sm:hidden">
                   <path d="M19 12H5M12 19l-7-7 7-7" />
                 </svg>
-                <span className="hidden sm:block text-2xl leading-none">×</span>
+                <span className="hidden sm:block text-xl leading-none">×</span>
               </button>
             </div>
           </div>

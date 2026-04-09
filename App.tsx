@@ -10,6 +10,7 @@ import Navbar from './components/Navbar';
 import SidebarLeft from './components/SidebarLeft';
 import SidebarRight from './components/SidebarRight';
 import BusinessCard from './components/BusinessCard';
+import CompanyCard from './components/CompanyCard';
 import Filters from './components/Filters';
 import Footer from './components/Footer';
 import SortDropdown from './components/SortDropdown';
@@ -43,6 +44,7 @@ const CVPromoModal = React.lazy(() => import('./components/CVPromoModal'));
 const AuthModal = React.lazy(() => import('./components/AuthModal'));
 const LegalRoute = React.lazy(() => import('./components/LegalRoute'));
 const BlogRoute = React.lazy(() => import('./components/BlogRoute'));
+const LegalList = React.lazy(() => import('./components/LegalList'));
 
 const getFriendlyErrorMessage = (error: any): string => {
   const message = error.message || error.toString();
@@ -100,14 +102,24 @@ const App: React.FC = () => {
   const [shopList, setShopList] = useState<any[]>([]);
 
   // 3-Column Layout Logic
-  const isDiscoveryView = useMemo(() => 
-    location.pathname === '/' || 
-    location.pathname === '' ||
-    location.pathname.startsWith('/cv/') || 
-    location.pathname.startsWith('/company/') || 
-    location.pathname === '/is-verenler' || 
-    location.pathname === '/hizmetler',
-  [location.pathname]);
+  const isDiscoveryView = useMemo(() => {
+    const path = location.pathname;
+    const legalPaths = [
+      '/kullanim-kosullari', '/guvenlik-ipuclari', '/sikca-sorulan-sorular',
+      '/yardim-merkezi', '/hizmetlerimiz', '/aydinlatma-metni',
+      '/cerez-politikasi', '/kvkk-aydinlatma', '/uyelik-sozlesmesi',
+      '/veri-sahibi-basvuru-formu', '/iletisim', '/hakkimizda'
+    ];
+    
+    return path === '/' || 
+           path === '' ||
+           path.startsWith('/cv/') || 
+           path.startsWith('/company/') || 
+           path === '/is-verenler' || 
+           path === '/hizmetler' ||
+           path.startsWith('/rehber') ||
+           legalPaths.includes(path);
+  }, [location.pathname]);
 
   const isHomeView = useMemo(() => location.pathname === '/', [location.pathname]);
 
@@ -146,8 +158,6 @@ const App: React.FC = () => {
   const [activeModalRequestId, setActiveModalRequestId] = useState<string | null>(null);
   const [isJobSuccessOpen, setIsJobSuccessOpen] = useState(false);
   const [isSavedCVsOpen, setIsSavedCVsOpen] = useState(false);
-  const [showAllEmployers, setShowAllEmployers] = useState(false);
-  const [showAllShops, setShowAllShops] = useState(false);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFilterModal, setActiveFilterModal] = useState<'professions' | 'cities' | 'experience' | 'advanced' | null>(null);
@@ -240,8 +250,6 @@ const App: React.FC = () => {
     }
     setCurrentPage(1);
     setIsMobileMenuOpen(false);
-    setShowAllEmployers(false);
-    setShowAllShops(false);
     fetchPopularCompanies(); // This is common for all views, or could be moved to a separate useEffect if it's truly independent
     fetchPopularCVs(); // Also common
     fetchJobFinders(); // Also common
@@ -423,6 +431,16 @@ const App: React.FC = () => {
     }
   };
 
+
+  // Handle Company Click
+  const handleCompanyClick = (company: Company) => {
+    navigate(`/company/${company.slug || company.id}`, { 
+      state: { 
+        companyData: company, 
+        background: background || location 
+      } 
+    });
+  };
 
   const fetchGeneralNotifications = async () => {
     if (!user) return;
@@ -1771,8 +1789,8 @@ const App: React.FC = () => {
       <div className="flex sm:hidden items-center justify-between px-4 mt-0.5 mb-0">
         <div className="flex flex-col gap-0 w-full pt-1.5 pb-0.5">
           {((viewMode === 'cvs') || 
-            (viewMode === 'shops' && (showAllShops || searchQuery.length > 0)) || 
-            (viewMode === 'employers' && (showAllEmployers || searchQuery.length > 0))) && (
+            (viewMode === 'shops') || 
+            (viewMode === 'employers')) && (
             <div className="animate-in fade-in duration-300 pb-2">
               <div className="text-[20px] font-black tracking-tighter text-black dark:text-white transition-all leading-none mb-1">
                 {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
@@ -1840,38 +1858,26 @@ const App: React.FC = () => {
             <div className="p-16 text-center text-gray-800 dark:text-white font-bold">{t('feed.no_results')}</div>
           )
         ) : viewMode === 'employers' ? (
-          <div className="flex flex-col gap-6">
-            {showAllEmployers || searchQuery.length > 0 ? (
-              filteredEmployers.length > 0 ? filteredEmployers.map(company => (
-                <div key={company.id} onClick={() => handleOpenProfile(company.userId, 'employer')} className="flex items-center gap-10 p-8 bg-white dark:bg-gray-800 border rounded-[35px] cursor-pointer hover:bg-gray-50">
-                  <div className="w-24 h-28 rounded-3xl border overflow-hidden shrink-0"><ImageWithFallback src={company.logoUrl} alt={company.name} /></div>
-                  <div className="flex-1"><h3 className="text-[22px] font-bold">{company.name}</h3><p className="text-[18px] text-[#1f6d78] font-bold">{company.industry}</p></div>
-                </div>
-              )) : <div className="p-16 text-center font-bold">Şirket bulunamadı.</div>
-            ) : (
-              <div className="bg-white dark:bg-gray-900 p-10 text-center rounded-[35px]">
-                <h2 className="text-[40px] font-black mb-6">Geleceğin Yıldızlarını Ekibinize Katın</h2>
-                <button onClick={() => setShowAllEmployers(true)} className="bg-[#1f6d78] text-white px-8 py-3 rounded-full font-black">İş Verenleri Keşfet</button>
-              </div>
-            )}
+          <div className="flex flex-col">
+            {filteredEmployers.length > 0 ? filteredEmployers.map(company => (
+              <CompanyCard 
+                key={company.id} 
+                company={company} 
+                onClick={() => handleCompanyClick(company)}
+                isActive={location.pathname === `/company/${company.slug}` || location.pathname === `/company/${company.id}`}
+              />
+            )) : <div className="p-16 text-center font-bold">Şirket bulunamadı.</div>}
           </div>
         ) : (
-          <div className="flex flex-col gap-6">
-            {showAllShops || searchQuery.length > 0 ? (
-              filteredShops.length > 0 ? filteredShops.map(shop => (
-                <ShopCard 
-                  key={shop.id} 
-                  shop={shop} 
-                  onClick={() => { setActiveShop(shop); setIsShopProfileOpen(true); }} 
-                  isActive={activeShop?.id === shop.id && isShopProfileOpen}
-                />
-              )) : <div className="p-16 text-center font-black italic opacity-50">Henüz Kayıtlı Hizmet Yok</div>
-            ) : (
-              <div className="bg-white dark:bg-gray-900 p-10 text-center rounded-[35px]">
-                <h2 className="text-[40px] font-black text-gray-900 dark:text-white">Yeteneğini Kazanca Dönüştür</h2>
-                <button onClick={() => setShowAllShops(true)} className="bg-[#1f6d78] text-white px-8 py-3 rounded-full font-black mt-6">Hizmetleri Keşfet</button>
-              </div>
-            )}
+          <div className="flex flex-col">
+            {filteredShops.length > 0 ? filteredShops.map(shop => (
+              <ShopCard 
+                key={shop.id} 
+                shop={shop} 
+                onClick={() => { setActiveShop(shop); setIsShopProfileOpen(true); }} 
+                isActive={activeShop?.id === shop.id && isShopProfileOpen}
+              />
+            )) : <div className="p-16 text-center font-black italic opacity-50">Henüz Kayıtlı Hizmet Yok</div>}
           </div>
         )}
       </div>
@@ -1940,45 +1946,87 @@ const App: React.FC = () => {
           </aside>
 
           {/* MAIN CONTENT AREA */}
-          <main className="flex-1 flex items-start min-w-0 h-full lg:pl-7">
+          <main className="flex-1 flex items-start min-w-0 h-full">
             
             {/* COLUMN 2: MIDDLE CONTENT (Feed or Full Page) */}
             <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 ${
               isDiscoveryView ? 'lg:max-w-[540px] border-r border-gray-100 dark:border-gray-800/10' : 'w-full'
             }`}>
-              <Routes>
-                {/* Discovery Routes (List View) */}
-                <Route path="/" element={<HomeDiscoveryContent />} />
-                <Route path="/cv/:id" element={<><HomeDiscoveryContent /><div className="lg:hidden"><CVProfileRoute onOpenChat={handleOpenChat} handleJobFound={handleJobFound} /></div></>} />
-                <Route path="/company/:id" element={<><HomeDiscoveryContent /><div className="lg:hidden"><CompanyProfileRoute /></div></>} />
-                <Route path="/hizmetler" element={<HomeDiscoveryContent />} />
-                <Route path="/is-verenler" element={<HomeDiscoveryContent />} />
+              <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth lg:pl-7">
+                <Routes>
+                  {/* Discovery Routes (List View) */}
+                  <Route path="/" element={<HomeDiscoveryContent />} />
+                  <Route path="/cv/:id" element={<HomeDiscoveryContent />} />
+                  <Route path="/company/:id" element={<HomeDiscoveryContent />} />
+                  <Route path="/hizmetler" element={<HomeDiscoveryContent />} />
+                  <Route path="/is-verenler" element={<HomeDiscoveryContent />} />
+                  
+                  {/* Unified Content Lists (Middle Column) */}
+                  <Route path="/rehber/*" element={<BlogRoute isInline={true} viewType="list" />} />
+                  <Route path="/kullanim-kosullari" element={<LegalList />} />
+                  <Route path="/guvenlik-ipuclari" element={<LegalList />} />
+                  <Route path="/sikca-sorulan-sorular" element={<LegalList />} />
+                  <Route path="/yardim-merkezi" element={<LegalList />} />
+                  <Route path="/hizmetlerimiz" element={<LegalList />} />
+                  <Route path="/aydinlatma-metni" element={<LegalList />} />
+                  <Route path="/cerez-politikasi" element={<LegalList />} />
+                  <Route path="/kvkk-aydinlatma" element={<LegalList />} />
+                  <Route path="/uyelik-sozlesmesi" element={<LegalList />} />
+                  <Route path="/veri-sahibi-basvuru-formu" element={<LegalList />} />
+                  <Route path="/iletisim" element={<LegalList />} />
+                  <Route path="/hakkimizda" element={<LegalList />} />
 
-                {/* Page Routes (Full Width on Desktop) */}
-                <Route path="/rehber/*" element={<div className="bg-white dark:bg-gray-900 rounded-[35px] overflow-hidden"><BlogRoute /></div>} />
-                <Route path="/ayarlar" element={<SettingsModal onClose={() => navigate('/', { replace: true })} />} />
-                <Route path="/bildirimler" element={<NotificationsModal onClose={() => navigate('/', { replace: true })} notifications={generalNotifications} onMarkRead={markNotificationRead} onOpenProfile={handleOpenProfile} />} />
-                <Route path="/cv-olustur" element={<CVFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCreateCV} initialData={currentUserCV || {}} availableCities={availableCities} />} />
-                <Route path="/sirket-olustur" element={<CompanyFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCompanySubmit} initialData={activeCompany || {}} availableCities={availableCities} />} />
-                <Route path="*" element={<LegalRoute section="general" />} />
-              </Routes>
+                  {/* Page Routes (Full Width on Desktop) */}
+                  <Route path="/ayarlar" element={<SettingsModal onClose={() => navigate('/', { replace: true })} />} />
+                  <Route path="/bildirimler" element={<NotificationsModal onClose={() => navigate('/', { replace: true })} notifications={generalNotifications} onMarkRead={markNotificationRead} onOpenProfile={handleOpenProfile} />} />
+                  <Route path="/cv-olustur" element={<CVFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCreateCV} initialData={currentUserCV || {}} availableCities={availableCities} />} />
+                  <Route path="/sirket-olustur" element={<CompanyFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCompanySubmit} initialData={activeCompany || {}} availableCities={availableCities} />} />
+                  <Route path="*" element={<LegalRoute section="general" />} />
+                </Routes>
+              </div>
             </section>
 
             {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
             <aside className={`hidden lg:block w-[585px] min-w-0 h-[calc(100vh-84px)] sticky top-[84px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-r border-gray-100 dark:border-gray-800/10 lg:ml-4 lg:mr-20 ${
-              isDiscoveryView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
+              isDiscoveryView || location.pathname.startsWith('/rehber/') ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
             }`}>
               <div className="h-full">
                 <Routes>
                   <Route path="/cv/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} />} />
                   <Route path="/company/:id" element={<CompanyProfileRoute isInline={true} />} />
+                  
+                  {/* Unified Content Details (Right Column) */}
+                  <Route path="/rehber/:slug" element={<BlogRoute isInline={true} viewType="detail" />} />
+                  <Route path="/kullanim-kosullari" element={<LegalRoute section="general" isInline={true} />} />
+                  <Route path="/guvenlik-ipuclari" element={<LegalRoute section="security" isInline={true} />} />
+                  <Route path="/sikca-sorulan-sorular" element={<LegalRoute section="faq" isInline={true} />} />
+                  <Route path="/yardim-merkezi" element={<LegalRoute section="help" isInline={true} />} />
+                  <Route path="/hizmetlerimiz" element={<LegalRoute section="services" isInline={true} />} />
+                  <Route path="/aydinlatma-metni" element={<LegalRoute section="privacy" isInline={true} />} />
+                  <Route path="/cerez-politikasi" element={<LegalRoute section="cookie" isInline={true} />} />
+                  <Route path="/kvkk-aydinlatma" element={<LegalRoute section="kvkk" isInline={true} />} />
+                  <Route path="/uyelik-sozlesmesi" element={<LegalRoute section="membership" isInline={true} />} />
+                  <Route path="/veri-sahibi-basvuru-formu" element={<LegalRoute section="data_form" isInline={true} />} />
+                  <Route path="/iletisim" element={<LegalRoute section="iletisim" isInline={true} />} />
+                  <Route path="/hakkimizda" element={<LegalRoute section="about" isInline={true} />} />
+
                   <Route path="*" element={
                     <div className="h-full flex flex-col items-center justify-center p-12 text-center text-gray-400 dark:text-gray-600">
                        <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800/50 rounded-full flex items-center justify-center mb-6">
-                          <i className="fi fi-rr-cursor-finger text-3xl"></i>
+                          <i className={`fi ${
+                            location.pathname.startsWith('/rehber') ? 'fi-rr-book-alt' :
+                            location.pathname === '/' ? 'fi-rr-cursor-finger' : 'fi-rr-document-signed'
+                          } text-3xl`}></i>
                        </div>
-                       <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">Detayları Gör</h3>
-                       <p className="text-sm font-medium">Soldaki listeden bir profil seçerek detaylarını burada inceleyebilirsiniz.</p>
+                       <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">
+                        {location.pathname.startsWith('/rehber') ? 'Makale Seçin' : 'Detayları Gör'}
+                       </h3>
+                       <p className="text-sm font-medium">
+                        {location.pathname.startsWith('/rehber') 
+                          ? 'Okumak istediğiniz makaleyi soldaki listeden seçebilirsiniz.' 
+                          : 'Soldaki listeden bir seçim yaparak detaylarını burada inceleyebilirsiniz.'
+                        }
+                       </p>
                     </div>
                   } />
                 </Routes>
@@ -2020,7 +2068,22 @@ const App: React.FC = () => {
         onViewModeChange={setViewMode}
         onOpenAuth={handleAuthOpen}
         onLogout={handleSignOut}
-        onGoHome={() => { navigate('/', {replace:true}); setViewMode('cvs'); setIsMobileMenuOpen(false); }}
+        onGoHome={() => { navigate('/'); setIsMobileMenuOpen(false); }}
+        onEmployersViewAll={() => { navigate('/is-verenler'); setIsMobileMenuOpen(false); }}
+        onShopsViewAll={() => { navigate('/hizmetler'); setIsMobileMenuOpen(false); }}
+        popularProfessions={professionStats}
+        popularCities={cityStats}
+        weeklyTrends={[]}
+        platformStats={platformStats}
+        jobFinders={cvList}
+        popularCVs={cvList}
+        popularCompanies={companyList}
+        shops={shopList}
+        onJobFinderClick={handleCVClick}
+        onCVClick={handleCVClick}
+        onCompanyClick={handleCompanyClick}
+        onShopClick={(shop) => { setActiveShop(shop); setIsShopProfileOpen(true); }}
+        onFilterApply={(type, val) => handleFilterUpdate(type, val)}
       />
 
       <React.Suspense fallback={null}>

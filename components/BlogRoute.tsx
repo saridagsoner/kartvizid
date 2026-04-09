@@ -1,177 +1,273 @@
-
 import React, { useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { BLOG_ARTICLES } from '../constants/articles';
 import { useLanguage } from '../context/LanguageContext';
 import SEO from './SEO';
 
-const BlogRoute: React.FC = () => {
+interface BlogRouteProps {
+  isInline?: boolean; // If true, it renders inside the 3-column shell (no fixed inset)
+  viewType?: 'list' | 'detail'; // Specifically force list or detail
+}
+
+const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => {
   const { slug } = useParams<{ slug?: string }>();
+  const location = useLocation();
   const navigate = useNavigate();
   const { t } = useLanguage();
 
-  // Scroll to top on route change
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [slug]);
+  // Robustly determine active slug from params or URL path
+  const currentPath = location.pathname;
+  const activeSlug = slug || (currentPath.startsWith('/rehber/') ? currentPath.split('/rehber/')[1] : null);
+  
+  const isListView = viewType === 'list' || (!activeSlug && !viewType);
+  const isDetailView = viewType === 'detail' || (activeSlug && activeSlug !== 'rehber' && !viewType);
 
-  if (slug) {
-    const article = BLOG_ARTICLES.find(a => a.slug === slug);
+  // Detail View Rendering - Only if we are specifically in detail mode or naturally found a slug
+  if (isDetailView && activeSlug && viewType !== 'list') {
+    const article = BLOG_ARTICLES.find(a => a.slug === activeSlug);
     if (!article) {
       return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4">
-          <h2 className="text-2xl font-bold mb-4">Makale bulunamadı</h2>
-          <button 
-            onClick={() => navigate('/rehber')}
-            className="bg-[#1f6d78] text-white px-6 py-2 rounded-full font-bold"
-          >
-            Rehber'e Dön
-          </button>
+        <div className="flex flex-col items-center justify-center p-12 h-full text-center">
+            <div className="text-4xl mb-4">😢</div>
+            <h2 className="text-xl font-black mb-4">Makale bulunamadı</h2>
+            <button 
+                onClick={() => navigate('/rehber')}
+                className="bg-[#1f6d78] text-white px-6 py-2 rounded-full font-bold"
+            >
+                Rehber'e Dön
+            </button>
         </div>
       );
     }
 
     return (
-      <div className="fixed inset-0 z-[200] bg-white dark:bg-gray-900 overflow-y-auto custom-scrollbar animate-in slide-in-from-right duration-300">
-        {/* Sticky Detail Header */}
-        <div className="sticky top-0 z-50 flex justify-between items-center px-4 py-4 md:px-8 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
-           <button 
-             onClick={() => navigate('/rehber')}
-             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors flex items-center gap-2 group"
-           >
-             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-               <line x1="19" y1="12" x2="5" y2="12"></line>
-               <polyline points="12 19 5 12 12 5"></polyline>
-             </svg>
-             <span className="hidden md:inline font-bold text-sm">Geri</span>
-           </button>
-           <div className="flex-1 text-center truncate px-4">
-               <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block">Okuyorsunuz</span>
-               <h2 className="text-xs font-black truncate dark:text-white uppercase">{article.title}</h2>
-           </div>
-           <button 
-             onClick={() => navigate('/')}
-             className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500 rounded-full transition-colors"
-           >
-             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-           </button>
+      <div className={isInline ? "h-full flex flex-col overflow-hidden bg-white dark:bg-black" : "fixed inset-0 z-[200] bg-white dark:bg-gray-900 overflow-y-auto custom-scrollbar animate-in slide-in-from-right duration-300"}>
+        {!isInline && (
+            <SEO 
+                title={`${article.title} | Kartvizid Rehber`}
+                description={article.excerpt}
+            />
+        )}
+        
+        {/* Detail Header */}
+        <div className={`sticky top-0 z-50 flex justify-between items-center bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-gray-100 dark:border-white/10 shrink-0 ${isInline ? 'px-6 py-4' : 'px-4 py-4 md:px-8'}`}>
+            <div className="flex items-center gap-4 min-w-0">
+                <button 
+                    onClick={() => navigate('/rehber')}
+                    className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors flex items-center gap-2 group"
+                >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span className="hidden md:inline font-bold text-sm">{isInline ? '' : 'Geri'}</span>
+                </button>
+                <div className="flex-1 min-w-0">
+                    <h2 className="text-[15px] font-black text-black dark:text-white truncate tracking-tight uppercase leading-none">{article.title}</h2>
+                    {isInline && <span className="text-[9px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em] mt-0.5 block">Kariyer Rehberi</span>}
+                </div>
+            </div>
+            {!isInline && (
+                <button 
+                    onClick={() => navigate('/')}
+                    className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500 rounded-full transition-colors"
+                >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            )}
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
-          <SEO 
-            title={`${article.title} | Kartvizid Rehber`}
-            description={article.excerpt}
-          />
-          
-          <header className="mb-12">
-            <div className="flex items-center gap-4 mb-4">
-              <span className="bg-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
-                {article.category}
-              </span>
-              <span className="text-gray-400 text-xs font-medium">{article.publishedAt} • {article.readTime} okuma</span>
-            </div>
-            <h1 className="text-3xl md:text-5xl font-black text-gray-900 dark:text-white leading-tight mb-6">
-              {article.title}
-            </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-400 leading-relaxed font-medium italic border-l-4 border-[#1f6d78] pl-6">
-              {article.excerpt}
-            </p>
-          </header>
-  
-          <article 
-            className="prose prose-lg dark:prose-invert max-w-none 
-            prose-headings:font-black prose-headings:text-gray-900 dark:prose-headings:text-white
-            prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed
-            prose-strong:text-[#1f6d78] dark:prose-strong:text-[#2dd4bf]
-            prose-img:rounded-3xl prose-img:shadow-2xl"
-            dangerouslySetInnerHTML={{ __html: article.content }}
-          />
-  
-          <footer className="mt-16 pt-8 pb-20 border-t border-gray-100 dark:border-gray-800">
-            <div className="bg-[#F0F2F5] dark:bg-gray-800 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-6">
-              <div className="w-20 h-20 bg-[#1f6d78] rounded-2xl flex items-center justify-center text-white text-3xl font-black">
-                K
+        <div className={`flex-1 overflow-y-auto ${isInline ? 'no-scrollbar pt-6 pb-12' : 'custom-scrollbar'}`}>
+          <div className={`max-w-4xl mx-auto px-6 py-4 md:py-8 ${isInline ? '' : ''}`}>
+            <header className="mb-10">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="bg-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
+                  {article.category}
+                </span>
+                <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{article.publishedAt} • {article.readTime} okuma</span>
               </div>
-              <div className="flex-1 text-center md:text-left">
-                <h4 className="font-black text-lg mb-2">Kartvizid Editör Ekibi</h4>
-                <p className="text-gray-500 text-sm">Bu içerik kariyer yolculuğunuzda size rehberlik etmek amacıyla profesyonel danışmanlarımız tarafından hazırlanmıştır.</p>
-              </div>
-            </div>
-          </footer>
+              <h1 className="text-2xl md:text-5xl font-black text-gray-900 dark:text-white leading-tight mb-6 tracking-tight">
+                {article.title}
+              </h1>
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 leading-relaxed font-bold italic border-l-4 border-[#1f6d78] pl-6">
+                {article.excerpt}
+              </p>
+            </header>
+    
+            <article 
+              className="prose prose-base md:prose-lg dark:prose-invert max-w-none 
+              prose-headings:font-black prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:tracking-tight
+              prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:font-medium
+              prose-strong:text-[#1f6d78] dark:prose-strong:text-[#2dd4bf]
+              prose-img:rounded-3xl prose-img:shadow-2xl"
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            />
+    
+            <footer className="mt-20 pt-10 border-t border-gray-50 dark:border-white/5">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gray-50 dark:bg-gray-800 rounded-2xl flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] text-xl font-black shrink-0 border border-gray-100 dark:border-gray-700">
+                    K
+                  </div>
+                  <div>
+                    <h4 className="font-black text-sm text-gray-900 dark:text-white">Kartvizid Editör Ekibi</h4>
+                    <p className="text-[11px] text-gray-400 font-medium">Kariyer rehberiniz olarak her adımda yanınızdayız.</p>
+                  </div>
+                </div>
+            </footer>
+          </div>
         </div>
-      </div>
-    );
+
+        {/* Action Footer */}
+        {isInline && (
+            <div className="sticky bottom-0 z-10 bg-white/95 dark:bg-black/95 backdrop-blur-md border-t border-gray-100 dark:border-white/10 px-6 py-4 flex items-center gap-4 shrink-0">
+                <button 
+                    onClick={() => {
+                        if (navigator.share) {
+                            navigator.share({ title: article.title, url: window.location.href });
+                        }
+                    }}
+                    className="flex-1 bg-[#1f6d78] text-white py-3.5 rounded-2xl font-black text-sm shadow-lg shadow-[#1f6d78]/20 active:scale-95 transition-all text-center"
+                >
+                    Makaleyi Paylaş
+                </button>
+                <div className="w-px h-8 bg-gray-100 dark:bg-gray-800 mx-2"></div>
+                <button onClick={() => navigate('/rehber')} className="text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-all">
+                    <i className="fi fi-rr-apps text-xl"></i>
+                </button>
+            </div>
+        )}
+      </div>);
   }
 
-  // List View
+  // List View Rendering
   return (
-    <div className="fixed inset-0 z-[200] bg-white dark:bg-gray-900 overflow-y-auto custom-scrollbar animate-in fade-in duration-300">
-      {/* Mobile Back Button / Close */}
-      <div className="sticky top-0 z-50 flex justify-between items-center px-4 py-4 md:px-8 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
-         <button 
-           onClick={() => navigate('/')}
-           className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-         >
-           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-             <line x1="19" y1="12" x2="5" y2="12"></line>
-             <polyline points="12 19 5 12 12 5"></polyline>
-           </svg>
-         </button>
-         <div className="flex flex-col items-center">
-             <span className="text-[10px] font-black uppercase tracking-widest text-[#1f6d78] dark:text-[#2dd4bf]">Kariyer Rehberi</span>
-         </div>
-         <div className="w-10"></div> {/* Spacer */}
-      </div>
+    <div className={isInline ? "bg-white dark:bg-black" : "fixed inset-0 z-[200] bg-white dark:bg-gray-900 overflow-y-auto custom-scrollbar animate-in fade-in duration-300"}>
+      {!isInline && (
+        <>
+            <SEO 
+                title="Kariyer Rehberi | Kartvizid" 
+                description="Profesyonel hayatta bir adım öne geçmek için ihtiyacınız olan tüm rehber makaleler ve mülakat teknikleri."
+            />
+            {/* Header for standalone list */}
+            <div className="sticky top-0 z-50 flex justify-between items-center px-4 py-4 md:px-8 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
+                <button 
+                onClick={() => navigate('/')}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                </button>
+                <div className="text-center">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#1f6d78] dark:text-[#2dd4bf]">Kariyer Rehberi</span>
+                </div>
+                <div className="w-10"></div>
+            </div>
+        </>
+      )}
 
-      <div className="max-w-6xl mx-auto px-4 py-12 md:py-20">
-        <SEO 
-          title="Kariyer Rehberi | Kartvizid" 
-          description="Profesyonel hayatta bir adım öne geçmek için ihtiyacınız olan tüm rehber makaleler ve mülakat teknikleri."
-        />
-        
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">Kariyer Rehberi</h1>
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium">
-            İş arama sürecinden kişisel marka yönetimine kadar her aşamada yanınızdayız.
-          </p>
-        </div>
+      <div className={`mx-auto ${isInline ? 'p-0 w-full' : 'max-w-6xl px-4 py-12 md:py-20'}`}>
+        {!isInline && (
+            <div className="text-center mb-16">
+                <h1 className="text-[24px] font-black mb-6 tracking-tighter uppercase">Kariyer Rehberi</h1>
+                <p className="text-xl text-gray-500 max-w-2xl mx-auto font-bold italic border-l-4 border-gray-100 pl-4">
+                    İş arama sürecinden kişisel marka yönetimine kadar her aşamada yanınızdayız.
+                </p>
+            </div>
+        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
+        {isInline && (
+            <div className="hidden sm:block mt-8 mb-4 lg:pl-1.5 px-6">
+                <h1 className="text-[24px] font-black tracking-tighter text-black dark:text-white leading-none">
+                    Kariyer Rehberi
+                </h1>
+            </div>
+        )}
+
+        <div className={isInline ? "flex flex-col first:pt-0" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32"}>
           {BLOG_ARTICLES.map(article => (
             <Link 
               key={article.id} 
               to={`/rehber/${article.slug}`}
-              className="group flex flex-col bg-white dark:bg-gray-800 rounded-[32px] overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+              className={`pl-1.5 pr-4 py-6 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
+                activeSlug === article.slug 
+                  ? 'bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' 
+                  : 'bg-transparent hover:bg-gray-50/50 dark:hover:bg-white/[0.02]'
+              } ${!isInline ? 'group flex flex-col bg-white dark:bg-gray-800 rounded-[32px] overflow-hidden border border-gray-100 dark:border-gray-800 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500' : ''}`}
             >
-              <div className="h-48 bg-[#F0F2F5] dark:bg-gray-700 flex items-center justify-center relative overflow-hidden">
-                 <div className="absolute inset-0 bg-gradient-to-br from-[#1f6d78]/20 to-transparent group-hover:scale-110 transition-transform duration-700"></div>
-                 <i className={`fi ${
-                   article.category === 'Mülakat Teknikleri' ? 'fi-rr-comment-user' : 
-                   article.category === 'Kariyer Tavsiyeleri' ? 'fi-rr-briefcase' : 'fi-rr-star'
-                 } text-5xl text-[#1f6d78] dark:text-[#2dd4bf] opacity-80`}></i>
-              </div>
-              <div className="p-8 flex-1 flex flex-col">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-[#1f6d78] dark:text-[#2dd4bf]">
-                    {article.category}
-                  </span>
-                  <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{article.readTime} okuma</span>
-                </div>
-                <h3 className="text-2xl font-black mb-4 group-hover:text-[#1f6d78] transition-colors line-clamp-2 leading-tight">
-                  {article.title}
-                </h3>
-                <p className="text-gray-500 text-sm font-medium line-clamp-3 mb-6">
-                  {article.excerpt}
-                </p>
-                <div className="mt-auto flex items-center gap-2 text-[#1f6d78] font-black text-sm group-hover:translate-x-2 transition-transform">
-                  Devamını Oku
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                  </svg>
-                </div>
-              </div>
+              {/* Active Selection Styling (Bridge Background) */}
+              {isInline && (
+                <div className={`absolute inset-y-0 left-[-28px] w-[28px] transition-opacity duration-500 pointer-events-none ${
+                    activeSlug === article.slug ? 'opacity-100 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' : 'opacity-0'
+                }`} />
+              )}
+
+              {/* Active Indicator Line */}
+              {isInline && (
+                <div className={`absolute left-[-28px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-50 transition-all duration-500 ease-in-out origin-center ${
+                    activeSlug === article.slug ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
+                }`} />
+              )}
+
+              {/* Divider Line */}
+              {isInline && (
+                <div className="absolute bottom-0 right-4 sm:right-10 left-[66px] sm:left-[70px] border-b border-gray-200 dark:border-white/10" />
+              )}
+
+              {isInline ? (
+                <>
+                  <div className="flex items-start gap-5 sm:gap-7 w-full">
+                    <div className="w-12 h-12 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] shrink-0 group-hover:scale-110 transition-transform">
+                        <i className={`fi ${
+                            article.category === 'Mülakat Teknikleri' ? 'fi-rr-comment-user' : 
+                            article.category === 'Kariyer Tavsiyeleri' ? 'fi-rr-briefcase' : 'fi-rr-star'
+                        } text-2xl`}></i>
+                    </div>
+                    <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
+                        <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-[10px] sm:text-[11px] font-black uppercase text-[#1f6d78] dark:text-[#2dd4bf] tracking-wider">{article.category}</span>
+                        </div>
+                        <h3 className="text-[16px] sm:text-[18px] font-black text-gray-900 dark:text-white truncate tracking-tight leading-tight">{article.title}</h3>
+                    </div>
+                    <div className="shrink-0 self-center flex items-center text-gray-400 dark:text-gray-500 ml-2">
+                        <i className="fi fi-rr-angle-small-right text-xl"></i>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                    <div className="h-48 bg-[#F0F2F5] dark:bg-gray-700 flex items-center justify-center relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#1f6d78]/20 to-transparent group-hover:scale-110 transition-transform duration-700"></div>
+                        <i className={`fi ${
+                            article.category === 'Mülakat Teknikleri' ? 'fi-rr-comment-user' : 
+                            article.category === 'Kariyer Tavsiyeleri' ? 'fi-rr-briefcase' : 'fi-rr-star'
+                        } text-5xl text-[#1f6d78] dark:text-[#2dd4bf] opacity-80`}></i>
+                    </div>
+                    <div className="p-8 flex-1 flex flex-col">
+                        <div className="flex items-center gap-3 mb-4">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-[#1f6d78] dark:text-[#2dd4bf]">
+                            {article.category}
+                        </span>
+                        <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{article.readTime} okuma</span>
+                        </div>
+                        <h3 className="text-2xl font-black mb-4 group-hover:text-[#1f6d78] transition-colors line-clamp-2 leading-tight">
+                        {article.title}
+                        </h3>
+                        <p className="text-gray-500 text-sm font-medium line-clamp-3 mb-6">
+                        {article.excerpt}
+                        </p>
+                        <div className="mt-auto flex items-center gap-2 text-[#1f6d78] font-black text-sm group-hover:translate-x-2 transition-transform">
+                        Devamını Oku
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                        </div>
+                    </div>
+                </>
+              )}
             </Link>
           ))}
         </div>

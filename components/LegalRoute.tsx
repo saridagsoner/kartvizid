@@ -19,9 +19,10 @@ export const LEGAL_ROUTE_MAP: Record<LegalSection, string> = {
 
 interface LegalRouteProps {
     section: LegalSection;
+    isInline?: boolean; // Prop to support 3-column architecture
 }
 
-const LegalRoute: React.FC<LegalRouteProps> = ({ section }) => {
+const LegalRoute: React.FC<LegalRouteProps> = ({ section, isInline = false }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -40,6 +41,7 @@ const LegalRoute: React.FC<LegalRouteProps> = ({ section }) => {
             initialSection={section}
             onClose={handleClose}
             onNavigate={handleNavigate}
+            isInline={isInline}
         />
     );
 };
