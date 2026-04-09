@@ -190,7 +190,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
             <Link 
               key={article.id} 
               to={`/rehber/${article.slug}`}
-              className={`pl-1.5 pr-4 py-6 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
+              className={`pl-0 pr-4 py-6 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
                 activeSlug === article.slug 
                   ? 'bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' 
                   : 'bg-transparent hover:bg-gray-50/50 dark:hover:bg-white/[0.02]'
@@ -217,7 +217,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
 
               {isInline ? (
                 <>
-                  <div className="flex items-start gap-5 sm:gap-7 w-full">
+                  <div className="flex items-start gap-4 sm:gap-6 w-full">
                     <div className="w-12 h-12 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] shrink-0 group-hover:scale-110 transition-transform">
                         <i className={`fi ${
                             article.category === 'Mülakat Teknikleri' ? 'fi-rr-comment-user' : 
@@ -228,7 +228,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                         <div className="flex items-center gap-2 mb-0.5">
                             <span className="text-[10px] sm:text-[11px] font-black uppercase text-[#1f6d78] dark:text-[#2dd4bf] tracking-wider">{article.category}</span>
                         </div>
-                        <h3 className="text-[16px] sm:text-[18px] font-black text-gray-900 dark:text-white truncate tracking-tight leading-tight">{article.title}</h3>
+                        <h3 className="text-[16px] sm:text-[17px] font-bold text-gray-900 dark:text-white truncate tracking-tight leading-tight">{article.title}</h3>
                     </div>
                     <div className="shrink-0 self-center flex items-center text-gray-400 dark:text-gray-500 ml-2">
                         <i className="fi fi-rr-angle-small-right text-xl"></i>

@@ -30,7 +30,7 @@ const LegalList: React.FC = () => {
               key={section}
               to={path}
               className={({ isActive }) => 
-                `pl-1.5 pr-4 py-6 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
+                `pl-0 pr-4 py-6 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
                   isActive 
                     ? 'bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 text-gray-900 dark:text-white' 
                     : 'bg-transparent hover:bg-gray-50/50 dark:hover:bg-white/[0.02] text-gray-700 dark:text-gray-300'
@@ -45,14 +45,14 @@ const LegalList: React.FC = () => {
                   }`} />
 
                   {/* Active Indicator Line */}
-                  <div className={`absolute left-[-28px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-50 transition-all duration-500 ease-in-out origin-center ${
+                  <div className={`absolute left-[-28px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-50 transform transition-all duration-500 ease-in-out origin-center ${
                     isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
                   }`} />
 
                   {/* Divider Line */}
-                  <div className="absolute bottom-0 right-4 sm:right-10 left-[66px] sm:left-[70px] border-b border-gray-200 dark:border-white/10" />
+                  <div className="absolute bottom-0 right-4 sm:right-10 left-[62px] sm:left-[66px] border-b border-gray-200 dark:border-white/10" />
 
-                  <div className="flex items-start gap-5 sm:gap-7 w-full">
+                  <div className="flex items-start gap-4 sm:gap-6 w-full">
                     <div className="w-12 h-12 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] shrink-0 group-hover:scale-110 transition-transform">
                       <i className={`fi ${
                         section === 'about' ? 'fi-rr-info' :
@@ -65,7 +65,7 @@ const LegalList: React.FC = () => {
                     </div>
 
                     <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
-                      <h3 className={`text-[16px] sm:text-[18px] font-black truncate tracking-tight leading-tight ${
+                      <h3 className={`text-[16px] sm:text-[17px] font-bold truncate tracking-tight leading-tight ${
                         isActive ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'
                       }`}>
                         {content.title}
