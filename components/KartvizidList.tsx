@@ -4,7 +4,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { CV } from '../types';
 
 interface KartvizidListProps {
-    type: 'job-finders' | 'professions' | 'cities' | 'most-viewed' | 'stats' | 'premium' | 'settings';
+    type: 'job-finders' | 'professions' | 'cities' | 'most-viewed' | 'stats' | 'premium' | 'settings' | 'cv-tips';
     jobFinders: CV[];
     popularProfessions: any[];
     popularCities: any[];
@@ -35,6 +35,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
             case 'stats': return t('sidebar.platform_stats');
             case 'premium': return 'Kartvizid Premium';
             case 'settings': return 'Hesap Ayarları';
+            case 'cv-tips': return 'CV Oluşturma Rehberi';
             default: return '';
         }
     };
@@ -48,6 +49,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
             case 'stats': return 'fi-rr-stats';
             case 'premium': return 'fi-rr-membership-vip';
             case 'settings': return 'fi-rr-settings';
+            case 'cv-tips': return 'fi-rr-graduation-cap';
             default: return 'fi-rr-document-signed';
         }
     };
@@ -245,6 +247,92 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                                 </button>
                             );
                         })}
+                    </div>
+                );
+            case 'employer-tips':
+                const employerTips = [
+                    { id: 1, title: 'Güçlü Bir Marka Hikayesi', desc: 'Şirket kültürünüzü ve vizyonunuzu anlatan etkileyici bir açıklama yazın. Adaylar sadece işi değil, kültürü de seçer.', icon: 'fi-rr-bullhorn', color: 'bg-blue-50 text-blue-600' },
+                    { id: 2, title: 'Profesyonel Logo ve Görseller', desc: 'Yüksek kaliteli bir logo güven verir. Şirketinizin dijital vitrinini en iyi şekilde yansıttığınızdan emin olun.', icon: 'fi-rr-building', color: 'bg-green-50 text-green-600' },
+                    { id: 3, title: 'Sosyal Medya Etkileşimi', desc: 'Instagram ve web sitenizi ekleyerek adayların ofis hayatınızı ve projelerinizi daha yakından tanımasını sağlayın.', icon: 'fi-rr-share', color: 'bg-purple-50 text-purple-600' },
+                    { id: 4, title: 'Lokasyon ve Şeffaflık', desc: 'Açık adres ve çalışan sayısı gibi bilgileri netleştirerek kurumsal kimliğinizi pekiştirin.', icon: 'fi-rr-marker', color: 'bg-orange-50 text-orange-600' },
+                    { id: 5, title: 'Aday Deneyimini Önemseyin', desc: 'Profiliniz ne kadar detaylıysa, doğru yeteneklerin size ulaşma hızı o kadar artar.', icon: 'fi-rr-users-alt', color: 'bg-teal-50 text-[#1f6d78]' }
+                ];
+                return (
+                    <div className="flex flex-col gap-1 py-6 px-4 no-scrollbar">
+                        <div className="mb-6 px-4">
+                            <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-2 leading-relaxed">
+                                İşveren Rehberi
+                            </p>
+                            <h3 className="text-sm font-black text-gray-900 dark:text-white leading-tight">
+                                Doğru Yeteneği <br/>Markanıza Çekin.
+                            </h3>
+                        </div>
+                        {employerTips.map((tip) => (
+                            <div
+                                key={tip.id}
+                                className="flex items-start gap-4 p-5 rounded-3xl hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-all group border border-transparent hover:border-gray-100 dark:hover:border-white/5"
+                            >
+                                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${tip.color} dark:bg-white/5`}>
+                                    <i className={`fi ${tip.icon} text-lg`}></i>
+                                </div>
+                                <div className="space-y-1">
+                                    <h4 className="text-[13px] font-black text-gray-900 dark:text-white tracking-tight leading-tight group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors">{tip.title}</h4>
+                                    <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 leading-relaxed">{tip.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                        <div className="mt-8 p-6 rounded-3xl bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 border border-[#1f6d78]/10 mx-2">
+                             <div className="flex items-center gap-3 mb-2">
+                                <span className="w-2 h-2 rounded-full bg-[#1f6d78] animate-pulse"></span>
+                                <span className="text-[10px] font-black text-[#1f6d78] uppercase tracking-widest">Marka Notu</span>
+                             </div>
+                             <p className="text-[11px] font-bold text-gray-600 dark:text-gray-400 leading-relaxed italic">
+                                "Nitelikli adayların %80'i başvurudan önce şirketin dijital varlığını derinlemesine inceler."
+                             </p>
+                        </div>
+                    </div>
+                );
+            case 'cv-tips':
+                const tips = [
+                    { id: 1, title: 'Güçlü Bir "Hakkında" Yazısı', desc: 'Kendinizi bir paragrafta özetleyin. Hedeflerinizden ve uzmanlık alanlarından bahsedin.', icon: 'fi-rr-comment-user', color: 'bg-blue-50 text-blue-600' },
+                    { id: 2, title: 'Deneyimlerde Başarı Odaklılık', desc: 'Sadece görevlerinizi değil, elde ettiğiniz somut başarıları ve projeleri de ekleyin.', icon: 'fi-rr-briefcase', color: 'bg-green-50 text-green-600' },
+                    { id: 3, title: 'Profesyonel Fotoğrafın Gücü', desc: 'Net, güncel ve profesyonel bir fotoğraf profilinizin güvenilirliğini %70 oranında artırır.', icon: 'fi-rr-camera', color: 'bg-orange-50 text-orange-600' },
+                    { id: 4, title: 'Tercih Edilen Pozisyonları Belirleyin', desc: 'İşverenlerin sizi doğru aramalarda bulabilmesi için tercih ettiğiniz rolleri mutlaka ekleyin.', icon: 'fi-rr-target', color: 'bg-purple-50 text-purple-600' },
+                    { id: 5, title: 'Eğitim Bilgilerini Güncel Tutun', desc: 'En son mezuniyetinizden başlayarak eğitim yolculuğunuzu detaylandırın.', icon: 'fi-rr-document-signed', color: 'bg-teal-50 text-[#1f6d78]' }
+                ];
+                return (
+                    <div className="flex flex-col gap-1 py-6 px-4 no-scrollbar">
+                        <div className="mb-6 px-4">
+                            <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-2 leading-relaxed">
+                                Profesyonel İpuçları
+                            </p>
+                            <h3 className="text-sm font-black text-gray-900 dark:text-white leading-tight">
+                                Dijital Kimliğinizi <br/>Birlikte Parlatalım.
+                            </h3>
+                        </div>
+                        {tips.map((tip) => (
+                            <div
+                                key={tip.id}
+                                className="flex items-start gap-4 p-5 rounded-3xl hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-all group border border-transparent hover:border-gray-100 dark:hover:border-white/5"
+                            >
+                                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 ${tip.color} dark:bg-white/5`}>
+                                    <i className={`fi ${tip.icon} text-lg`}></i>
+                                </div>
+                                <div className="space-y-1">
+                                    <h4 className="text-[13px] font-black text-gray-900 dark:text-white tracking-tight leading-tight group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors">{tip.title}</h4>
+                                    <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400 leading-relaxed">{tip.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                        <div className="mt-8 p-6 rounded-3xl bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 border border-[#1f6d78]/10 mx-2">
+                             <div className="flex items-center gap-3 mb-2">
+                                <span className="w-2 h-2 rounded-full bg-[#1f6d78] animate-pulse"></span>
+                                <span className="text-[10px] font-black text-[#1f6d78] uppercase tracking-widest">İpucu</span>
+                             </div>
+                             <p className="text-[11px] font-bold text-gray-600 dark:text-gray-400 leading-relaxed italic">
+                                "Profilinizi %100 tamamladığınızda işverenlerin dikkatini çekme şansınız 5 kat daha fazla olur."
+                             </p>
+                        </div>
                     </div>
                 );
             default:

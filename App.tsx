@@ -24,8 +24,10 @@ import MessagesModal from './components/MessagesModal';
 import ProfileModal from './components/ProfileModal';
 import CompanyProfileModal from './components/CompanyProfileModal';
 import CVFormModal from './components/CVFormModal';
+import CVFormContent from './components/CVFormContent';
 import SettingsModal from './components/SettingsModal';
 import CompanyFormModal from './components/CompanyFormModal';
+import CompanyFormContent from './components/CompanyFormContent';
 import SettingsDetailView from './components/SettingsDetailView';
 import NotificationsModal from './components/NotificationsModal';
 import CVProfileRoute from './components/CVProfileRoute';
@@ -128,6 +130,10 @@ const App: React.FC = () => {
             path.startsWith('/mesajlar') ||
             path === '/premium' ||
             path.startsWith('/ayarlar') ||
+            path === '/cv-olustur' ||
+            path === '/cv-guncelle' ||
+            path === '/sirket-olustur' ||
+            path === '/sirket-guncelle' ||
             legalPaths.includes(path);
   }, [location.pathname]);
 
@@ -1932,6 +1938,7 @@ const App: React.FC = () => {
             setIsMessagesOpen(true);
           }
         }}
+        onOpenCompanyProfile={() => navigate(activeCompany ? '/sirket-guncelle' : '/sirket-olustur')}
         onToggleFilter={() => setIsDesktopFilterOpen(!isDesktopFilterOpen)}
         isFilterOpen={isDesktopFilterOpen}
       />
@@ -2019,16 +2026,26 @@ const App: React.FC = () => {
                   } />
                   <Route path="/ayarlar/:tab" element={<KartvizidList type="settings" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
                   <Route path="/bildirimler" element={<NotificationsModal onClose={() => navigate('/', { replace: true })} notifications={generalNotifications} onMarkRead={markNotificationRead} onOpenProfile={handleOpenProfile} />} />
-                  <Route path="/cv-olustur" element={<CVFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCreateCV} initialData={currentUserCV || {}} availableCities={availableCities} />} />
-                  <Route path="/sirket-olustur" element={<CompanyFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCompanySubmit} initialData={activeCompany || {}} availableCities={availableCities} />} />
+                  <Route path="/cv-olustur" element={
+                    window.innerWidth >= 1024 ? <KartvizidList type="cv-tips" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} /> : <CVFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCreateCV} initialData={currentUserCV || {}} availableCities={availableCities} />
+                   } />
+                   <Route path="/cv-guncelle" element={
+                    window.innerWidth >= 1024 ? <KartvizidList type="cv-tips" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} /> : <CVFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCreateCV} initialData={currentUserCV || {}} availableCities={availableCities} />
+                   } />
+                   <Route path="/sirket-olustur" element={
+                     window.innerWidth >= 1024 ? <KartvizidList type="employer-tips" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} /> : <CompanyFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCompanySubmit} initialData={activeCompany || {}} availableCities={availableCities} />
+                    } />
+                    <Route path="/sirket-guncelle" element={
+                     window.innerWidth >= 1024 ? <KartvizidList type="employer-tips" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} /> : <CompanyFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCompanySubmit} initialData={activeCompany || {}} availableCities={availableCities} />
+                    } />
                   <Route path="*" element={<LegalRoute section="general" />} />
                 </Routes>
               </div>
             </section>
 
             {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
-            <aside className={`hidden lg:block flex-1 max-w-[585px] min-w-[320px] h-[calc(100vh-64px)] sticky top-[64px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-r border-gray-200/70 dark:border-white/10 ${
-              isDiscoveryView || location.pathname.startsWith('/rehber/') ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
+             <aside className={`hidden lg:block flex-1 max-w-[585px] min-w-[320px] h-[calc(100vh-64px)] sticky top-[64px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-r border-gray-200/70 dark:border-white/10 ${
+              isDiscoveryView || location.pathname.startsWith('/rehber/') || location.pathname === '/cv-olustur' || location.pathname === '/cv-guncelle' || location.pathname === '/sirket-olustur' || location.pathname === '/sirket-guncelle' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
             }`}>
               <div className="h-full">
                 <Routes>
@@ -2060,6 +2077,14 @@ const App: React.FC = () => {
                   <Route path="/ayarlar/genel" element={<SettingsDetailView activeTab="general" />} />
                   <Route path="/ayarlar/guvenlik" element={<SettingsDetailView activeTab="security" />} />
                   <Route path="/ayarlar/bildirimler" element={<SettingsDetailView activeTab="notifications" />} />
+                  
+                  {/* CV Form Detail Routes (Right Column) */}
+                  <Route path="/cv-olustur" element={<CVFormContent isInline={true} onSubmit={handleCreateCV} initialData={currentUserCV || {}} availableCities={availableCities} />} />
+                  <Route path="/cv-guncelle" element={<CVFormContent isInline={true} onSubmit={handleCreateCV} onDelete={handleDeleteCV} initialData={currentUserCV || {}} availableCities={availableCities} />} />
+                  
+                  {/* Company Form Detail Routes (Right Column) */}
+                  <Route path="/sirket-olustur" element={<CompanyFormContent isInline={true} onSubmit={handleCompanySubmit} initialData={activeCompany || {}} />} />
+                  <Route path="/sirket-guncelle" element={<CompanyFormContent isInline={true} onSubmit={handleCompanySubmit} onDelete={handleDeleteCompany} initialData={activeCompany || {}} />} />
                   
                   {/* Kartvizid detail routes can reuse CV detail for job finders/most viewed */}
                   <Route path="/kartvizid/is-bulanlar" element={
