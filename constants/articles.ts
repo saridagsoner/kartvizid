@@ -329,7 +329,7 @@ export const BLOG_ARTICLES: Article[] = [
   {
     id: '21',
     slug: 'imposter-sendromu-ve-ozguven-insasi-yollari',
-    title: 'Imposter Sendromu: \'Ben Yetersizim\' Hissinden Kurtulun',
+    title: "Imposter Sendromu: 'Ben Yetersizim' Hissinden Kurtulun",
     excerpt: 'Başarılarınızı sahiplenmeyi öğrenin ve kendi kariyer gelişiminizdeki sahtekarlık hissini yenin.',
     category: 'İş Yeri Psikolojisi',
     publishedAt: '2026-04-21',
@@ -447,7 +447,7 @@ export const BLOG_ARTICLES: Article[] = [
     id: '30',
     slug: 'ebeveynlikten-is-hayatina-donus-rehberi',
     title: 'Ebeveynlikten İş Hayatına Dönüş: Anneler ve Babalar İçin Rehber',
-    excerpt: 'Verilen boşluk sonrası iş dünyasına nasıl 'Zirveden' giriş yaparsınız?',
+    excerpt: "Verilen boşluk sonrası iş dünyasına nasıl 'Zirveden' giriş yaparsınız?",
     category: 'Kariyer Dönüşümü',
     publishedAt: '2026-04-30',
     readTime: '17 dk',
@@ -455,8 +455,6 @@ export const BLOG_ARTICLES: Article[] = [
       <h2>Boşluk Bir Zırhtır</h2>
       <p>Ebeveynlikte kazanılan kriz yönetimi ve zaman planlama becerileri paha biçilemezdir.</p>
     `
-  }
-
   },
   {
     id: '31',
@@ -517,7 +515,7 @@ export const BLOG_ARTICLES: Article[] = [
     id: '35',
     slug: 'cvdeki-bosluklari-aciklama-stratejileri',
     title: 'CV-deki Boşluklar (Gap Years): Mülakatta Doğru Nasıl Anlatılır?',
-    excerpt: 'Kariyerine ara verenler için 'paslanmadığını' kanıtlayan profesyonel dil kullanımı.',
+    excerpt: "Kariyerine ara verenler için 'paslanmadığını' kanıtlayan profesyonel dil kullanımı.",
     category: 'İş Arayışında Uzmanlık',
     publishedAt: '2026-05-05',
     readTime: '14 dk',
@@ -608,7 +606,7 @@ export const BLOG_ARTICLES: Article[] = [
     id: '42',
     slug: 'ic-network-ve-terfi-alma-stratejileri',
     title: 'İç Network: Şirket İçinde Görünürlük ve Terfi Sırları',
-    excerpt: 'Daha yüksek bir pozisyon için sadece çalışmak yetmez, 'Doğru' kişilerle tanışmalısınız.',
+    excerpt: "Daha yüksek bir pozisyon için sadece çalışmak yetmez, 'Doğru' kişilerle tanışmalısınız.",
     category: 'Yönetim',
     publishedAt: '2026-05-12',
     readTime: '18 dk',
