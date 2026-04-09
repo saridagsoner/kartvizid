@@ -64,7 +64,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                                 }`}
                             >
                                 {location.pathname === `/cv/${cv.id}` && (
-                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1f6d78] dark:bg-[#2dd4bf]"></div>
+                                    <div className="absolute left-[-8px] top-0 bottom-0 w-1 bg-[#1f6d78] dark:bg-[#2dd4bf]"></div>
                                 )}
                                 <div className="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 border border-gray-100 dark:border-white/10 group-hover:scale-105 transition-transform">
                                     <img src={cv.photoUrl || "https://picsum.photos/seed/user-placeholder/100/100"} alt={cv.name} className="w-full h-full object-cover" />

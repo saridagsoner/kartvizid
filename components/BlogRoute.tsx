@@ -220,14 +220,14 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
               >
                 {/* Active Selection Styling (Bridge Background) */}
                 {isInline && (
-                  <div className={`absolute inset-y-0 left-[-20px] w-[20px] transition-opacity duration-500 pointer-events-none ${
+                  <div className={`absolute inset-y-0 left-[-8px] w-[8px] transition-opacity duration-500 pointer-events-none ${
                       activeSlug === article.slug ? 'opacity-100 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' : 'opacity-0'
                   }`} />
                 )}
 
                 {/* Active Indicator Line */}
                 {isInline && (
-                  <div className={`absolute left-[-20px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-50 transform transition-all duration-500 ease-in-out origin-center ${
+                  <div className={`absolute left-[-8px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-10 transform transition-all duration-500 ease-in-out origin-center ${
                       activeSlug === article.slug ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
                   }`} />
                 )}

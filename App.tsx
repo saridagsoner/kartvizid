@@ -1943,10 +1943,10 @@ const App: React.FC = () => {
       />
 
       <div className="flex-1 flex justify-center pt-[68px] md:pt-[64px] px-0 sm:px-2 md:px-0">
-        <div className="max-w-[1600px] w-full flex items-start pb-12 lg:px-6 xl:px-12 gap-x-4 xl:gap-x-6">
+        <div className="max-w-[1600px] w-full flex items-start pb-12 lg:pl-[58px] lg:pr-6 xl:pl-[84px] xl:pr-12 gap-0">
           
           {/* COLUMN 1: LEFT NAVIGATION (Desktop Only) */}
-          <aside className="hidden lg:block lg:w-[240px] xl:w-[280px] shrink sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/10 pr-2 transition-all duration-300 no-scrollbar">
+          <aside className="hidden lg:block lg:w-[220px] xl:w-[255px] shrink sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-100 dark:border-gray-800/10 pr-2 transition-all duration-300 no-scrollbar">
             <DesktopNav 
               viewMode={viewMode}
               onViewModeChange={setViewMode}
@@ -1970,9 +1970,9 @@ const App: React.FC = () => {
             
             {/* COLUMN 2: MIDDLE CONTENT (Feed or Full Page) */}
             <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 overflow-hidden ${
-              isDiscoveryView ? 'lg:max-w-[540px] border-r border-gray-100 dark:border-gray-800/10' : 'w-full'
+              isDiscoveryView ? 'lg:max-w-[520px] xl:max-w-[525px] border-r border-gray-100 dark:border-gray-800/10' : 'w-full'
             }`}>
-              <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth lg:pl-5">
+              <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth lg:pl-2">
                 <Routes>
                   {/* Discovery Routes (List View) */}
                   <Route path="/" element={<HomeDiscoveryContent />} />

@@ -71,10 +71,10 @@ const Navbar: React.FC<NavbarProps & {
     return (
       <>
         <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-black border-b border-gray-100 dark:border-white/5 z-50 flex items-center justify-center transition-colors duration-300">
-          <div className="max-w-[1600px] w-full px-4 md:px-6 lg:px-6 xl:px-12 flex items-center justify-between h-full gap-x-4 md:gap-x-8">
+          <div className="max-w-[1600px] w-full px-4 md:px-6 lg:pl-[58px] lg:pr-32 xl:pl-[84px] xl:pr-40 flex items-center justify-between h-full gap-x-4 md:gap-x-8">
 
             {/* Left Section: Logo & Mobile Menu */}
-            <div className="lg:w-[240px] xl:w-[280px] shrink-0 flex items-center gap-2">
+            <div className="w-fit shrink-0 flex items-center gap-2 lg:pl-10 xl:pl-16">
               {/* Mobile Menu Button */}
               <button
                 onClick={onOpenMenu}
@@ -106,7 +106,7 @@ const Navbar: React.FC<NavbarProps & {
             </div>
 
             {/* Center Section: Search Bar */}
-            <div className="hidden md:flex items-center gap-3 shrink-1 flex-1 max-w-[540px]">
+            <div className="hidden md:flex items-center shrink-1 flex-1 max-w-none ml-2 mr-6 focus-within:max-w-none transition-all duration-300">
               <div className="flex-1 relative group">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
                   <i className="fi fi-rr-search text-gray-400 dark:text-gray-500 text-sm"></i>
@@ -121,25 +121,25 @@ const Navbar: React.FC<NavbarProps & {
                       e.currentTarget.blur();
                     }
                   }}
-                  className="w-full bg-white dark:bg-gray-800 transition-all outline-none rounded-2xl px-12 py-3 text-[15px] font-medium text-gray-800 dark:text-gray-100 border-[0.5px] border-black dark:border-white/20 focus:ring-1 focus:ring-[#1f6d78] shadow-none placeholder-gray-400 dark:placeholder-gray-500"
+                  className="w-full bg-white dark:bg-gray-800 transition-all outline-none rounded-2xl pl-12 pr-14 py-3 text-[15px] font-medium text-gray-800 dark:text-gray-100 border-[0.5px] border-black dark:border-white/20 focus:ring-1 focus:ring-[#1f6d78] shadow-none placeholder-gray-400 dark:placeholder-gray-500"
                 />
+                
+                {/* Discovery Filter Toggle */}
+                <button
+                  onClick={(e: React.MouseEvent) => {
+                    e.preventDefault();
+                    onToggleFilter?.();
+                  }}
+                  className={`absolute right-1.5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                    isFilterOpen 
+                    ? 'bg-[#1f6d78] text-white shadow-lg shadow-[#1f6d78]/20' 
+                    : 'bg-white dark:bg-gray-800 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 border-none'
+                  }`}
+                  title="Filtrele"
+                >
+                  <i className="fi fi-rr-settings-sliders text-base"></i>
+                </button>
               </div>
-
-              {/* Discovery Filter Toggle */}
-              <button
-                onClick={(e: React.MouseEvent) => {
-                  e.preventDefault();
-                  onToggleFilter?.();
-                }}
-                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
-                  isFilterOpen 
-                  ? 'bg-[#1f6d78] text-white shadow-lg shadow-[#1f6d78]/20' 
-                  : 'bg-white dark:bg-gray-800 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 border-none'
-                }`}
-                title="Filtrele"
-              >
-                <i className="fi fi-rr-settings-sliders text-lg"></i>
-              </button>
             </div>
 
             {/* Right Section: Actions */}

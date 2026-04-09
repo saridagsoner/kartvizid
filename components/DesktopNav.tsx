@@ -59,7 +59,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             onClick={onClick}
             className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-300 group mb-1 ${
                 active 
-                ? 'text-black dark:text-white translate-x-1.5' 
+                ? 'text-black dark:text-white' 
                 : 'text-black dark:text-gray-200 hover:bg-gray-50/10 dark:hover:bg-gray-800/10'
             }`}
         >
