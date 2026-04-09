@@ -1952,7 +1952,7 @@ const App: React.FC = () => {
             <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 ${
               isDiscoveryView ? 'lg:max-w-[540px] border-r border-gray-100 dark:border-gray-800/10' : 'w-full'
             }`}>
-              <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth lg:pl-7">
+              <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth lg:pl-5">
                 <Routes>
                   {/* Discovery Routes (List View) */}
                   <Route path="/" element={<HomeDiscoveryContent />} />

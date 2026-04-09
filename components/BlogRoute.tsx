@@ -198,26 +198,26 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
             >
               {/* Active Selection Styling (Bridge Background) */}
               {isInline && (
-                <div className={`absolute inset-y-0 left-[-28px] w-[28px] transition-opacity duration-500 pointer-events-none ${
+                <div className={`absolute inset-y-0 left-[-20px] w-[20px] transition-opacity duration-500 pointer-events-none ${
                     activeSlug === article.slug ? 'opacity-100 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' : 'opacity-0'
                 }`} />
               )}
 
               {/* Active Indicator Line */}
               {isInline && (
-                <div className={`absolute left-[-28px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-50 transition-all duration-500 ease-in-out origin-center ${
+                <div className={`absolute left-[-20px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-50 transform transition-all duration-500 ease-in-out origin-center ${
                     activeSlug === article.slug ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
                 }`} />
               )}
 
               {/* Divider Line */}
               {isInline && (
-                <div className="absolute bottom-0 right-4 sm:right-10 left-[66px] sm:left-[70px] border-b border-gray-200 dark:border-white/10" />
+                <div className="absolute bottom-0 right-4 sm:right-10 left-[58px] sm:left-[62px] border-b border-gray-200 dark:border-white/10" />
               )}
 
               {isInline ? (
                 <>
-                  <div className="flex items-start gap-4 sm:gap-6 w-full">
+                  <div className="flex items-start gap-3 sm:gap-4 w-full">
                     <div className="w-12 h-12 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] shrink-0 group-hover:scale-110 transition-transform">
                         <i className={`fi ${
                             article.category === 'Mülakat Teknikleri' ? 'fi-rr-comment-user' : 
@@ -228,7 +228,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                         <div className="flex items-center gap-2 mb-0.5">
                             <span className="text-[10px] sm:text-[11px] font-black uppercase text-[#1f6d78] dark:text-[#2dd4bf] tracking-wider">{article.category}</span>
                         </div>
-                        <h3 className="text-[16px] sm:text-[17px] font-bold text-gray-900 dark:text-white truncate tracking-tight leading-tight">{article.title}</h3>
+                        <h3 className="text-[15px] sm:text-[16px] font-semibold text-gray-900 dark:text-white truncate tracking-tight leading-tight">{article.title}</h3>
                     </div>
                     <div className="shrink-0 self-center flex items-center text-gray-400 dark:text-gray-500 ml-2">
                         <i className="fi fi-rr-angle-small-right text-xl"></i>

@@ -30,12 +30,12 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick, isActive }) => {
       }`}
     >
       {/* Active Selection Styling (Bridge & Background) */}
-      <div className={`absolute inset-0 left-[-28px] transition-opacity duration-500 pointer-events-none sm:rounded-[35px] ${
+      <div className={`absolute inset-0 left-[-20px] transition-opacity duration-500 pointer-events-none sm:rounded-[35px] ${
         isActive ? 'opacity-100 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' : 'opacity-0'
       }`} />
 
       {/* Active Indicator Line */}
-      <div className={`absolute left-[-28px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-50 transform transition-all duration-500 ease-in-out origin-center ${
+      <div className={`absolute left-[-20px] top-0 bottom-0 w-1.5 bg-[#1f6d78] dark:bg-[#2dd4bf] z-50 transform transition-all duration-500 ease-in-out origin-center ${
         isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
       }`} />
       <div className="w-[60px] h-[68px] sm:w-[104px] sm:h-[118px] rounded-xl sm:rounded-3xl border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0 bg-white dark:bg-gray-700 flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
