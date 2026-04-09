@@ -76,7 +76,7 @@ const ShopProfileModal: React.FC<ShopProfileModalProps> = ({ isOpen, onClose, sh
                     className="flex-1 sm:flex-none bg-[#1f6d78] text-white px-6 py-3 rounded-2xl font-black text-sm hover:bg-[#155e68] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#1f6d78]/20"
                    >
                       <i className="fi fi-rr-paper-plane"></i>
-                      <span>{t?.('profile.send_message') || 'Mesaj Gönder'}</span>
+                      <span>{t?.('profile.send_message') || 'İş Görüşmesi Başlat'}</span>
                    </button>
                  )}
                  {isOwner && (

@@ -74,7 +74,7 @@ const Navbar: React.FC<NavbarProps & {
           <div className="max-w-[1600px] w-full px-4 md:px-6 lg:px-12 flex items-center justify-between h-full gap-2 md:gap-0">
 
             {/* Left Section: Logo & Mobile Menu */}
-            <div className="lg:w-[280px] shrink-0 flex items-center gap-1 lg:pl-[106px]">
+            <div className="lg:w-[280px] shrink-0 flex items-center gap-1 lg:pl-[95px]">
               {/* Mobile Menu Button */}
               <button
                 onClick={onOpenMenu}
@@ -143,7 +143,7 @@ const Navbar: React.FC<NavbarProps & {
             </div>
 
             {/* Right Section: Actions */}
-            <div className={`${loading ? 'flex' : 'flex'} md:w-[330px] shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto lg:ml-0`}>
+            <div className={`${loading ? 'flex' : 'flex'} md:w-[330px] shrink-0 items-center justify-end gap-2 md:gap-4 ml-auto lg:ml-0 lg:pr-[95px]`}>
               {loading ? (
                 <div className="flex items-center gap-6 opacity-50 pr-4">
                   <div className="w-16 md:w-20 h-5 bg-gray-100 dark:bg-gray-700 animate-pulse rounded-full"></div>
@@ -230,22 +230,22 @@ const Navbar: React.FC<NavbarProps & {
                         setIsProfileOpen(!isProfileOpen);
                         setIsNotifOpen(false);
                       }}
-                      className={`w-9 h-9 rounded-full overflow-hidden border transition-all ${isProfileOpen ? 'ring-2 ring-[#1f6d78] border-[#1f6d78]' : 'border-gray-200 hover:ring-2 hover:ring-gray-100'}`}
+                      className={`w-10 h-10 text-black dark:text-white rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group ${isProfileOpen ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
                     >
 
                       {userPhotoUrl ? (
-                        <ImageWithFallback 
-                          src={userPhotoUrl} 
-                          alt={user?.user_metadata?.full_name || user?.email || 'User'} 
-                          className="w-full h-full object-cover"
-                          initialsClassName="text-sm font-black"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800">
-                          <i className={`fi ${
-                            isEmployer ? 'fi-rr-building' : 'fi-rr-circle-user'
-                          } text-lg`}></i>
+                        <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-100 dark:border-gray-800">
+                          <ImageWithFallback 
+                            src={userPhotoUrl} 
+                            alt={user?.user_metadata?.full_name || user?.email || 'User'} 
+                            className="w-full h-full object-cover"
+                            initialsClassName="text-sm font-black"
+                          />
                         </div>
+                      ) : (
+                        <i className={`fi ${
+                          isEmployer ? 'fi-rr-building' : 'fi-rr-user'
+                        } text-xl transition-colors`}></i>
                       )}
                     </button>
                     {isProfileOpen && <UserMenuDropdown onClose={() => setIsProfileOpen(false)} onLogout={signOut} onOpenSettings={onOpenSettings} onOpenSavedCVs={onOpenSavedCVs} onOpenProfile={onOpenProfile} />}

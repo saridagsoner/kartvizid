@@ -347,7 +347,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                   }}
                   className={`${isInline ? 'h-11 sm:h-12' : 'h-12 sm:h-14'} flex-[2.5] bg-[#1f6d78] text-white rounded-2xl sm:rounded-full font-bold text-[14px] sm:text-base shadow-lg shadow-[#1f6d78]/20 active:scale-95 hover:bg-[#155e68] transition-all`}
                 >
-                  {t('profile.send_message') || 'Mesaj Gönder'}
+                  {t('profile.send_message') || 'İş Görüşmesi Başlat'}
                 </button>
 
                 <div className="relative">
@@ -356,9 +356,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                     onClick={handleShare}
                     onMouseEnter={() => setActiveTooltip('share')}
                     onMouseLeave={() => setActiveTooltip(null)}
-                    className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full border-2 border-teal-50 bg-teal-50/30 text-blue-500 dark:text-blue-400 flex items-center justify-center active:scale-90`}
+                    className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full text-black dark:text-white flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-90`}
                   >
-                    <i className={`${isInline ? 'text-base' : 'text-lg'} fi fi-rr-share-square`}></i>
+                    <i className={`${isInline ? 'text-lg' : 'text-xl'} fi fi-rr-share-square`}></i>
                   </button>
                 </div>
 
@@ -368,9 +368,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                     onClick={handleDownload}
                     onMouseEnter={() => setActiveTooltip('download')}
                     onMouseLeave={() => setActiveTooltip(null)}
-                    className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full border-2 border-teal-50 bg-teal-50/30 text-green-500 dark:text-green-400 flex items-center justify-center active:scale-90`}
+                    className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full text-black dark:text-white flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-90`}
                   >
-                    <i className={`${isInline ? 'text-base' : 'text-lg'} fi fi-rr-download`}></i>
+                    <i className={`${isInline ? 'text-lg' : 'text-xl'} fi fi-rr-download`}></i>
                   </button>
                 </div>
 
@@ -391,9 +391,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                     }}
                     onMouseEnter={() => setActiveTooltip('save')}
                     onMouseLeave={() => setActiveTooltip(null)}
-                    className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full border-2 flex items-center justify-center transition-all ${isSaved ? 'bg-rose-50 border-rose-100 text-rose-500' : 'bg-teal-50/30 border-teal-50 text-[#1f6d78]'}`}
+                    className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-90 ${isSaved ? 'text-rose-500' : 'text-black dark:text-white'}`}
                   >
-                    <i className={`${isInline ? 'text-base' : 'text-lg'} ${isSaved ? 'fi fi-sr-bookmark' : 'fi fi-rr-bookmark'}`}></i>
+                    <i className={`${isInline ? 'text-lg' : 'text-xl'} ${isSaved ? 'fi fi-sr-bookmark' : 'fi fi-rr-bookmark'}`}></i>
                   </button>
                 </div>
               </div>
@@ -405,8 +405,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                 >
                   {t('profile.job_found')}
                 </button>
-                <button onClick={handleDownload} className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full border-2 border-green-50 text-green-500 flex items-center justify-center transition-all active:scale-90`}><i className="fi fi-rr-download text-lg"></i></button>
-                <button onClick={handleShare} className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full border-2 border-blue-50 text-blue-500 flex items-center justify-center transition-all active:scale-90`}><i className="fi fi-rr-share-square text-lg"></i></button>
+                <button onClick={handleDownload} className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full text-black dark:text-white flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-90`}><i className="fi fi-rr-download text-xl"></i></button>
+                <button onClick={handleShare} className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full text-black dark:text-white flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-90`}><i className="fi fi-rr-share-square text-xl"></i></button>
               </div>
             )}
           </div>

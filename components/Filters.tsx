@@ -36,23 +36,26 @@ const CustomDropdown: React.FC<{
   }, []);
 
   return (
-    <div className="flex-1 min-w-[130px] relative" ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full bg-white dark:bg-gray-800 border ${isOpen || value ? 'border-[#1f6d78] dark:border-[#2dd4bf] text-[#1f6d78] dark:text-[#2dd4bf] shadow-md' : 'border-gray-100 dark:border-gray-700 text-gray-800 dark:text-white shadow-sm'} rounded-full px-3 py-2 sm:px-5 sm:py-2.5 text-[10px] sm:text-xs font-bold outline-none cursor-pointer hover:border-[#1f6d78] dark:hover:border-[#2dd4bf] transition-all flex items-center justify-between group`}
+        className={`bg-transparent border-none ${isOpen || value ? 'text-[#1f6d78]' : 'text-gray-700 dark:text-gray-300'} rounded-lg px-2 py-2 text-[15px] font-semibold outline-none cursor-pointer hover:text-black dark:hover:text-white transition-all flex items-center justify-start gap-1 group relative`}
       >
-        <span className="truncate pr-2">{value || label}</span>
+        <span className="relative pb-0.5">
+          {value || label}
+          <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#1f6d78] transition-all duration-300 group-hover:w-full"></span>
+        </span>
         <svg
-          className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-          width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
+          className={`transition-transform duration-300 opacity-40 ${isOpen ? 'rotate-180' : ''}`}
+          width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
         >
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-700 py-2 z-[100] animate-in slide-in-from-top-2 duration-200 overflow-hidden">
-          <div className="max-h-[220px] overflow-y-auto custom-scrollbar">
+        <div className="absolute top-full left-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] dark:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] border border-gray-100/50 dark:border-gray-700/50 py-1.5 z-[100] animate-in slide-in-from-top-2 duration-200 overflow-hidden w-[210px]">
+          <div className="max-h-[280px] overflow-y-auto custom-scrollbar">
             {/* Add Reset Option if value is selected */}
             {value && (
               <button
@@ -60,19 +63,19 @@ const CustomDropdown: React.FC<{
                   onSelect('');
                   setIsOpen(false);
                 }}
-                className="w-full text-left px-5 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all border-b border-gray-50 dark:border-gray-700 mb-1"
+                className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-all border-b border-gray-50 dark:border-gray-700 mb-1"
               >
                 × {t('filters.reset')}
               </button>
             )}
-            {(items || []).slice(0, 5).map((item, idx) => (
+            {(items || []).slice(0, 10).map((item, idx) => (
               <button
                 key={idx}
                 onClick={() => {
                   onSelect(item.label);
                   setIsOpen(false);
                 }}
-                className={`w-full text-left px-5 py-2.5 text-xs font-bold transition-all ${value === item.label ? 'text-black dark:text-white bg-gray-50 dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-black dark:hover:text-white'
+                className={`w-full text-left px-4 py-2.5 text-[13px] font-medium transition-all ${value === item.label ? 'text-black dark:text-white bg-gray-50 dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-black dark:hover:text-white'
                   }`}
               >
                 {item.label}
@@ -84,9 +87,9 @@ const CustomDropdown: React.FC<{
               setIsOpen(false);
               onMore();
             }}
-            className="w-full text-center py-2.5 text-[10px] font-black text-gray-400 hover:text-black dark:hover:text-white uppercase tracking-widest border-t border-gray-50 dark:border-gray-700 mt-1 transition-colors"
+            className="w-full text-center py-3 text-[11px] font-bold text-[#1f6d78] hover:text-black dark:hover:text-white uppercase tracking-wider border-t border-gray-50 dark:border-gray-700/50 mt-1 transition-all bg-gray-50/50 dark:bg-gray-800/50"
           >
-            {t('filters.show_more')}
+            {t('filters.show_more')}...
           </button>
         </div>
       )}
@@ -118,8 +121,8 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
   }).length;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 shadow-sm flex flex-wrap gap-3 items-center transition-all duration-300">
-      <div className="hidden sm:block flex-1 min-w-[130px]">
+    <div className="flex flex-wrap sm:flex-nowrap justify-start gap-8 items-center transition-all duration-300 py-1 pr-1">
+      <div className="hidden sm:block shrink-0">
         <CustomDropdown
           label={t('filters.categories')}
           value={currentFilters.profession}
@@ -129,7 +132,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
         />
       </div>
 
-      <div className="hidden sm:block flex-1 min-w-[130px]">
+      <div className="hidden sm:block shrink-0">
         <CustomDropdown
           label={t('filters.city')}
           value={currentFilters.city}
@@ -139,7 +142,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
         />
       </div>
 
-      <div className="hidden sm:block flex-1 min-w-[130px]">
+      <div className="hidden sm:block shrink-0">
         <CustomDropdown
           label={t('filters.experience')}
           value={currentFilters.experience}
@@ -152,12 +155,16 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
       {/* Desktop Advanced Button */}
       <button
         onClick={() => setActiveModal('advanced')}
-        className={`hidden sm:flex bg-white dark:bg-gray-800 border px-5 py-2.5 rounded-full font-bold text-xs transition-all items-center gap-2 shadow-sm shrink-0 hover:border-[#1f6d78] dark:hover:border-[#2dd4bf] active:scale-95 ${activeFiltersCount > 0 ? 'border-[#1f6d78] dark:border-[#2dd4bf] bg-gray-50 dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf]' : 'border-gray-200 dark:border-gray-700 text-gray-800 dark:text-white'
+        className={`hidden sm:flex bg-transparent border-none py-2 rounded-lg font-semibold text-[15px] transition-all items-center gap-1.5 shrink-0 hover:text-black dark:hover:text-white active:scale-95 group relative ${activeFiltersCount > 0 ? 'text-[#1f6d78]' : 'text-gray-700 dark:text-gray-300'
           }`}
       >
-        <span>{t('filters.advanced')}</span>
+        <span className="relative pb-0.5">
+          {t('filters.advanced')}
+          <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#1f6d78] transition-all duration-300 group-hover:w-full"></span>
+        </span>
+        <i className="fi fi-rr-caret-right text-[10px] opacity-40 mt-0.5"></i>
         {activeFiltersCount > 0 && (
-          <span className="w-4 h-4 bg-[#1f6d78] text-white text-[9px] rounded-full flex items-center justify-center font-black">
+          <span className="w-4 h-4 bg-[#1f6d78] text-white text-[9px] rounded-full flex items-center justify-center font-black ml-1">
             {activeFiltersCount}
           </span>
         )}
