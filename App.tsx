@@ -1822,16 +1822,16 @@ const App: React.FC = () => {
 
   const HomeDiscoveryContent = () => (
     <>
-      <div className="flex sm:hidden items-center justify-between px-4 mt-0.5 mb-0">
-        <div className="flex flex-col gap-0 w-full pt-1.5 pb-0.5">
+      <div className="flex sm:hidden items-start justify-between px-4 mt-4 mb-0 pl-6">
+        <div className="flex flex-col gap-0 w-full pt-2 pb-0.5">
           {((viewMode === 'cvs') || 
             (viewMode === 'shops') || 
             (viewMode === 'employers')) && (
-            <div className="animate-in fade-in duration-300 pb-2">
-              <div className="text-[20px] font-black tracking-tighter text-black dark:text-white transition-all leading-none mb-1">
+            <div className="animate-in fade-in duration-300 pb-2 flex items-center gap-2">
+              <div className="text-[22px] font-black tracking-tighter text-black dark:text-white transition-all leading-none">
                 {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
               </div>
-              <div className="flex items-center w-full mt-1.5">
+              <div className="flex items-center pt-0.5">
                 <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
               </div>
             </div>
