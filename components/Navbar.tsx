@@ -48,8 +48,6 @@ const Navbar: React.FC<NavbarProps & {
     const navigate = useNavigate();
     const [query, setQuery] = useState('');
     const [isNotifOpen, setIsNotifOpen] = useState(false);
-    const [isProfileOpen, setIsProfileOpen] = useState(false);
-    const profileRef = useRef<HTMLDivElement>(null);
     // ... existing useState ...
     const isEmployer = user?.user_metadata?.role === 'employer';
 
@@ -59,15 +57,6 @@ const Navbar: React.FC<NavbarProps & {
       onSearch(val);
     };
 
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
-          setIsProfileOpen(false);
-        }
-      };
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
 
     return (
       <>
@@ -229,15 +218,19 @@ const Navbar: React.FC<NavbarProps & {
                   </div>
                   {/* Profile Dropdown ... */}
 
-                  <div className="relative hidden sm:block" ref={profileRef}>
+                  <div className="relative hidden sm:block">
                     <button
                       onClick={() => {
-                        setIsProfileOpen(!isProfileOpen);
-                        setIsNotifOpen(false);
+                        if (isEmployer && onOpenCompanyProfile) {
+                          onOpenCompanyProfile();
+                        } else if (hasCV && onOpenProfile) {
+                          onOpenProfile(user.id);
+                        } else {
+                          onCreateCV();
+                        }
                       }}
-                      className={`w-10 h-10 text-black dark:text-white rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group ${isProfileOpen ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
+                      className="w-10 h-10 text-black dark:text-white rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group"
                     >
-
                       {userPhotoUrl ? (
                         <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-100 dark:border-gray-800">
                           <ImageWithFallback 
@@ -253,7 +246,6 @@ const Navbar: React.FC<NavbarProps & {
                         } text-xl transition-colors`}></i>
                       )}
                     </button>
-                    {isProfileOpen && <UserMenuDropdown onClose={() => setIsProfileOpen(false)} onLogout={signOut} onOpenSettings={onOpenSettings} onOpenSavedCVs={onOpenSavedCVs} onOpenProfile={onOpenProfile} />}
                   </div>
                 </>
               ) : (
