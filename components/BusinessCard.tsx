@@ -15,7 +15,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
   return (
     <div
       onClick={onClick}
-      className={`pl-1.5 pr-4 py-6 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
+      className={`pl-4 pr-4 py-6 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
         isActive 
           ? 'bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' 
           : 'bg-transparent hover:bg-gray-50/50 dark:hover:bg-white/[0.02]'

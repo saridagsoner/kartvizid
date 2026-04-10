@@ -1,7 +1,7 @@
 import React from 'react';
 
 export const BusinessCardSkeleton = () => (
-    <div className="bg-transparent pl-1.5 pr-4 py-5 sm:py-4 relative animate-pulse">
+    <div className="bg-transparent pl-4 pr-4 py-5 sm:py-4 relative animate-pulse">
         {/* Divider Line */}
         <div className="absolute bottom-0 right-4 sm:right-10 left-[66px] sm:left-[70px] border-b border-gray-100 dark:border-white/5" />
 

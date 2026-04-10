@@ -5,7 +5,7 @@ import UserMenuDropdown from './UserMenuDropdown';
 import ImageWithFallback from './ImageWithFallback';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 
@@ -45,6 +45,7 @@ const Navbar: React.FC<NavbarProps & {
 }) => {
     const { user, loading, signOut } = useAuth();
     const { t } = useLanguage();
+    const navigate = useNavigate();
     const [query, setQuery] = useState('');
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -74,7 +75,7 @@ const Navbar: React.FC<NavbarProps & {
           <div className="max-w-[1600px] w-full px-4 md:px-6 lg:pl-[58px] lg:pr-32 xl:pl-[84px] xl:pr-40 flex items-center justify-between h-full gap-x-4 md:gap-x-8">
 
             {/* Left Section: Logo & Mobile Menu */}
-            <div className="w-fit shrink-0 flex items-center gap-2 lg:pl-10 xl:pl-16">
+            <div className="w-fit shrink-0 flex items-center gap-2 lg:pl-12 xl:pl-16">
               {/* Mobile Menu Button */}
               <button
                 onClick={onOpenMenu}
@@ -97,7 +98,7 @@ const Navbar: React.FC<NavbarProps & {
                   <span>Kartvizi</span>
                   <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                 </div>
-                <span className="hidden sm:block text-[12px] font-black text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
+                <span className="hidden sm:block text-[12px] font-medium text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
                   dijital cv & doğru eşleşme
                 </span>
               </Link>
@@ -184,8 +185,12 @@ const Navbar: React.FC<NavbarProps & {
                   <div className="relative">
                     <button
                       onClick={() => {
-                        setIsNotifOpen(!isNotifOpen);
-                        setIsProfileOpen(false);
+                        if (window.innerWidth >= 1024) {
+                          navigate('/bildirimler');
+                        } else {
+                          setIsNotifOpen(!isNotifOpen);
+                          setIsProfileOpen(false);
+                        }
                       }}
                       className="w-10 h-10 text-black dark:text-white rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group"
                     >

@@ -22,6 +22,7 @@ interface DesktopNavProps {
     onCVClick?: (cv: CV) => void;
     loading?: boolean;
     unreadMessageCount?: number;
+    notificationCount?: number;
 }
 
 const DesktopNav: React.FC<DesktopNavProps> = ({
@@ -38,7 +39,8 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
     jobFinders = [],
     onCVClick,
     loading = false,
-    unreadMessageCount = 0
+    unreadMessageCount = 0,
+    notificationCount = 0
 }) => {
     const { t } = useLanguage();
     const navigate = useNavigate();
@@ -57,22 +59,24 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
     const NavItem = ({ label, icon, onClick, active, badge, hasChildren, isOpen }: { label: string, icon: string, onClick: () => void, active?: boolean, badge?: string, hasChildren?: boolean, isOpen?: boolean }) => (
         <button
             onClick={onClick}
-            className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-300 group mb-1 ${
+            className={`w-full flex items-center justify-between pl-4 pr-4 py-3 rounded-2xl transition-all duration-300 group mb-1 overflow-visible ${
                 active 
                 ? 'text-black dark:text-white' 
                 : 'text-black dark:text-gray-200 hover:bg-gray-50/10 dark:hover:bg-gray-800/10'
             }`}
         >
-            <div className="flex items-center gap-x-[clamp(8px,1vw,16px)] overflow-hidden">
-                <i className={`fi ${active ? icon.replace('fi-rr-', 'fi-sr-') : icon} transition-all duration-300 group-hover:scale-110 flex-shrink-0 ${
-                    active 
-                    ? 'text-[clamp(18px,1.4vw,22px)] text-black dark:text-white font-black' 
-                    : 'text-[clamp(16px,1.2vw,20px)] text-black dark:text-gray-300 font-medium'
-                }`}></i>
+            <div className="flex items-center gap-3 overflow-visible">
+                <div className="w-8 flex items-center justify-center flex-shrink-0 overflow-visible">
+                    <i className={`fi ${active ? icon.replace('fi-rr-', 'fi-sr-') : icon} transition-all duration-300 group-hover:scale-110 ${
+                        active 
+                        ? 'text-xl text-black dark:text-white font-black' 
+                        : 'text-lg text-black dark:text-gray-300 font-medium'
+                    }`}></i>
+                </div>
                 <span className={`tracking-tight transition-all duration-300 truncate ${
                     active 
-                    ? 'text-[clamp(14px,1.1vw,17px)] font-black text-black dark:text-white' 
-                    : 'text-[clamp(13px,1vw,16px)] font-medium text-black dark:text-gray-200'
+                    ? 'text-[15px] font-black text-black dark:text-white' 
+                    : 'text-[14px] font-medium text-black dark:text-gray-200'
                 }`}>{label}</span>
             </div>
             <div className="flex items-center gap-2">
@@ -97,14 +101,14 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 : 'text-gray-500 hover:text-black hover:bg-gray-50/50 dark:hover:bg-gray-800/30'
             }`}
         >
-            <span className="text-[clamp(12px,0.9vw,14px)] leading-none transform translate-y-[1px] truncate">{label}</span>
+            <span className="text-[13px] leading-none transform translate-y-[1px] truncate">{label}</span>
         </button>
     );
 
 
 
     return (
-        <div className="flex flex-col h-full pt-8 pb-8 lg:pl-6 xl:pl-12 pr-0 no-scrollbar overflow-y-auto">
+        <div className="flex flex-col h-full pt-8 pb-8 lg:pl-4 xl:pl-8 pr-0 no-scrollbar overflow-y-auto">
             {/* Main Navigation */}
             <NavItem 
                 label="İş Arayanlar" 
@@ -185,6 +189,14 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 active={location.pathname.startsWith('/mesajlar')}
                 onClick={() => navigate('/mesajlar')}
                 badge={unreadMessageCount > 0 ? unreadMessageCount.toString() : undefined}
+            />
+
+            <NavItem 
+                label="Bildirimler" 
+                icon="fi-rr-bell" 
+                active={location.pathname === '/bildirimler'}
+                onClick={() => navigate('/bildirimler')}
+                badge={notificationCount > 0 ? notificationCount.toString() : undefined}
             />
 
             {isEmployer && onOpenSavedCVs && (

@@ -134,6 +134,7 @@ const App: React.FC = () => {
             path === '/cv-guncelle' ||
             path === '/sirket-olustur' ||
             path === '/sirket-guncelle' ||
+            path === '/bildirimler' ||
             legalPaths.includes(path);
   }, [location.pathname]);
 
@@ -604,23 +605,36 @@ const App: React.FC = () => {
     }
   };
 
-  const markAllNotificationsRead = async () => {
+  const markAllRead = async () => {
     if (!user) return;
     try {
-      // Clear Notifications: Soft Delete (Hide)
       const { error } = await supabase
         .from('notifications')
         .update({ is_visible: false })
         .eq('user_id', user.id);
 
       if (error) throw error;
-
-      // Optimistic update: Clear list except pending requests (which are properly separated now)
       setGeneralNotifications([]);
       showToast('Bildirimler temizlendi.', 'success');
     } catch (error: any) {
       console.error('Error clearing notifications:', error);
       showToast('Bildirimler silinemedi: ' + error.message, 'error');
+    }
+  };
+
+  const handleNotificationAction = async (requestId: string, action: 'approved' | 'rejected') => {
+    try {
+      const { error } = await supabase
+        .from('contact_requests')
+        .update({ status: action })
+        .eq('id', requestId);
+
+      if (error) throw error;
+      showToast(action === 'approved' ? 'İstek onaylandı.' : 'İstek reddedildi.', 'success');
+      fetchGeneralNotifications();
+    } catch (error: any) {
+      console.error('Error handling notification action:', error);
+      showToast('İşlem başarısız: ' + error.message, 'error');
     }
   };
 
@@ -1924,7 +1938,11 @@ const App: React.FC = () => {
         hasCV={!!currentUserCV}
         userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
         notificationCount={generalNotifications.filter(n => !n.is_read).length}
-        notifications={[...generalNotifications].sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+        notifications={[...generalNotifications].sort((a,b) => {
+          const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+          const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+          return dateB - dateA;
+        })}
         onMarkNotificationRead={markNotificationRead}
         onOpenProfile={handleOpenProfile}
         onOpenAuth={handleAuthOpen}
@@ -1972,6 +1990,7 @@ const App: React.FC = () => {
               onCVClick={handleCVClick}
               loading={loading}
               unreadMessageCount={unreadMessageCount}
+              notificationCount={generalNotifications.filter(n => !n.is_read).length}
             />
           </aside>
 
@@ -2025,7 +2044,6 @@ const App: React.FC = () => {
                     window.innerWidth >= 1024 ? <KartvizidList type="settings" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} /> : <SettingsModal onClose={() => navigate('/', { replace: true })} />
                   } />
                   <Route path="/ayarlar/:tab" element={<KartvizidList type="settings" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/bildirimler" element={<NotificationsModal onClose={() => navigate('/', { replace: true })} notifications={generalNotifications} onMarkRead={markNotificationRead} onOpenProfile={handleOpenProfile} />} />
                   <Route path="/cv-olustur" element={
                     window.innerWidth >= 1024 ? <KartvizidList type="cv-tips" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} /> : <CVFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCreateCV} initialData={currentUserCV || {}} availableCities={availableCities} />
                    } />
@@ -2038,6 +2056,36 @@ const App: React.FC = () => {
                     <Route path="/sirket-guncelle" element={
                      window.innerWidth >= 1024 ? <KartvizidList type="employer-tips" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} /> : <CompanyFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCompanySubmit} initialData={activeCompany || {}} availableCities={availableCities} />
                     } />
+                    <Route path="/bildirimler" element={
+                      window.innerWidth >= 1024 ? (
+                        <KartvizidList 
+                          type="notifications" 
+                          jobFinders={cvList} 
+                          popularProfessions={professionStats} 
+                          popularCities={cityStats} 
+                          popularCVs={[]} 
+                          platformStats={platformStats} 
+                          onFilterApply={handleFilterUpdate} 
+                          notifications={[...generalNotifications].sort((a, b) => {
+                            const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+                            const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+                            return dateB - dateA;
+                          })} 
+                          onMarkRead={markNotificationRead} 
+                          onMarkAllRead={markAllRead} 
+                          onNotificationAction={handleNotificationAction} 
+                        />
+                      ) : (
+                        <NotificationsModal 
+                          onClose={() => navigate('/', { replace: true })} 
+                          notifications={generalNotifications} 
+                          onMarkRead={markNotificationRead} 
+                          onMarkAllRead={markAllRead} 
+                          onAction={handleNotificationAction} 
+                          onOpenProfile={handleOpenProfile} 
+                        />
+                      )
+                    } />
                   <Route path="*" element={<LegalRoute section="general" />} />
                 </Routes>
               </div>
@@ -2045,7 +2093,7 @@ const App: React.FC = () => {
 
             {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
              <aside className={`hidden lg:block flex-1 max-w-[585px] min-w-[320px] h-[calc(100vh-64px)] sticky top-[64px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-r border-gray-200/70 dark:border-white/10 ${
-              isDiscoveryView || location.pathname.startsWith('/rehber/') || location.pathname === '/cv-olustur' || location.pathname === '/cv-guncelle' || location.pathname === '/sirket-olustur' || location.pathname === '/sirket-guncelle' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
+              isDiscoveryView || location.pathname.startsWith('/rehber/') || location.pathname === '/cv-olustur' || location.pathname === '/cv-guncelle' || location.pathname === '/sirket-olustur' || location.pathname === '/sirket-guncelle' || location.pathname === '/bildirimler' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
             }`}>
               <div className="h-full">
                 <Routes>
@@ -2218,7 +2266,11 @@ const App: React.FC = () => {
         hasCV={!!currentUserCV}
         userPhotoUrl={user?.user_metadata?.avatar_url || currentUserCV?.photoUrl}
         notificationCount={generalNotifications.filter(n => !n.is_read).length}
-        notifications={[...generalNotifications].sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())}
+        notifications={[...generalNotifications].sort((a,b) => {
+          const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+          const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+          return dateB - dateA;
+        })}
         onMarkNotificationRead={markNotificationRead}
         onOpenNotifications={() => navigate('/bildirimler')}
         onOpenProfile={handleOpenProfile}

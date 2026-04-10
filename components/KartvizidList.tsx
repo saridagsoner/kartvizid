@@ -1,16 +1,22 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-import { CV } from '../types';
+import { CV, ContactRequest, NotificationItem } from '../types';
+import NotificationDropdown from './NotificationDropdown';
 
 interface KartvizidListProps {
-    type: 'job-finders' | 'professions' | 'cities' | 'most-viewed' | 'stats' | 'premium' | 'settings' | 'cv-tips';
+    type: 'job-finders' | 'professions' | 'cities' | 'most-viewed' | 'stats' | 'premium' | 'settings' | 'cv-tips' | 'employer-tips' | 'notifications';
     jobFinders: CV[];
     popularProfessions: any[];
     popularCities: any[];
     popularCVs: CV[];
     platformStats: any[];
     onFilterApply: (type: 'profession' | 'city', value: string) => void;
+    // Notification props
+    notifications?: any[];
+    onNotificationAction?: (requestId: string, action: 'approved' | 'rejected') => void;
+    onMarkRead?: (id: string) => void;
+    onMarkAllRead?: () => void;
 }
 
 const KartvizidList: React.FC<KartvizidListProps> = ({
@@ -20,7 +26,11 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
     popularCities,
     popularCVs,
     platformStats,
-    onFilterApply
+    onFilterApply,
+    notifications = [],
+    onNotificationAction,
+    onMarkRead,
+    onMarkAllRead
 }) => {
     const { t } = useLanguage();
     const navigate = useNavigate();
@@ -36,6 +46,8 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
             case 'premium': return 'Kartvizid Premium';
             case 'settings': return 'Hesap Ayarları';
             case 'cv-tips': return 'CV Oluşturma Rehberi';
+            case 'employer-tips': return 'İşveren Rehberi';
+            case 'notifications': return 'Bildirimler';
             default: return '';
         }
     };
@@ -50,6 +62,8 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
             case 'premium': return 'fi-rr-membership-vip';
             case 'settings': return 'fi-rr-settings';
             case 'cv-tips': return 'fi-rr-graduation-cap';
+            case 'employer-tips': return 'fi-rr-briefcase';
+            case 'notifications': return 'fi-rr-bell';
             default: return 'fi-rr-document-signed';
         }
     };
@@ -333,6 +347,21 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                                 "Profilinizi %100 tamamladığınızda işverenlerin dikkatini çekme şansınız 5 kat daha fazla olur."
                              </p>
                         </div>
+                    </div>
+                );
+            case 'notifications':
+                return (
+                    <div className="flex flex-col h-[calc(100vh-180px)] overflow-hidden">
+                         <div className="flex-1 overflow-y-auto no-scrollbar">
+                            <NotificationDropdown
+                                onClose={() => {}}
+                                notifications={notifications}
+                                onAction={onNotificationAction || (() => {})}
+                                onMarkRead={onMarkRead}
+                                onMarkAllRead={onMarkAllRead}
+                                embedded={true}
+                            />
+                         </div>
                     </div>
                 );
             default:

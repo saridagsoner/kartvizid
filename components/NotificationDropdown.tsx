@@ -129,11 +129,15 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
                 <div
                   key={item.id}
                   onClick={() => {
-                    const profileId = isContactRequest(item) ? item.requester_id : item.sender_id;
-                    const relatedId = isContactRequest(item) ? item.id : (item as NotificationItem).related_id;
+                    try {
+                        const profileId = isContactRequest(item) ? item.requester_id : (item as any).sender_id;
+                        const relatedId = isContactRequest(item) ? item.id : (item as any).related_id;
 
-                    if (!isContactRequest(item) && onMarkRead) onMarkRead(item.id);
-                    if (profileId) handleProfileClick(profileId, details.role, relatedId);
+                        if (!isContactRequest(item) && item.id && onMarkRead) onMarkRead(item.id);
+                        if (profileId) handleProfileClick(profileId, details.role, relatedId);
+                    } catch (err) {
+                        console.error('Error handling notification click:', err);
+                    }
                   }}
                   className={`px-5 py-4 border-b border-gray-50 dark:border-gray-700 cursor-pointer transition-all hover:bg-white dark:hover:bg-gray-800
                     ${!isContactRequest(item) && !item.is_read ? 'bg-blue-50/40 dark:bg-blue-900/10' : 'bg-transparent'}
@@ -174,13 +178,34 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
                         }
                       </p>
 
-                      {/* Legacy Approval Status (Read Only) */}
-                      {isResolved && (
+                      {/* Approval Status / Actions */}
+                      {isResolved ? (
                         <div className="mt-3">
                           <div className={`text-[10px] font-bold px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5 
                               ${status === 'approved' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
                             {status === 'approved' ? `✓ ${t('notif.approved')}` : `✕ ${t('notif.rejected')}`}
                           </div>
+                        </div>
+                      ) : isContactRequest(item) && (
+                        <div className="mt-3 flex gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onAction(item.id, 'approved');
+                            }}
+                            className="bg-[#1f6d78] text-white text-[10px] font-black px-4 py-2 rounded-xl hover:bg-[#155e68] transition-colors uppercase tracking-wider shadow-sm"
+                          >
+                            {t('notif.approve')}
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onAction(item.id, 'rejected');
+                            }}
+                            className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-[10px] font-black px-4 py-2 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors uppercase tracking-wider"
+                          >
+                            {t('notif.reject')}
+                          </button>
                         </div>
                       )}
                     </div>
