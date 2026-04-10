@@ -2304,6 +2304,8 @@ const App: React.FC = () => {
         onCompanyClick={handleCompanyClick}
         onShopClick={(shop) => { setActiveShop(shop); setIsShopProfileOpen(true); }}
         onFilterApply={(type, val) => handleFilterUpdate(type, val)}
+        unreadMessageCount={conversations.reduce((acc, c) => acc + (c.unread_count || 0), 0)}
+        notificationCount={generalNotifications.filter(n => !n.is_read).length}
       />
 
       <React.Suspense fallback={null}>

@@ -29,6 +29,8 @@ interface MobileMenuDrawerProps {
     onLogout?: () => void;
     onOpenAuth?: (mode: 'signin' | 'signup', role?: string) => void;
     onGoHome: () => void;
+    unreadMessageCount?: number;
+    notificationCount?: number;
 }
 
 const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
@@ -55,7 +57,9 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
     onOpenSavedCVs = () => { },
     onLogout = () => { },
     onOpenAuth,
-    onGoHome
+    onGoHome,
+    unreadMessageCount = 0,
+    notificationCount = 0
 }) => {
     const { t, language, setLanguage } = useLanguage();
     const { theme, toggleTheme } = useTheme();
@@ -70,26 +74,33 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
 
     if (!isOpen) return null;
 
-    const MenuItem = ({ label, onClick, icon, showChevron, isSubMenu }: { label: string, onClick: () => void, icon?: React.ReactNode, showChevron?: boolean, isSubMenu?: boolean }) => (
+    const MenuItem = ({ label, onClick, icon, showChevron, isSubMenu, badge }: { label: string, onClick: () => void, icon?: React.ReactNode, showChevron?: boolean, isSubMenu?: boolean, badge?: string }) => (
         <button
             onClick={onClick}
-            className={`w-full text-left py-3.5 flex items-center justify-between group ${isSubMenu ? 'px-6 py-4' : ''}`}
+            className={`w-full text-left py-4 flex items-center justify-between group active:bg-gray-50 dark:active:bg-white/[0.02] transition-all ${isSubMenu ? 'px-6 py-4' : ''}`}
         >
             <div className="flex items-center gap-4 flex-1 min-w-0 pr-2">
                 {icon && (
-                    <div className="text-gray-900 dark:text-gray-100 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors flex items-center justify-center shrink-0 w-7 text-xl">
+                    <div className="text-black dark:text-gray-100 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors flex items-center justify-center shrink-0 w-8 text-xl font-black">
                         {icon}
                     </div>
                 )}
-                <span className={`${isSubMenu ? 'text-[16px]' : 'text-[17px]'} font-semibold text-gray-900 dark:text-gray-100 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors tracking-tight truncate`}>
+                <span className={`${isSubMenu ? 'text-[15px]' : 'text-[16px]'} font-black text-black dark:text-gray-100 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors tracking-tight truncate`}>
                     {label}
                 </span>
             </div>
-            {showChevron && (
-                <div className="text-gray-400 dark:text-gray-600 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors shrink-0">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
-                </div>
-            )}
+            <div className="flex items-center gap-3">
+                {badge && (
+                    <span className="bg-[#1f6d78] text-white text-[10px] px-2.5 py-1 rounded-full font-black uppercase tracking-wider">
+                        {badge}
+                    </span>
+                )}
+                {showChevron && (
+                    <div className="text-gray-400 dark:text-gray-600 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors shrink-0">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+                    </div>
+                )}
+            </div>
         </button>
     );
 
@@ -500,13 +511,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 content = (
                     <div className="flex flex-col">
                         <MenuItem
-                            label="Kartvizid Nedir?"
-                            onClick={() => setActiveCategory('about')}
-                            showChevron={true}
-                            isSubMenu={true}
-                        />
-                        <MenuItem
-                            label="Kartvizid'te İş Bulanlar"
+                            label={t('sidebar.job_finders')}
                             onClick={() => setActiveCategory('jobFinders')}
                             showChevron={true}
                             isSubMenu={true}
@@ -754,105 +759,96 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 <div className="flex-1 overflow-y-auto px-5 pt-0 pb-4 custom-scrollbar">
                     <div className="flex flex-col space-y-1">
                         <MenuItem
-                            label={t('menu.job_seekers')}
-                            onClick={() => {
-                                onGoHome();
-                                onClose();
-                            }}
-                            icon={<i className="fi fi-rr-ballot"></i>}
+                            label="İş Arayanlar"
+                            onClick={() => { onGoHome(); onClose(); }}
+                            icon={<i className="fi fi-rr-users"></i>}
                         />
                         <MenuItem
                             label="İş Verenler"
                             onClick={() => { onEmployersViewAll(); onClose(); }}
-                            icon={<i className="fi fi-rr-building"></i>}
+                            icon={<i className="fi fi-rr-briefcase"></i>}
                         />
                         <MenuItem
                             label="Hizmetler"
                             onClick={() => { onShopsViewAll(); onClose(); }}
                             icon={<i className="fi fi-rr-shop"></i>}
                         />
-                        <div className="my-1 border-t border-gray-50 dark:border-gray-800/30"></div>
+                        
+                        <div className="my-2 border-t border-gray-100 dark:border-white/5"></div>
+
                         <MenuItem
                             label="Kariyer Rehberi"
-                            onClick={() => {
-                                window.location.href = '/rehber';
-                                onClose();
-                            }}
-                            icon={<i className="fi fi-rr-book-alt text-[#1f6d78] dark:text-[#2dd4bf]"></i>}
+                            onClick={() => { window.location.href = '/rehber'; onClose(); }}
+                            icon={<i className="fi fi-rr-book-alt"></i>}
                         />
                         <MenuItem
-                            label="Bize Ulaşın"
-                            onClick={() => {
-                                window.location.href = '/iletisim';
-                                onClose();
-                            }}
-                            icon={<i className="fi fi-rr-envelope"></i>}
+                            label="Kartvizid"
+                            onClick={() => setActiveCategory('kartvizid')}
+                            icon={<i className="fi fi-rr-document-signed"></i>}
+                            showChevron
+                        />
+
+                        <MenuItem
+                            label="İş Görüşmeleri"
+                            onClick={() => { window.location.href = '/mesajlar'; onClose(); }}
+                            icon={<i className="fi fi-rr-comment"></i>}
+                            badge={unreadMessageCount > 0 ? unreadMessageCount.toString() : undefined}
+                        />
+
+                        <MenuItem
+                            label="Bildirimler"
+                            onClick={() => { window.location.href = '/bildirimler'; onClose(); }}
+                            icon={<i className="fi fi-rr-bell"></i>}
+                            badge={notificationCount > 0 ? notificationCount.toString() : undefined}
                         />
 
                         {isEmployer && (
                             <MenuItem
                                 label="Kaydettiklerim"
-                                onClick={onOpenSavedCVs}
-                                icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>}
+                                onClick={() => { onOpenSavedCVs(); onClose(); }}
+                                icon={<i className="fi fi-rr-bookmark"></i>}
                             />
                         )}
-                        <MenuItem
-                            label={t('menu.kartvizid')}
-                            onClick={() => setActiveCategory('kartvizid')}
-                            icon={<i className="fi fi-rr-document-signed"></i>}
-                        />
+
                         <MenuItem
                             label="Premium"
                             onClick={() => setActiveCategory('premium')}
                             icon={<i className="fi fi-rr-membership-vip"></i>}
                         />
+
+                        <div className="my-2 border-t border-gray-100 dark:border-white/5"></div>
+
                         <MenuItem
-                            label={t('profile.settings')}
-                            onClick={onOpenSettings}
+                            label="Ayarlar"
+                            onClick={() => { onOpenSettings(); onClose(); }}
                             icon={<i className="fi fi-rr-settings"></i>}
                         />
 
-                        <div className="my-3 border-t border-gray-100 dark:border-gray-800"></div>
-
                         <MenuItem
-                            label="Site Kullanımı"
-                            onClick={() => setActiveCategory('siteUsage')}
-                            icon={<i className="fi fi-rr-browser"></i>}
-                        />
-                        <MenuItem
-                            label="Güvenlik ve Gizlilik"
-                            onClick={() => setActiveCategory('securityPrivacy')}
-                            icon={<i className="fi fi-rr-shield-check"></i>}
-                        />
-                        <MenuItem
-                            label="Veri Politikamız"
-                            onClick={() => setActiveCategory('dataPolicy')}
-                            icon={<i className="fi fi-rr-lock"></i>}
-                        />
-                        <MenuItem
-                            label="Mobil Uygulama"
-                            onClick={() => setActiveCategory('mobileApp')}
-                            icon={<i className="fi fi-rr-mobile-button"></i>}
+                            label="Kurumsal"
+                            onClick={() => { window.location.href = '/iletisim'; onClose(); }}
+                            icon={<i className="fi fi-rr-info"></i>}
                         />
 
-                        {user && (
-                            <>
-                                <div className="my-3 border-t border-gray-100 dark:border-gray-800"></div>
-
-
+                        <div className="mt-auto pt-8">
+                            {!user ? (
                                 <button
-                                    onClick={onLogout}
-                                    className="w-full text-left py-3 flex items-center gap-3 group"
+                                    onClick={() => { onOpenAuth?.('signin'); onClose(); }}
+                                    className="w-full bg-[#1f6d78] text-white py-4 rounded-2xl font-black text-sm active:scale-[0.98] transition-all shadow-xl shadow-[#1f6d78]/10 flex items-center justify-center gap-3"
                                 >
-                                    <div className="text-red-500 group-hover:text-red-600 transition-colors flex items-center justify-center shrink-0 w-6">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                                    </div>
-                                    <span className="text-[15px] font-black text-red-500 group-hover:text-red-600 transition-colors rounded-font tracking-tight">
-                                        Çıkış Yap
-                                    </span>
+                                    <i className="fi fi-rr-sign-in-alt text-lg"></i>
+                                    Giriş Yap
                                 </button>
-                            </>
-                        )}
+                            ) : (
+                                <button
+                                    onClick={() => { onLogout(); onClose(); }}
+                                    className="w-full bg-white dark:bg-transparent text-black dark:text-white py-4 rounded-2xl font-black text-sm border-2 border-black dark:border-white/20 active:bg-gray-50 dark:active:bg-white/5 transition-all flex items-center justify-center gap-3"
+                                >
+                                    <i className="fi fi-rr-sign-out-alt text-lg"></i>
+                                    Çıkış Yap
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
 
