@@ -303,6 +303,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 </button>
                             </>
                         )}
+                        
+                        {!user && (
+                            <div className="mt-auto pt-6 px-2 opacity-50 hidden sm:block">
+                                <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-relaxed">
+                                    Diğer ayarlar için giriş yapın.
+                                </p>
+                            </div>
+                        )}
                     </div>
 
                     {/* Content */}
