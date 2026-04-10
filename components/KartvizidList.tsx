@@ -17,6 +17,7 @@ interface KartvizidListProps {
     onNotificationAction?: (requestId: string, action: 'approved' | 'rejected') => void;
     onMarkRead?: (id: string) => void;
     onMarkAllRead?: () => void;
+    user?: any;
 }
 
 const KartvizidList: React.FC<KartvizidListProps> = ({
@@ -30,7 +31,8 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
     notifications = [],
     onNotificationAction,
     onMarkRead,
-    onMarkAllRead
+    onMarkAllRead,
+    user
 }) => {
     const { t } = useLanguage();
     const navigate = useNavigate();
@@ -350,6 +352,19 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                     </div>
                 );
             case 'notifications':
+                if (!user) {
+                    return (
+                        <div className="flex flex-col items-center justify-center py-24 px-10 text-center">
+                            <div className="w-20 h-20 rounded-[2.5rem] bg-gray-50 dark:bg-gray-900/50 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] mb-8 shadow-sm">
+                                <i className="fi fi-rr-bell text-4xl"></i>
+                            </div>
+                            <h3 className="text-xl font-black text-gray-900 dark:text-white mb-3 uppercase tracking-tight">Bildirimlerinizi Kaçırmayın</h3>
+                            <p className="text-[15px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed max-w-[320px]">
+                                İşverenlerden gelen iletişim isteklerini ve hesabınızla ilgili önemli güncellemeleri görmek için giriş yapmalısınız.
+                            </p>
+                        </div>
+                    );
+                }
                 return (
                     <div className="flex flex-col h-[calc(100vh-180px)] overflow-hidden">
                          <div className="flex-1 overflow-y-auto no-scrollbar">

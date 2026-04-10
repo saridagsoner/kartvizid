@@ -8,12 +8,14 @@ interface ConversationsListProps {
   conversations: Conversation[];
   activeConversationId: string | null;
   onRefreshConversations: () => void;
+  user?: any;
 }
 
 const ConversationsList: React.FC<ConversationsListProps> = ({
   conversations,
   activeConversationId,
-  onRefreshConversations
+  onRefreshConversations,
+  user
 }) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -32,7 +34,19 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
       </div>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
-        {conversations.length === 0 ? (
+        {!user ? (
+          <div className="flex flex-col items-center justify-start h-full text-center px-10 pt-20">
+            <div className="w-20 h-20 rounded-[2.5rem] bg-gray-50 dark:bg-gray-900/50 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] mb-8 shadow-sm">
+              <i className="fi fi-rr-comments text-4xl"></i>
+            </div>
+            <h3 className="text-xl font-black text-black dark:text-white mb-3 uppercase tracking-tight">
+              Görüşmelerinizi Takip Edin
+            </h3>
+            <p className="text-[15px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed max-w-[320px]">
+              İşverenlerle olan yazışmalarınızı ve mülakat süreçlerinizi yönetmek için giriş yapmalısınız.
+            </p>
+          </div>
+        ) : conversations.length === 0 ? (
           <div className="flex flex-col items-center justify-start h-full text-center px-10 pt-20">
             <h3 className="text-lg font-black text-black dark:text-white mb-2 uppercase tracking-tight">
               Henüz Bir Görüşme Başlamadı

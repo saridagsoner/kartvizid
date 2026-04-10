@@ -2026,24 +2026,24 @@ const App: React.FC = () => {
                   <Route path="/hakkimizda" element={<LegalList />} />
 
                   {/* Kartvizid Discovery Routes */}
-                  <Route path="/kartvizid/is-bulanlar" element={<KartvizidList type="job-finders" jobFinders={cvList.filter(cv => cv.isPlaced || cv.workingStatus === 'active')} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/kartvizid/is-bulanlar/:id" element={<KartvizidList type="job-finders" jobFinders={cvList.filter(cv => cv.isPlaced || cv.workingStatus === 'active')} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/kartvizid/populer-meslekler" element={<KartvizidList type="professions" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/kartvizid/one-cikan-sehirler" element={<KartvizidList type="cities" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/kartvizid/en-cok-gorununtulenenler" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/kartvizid/en-cok-gorununtulenenler/:id" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/kartvizid/istatistikler" element={<KartvizidList type="stats" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
-                  <Route path="/premium" element={<KartvizidList type="premium" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/kartvizid/is-bulanlar" element={<KartvizidList type="job-finders" jobFinders={cvList.filter(cv => cv.isPlaced || cv.workingStatus === 'active')} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/is-bulanlar/:id" element={<KartvizidList type="job-finders" jobFinders={cvList.filter(cv => cv.isPlaced || cv.workingStatus === 'active')} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/populer-meslekler" element={<KartvizidList type="professions" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/one-cikan-sehirler" element={<KartvizidList type="cities" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/en-cok-gorununtulenenler" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/en-cok-gorununtulenenler/:id" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/istatistikler" element={<KartvizidList type="stats" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/premium" element={<KartvizidList type="premium" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
 
                   {/* Messaging Discovery Routes */}
-                  <Route path="/mesajlar" element={<ConversationsList conversations={conversations} activeConversationId={activeConversationId} onRefreshConversations={fetchConversations} />} />
-                  <Route path="/mesajlar/:id" element={<ConversationsList conversations={conversations} activeConversationId={activeConversationId} onRefreshConversations={fetchConversations} />} />
+                  <Route path="/mesajlar" element={<ConversationsList conversations={conversations} activeConversationId={activeConversationId} onRefreshConversations={fetchConversations} user={user} />} />
+                  <Route path="/mesajlar/:id" element={<ConversationsList conversations={conversations} activeConversationId={activeConversationId} onRefreshConversations={fetchConversations} user={user} />} />
 
                   {/* Page Routes (Full Width on Desktop or Modal) */}
                   <Route path="/ayarlar" element={
-                    window.innerWidth >= 1024 ? <KartvizidList type="settings" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} /> : <SettingsModal onClose={() => navigate('/', { replace: true })} />
+                    window.innerWidth >= 1024 ? <KartvizidList type="settings" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} /> : <SettingsModal onClose={() => navigate('/', { replace: true })} />
                   } />
-                  <Route path="/ayarlar/:tab" element={<KartvizidList type="settings" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} />} />
+                  <Route path="/ayarlar/:tab" element={<KartvizidList type="settings" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
                   <Route path="/cv-olustur" element={
                     window.innerWidth >= 1024 ? <KartvizidList type="cv-tips" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[]} platformStats={platformStats} onFilterApply={handleFilterUpdate} /> : <CVFormModal onClose={() => navigate('/', { replace: true })} onSubmit={handleCreateCV} initialData={currentUserCV || {}} availableCities={availableCities} />
                    } />
@@ -2074,6 +2074,7 @@ const App: React.FC = () => {
                           onMarkRead={markNotificationRead} 
                           onMarkAllRead={markAllRead} 
                           onNotificationAction={handleNotificationAction} 
+                          user={user}
                         />
                       ) : (
                         <NotificationsModal 
