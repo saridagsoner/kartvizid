@@ -1827,7 +1827,7 @@ const App: React.FC = () => {
           {((viewMode === 'cvs') || 
             (viewMode === 'shops') || 
             (viewMode === 'employers')) && (
-            <div className="animate-in fade-in duration-300 pb-2 flex items-center gap-2">
+            <div className="pb-2 flex items-center gap-2">
               <div className="text-[22px] font-black tracking-tighter text-black dark:text-white transition-all leading-none">
                 {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
               </div>
@@ -2313,6 +2313,32 @@ const App: React.FC = () => {
         {isCVPromoOpen && <CVPromoModal onClose={() => setIsCVPromoOpen(false)} onCreateCV={() => { setIsCVPromoOpen(false); navigate('/cv-olustur'); }} />}
         {isAuthModalOpen && <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} initialMode={authMode} initialRole={authRole as any} />}
         {isShopProfileOpen && activeShop && <ShopProfileModal shop={activeShop} isOpen={isShopProfileOpen} onClose={() => setIsShopProfileOpen(false)} onOpenChat={handleOpenChat} />}
+        
+        {/* Mobile Detail Modals (Triggered when on mobile and route matches) */}
+        {window.innerWidth < 1024 && location.pathname.includes('/cv/') && (() => {
+          const id = location.pathname.split('/cv/')[1];
+          const cv = cvList.find(c => c.slug === id || c.id === id);
+          return cv ? (
+            <ProfileModal 
+              cv={cv} 
+              onClose={() => navigate('/')} 
+              onOpenChat={handleOpenChat} 
+              onJobFound={handleJobFound} 
+            />
+          ) : null;
+        })()}
+
+        {window.innerWidth < 1024 && location.pathname.includes('/company/') && (() => {
+          const id = location.pathname.split('/company/')[1];
+          const company = companyList.find(c => c.slug === id || c.id === id);
+          return company ? (
+            <CompanyProfileModal 
+              company={company} 
+              onClose={() => navigate('/')} 
+            />
+          ) : null;
+        })()}
+        
         {isJobSuccessOpen && <JobSuccessModal onClose={() => setIsJobSuccessOpen(false)} />}
         {isMessagesOpen && window.innerWidth < 1024 && (
           <MessagesModal 
