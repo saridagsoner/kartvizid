@@ -8,10 +8,13 @@ interface SettingsDetailViewProps {
     activeTab: 'general' | 'account' | 'security' | 'notifications';
 }
 
-const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab }) => {
+const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: initialTab }) => {
     const { user, signOut } = useAuth();
     const { language, setLanguage, t } = useLanguage();
     const { theme, toggleTheme } = useTheme();
+
+    // Guests can only access 'general' settings
+    const activeTab = (!user && initialTab !== 'general') ? 'general' : initialTab;
     const [loading, setLoading] = useState(false);
     const [showWarning, setShowWarning] = useState<{ show: boolean, message: string }>({ show: false, message: '' });
 

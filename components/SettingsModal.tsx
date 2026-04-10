@@ -255,7 +255,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                     <div>
                         <h2 className="text-xl sm:text-2xl font-black text-black dark:text-white tracking-tighter">{t('settings.header_title')}</h2>
                         <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mt-1">
-                            {user ? t('settings.header_subtitle') : t('account.appearance')}
+                            {user ? t('settings.header_subtitle') : 'Tema & Dil'}
                         </p>
                     </div>
                     <button

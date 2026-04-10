@@ -220,11 +220,11 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                 );
             case 'settings':
                 const settingsTabs = [
-                    { id: 'account', label: 'Hesap Özeti', icon: 'fi-rr-user', path: '/ayarlar/hesap' },
-                    { id: 'general', label: 'Genel Ayarlar', icon: 'fi-rr-opacity', path: '/ayarlar/genel' },
-                    { id: 'security', label: 'Güvenlik', icon: 'fi-rr-lock', path: '/ayarlar/guvenlik' },
-                    { id: 'notifications', label: 'Bildirimler', icon: 'fi-rr-bell', path: '/ayarlar/bildirimler' }
-                ];
+                    { id: 'account', label: 'Hesap Özeti', icon: 'fi-rr-user', path: '/ayarlar/hesap', protected: true },
+                    { id: 'general', label: 'Genel Ayarlar', icon: 'fi-rr-opacity', path: '/ayarlar/genel', protected: false },
+                    { id: 'security', label: 'Güvenlik', icon: 'fi-rr-lock', path: '/ayarlar/guvenlik', protected: true },
+                    { id: 'notifications', label: 'Bildirimler', icon: 'fi-rr-bell', path: '/ayarlar/bildirimler', protected: true }
+                ].filter(tab => !tab.protected || user);
                 return (
                     <div className="flex flex-col py-4">
                         {settingsTabs.map((tab) => {

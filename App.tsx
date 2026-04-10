@@ -2121,7 +2121,7 @@ const App: React.FC = () => {
                   <Route path="/mesajlar/:id" element={<ChatDetailView conversations={conversations} onRefreshConversations={fetchConversations} />} />
                   
                   {/* Settings Detail Routes */}
-                  <Route path="/ayarlar" element={<SettingsDetailView activeTab="account" />} />
+                  <Route path="/ayarlar" element={<SettingsDetailView activeTab={user ? "account" : "general"} />} />
                   <Route path="/ayarlar/hesap" element={<SettingsDetailView activeTab="account" />} />
                   <Route path="/ayarlar/genel" element={<SettingsDetailView activeTab="general" />} />
                   <Route path="/ayarlar/guvenlik" element={<SettingsDetailView activeTab="security" />} />
