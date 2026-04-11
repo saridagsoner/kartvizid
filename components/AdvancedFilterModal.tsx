@@ -67,7 +67,7 @@ const ModalDropdown: React.FC<{
           onChange={(e) => setSearchTerm(e.target.value)}
           className={`w-[111.11%] h-[46px] sm:h-[53.33px] bg-transparent outline-none font-bold text-[16px] origin-top-left [0.9] px-5 sm:px-6 py-0 placeholder:text-gray-400 ${value && !isOpen ? 'text-black dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}
         />
-        <div className="absolute right-4 top-1/2 -/2 pointer-events-none text-gray-400 group-focus-within:text-[#1f6d78] transition-colors">
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-[#1f6d78] transition-colors">
           <svg
             className={`transition-transform  ${isOpen ? 'rotate-180' : ''}`}
             width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
@@ -306,7 +306,7 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
                     onChange={e => handleSalaryChange('salaryMin', e.target.value)}
                     className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left [0.85] px-6 sm:px-7 py-0 placeholder:text-gray-400 dark:text-white"
                   />
-                  <span className="absolute right-4 top-1/2 -/2 text-gray-400 font-bold text-[10px]">₺</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[10px]">₺</span>
                 </div>
                 <div className="w-4 h-0.5 bg-gray-300 rounded-full shrink-0"></div>
                 <div className="flex-1 relative h-[42px] sm:h-[48px] rounded-full overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus-within:border-[#1f6d78] focus-within:ring-4 focus-within:ring-[#1f6d78]/5 transition-all">
@@ -318,7 +318,7 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({ initialFilter
                     onChange={e => handleSalaryChange('salaryMax', e.target.value)}
                     className="w-[117.6%] h-[49px] sm:h-[56px] bg-transparent outline-none font-bold text-[16px] origin-top-left [0.85] px-6 sm:px-7 py-0 placeholder:text-gray-400 dark:text-white"
                   />
-                  <span className="absolute right-4 top-1/2 -/2 text-gray-400 font-bold text-[10px]">₺</span>
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-[10px]">₺</span>
                 </div>
               </div>
             </FilterSection>

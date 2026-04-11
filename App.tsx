@@ -1674,9 +1674,10 @@ const App: React.FC = () => {
   }, [isSimulatedLoading]);
 
   const availableProfessions = useMemo(() => {
-    const allProfessions = cvList.flatMap(cv =>
-      cv.profession?.split(',').map(p => p.trim()).filter(Boolean) || []
-    );
+    const allProfessions = cvList.reduce((acc, cv) => {
+      const profs = cv.profession?.split(',').map(p => p.trim()).filter(Boolean) || [];
+      return acc.concat(profs);
+    }, [] as string[]);
     const unique = new Set(allProfessions);
     return Array.from(unique).sort().map(p => ({ label: p }));
   }, [cvList]);

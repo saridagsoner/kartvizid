@@ -2,10 +2,9 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { CV, FilterState } from '../types';
 import BusinessCard from './BusinessCard';
 import SelectionModal from './SelectionModal';
+import AdvancedFilterModal from './AdvancedFilterModal';
 import { EXPERIENCE_LEVELS } from '../constants';
 import { useLanguage } from '../context/LanguageContext';
-
-const AdvancedFilterModal = React.lazy(() => import('./AdvancedFilterModal'));
 
 interface SearchOverlayProps {
     onClose: () => void;
@@ -57,10 +56,9 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
             filtered = filtered.filter(cv => cv.city === filters.city);
         }
         if (filters.experience) {
-            // Mapping label to experience description or logical match if needed
-            // Currently CV has experienceYears (number), so we might need a more complex match
-            // For now, let's keep it partial string match if we had a string field, or hide this logic until perfected
-            // filtered = filtered.filter(cv => cv.experienceLevel === filters.experience);
+            // Experience matching logic is handled in the main list, 
+            // but for the overlay we currently show filtered results based on stats.
+            // If needed, more complex matching can be added here.
         }
         if (filters.workType) {
             filtered = filtered.filter(cv => cv.workType === filters.workType);
@@ -279,15 +277,13 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
                 />
             )}
             {activeModal === 'advanced' && (
-                <React.Suspense fallback={null}>
-                    <AdvancedFilterModal
-                        initialFilters={filters}
-                        onApply={handleAdvancedApply}
-                        onClose={() => setActiveModal(null)}
-                        availableProfessions={availableProfessions}
-                        availableCities={availableCities}
-                    />
-                </React.Suspense>
+                <AdvancedFilterModal
+                    initialFilters={filters}
+                    onApply={handleAdvancedApply}
+                    onClose={() => setActiveModal(null)}
+                    availableProfessions={availableProfessions}
+                    availableCities={availableCities}
+                />
             )}
         </div>
     );
