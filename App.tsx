@@ -695,6 +695,7 @@ const App: React.FC = () => {
         phone: item.phone,
         isEmailPublic: item.is_email_public,
         isPhonePublic: item.is_phone_public,
+        isPlaced: item.is_placed,
         workingStatus: item.working_status,
         salaryCurrency: item.salary_currency,
         preferredCities: item.preferred_cities || (item.preferred_city ? [item.preferred_city] : []),
@@ -749,7 +750,7 @@ const App: React.FC = () => {
       const { data, error } = await supabase
         .from('cvs')
         .select('*')
-        .eq('working_status', 'active') // active = Working / Found Job
+        .eq('is_placed', true) // Only those who actually found jobs
         .order('updated_at', { ascending: false })
         .limit(5);
 
@@ -787,6 +788,7 @@ const App: React.FC = () => {
         phone: item.phone,
         isEmailPublic: item.is_email_public,
         isPhonePublic: item.is_phone_public,
+        isPlaced: item.is_placed,
         workingStatus: item.working_status,
         salaryCurrency: item.salary_currency,
         preferredCities: item.preferred_cities || (item.preferred_city ? [item.preferred_city] : []),
@@ -1101,6 +1103,7 @@ const App: React.FC = () => {
           phone: item.phone || '',
           isEmailPublic: item.is_email_public,
           isPhonePublic: item.is_phone_public,
+          isPlaced: item.is_placed,
           workingStatus: item.working_status || 'open',
           references: item.references,
           workExperience: item.work_experience || [],
@@ -1969,8 +1972,8 @@ const App: React.FC = () => {
                   <Route path="/hakkimizda" element={<LegalList />} />
 
                   {/* Kartvizid Discovery Routes */}
-                  <Route path="/kartvizid/is-bulanlar" element={<KartvizidList type="job-finders" jobFinders={cvList.filter(cv => cv.isPlaced || cv.workingStatus === 'active')} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
-                  <Route path="/kartvizid/is-bulanlar/:id" element={<KartvizidList type="job-finders" jobFinders={cvList.filter(cv => cv.isPlaced || cv.workingStatus === 'active')} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/is-bulanlar" element={<KartvizidList type="job-finders" jobFinders={jobFinders} popularProfessions={professionStats} popularCities={cityStats} popularCVs={popularCVs} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/is-bulanlar/:id" element={<KartvizidList type="job-finders" jobFinders={jobFinders} popularProfessions={professionStats} popularCities={cityStats} popularCVs={popularCVs} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
                   <Route path="/kartvizid/populer-meslekler" element={<KartvizidList type="professions" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
                   <Route path="/kartvizid/one-cikan-sehirler" element={<KartvizidList type="cities" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
                   <Route path="/kartvizid/en-cok-gorununtulenenler" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
