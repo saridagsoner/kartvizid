@@ -750,9 +750,9 @@ const App: React.FC = () => {
       const { data, error } = await supabase
         .from('cvs')
         .select('*')
-        .eq('is_placed', true) // Only those who actually found jobs
+        .or('is_placed.eq.true,working_status.eq.active')
         .order('updated_at', { ascending: false })
-        .limit(5);
+        .limit(10);
 
       if (error) throw error;
 
