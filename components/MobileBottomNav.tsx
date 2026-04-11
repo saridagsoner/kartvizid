@@ -31,7 +31,11 @@ interface MobileBottomNavProps {
     onOpenNotifications?: () => void;
     onOpenSavedCVs?: () => void;
     hasCV?: boolean;
-    onOpenSettings?: () => void; // Adding this too since it's used in App.tsx
+    onOpenSettings?: () => void;
+    currentFilters?: FilterState;
+    onFilterApply?: (key: string, value: any) => void;
+    availableProfessions?: any[];
+    availableCities?: any[];
 }
 
 const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
@@ -51,7 +55,18 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     isCreateOpen = false,
     isProfileOpen = false,
     cvList = [],
-    onOpenFilter
+    availableProfessions = [],
+    availableCities = [],
+    currentFilters = {
+        profession: '',
+        city: '',
+        experience: '',
+        workType: '',
+        employmentType: '',
+        education: '',
+        skills: []
+    },
+    onFilterApply
 }) => {
     const { user } = useAuth();
     const { t } = useLanguage();
@@ -169,6 +184,10 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     cvList={cvList || []}
                     onOpenProfile={onOpenProfile || (() => {})}
                     onOpenFilter={onOpenFilter}
+                    availableProfessions={availableProfessions}
+                    availableCities={availableCities}
+                    currentFilters={currentFilters}
+                    onFilterChange={onFilterApply}
                 />
             )}
         </>

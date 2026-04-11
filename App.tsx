@@ -2210,6 +2210,10 @@ const App: React.FC = () => {
         onCreateCV={() => user ? navigate('/cv-olustur') : handleAuthOpen('signin')}
         onOpenCompanyProfile={() => user ? navigate('/sirket-olustur') : handleAuthOpen('signin', 'employer')}
         onOpenSettings={() => navigate('/ayarlar')}
+        currentFilters={activeFilters}
+        onFilterApply={handleFilterUpdate}
+        availableProfessions={availableProfessions}
+        availableCities={availableCities}
         hasCV={!!currentUserCV}
         userPhotoUrl={user?.user_metadata?.avatar_url || currentUserCV?.photoUrl}
         notificationCount={generalNotifications.filter(n => !n.is_read).length}
