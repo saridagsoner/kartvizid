@@ -1820,7 +1820,55 @@ const App: React.FC = () => {
     return false;
   }, [location.pathname, currentUserCV, activeCompany, isCVPromoOpen]);
 
-  const HomeDiscoveryContent = () => (
+  // Mobile Swipe Gestures Implementation
+  useEffect(() => {
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      // Detect horizontal swipe (horizontal movement > vertical movement)
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
+        // SWIPE RIGHT (Left to Right)
+        if (deltaX > 0) {
+          // Edge Swipe logic (Starts from the first 50px of the screen)
+          if (touchStartX < 50) {
+            const isDetailView = location.pathname !== '/' && 
+                              (location.pathname.startsWith('/cv/') || 
+                               location.pathname.startsWith('/rehber/') || 
+                               location.pathname.startsWith('/company/'));
+            
+            if (isDetailView && window.innerWidth < 1024) {
+              // On mobile detail views, swiping from left edge goes BACK
+              navigate(-1);
+            } else if (window.innerWidth < 1024) {
+              // On main pages, swiping from left edge opens the MENU
+              setIsMobileMenuOpen(true);
+            }
+          }
+        }
+      }
+    };
+
+    window.addEventListener('touchstart', handleTouchStart);
+    window.addEventListener('touchend', handleTouchEnd);
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [location.pathname, navigate]);
+
+  // Moved HomeDiscoveryContent to a constant or stable function to prevent re-creation flicker
+  const renderHomeDiscoveryContent = useCallback(() => (
     <>
       <div className="flex sm:hidden items-start justify-between px-4 mt-4 mb-0 pl-6">
         <div className="flex flex-col gap-0 w-full pt-2 pb-0.5">
@@ -2004,11 +2052,11 @@ const App: React.FC = () => {
               <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth lg:pl-2">
                 <Routes>
                   {/* Discovery Routes (List View) */}
-                  <Route path="/" element={<HomeDiscoveryContent />} />
-                  <Route path="/cv/:id" element={<HomeDiscoveryContent />} />
-                  <Route path="/company/:id" element={<HomeDiscoveryContent />} />
-                  <Route path="/hizmetler" element={<HomeDiscoveryContent />} />
-                  <Route path="/is-verenler" element={<HomeDiscoveryContent />} />
+                  <Route path="/" element={renderHomeDiscoveryContent()} />
+                  <Route path="/cv/:id" element={renderHomeDiscoveryContent()} />
+                  <Route path="/company/:id" element={renderHomeDiscoveryContent()} />
+                  <Route path="/hizmetler" element={renderHomeDiscoveryContent()} />
+                  <Route path="/is-verenler" element={renderHomeDiscoveryContent()} />
                   
                   {/* Unified Content Lists (Middle Column) */}
                   <Route path="/rehber/*" element={<BlogRoute isInline={true} viewType="list" />} />
