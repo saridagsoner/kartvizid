@@ -238,17 +238,13 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 content = (
                     <div className="flex flex-col">
                         {popularProfessions.map((item, idx) => (
-                            <button
+                            <div
                                 key={idx}
-                                onClick={() => {
-                                    onFilterApply('profession', item.label);
-                                    onClose();
-                                }}
-                                className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                                className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5"
                             >
                                 <span className="font-semibold text-[16px] text-gray-700 dark:text-gray-300">{item.label}</span>
                                 <span className="text-[12px] font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-2.5 py-1 rounded-full">{item.count}</span>
-                            </button>
+                            </div>
                         ))}
                     </div>
                 );
@@ -258,17 +254,13 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 content = (
                     <div className="flex flex-col">
                         {popularCities.map((item, idx) => (
-                            <button
+                            <div
                                 key={idx}
-                                onClick={() => {
-                                    onFilterApply('city', item.label);
-                                    onClose();
-                                }}
-                                className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                                className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5"
                             >
                                 <span className="font-semibold text-[16px] text-gray-700 dark:text-gray-300">{item.label}</span>
                                 <span className="text-[12px] font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-2.5 py-1 rounded-full">{item.count}</span>
-                            </button>
+                            </div>
                         ))}
                     </div>
                 );
@@ -678,8 +670,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                             popularCVs.map((cv) => (
                                 <div
                                     key={cv.id}
-                                    onClick={() => { onCVClick(cv); onClose(); }}
-                                    className="flex items-center gap-3 py-3.5 border-b border-gray-100 dark:border-gray-800 px-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                                    className="flex items-center gap-3 py-3.5 border-b border-gray-100 dark:border-gray-800 px-5"
                                 >
                                     <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden shrink-0 border border-gray-100 dark:border-gray-700">
                                         <img src={cv.photoUrl || "https://picsum.photos/seed/user-placeholder/100/100"} alt={cv.name} className="w-full h-full object-cover" />

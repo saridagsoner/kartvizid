@@ -75,6 +75,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
             case 'job-finders':
             case 'most-viewed':
                 const list = type === 'job-finders' ? jobFinders : popularCVs;
+                const isClickable = type === 'job-finders';
                 return (
                     <div className="flex flex-col">
                         {list.length > 0 ? (
@@ -82,22 +83,20 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                                 <div
                                     key={cv.id}
                                     onClick={() => {
-                                        if (type === 'job-finders') {
-                                            navigate(`/kartvizid/is-bulanlar/${cv.id}`);
-                                        } else if (type === 'most-viewed') {
-                                            navigate(`/kartvizid/en-cok-gorununtulenenler/${cv.id}`);
-                                        } else {
-                                            navigate(`/cv/${cv.id}`);
+                                        if (isClickable) {
+                                            navigate(`/cv/${cv.slug || cv.id}`);
                                         }
                                     }}
-                                    className={`flex items-center gap-4 py-5 border-b border-gray-100 dark:border-white/5 px-6 cursor-pointer hover:bg-[#1f6d78]/5 dark:hover:bg-[#1f6d78]/10 transition-all group relative ${
+                                    className={`flex items-center gap-4 py-5 border-b border-gray-100 dark:border-white/5 px-6 transition-all group relative ${
+                                        isClickable ? 'cursor-pointer hover:bg-[#1f6d78]/5 dark:hover:bg-[#1f6d78]/10' : ''
+                                    } ${
                                         location.pathname.includes(cv.id) ? 'bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' : ''
                                     }`}
                                 >
-                                    {location.pathname.includes(cv.id) && (
+                                    {isClickable && location.pathname.includes(cv.id) && (
                                         <div className="absolute left-[-8px] top-0 bottom-0 w-1 bg-[#1f6d78] dark:bg-[#2dd4bf]"></div>
                                     )}
-                                    <div className="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 border border-gray-100 dark:border-white/10 group-hover:scale-105 transition-transform">
+                                    <div className={`w-12 h-12 rounded-2xl bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 border border-gray-100 dark:border-white/10 transition-transform ${isClickable ? 'group-hover:scale-105' : ''}`}>
                                         <img src={cv.photoUrl || "https://picsum.photos/seed/user-placeholder/100/100"} alt={cv.name} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="min-w-0 flex-1">
@@ -109,9 +108,11 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                                             )}
                                         </div>
                                     </div>
-                                    <div className="text-gray-300 dark:text-gray-700 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors">
-                                        <i className="fi fi-rr-angle-small-right text-xl"></i>
-                                    </div>
+                                    {isClickable && (
+                                        <div className="text-gray-300 dark:text-gray-700 group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors">
+                                            <i className="fi fi-rr-angle-small-right text-xl"></i>
+                                        </div>
+                                    )}
                                 </div>
                             ))
                         ) : (
