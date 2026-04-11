@@ -66,6 +66,11 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         education: '',
         skills: []
     },
+    onOpenSettings,
+    onOpenFilter,
+    onOpenNotifications,
+    onOpenSavedCVs,
+    signOut,
     onFilterApply
 }) => {
     const { user } = useAuth();
