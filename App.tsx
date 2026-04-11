@@ -1841,7 +1841,7 @@ const App: React.FC = () => {
 
       {/* Filters are now moved to Top Navbar */}
       {isDesktopFilterOpen && viewMode === 'cvs' && (
-        <div className="hidden sm:block animate-in slide-in-from-top-4 duration-300 mb-3 pb-4 mt-2 lg:-ml-4 mr-8 px-1 border-b border-gray-100 dark:border-gray-800/50">
+        <div className="hidden sm:block mb-3 pb-4 mt-2 lg:-ml-4 mr-8 px-1 border-b border-gray-100 dark:border-gray-800/50">
           <Filters
             currentFilters={activeFilters}
             onChange={handleFilterUpdate}

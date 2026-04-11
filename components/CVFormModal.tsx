@@ -12,8 +12,8 @@ interface CVFormModalProps {
 
 const CVFormModal: React.FC<CVFormModalProps> = (props) => {
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center sm:p-4 bg-white dark:bg-black sm:bg-black/60 sm:backdrop-blur-xl animate-in fade-in duration-300">
-      <div className="bg-white dark:bg-black w-full h-full sm:w-full sm:max-w-[800px] sm:h-[90vh] rounded-none sm:rounded-[3rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden animate-in zoom-in-95 duration-500">
+    <div className="fixed inset-0 z-[120] flex items-center justify-center sm:p-4 bg-white dark:bg-black sm:bg-black/60 sm:backdrop-blur-xl">
+      <div className="bg-white dark:bg-black w-full h-full sm:w-full sm:max-w-[800px] sm:h-[90vh] rounded-none sm:rounded-[3rem] shadow-none sm:shadow-2xl relative flex flex-col overflow-hidden">
         <CVFormContent {...props} />
       </div>
     </div>

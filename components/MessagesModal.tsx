@@ -305,7 +305,7 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                                 </span>
                               </div>
                             )}
-                            <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                            <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                               <div className={`max-w-[85%] sm:max-w-[70%] px-5 py-3 sm:px-6 sm:py-3.5 shadow-sm leading-relaxed transition-all ${
                                 isOwn 
                                 ? 'bg-[#1f6d78] text-white rounded-[1.25rem] rounded-br-[0.2rem]' 

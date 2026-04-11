@@ -548,7 +548,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             case 'premium':
                 title = "Premium";
                 content = (
-                    <div className="flex flex-col p-6 pb-20 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                    <div className="flex flex-col p-6 pb-20 space-y-8">
                         <div className="flex flex-col items-center text-center space-y-4">
                             <div className="w-20 h-20 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 rounded-[28px] flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78]/10 shadow-sm transition-transform duration-500 hover:scale-105">
                                 <i className="fi fi-rr-membership-vip text-4xl"></i>
@@ -625,7 +625,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
             case 'securityPrivacy':
                 title = "Güvenlik ve Gizlilik";
                 content = (
-                    <div className="flex flex-col p-6 pb-20 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                    <div className="flex flex-col p-6 pb-20 space-y-8">
                         <div className="flex flex-col items-center text-center space-y-4">
                             <div className="w-20 h-20 bg-green-50 dark:bg-green-500/10 rounded-[28px] flex items-center justify-center text-green-600 dark:text-green-400 border border-green-100 dark:border-green-500/20 shadow-sm transition-transform duration-500 hover:scale-105">
                                 <i className="fi fi-rr-shield-check text-4xl"></i>

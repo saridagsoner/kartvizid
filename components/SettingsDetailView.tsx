@@ -117,7 +117,7 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
             )}
 
             {activeTab === 'general' && (
-                <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-12">
                     <section>
                         <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
                             {t('account.appearance')}
@@ -171,7 +171,7 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
             )}
 
             {activeTab === 'account' && (
-                <div className="max-w-xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="max-w-xl mx-auto space-y-10">
                     <section>
                         <h3 className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.25em] mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
                             HESAP ÖZETİ
@@ -208,7 +208,7 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
             )}
 
             {activeTab === 'security' && (
-                <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-12">
                     <section>
                          <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
                             E-posta Değiştir
@@ -253,7 +253,7 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
             )}
 
             {activeTab === 'notifications' && (
-                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-6">
                     <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
                         Bildirim Tercihleri
                     </h3>

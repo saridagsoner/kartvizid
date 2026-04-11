@@ -235,7 +235,7 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
                         </span>
                       </div>
                     )}
-                    <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-4 duration-500`}>
+                    <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-[85%] md:max-w-[75%] px-7 py-4 shadow-xl leading-relaxed transition-all duration-300 ${
                         isOwn 
                         ? 'bg-[#1f6d78] text-white rounded-[2.5rem] rounded-br-lg' 

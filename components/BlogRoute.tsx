@@ -61,7 +61,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
     const { color } = getStyle(article.category);
 
     return (
-      <div className={isInline ? "h-full flex flex-col overflow-hidden bg-white dark:bg-black" : "fixed inset-0 z-[200] bg-white dark:bg-gray-900 overflow-y-auto custom-scrollbar animate-in slide-in-from-right duration-300"}>
+      <div className={isInline ? "h-full flex flex-col overflow-hidden bg-white dark:bg-black" : "fixed inset-0 z-[200] bg-white dark:bg-gray-900 overflow-y-auto custom-scrollbar"}>
         {!isInline && (
             <SEO 
                 title={`${article.title} | Kartvizid Rehber`}
@@ -161,7 +161,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
 
   // List View Rendering
   return (
-    <div className={isInline ? "bg-white dark:bg-black" : "fixed inset-0 z-[200] bg-white dark:bg-gray-900 overflow-y-auto custom-scrollbar animate-in fade-in duration-300"}>
+    <div className={isInline ? "bg-white dark:bg-black" : "fixed inset-0 z-[200] bg-white dark:bg-gray-900 overflow-y-auto custom-scrollbar"}>
       {!isInline && (
         <>
             <SEO 
