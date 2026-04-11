@@ -2241,8 +2241,8 @@ const App: React.FC = () => {
         popularCities={cityStats}
         weeklyTrends={[]}
         platformStats={platformStats}
-        jobFinders={cvList}
-        popularCVs={cvList}
+        jobFinders={jobFinders}
+        popularCVs={popularCVs}
         popularCompanies={companyList}
         shops={shopList}
         onJobFinderClick={handleCVClick}
