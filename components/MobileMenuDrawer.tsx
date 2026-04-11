@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { CV } from '../types';
@@ -61,6 +62,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
     unreadMessageCount = 0,
     notificationCount = 0
 }) => {
+    const navigate = useNavigate();
     const { t, language, setLanguage } = useLanguage();
     const { theme, toggleTheme } = useTheme();
     const [activeCategory, setActiveCategory] = useState<'about' | 'professions' | 'cities' | 'jobFinders' | 'stats' | 'companies' | 'shops' | 'mostViewed' | 'siteUsage' | 'securityPrivacy' | 'dataPolicy' | 'mobileApp' | 'kartvizid' | 'premium' | LegalSection | null>(null);
@@ -778,7 +780,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
 
                         <MenuItem
                             label="Kariyer Rehberi"
-                            onClick={() => { window.location.href = '/rehber'; onClose(); }}
+                            onClick={() => { navigate('/rehber'); onClose(); }}
                             icon={<i className="fi fi-rr-book-alt"></i>}
                         />
                         <MenuItem
@@ -790,14 +792,14 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
 
                         <MenuItem
                             label="İş Görüşmeleri"
-                            onClick={() => { window.location.href = '/mesajlar'; onClose(); }}
+                            onClick={() => { navigate('/mesajlar'); onClose(); }}
                             icon={<i className="fi fi-rr-comment"></i>}
                             badge={unreadMessageCount > 0 ? unreadMessageCount.toString() : undefined}
                         />
 
                         <MenuItem
                             label="Bildirimler"
-                            onClick={() => { window.location.href = '/bildirimler'; onClose(); }}
+                            onClick={() => { navigate('/bildirimler'); onClose(); }}
                             icon={<i className="fi fi-rr-bell"></i>}
                             badge={notificationCount > 0 ? notificationCount.toString() : undefined}
                         />

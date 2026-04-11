@@ -2338,6 +2338,11 @@ const App: React.FC = () => {
             />
           ) : null;
         })()}
+
+        {/* Mobile Blog/Article Detail */}
+        {window.innerWidth < 1024 && location.pathname.startsWith('/rehber/') && location.pathname !== '/rehber' && (
+          <BlogRoute isInline={false} viewType="detail" />
+        )}
         
         {isJobSuccessOpen && <JobSuccessModal onClose={() => setIsJobSuccessOpen(false)} />}
         {isMessagesOpen && window.innerWidth < 1024 && (

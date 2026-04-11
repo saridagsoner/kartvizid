@@ -198,6 +198,18 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
         )}
 
         {isInline && (
+            <div className="flex sm:hidden items-start justify-between px-4 mt-4 mb-0 pl-6">
+                <div className="flex flex-col gap-0 w-full pt-2 pb-0.5">
+                    <div className="pb-2 flex items-center gap-2">
+                        <h1 className="text-[22px] font-black tracking-tighter text-black dark:text-white leading-none">
+                            Kariyer Rehberi
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        )}
+
+        {isInline && (
             <div className="hidden sm:block mt-8 mb-4 lg:pl-1.5 px-6">
                 <h1 className="text-[24px] font-black tracking-tighter text-black dark:text-white leading-none">
                     Kariyer Rehberi
