@@ -122,6 +122,7 @@ export interface FilterState {
   noticePeriod: string;
   travelStatus: string;
   driverLicenses: string[];
+  skills?: string[];
   preferredCities?: string[];
   preferredCountries?: string[];
   preferredRoles?: string[];

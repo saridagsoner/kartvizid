@@ -163,6 +163,7 @@ const App: React.FC = () => {
     noticePeriod: '',
     travelStatus: '',
     driverLicenses: [],
+    skills: [],
     preferredCities: [],
     preferredCountries: []
   });

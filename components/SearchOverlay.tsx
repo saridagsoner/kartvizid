@@ -34,31 +34,46 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
     const [activeModal, setActiveModal] = useState<'professions' | 'cities' | 'experience' | 'advanced' | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
+    // Defensive check for currentFilters
+    const filters = currentFilters || {
+        profession: '',
+        city: '',
+        experience: '',
+        workType: '',
+        employmentType: '',
+        educationLevel: '',
+        skills: []
+    };
+
     const results = useMemo(() => {
-        let filtered = [...cvList];
+        if (!cvList) return [];
+        let filtered = cvList.filter(cv => !!cv); // Remove any nulls/undefineds
 
         // Apply filters
-        if (currentFilters.profession) {
-            filtered = filtered.filter(cv => cv.profession === currentFilters.profession);
+        if (filters.profession) {
+            filtered = filtered.filter(cv => cv.profession === filters.profession);
         }
-        if (currentFilters.city) {
-            filtered = filtered.filter(cv => cv.city === currentFilters.city);
+        if (filters.city) {
+            filtered = filtered.filter(cv => cv.city === filters.city);
         }
-        if (currentFilters.experience) {
-            filtered = filtered.filter(cv => cv.experienceLevel === currentFilters.experience);
+        if (filters.experience) {
+            // Mapping label to experience description or logical match if needed
+            // Currently CV has experienceYears (number), so we might need a more complex match
+            // For now, let's keep it partial string match if we had a string field, or hide this logic until perfected
+            // filtered = filtered.filter(cv => cv.experienceLevel === filters.experience);
         }
-        if (currentFilters.workType) {
-            filtered = filtered.filter(cv => cv.workType === currentFilters.workType);
+        if (filters.workType) {
+            filtered = filtered.filter(cv => cv.workType === filters.workType);
         }
-        if (currentFilters.employmentType) {
-            filtered = filtered.filter(cv => cv.employmentType === currentFilters.employmentType);
+        if (filters.employmentType) {
+            filtered = filtered.filter(cv => cv.employmentType === filters.employmentType);
         }
-        if (currentFilters.education) {
-            filtered = filtered.filter(cv => cv.educationLevel === currentFilters.education);
+        if (filters.educationLevel) {
+            filtered = filtered.filter(cv => cv.educationLevel === filters.educationLevel);
         }
-        if (currentFilters.skills && currentFilters.skills.length > 0) {
+        if (filters.skills && Array.isArray(filters.skills) && filters.skills.length > 0) {
             filtered = filtered.filter(cv => 
-                currentFilters.skills?.every(s => cv.skills?.includes(s))
+                filters.skills?.every(s => cv.skills?.includes(s))
             );
         }
 
@@ -74,7 +89,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
         }
 
         return filtered.slice(0, 30); // Limit results for performance
-    }, [query, cvList, currentFilters]);
+    }, [query, cvList, filters]);
 
     const handleResultClick = (cv: CV) => {
         onOpenProfile(cv.userId, 'job_seeker');
@@ -82,7 +97,8 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
 
     const handleFilterSelect = (key: string, val: string) => {
         if (onFilterChange) {
-            const newVal = currentFilters[key as keyof FilterState] === val ? '' : val;
+            const currentVal = filters[key as keyof FilterState];
+            const newVal = currentVal === val ? '' : val;
             onFilterChange(key, newVal);
         }
         setActiveModal(null);
@@ -97,10 +113,13 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
         setActiveModal(null);
     };
 
-    const activeFiltersCount = Object.entries(currentFilters).filter(([k, v]) => {
-        if (Array.isArray(v)) return v.length > 0;
-        return v !== '';
-    }).length;
+    const activeFiltersCount = useMemo(() => {
+        if (!filters) return 0;
+        return Object.entries(filters).filter(([k, v]) => {
+            if (Array.isArray(v)) return v.length > 0;
+            return v !== '' && v !== null && v !== undefined;
+        }).length;
+    }, [filters]);
 
     return (
         <div className="fixed inset-0 z-[200] bg-white dark:bg-gray-900 flex flex-col sm:hidden overflow-hidden">
@@ -155,36 +174,36 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
                     <button
                         onClick={() => setActiveModal('professions')}
                         className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-bold border transition-all active:scale-95 flex items-center gap-1.5 ${
-                            currentFilters.profession 
+                            filters.profession 
                             ? 'bg-[#1f6d78]/10 text-[#1f6d78] border-[#1f6d78]' 
                             : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-100 dark:border-white/5'
                         }`}
                     >
-                        <span>{currentFilters.profession || t('filters.categories')}</span>
+                        <span>{filters.profession || t('filters.categories')}</span>
                         <i className="fi fi-rr-angle-small-down text-[10px]"></i>
                     </button>
 
                     <button
                         onClick={() => setActiveModal('cities')}
                         className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-bold border transition-all active:scale-95 flex items-center gap-1.5 ${
-                            currentFilters.city 
+                            filters.city 
                             ? 'bg-[#1f6d78]/10 text-[#1f6d78] border-[#1f6d78]' 
                             : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-100 dark:border-white/5'
                         }`}
                     >
-                        <span>{currentFilters.city || t('filters.city')}</span>
+                        <span>{filters.city || t('filters.city')}</span>
                         <i className="fi fi-rr-angle-small-down text-[10px]"></i>
                     </button>
 
                     <button
                         onClick={() => setActiveModal('experience')}
                         className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-bold border transition-all active:scale-95 flex items-center gap-1.5 ${
-                            currentFilters.experience 
+                            filters.experience 
                             ? 'bg-[#1f6d78]/10 text-[#1f6d78] border-[#1f6d78]' 
                             : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-100 dark:border-white/5'
                         }`}
                     >
-                        <span>{currentFilters.experience || t('filters.experience')}</span>
+                        <span>{filters.experience || t('filters.experience')}</span>
                         <i className="fi fi-rr-angle-small-down text-[10px]"></i>
                     </button>
 
@@ -262,7 +281,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
             {activeModal === 'advanced' && (
                 <React.Suspense fallback={null}>
                     <AdvancedFilterModal
-                        initialFilters={currentFilters}
+                        initialFilters={filters}
                         onApply={handleAdvancedApply}
                         onClose={() => setActiveModal(null)}
                         availableProfessions={availableProfessions}

@@ -31,7 +31,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
 
         <div className="px-8 pt-6 pb-2">
           <div className="relative group">
-            <svg className="absolute left-4 top-1/2 -/2 opacity-30 group-focus-within:opacity-100 transition-opacity" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3">
+            <svg className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30 group-focus-within:opacity-100 transition-opacity" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
