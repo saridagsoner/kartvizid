@@ -1867,8 +1867,8 @@ const App: React.FC = () => {
     };
   }, [location.pathname, navigate]);
 
-  // Moved HomeDiscoveryContent to a constant or stable function to prevent re-creation flicker
-  const renderHomeDiscoveryContent = useCallback(() => (
+  // Stable render function to prevent component re-creation flicker
+  const renderHomeDiscoveryContent = () => (
     <>
       <div className="flex sm:hidden items-start justify-between px-4 mt-4 mb-0 pl-6">
         <div className="flex flex-col gap-0 w-full pt-2 pb-0.5">
