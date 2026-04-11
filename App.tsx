@@ -2209,7 +2209,7 @@ const App: React.FC = () => {
         onSearch={setSearchQuery}
         onCreateCV={() => user ? navigate('/cv-olustur') : handleAuthOpen('signin')}
         onOpenCompanyProfile={() => user ? navigate('/sirket-olustur') : handleAuthOpen('signin', 'employer')}
-        onOpenSettings={() => user ? navigate('/ayarlar') : handleAuthOpen('signin')}
+        onOpenSettings={() => navigate('/ayarlar')}
         hasCV={!!currentUserCV}
         userPhotoUrl={user?.user_metadata?.avatar_url || currentUserCV?.photoUrl}
         notificationCount={generalNotifications.filter(n => !n.is_read).length}
@@ -2251,6 +2251,7 @@ const App: React.FC = () => {
         onShopClick={(shop) => { setActiveShop(shop); setIsShopProfileOpen(true); }}
         onFilterApply={(type, val) => handleFilterUpdate(type, val)}
         unreadMessageCount={conversations.reduce((acc, c) => acc + (c.unread_count || 0), 0)}
+        onOpenSettings={() => { navigate('/ayarlar'); setIsMobileMenuOpen(false); }}
         notificationCount={generalNotifications.filter(n => !n.is_read).length}
       />
 
