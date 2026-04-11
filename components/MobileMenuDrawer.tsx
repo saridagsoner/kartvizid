@@ -287,9 +287,14 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                     <div className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden shrink-0 border border-gray-100 dark:border-gray-700">
                                         <img src={cv.photoUrl || "https://picsum.photos/seed/user-placeholder/100/100"} alt={cv.name} className="w-full h-full object-cover" />
                                     </div>
-                                    <div>
-                                        <h4 className="font-semibold text-[15px] text-gray-900 dark:text-white truncate">{cv.name}</h4>
-                                        <p className="text-[12px] text-gray-500 dark:text-gray-400 truncate">{cv.profession}</p>
+                                    <div className="min-w-0 flex-1">
+                                        <h4 className="font-black text-[15px] text-gray-900 dark:text-white truncate tracking-tight">{cv.name}</h4>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-[12px] text-gray-500 dark:text-gray-400 truncate font-semibold uppercase tracking-wider">{cv.profession}</p>
+                                            {(cv.isPlaced || cv.workingStatus === 'active') && (
+                                                <span className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">İŞ BULDU</span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             ))
