@@ -276,7 +276,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                     onClick={() => { onJobFinderClick(cv); onClose(); }}
                                     className="flex items-center gap-3 py-3.5 border-b border-gray-100 dark:border-gray-800 px-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                                 >
-                                    <div className="w-[38px] h-[46px] rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-100 dark:border-gray-700">
+                                    <div className="w-[36px] h-[44px] rounded-[10px] bg-gray-100 overflow-hidden shrink-0 border border-gray-100 dark:border-gray-700">
                                         <img src={cv.photoUrl || "https://picsum.photos/seed/user-placeholder/100/100"} alt={cv.name} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="min-w-0 flex-1">
@@ -672,7 +672,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                     key={cv.id}
                                     className="flex items-center gap-3 py-3.5 border-b border-gray-100 dark:border-gray-800 px-5"
                                 >
-                                    <div className="w-[38px] h-[46px] rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-100 dark:border-gray-700">
+                                    <div className="w-[36px] h-[44px] rounded-[10px] bg-gray-100 overflow-hidden shrink-0 border border-gray-100 dark:border-gray-700">
                                         <img src={cv.photoUrl || "https://picsum.photos/seed/user-placeholder/100/100"} alt={cv.name} className="w-full h-full object-cover" />
                                     </div>
                                     <div>

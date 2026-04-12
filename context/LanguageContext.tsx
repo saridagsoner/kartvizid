@@ -473,6 +473,10 @@ const translations: Record<Language, Record<string, string>> = {
         'filter.driver_license_label': 'Sürücü Belgesi',
         'filter.military_status_label': 'Askerlik Durumu',
         'filter.skills_label': 'Önemli Yetenekler',
+        'errors.no_edu': 'Henüz eğitim bilgisi eklenmemiş.',
+        'errors.no_lang': 'Henüz yabancı dil bilgisi eklenmemiş.',
+        'pagination.prev': 'Önceki',
+        'pagination.next': 'Sonraki',
     },
     en: {
         'settings.general': 'General',
@@ -787,6 +791,10 @@ const translations: Record<Language, Record<string, string>> = {
         'common.please_note': 'Please take note:',
         'common.please_fill': 'Please fill in the following fields:',
         'common.ok_fill': 'Ok, I will fill it',
+        'errors.no_edu': 'No education information added yet.',
+        'errors.no_lang': 'No foreign language information added yet.',
+        'pagination.prev': 'Previous',
+        'pagination.next': 'Next',
         'errors.no_ref': 'No references added.',
         'errors.no_contact': 'No contact info added.',
 

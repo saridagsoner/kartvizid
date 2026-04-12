@@ -168,10 +168,68 @@ const HomeDiscoveryContent: React.FC<HomeDiscoveryContentProps> = ({
       </div>
 
       {filteredCVs.length > ITEMS_PER_PAGE && (
-        <div className="mt-8 flex justify-center items-center gap-4 pb-12 sm:pb-8">
-          <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} className="px-4 py-2 border rounded-full">←</button>
-          <span className="font-bold text-sm text-gray-500">{currentPage} / {totalPages}</span>
-          <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} className="px-4 py-2 border rounded-full">→</button>
+        <div className="mt-8 flex flex-col items-center gap-4 pb-32 sm:pb-8 animate-in fade-in duration-700">
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Previous Button */}
+            <button 
+              disabled={currentPage === 1} 
+              onClick={() => {
+                setCurrentPage(p => p - 1);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }} 
+              className={`flex items-center gap-1 sm:gap-2 px-2 py-2 rounded-xl text-sm font-bold transition-all ${
+                currentPage === 1 
+                  ? 'opacity-20 cursor-not-allowed dark:bg-transparent' 
+                  : 'text-[#1f6d78] hover:opacity-70 dark:text-[#2dd4bf]'
+              }`}
+            >
+              <i className="fi fi-rr-arrow-small-left text-lg"></i>
+              <span className="text-xs sm:text-sm">{t('pagination.prev')}</span>
+            </button>
+
+            {/* Page Numbers - Direct Access */}
+            <div className="flex items-center gap-1 sm:gap-2 mx-0.5 sm:mx-2">
+              {(() => {
+                const pages = [];
+                for (let i = 1; i <= totalPages; i++) {
+                  pages.push(
+                    <button
+                      key={i}
+                      onClick={() => {
+                        setCurrentPage(i);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-sm font-black transition-all flex items-center justify-center ${
+                        currentPage === i
+                          ? 'bg-[#1f6d78] text-white shadow-lg shadow-[#1f6d78]/20 dark:bg-[#2dd4bf] dark:text-black dark:shadow-[#2dd4bf]/20'
+                          : 'bg-white text-gray-400 border border-gray-100 hover:border-[#1f6d78]/30 dark:bg-black dark:text-gray-500 dark:border-white/5 dark:hover:border-[#2dd4bf]/30'
+                      }`}
+                    >
+                      {i}
+                    </button>
+                  );
+                }
+                return pages;
+              })()}
+            </div>
+
+            {/* Next Button */}
+            <button 
+              disabled={currentPage === totalPages} 
+              onClick={() => {
+                setCurrentPage(p => p + 1);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }} 
+              className={`flex items-center gap-1 sm:gap-2 px-2 py-2 rounded-xl text-sm font-bold transition-all ${
+                currentPage === totalPages 
+                  ? 'opacity-20 cursor-not-allowed dark:bg-transparent' 
+                  : 'text-[#1f6d78] hover:opacity-70 dark:text-[#2dd4bf]'
+              }`}
+            >
+              <span className="text-xs sm:text-sm">{t('pagination.next')}</span>
+              <i className="fi fi-rr-arrow-small-right text-lg"></i>
+            </button>
+          </div>
         </div>
       )}
     </>

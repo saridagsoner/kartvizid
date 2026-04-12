@@ -96,7 +96,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                                     {isClickable && location.pathname.includes(cv.id) && (
                                         <div className="absolute left-[-8px] top-0 bottom-0 w-1 bg-[#1f6d78] dark:bg-[#2dd4bf]"></div>
                                     )}
-                                    <div className={`w-[44px] h-[54px] rounded-lg bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 border border-gray-100 dark:border-white/10 transition-transform ${isClickable ? 'group-hover:scale-105' : ''}`}>
+                                    <div className={`w-[42px] h-[52px] rounded-[14px] bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 border border-gray-100 dark:border-white/10 transition-transform ${isClickable ? 'group-hover:scale-105' : ''}`}>
                                         <img src={cv.photoUrl || "https://picsum.photos/seed/user-placeholder/100/100"} alt={cv.name} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="min-w-0 flex-1">

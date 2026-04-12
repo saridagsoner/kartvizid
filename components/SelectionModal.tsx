@@ -17,21 +17,21 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
   );
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl  fade-in ">
-      <div className="bg-white w-full max-w-[500px] rounded-[2.5rem] shadow-2xl overflow-hidden  zoom-in-95 ">
-        <div className="p-8 border-b border-gray-100 flex justify-between items-center">
-          <h2 className="text-xl font-black text-black tracking-tight">{title}</h2>
+    <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm transition-all animate-in fade-in duration-300">
+      <div className="bg-white dark:bg-gray-900 w-full sm:max-w-[440px] rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300 sm:zoom-in-95">
+        <div className="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900">
+          <h2 className="text-lg font-black text-black dark:text-white tracking-tight">{title}</h2>
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-xl text-black hover:bg-[#1f6d78] hover:text-white transition-all"
+            className="w-9 h-9 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-xl text-black dark:text-white hover:bg-[#1f6d78] hover:text-white transition-all"
           >
-            ×
+            <i className="fi fi-br-cross text-[10px]"></i>
           </button>
         </div>
 
-        <div className="px-8 pt-6 pb-2">
+        <div className="px-6 pt-5 pb-1">
           <div className="relative group">
-            <svg className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30 group-focus-within:opacity-100 transition-opacity" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3">
+            <svg className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30 group-focus-within:opacity-100 transition-opacity dark:stroke-white" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
@@ -40,12 +40,12 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
               placeholder="Listede ara..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-gray-50 rounded-full py-3.5 pl-12 pr-6 outline-none text-sm font-bold border border-transparent focus:border-[#1f6d78]/10 focus:bg-white transition-all"
+              className="w-full bg-gray-50 dark:bg-gray-800 rounded-full py-2.5 pl-10 pr-6 outline-none text-[13px] font-bold border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 transition-all dark:text-white"
             />
           </div>
         </div>
 
-        <div className="p-4 max-h-[400px] overflow-y-auto custom-scrollbar">
+        <div className="p-3 max-h-[320px] overflow-y-auto custom-scrollbar">
           {filtered.length > 0 ? (
             <div className="grid grid-cols-1 gap-1">
               {filtered.map((item, idx) => (

@@ -130,8 +130,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
         )}
         <div className={isInline ? "w-full h-full relative flex flex-col overflow-hidden bg-white dark:bg-[#0f172a]" : "w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-black border-none sm:border border-gray-100 dark:border-white/10"}>
           {/* Header (Always Fixed) */}
-          <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-black shrink-0">
-            <div className={`pt-0.5 pb-2 px-4 sm:pt-1 sm:pb-2.5 border-b border-gray-100 dark:border-white/10 flex items-center bg-white dark:bg-black gap-2 sm:gap-4 ${isInline ? 'sm:px-6' : 'sm:px-10'}`}>
+          <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-black shrink-0 shadow-sm sm:shadow-none">
+            <div className={`pt-3 pb-5 px-4 sm:pt-1 sm:pb-2.5 border-b border-gray-100 dark:border-white/10 flex items-center bg-white dark:bg-black gap-2 sm:gap-4 ${isInline ? 'sm:px-6' : 'sm:px-10'}`}>
               <div className="w-8 sm:w-9 shrink-0">
                 {/* Balancing spacer for horizontal centering */}
               </div>
@@ -163,8 +163,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                   <div className="flex flex-row gap-4 sm:gap-6 items-start">
                     <div className="shrink-0">
                       <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-3 mb-1.5 block">FOTOĞRAF</span>
-                      <div className="border border-dashed border-gray-300 dark:border-white/20 rounded-2xl sm:rounded-[3rem] p-1 mt-2 w-fit">
-                        <div className={`${isInline ? 'w-20 h-28 sm:w-24 sm:h-34 sm:rounded-[2rem]' : 'w-20 h-28 sm:w-32 sm:h-44 sm:rounded-[2.5rem]'} overflow-hidden bg-gray-50 dark:bg-gray-900 flex items-center justify-center relative`}>
+                      <div className="border border-dashed border-gray-300 dark:border-white/20 rounded-[24px] sm:rounded-[3rem] p-0.5 mt-2 w-fit">
+                        <div className={`${isInline ? 'w-20 h-28 sm:w-24 sm:h-34 sm:rounded-[2rem]' : 'w-20 h-28 sm:w-32 sm:h-44 rounded-[21px] sm:rounded-[2.5rem]'} overflow-hidden bg-gray-50 dark:bg-gray-900 flex items-center justify-center relative`}>
                           <ImageWithFallback src={cv.photoUrl} alt={cv.name || ''} className="w-full h-full object-cover" initialsClassName="text-4xl sm:text-6xl font-black" />
                         </div>
                       </div>

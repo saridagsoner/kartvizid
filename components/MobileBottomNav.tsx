@@ -102,7 +102,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     return (
         <>
             {/* Fixed Bottom Bar */}
-            <div className="fixed bottom-0 left-0 right-0 z-[100] sm:hidden">
+            <div className="fixed bottom-0 left-0 right-0 z-[250] sm:hidden">
                 <div className="bg-white/95 dark:bg-black/95 backdrop-blur-xl border-t border-gray-100 dark:border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.3)] flex justify-between px-2 pb-safe h-[60px]">
                     {/* Home Button */}
                     <button
@@ -128,12 +128,12 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     </button>
 
                     {/* Main Action Button (Create/Edit) */}
-                   <button
+                    <button
                         onClick={() => {
+                            setActiveTab(null);
                             if (!user) {
                                 onOpenAuth('signup');
                             } else {
-                                setActiveTab(null);
                                 if (isEmployer && onOpenCompanyProfile) {
                                     onOpenCompanyProfile();
                                 } else {
@@ -151,10 +151,10 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
                     {/* Profile Button */}
                     <button
                         onClick={() => {
+                            setActiveTab(null);
                             if (!user) {
                                 onOpenAuth('signup');
                             } else {
-                                setActiveTab(null);
                                 if (onOpenProfile) onOpenProfile(user.id, user.user_metadata?.role);
                             }
                         }}

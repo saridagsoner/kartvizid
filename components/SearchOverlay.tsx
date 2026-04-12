@@ -30,10 +30,11 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
     const { t } = useLanguage();
     const [query, setQuery] = useState('');
     const [isFocused, setIsFocused] = useState(false);
+    const [isFilterBarVisible, setIsFilterBarVisible] = useState(false);
     const [activeModal, setActiveModal] = useState<'professions' | 'cities' | 'experience' | 'advanced' | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Defensive check for currentFilters
+    // 1. Defensive check for currentFilters - MUST COME FIRST
     const filters = currentFilters || {
         profession: '',
         city: '',
@@ -44,8 +45,27 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
         skills: []
     };
 
+    // 2. Calculate active filters count - MUST COME AFTER filters
+    const activeFiltersCount = useMemo(() => {
+        if (!filters) return 0;
+        return Object.entries(filters).filter(([k, v]) => {
+            if (Array.isArray(v)) return v.length > 0;
+            return v !== '' && v !== null && v !== undefined;
+        }).length;
+    }, [filters]);
+
+    // 3. Calculate results - MUST COME AFTER activeFiltersCount
     const results = useMemo(() => {
         if (!cvList) return [];
+        
+        // If no search query and no active filters, show empty results (Discovery view)
+        const hasActiveQuery = query.trim().length > 0;
+        const hasActiveFilters = activeFiltersCount > 0;
+        
+        if (!hasActiveQuery && !hasActiveFilters) {
+            return [];
+        }
+
         let filtered = cvList.filter(cv => !!cv); // Remove any nulls/undefineds
 
         // Apply filters
@@ -56,9 +76,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
             filtered = filtered.filter(cv => cv.city === filters.city);
         }
         if (filters.experience) {
-            // Experience matching logic is handled in the main list, 
-            // but for the overlay we currently show filtered results based on stats.
-            // If needed, more complex matching can be added here.
+            // Experience matching logic is handled in the main list
         }
         if (filters.workType) {
             filtered = filtered.filter(cv => cv.workType === filters.workType);
@@ -87,7 +105,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
         }
 
         return filtered.slice(0, 30); // Limit results for performance
-    }, [query, cvList, filters]);
+    }, [query, cvList, filters, activeFiltersCount]);
 
     const handleResultClick = (cv: CV) => {
         onOpenProfile(cv.userId, 'job_seeker');
@@ -111,18 +129,10 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
         setActiveModal(null);
     };
 
-    const activeFiltersCount = useMemo(() => {
-        if (!filters) return 0;
-        return Object.entries(filters).filter(([k, v]) => {
-            if (Array.isArray(v)) return v.length > 0;
-            return v !== '' && v !== null && v !== undefined;
-        }).length;
-    }, [filters]);
-
     return (
         <div className="fixed inset-0 z-[200] bg-white dark:bg-gray-900 flex flex-col sm:hidden overflow-hidden">
             {/* Search Header */}
-            <div className="flex flex-col border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 sticky top-0 z-20">
+            <div className={`flex flex-col border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 sticky top-0 z-20 transition-all duration-300`}>
                 <div className="flex items-center gap-3 p-4 pb-2">
                     <button
                         onClick={onClose}
@@ -143,76 +153,79 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
                             onFocus={() => setIsFocused(true)}
                             onBlur={() => setIsFocused(false)}
                             placeholder="Meslek, Şehir, İsim Ara"
-                            className="w-full bg-white dark:bg-gray-800 border-[1px] border-black dark:border-white rounded-2xl pl-11 pr-10 h-[46px] font-semibold tracking-tight outline-none appearance-none focus:border-black dark:focus:border-white transition-all placeholder:text-gray-400 text-[14px] text-gray-900 dark:text-white"
+                            className="w-full bg-white dark:bg-gray-800 border-[1px] border-black dark:border-white rounded-2xl pl-11 pr-20 h-[46px] font-semibold tracking-tight outline-none appearance-none focus:border-black dark:focus:border-white transition-all placeholder:text-gray-400 text-[14px] text-gray-900 dark:text-white"
                         />
-                        {query ? (
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                            {query ? (
+                                <button
+                                    onClick={() => setQuery('')}
+                                    className="w-7 h-7 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-full text-gray-500 text-[9px] active:scale-90 transition-transform"
+                                >
+                                    <i className="fi fi-br-cross"></i>
+                                </button>
+                            ) : null}
                             <button
-                                onClick={() => setQuery('')}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-full text-gray-500 text-[8px] active:scale-90 transition-transform"
+                                onClick={() => setIsFilterBarVisible(!isFilterBarVisible)}
+                                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all active:scale-90 ${
+                                    isFilterBarVisible || activeFiltersCount > 0 
+                                    ? 'bg-[#1f6d78] text-white' 
+                                    : 'bg-transparent text-gray-900 dark:text-white'
+                                }`}
                             >
-                                <i className="fi fi-br-cross"></i>
+                                <i className="fi fi-rr-settings-sliders text-[14px]"></i>
                             </button>
-                        ) : null}
+                        </div>
                     </div>
-
-                    <button
-                        onClick={() => setActiveModal('advanced')}
-                        className={`w-11 h-11 rounded-full border flex items-center justify-center transition-all active:scale-90 shrink-0 shadow-sm ${
-                            activeFiltersCount > 0 
-                            ? 'bg-[#1f6d78] border-[#1f6d78] text-white' 
-                            : 'border-black dark:border-white text-black dark:text-white'
-                        }`}
-                    >
-                        <i className="fi fi-rr-settings-sliders text-[15px]"></i>
-                    </button>
                 </div>
 
-                {/* Horizontal Filter Bar */}
-                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar px-4 py-3 pb-4">
-                    <button
-                        onClick={() => setActiveModal('professions')}
-                        className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-bold border transition-all active:scale-95 flex items-center gap-1.5 ${
-                            filters.profession 
-                            ? 'bg-[#1f6d78]/10 text-[#1f6d78] border-[#1f6d78]' 
-                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-100 dark:border-white/5'
-                        }`}
-                    >
-                        <span>{filters.profession || t('filters.categories')}</span>
-                        <i className="fi fi-rr-angle-small-down text-[10px]"></i>
-                    </button>
+                {/* Horizontal Filter Bar - Toggleable (Cleanup) */}
+                {isFilterBarVisible && (
+                    <div className="flex items-center gap-4 overflow-x-auto no-scrollbar px-5 py-3.5 pb-5 animate-in slide-in-from-top-2 duration-300">
+                        <button
+                            onClick={() => setActiveModal('professions')}
+                            className={`shrink-0 flex items-center gap-1 text-[13px] font-bold transition-all active:scale-95 ${
+                                filters.profession 
+                                ? 'text-[#1f6d78]' 
+                                : 'text-gray-700 dark:text-gray-300'
+                            }`}
+                        >
+                            <span className="whitespace-nowrap">{filters.profession || t('filters.categories')}</span>
+                            <i className="fi fi-rr-angle-small-down text-[14px] opacity-40"></i>
+                        </button>
 
-                    <button
-                        onClick={() => setActiveModal('cities')}
-                        className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-bold border transition-all active:scale-95 flex items-center gap-1.5 ${
-                            filters.city 
-                            ? 'bg-[#1f6d78]/10 text-[#1f6d78] border-[#1f6d78]' 
-                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-100 dark:border-white/5'
-                        }`}
-                    >
-                        <span>{filters.city || t('filters.city')}</span>
-                        <i className="fi fi-rr-angle-small-down text-[10px]"></i>
-                    </button>
+                        <button
+                            onClick={() => setActiveModal('cities')}
+                            className={`shrink-0 flex items-center gap-1 text-[13px] font-bold transition-all active:scale-95 ${
+                                filters.city 
+                                ? 'text-[#1f6d78]' 
+                                : 'text-gray-700 dark:text-gray-300'
+                            }`}
+                        >
+                            <span className="whitespace-nowrap">{filters.city || t('filters.city')}</span>
+                            <i className="fi fi-rr-angle-small-down text-[14px] opacity-40"></i>
+                        </button>
 
-                    <button
-                        onClick={() => setActiveModal('experience')}
-                        className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-bold border transition-all active:scale-95 flex items-center gap-1.5 ${
-                            filters.experience 
-                            ? 'bg-[#1f6d78]/10 text-[#1f6d78] border-[#1f6d78]' 
-                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-100 dark:border-white/5'
-                        }`}
-                    >
-                        <span>{filters.experience || t('filters.experience')}</span>
-                        <i className="fi fi-rr-angle-small-down text-[10px]"></i>
-                    </button>
+                        <button
+                            onClick={() => setActiveModal('experience')}
+                            className={`shrink-0 flex items-center gap-1 text-[13px] font-bold transition-all active:scale-95 ${
+                                filters.experience 
+                                ? 'text-[#1f6d78]' 
+                                : 'text-gray-700 dark:text-gray-300'
+                            }`}
+                        >
+                            <span className="whitespace-nowrap">{filters.experience || t('filters.experience')}</span>
+                            <i className="fi fi-rr-angle-small-down text-[14px] opacity-40"></i>
+                        </button>
 
-                    <button
-                        onClick={() => setActiveModal('advanced')}
-                        className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-bold border border-gray-100 dark:border-white/5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 transition-all active:scale-95 flex items-center gap-1.5`}
-                    >
-                         <span>{t('filters.advanced')}</span>
-                         <i className="fi fi-rr-caret-right text-[10px] opacity-40"></i>
-                    </button>
-                </div>
+                        <button
+                            onClick={() => setActiveModal('advanced')}
+                            className={`shrink-0 flex items-center gap-1 text-[13px] font-bold text-gray-700 dark:text-gray-300 transition-all active:scale-95`}
+                        >
+                             <span className="whitespace-nowrap">{t('filters.advanced')}</span>
+                             <i className="fi fi-rr-caret-right text-[12px] opacity-30"></i>
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* Results Area */}
