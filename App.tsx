@@ -2200,37 +2200,39 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      <MobileBottomNav
-        user={user}
-        cvList={cvList}
-        onOpenFilter={() => setActiveFilterModal('advanced')}
-        isProfileOpen={isMyProfileOpen}
-        isCreateOpen={location.pathname === '/cv-olustur' || location.pathname === '/sirket-olustur'}
-        isHomeView={isHomeView}
-        onGoHome={() => { navigate('/', { replace: true }); setViewMode('cvs'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-        onSearch={setSearchQuery}
-        onCreateCV={() => user ? navigate('/cv-olustur') : handleAuthOpen('signin')}
-        onOpenCompanyProfile={() => user ? navigate('/sirket-olustur') : handleAuthOpen('signin', 'employer')}
-        onOpenSettings={() => navigate('/ayarlar')}
-        currentFilters={activeFilters}
-        onFilterApply={handleFilterUpdate}
-        availableProfessions={availableProfessions}
-        availableCities={availableCities}
-        hasCV={!!currentUserCV}
-        userPhotoUrl={user?.user_metadata?.avatar_url || currentUserCV?.photoUrl}
-        notificationCount={generalNotifications.filter(n => !n.is_read).length}
-        notifications={[...generalNotifications].sort((a,b) => {
-          const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
-          const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
-          return dateB - dateA;
-        })}
-        onMarkNotificationRead={markNotificationRead}
-        onOpenNotifications={() => navigate('/bildirimler')}
-        onOpenProfile={handleOpenProfile}
-        onOpenSavedCVs={() => setIsSavedCVsOpen(true)}
-        onOpenAuth={handleAuthOpen}
-        signOut={handleSignOut}
-      />
+      {!isAuthModalOpen && !isMobileMenuOpen && (
+        <MobileBottomNav
+          user={user}
+          cvList={cvList}
+          onOpenFilter={() => setActiveFilterModal('advanced')}
+          isProfileOpen={isMyProfileOpen}
+          isCreateOpen={location.pathname === '/cv-olustur' || location.pathname === '/sirket-olustur'}
+          isHomeView={isHomeView}
+          onGoHome={() => { navigate('/', { replace: true }); setViewMode('cvs'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          onSearch={setSearchQuery}
+          onCreateCV={() => user ? navigate('/cv-olustur') : handleAuthOpen('signin')}
+          onOpenCompanyProfile={() => user ? navigate('/sirket-olustur') : handleAuthOpen('signin', 'employer')}
+          onOpenSettings={() => navigate('/ayarlar')}
+          currentFilters={activeFilters}
+          onFilterApply={handleFilterUpdate}
+          availableProfessions={availableProfessions}
+          availableCities={availableCities}
+          hasCV={!!currentUserCV}
+          userPhotoUrl={user?.user_metadata?.avatar_url || currentUserCV?.photoUrl}
+          notificationCount={generalNotifications.filter(n => !n.is_read).length}
+          notifications={[...generalNotifications].sort((a,b) => {
+            const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+            const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+            return dateB - dateA;
+          })}
+          onMarkNotificationRead={markNotificationRead}
+          onOpenNotifications={() => navigate('/bildirimler')}
+          onOpenProfile={handleOpenProfile}
+          onOpenSavedCVs={() => setIsSavedCVsOpen(true)}
+          onOpenAuth={handleAuthOpen}
+          signOut={handleSignOut}
+        />
+      )}
 
       <MobileMenuDrawer
         isOpen={isMobileMenuOpen}
