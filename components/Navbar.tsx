@@ -111,7 +111,7 @@ const Navbar: React.FC<NavbarProps & {
                       e.currentTarget.blur();
                     }
                   }}
-                  className="w-full bg-white dark:bg-gray-800 transition-all outline-none rounded-2xl pl-12 pr-14 py-3 text-[15px] font-medium text-gray-800 dark:text-gray-100 border-[0.5px] border-black dark:border-white/20 focus:ring-1 focus:ring-[#1f6d78] shadow-none placeholder-gray-400 dark:placeholder-gray-500"
+                  className="w-full bg-white dark:bg-black transition-all outline-none rounded-2xl pl-12 pr-14 py-3 text-[15px] font-medium text-gray-800 dark:text-gray-100 border-[0.5px] border-black dark:border-white/20 focus:ring-1 focus:ring-[#1f6d78] shadow-none placeholder-gray-400 dark:placeholder-gray-500"
                 />
                 
                 {/* Discovery Filter Toggle */}
@@ -123,7 +123,7 @@ const Navbar: React.FC<NavbarProps & {
                   className={`absolute right-1.5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
                     isFilterOpen 
                     ? 'bg-[#1f6d78] text-white shadow-lg shadow-[#1f6d78]/20' 
-                    : 'bg-white dark:bg-gray-800 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 border-none'
+                    : 'bg-white dark:bg-black text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-900 border-none'
                   }`}
                   title="Filtrele"
                 >

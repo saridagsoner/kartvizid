@@ -37,7 +37,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
     );
 
     return (
-        <div className={isInline ? "h-full flex flex-col bg-white dark:bg-[#0f172a] shadow-none border-none overflow-hidden" : "fixed top-0 left-0 right-0 bottom-0 z-[250] flex sm:items-center sm:justify-center sm:p-4 bg-white dark:bg-black sm:bg-black/30 sm:dark:bg-black/60"}>
+        <div className={isInline ? "h-full flex flex-col bg-white dark:bg-black shadow-none border-none overflow-hidden" : "fixed top-0 left-0 right-0 bottom-0 z-[250] flex sm:items-center sm:justify-center sm:p-4 bg-white dark:bg-black sm:bg-black/30 sm:dark:bg-black/60"}>
             {!isInline && (
                 <SEO
                     title={`${company.name} - ${t('profile.company_title')}`}
@@ -46,7 +46,7 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                 />
             )}
             
-            <div className={isInline ? "w-full h-full relative flex flex-col overflow-hidden bg-white dark:bg-[#0f172a]" : "w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-black border-none sm:border border-gray-100 dark:border-white/10"}>
+            <div className={isInline ? "w-full h-full relative flex flex-col overflow-hidden bg-white dark:bg-black" : "w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-black border-none sm:border border-gray-100 dark:border-white/10"}>
                 
                 {/* Header (Aligned with ProfileModal) */}
                 <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-black shrink-0">

@@ -98,7 +98,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             className={`w-[calc(100%-24px)] ml-6 flex items-center px-4 py-2 rounded-xl transition-all duration-200 mb-0.5 group overflow-hidden ${
                 active 
                 ? 'bg-gray-50 dark:bg-gray-800/50 text-black dark:text-white font-bold' 
-                : 'text-gray-500 hover:text-black hover:bg-gray-50/50 dark:hover:bg-gray-800/30'
+                : 'text-gray-500 hover:text-black dark:hover:text-white hover:bg-gray-50/50 dark:hover:bg-gray-800/30'
             }`}
         >
             <span className="text-[13px] leading-none transform translate-y-[1px] truncate">{label}</span>

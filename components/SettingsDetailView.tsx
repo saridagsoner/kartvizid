@@ -104,7 +104,7 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
     const isEmployer = user?.user_metadata?.role === 'employer';
 
     return (
-        <div className="flex-1 p-8 sm:p-12 overflow-y-auto custom-scrollbar bg-white dark:bg-[#0f172a]">
+        <div className="flex-1 p-8 sm:p-12 overflow-y-auto custom-scrollbar bg-white dark:bg-black">
             {/* Warning Overlay */}
             {showWarning.show && (
                 <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/5 backdrop-blur-sm p-6">

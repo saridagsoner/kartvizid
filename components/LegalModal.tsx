@@ -344,7 +344,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
             ref={containerRef}
             className={isInline 
                 ? "h-full flex flex-col min-w-0 bg-white dark:bg-black overflow-hidden" 
-                : "bg-white w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex overflow-hidden"
+                : "bg-white dark:bg-black w-full max-w-5xl h-[85vh] rounded-[2rem] shadow-2xl flex overflow-hidden"
             }
         >
             {/* Sidebar Navigation - Only shown in full modal mode */}

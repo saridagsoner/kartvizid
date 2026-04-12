@@ -1877,7 +1877,7 @@ const App: React.FC = () => {
   // All local render functions for HomeDiscoveryContent have been moved to components/HomeDiscoveryContent.tsx
 
   return (
-    <div className="min-h-screen flex flex-col bg-white dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-black dark:text-gray-100 transition-colors duration-300">
       <SEO />
       <Navbar
         onSearch={setSearchQuery}
@@ -2041,7 +2041,7 @@ const App: React.FC = () => {
             </section>
 
             {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
-             <aside className={`hidden lg:block flex-1 max-w-[585px] min-w-[320px] h-[calc(100vh-64px)] sticky top-[64px] overflow-hidden bg-white dark:bg-[#0f172a] transition-all duration-500 border-r border-gray-200/70 dark:border-white/10 ${
+             <aside className={`hidden lg:block flex-1 max-w-[585px] min-w-[320px] h-[calc(100vh-64px)] sticky top-[64px] overflow-hidden bg-white dark:bg-black transition-all duration-500 border-r border-gray-200/70 dark:border-white/10 ${
               isDiscoveryView || location.pathname.startsWith('/rehber/') || location.pathname === '/cv-olustur' || location.pathname === '/cv-guncelle' || location.pathname === '/sirket-olustur' || location.pathname === '/sirket-guncelle' || location.pathname === '/bildirimler' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
             }`}>
               <div className="h-full">

@@ -147,7 +147,7 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
 
   if (!id) {
     return (
-      <div className="h-full flex flex-col items-center justify-center p-12 text-center bg-white dark:bg-[#0f172a]">
+      <div className="h-full flex flex-col items-center justify-center p-12 text-center bg-white dark:bg-black">
         <div className="w-24 h-24 rounded-[2rem] bg-gray-50 dark:bg-gray-900/50 flex items-center justify-center mb-10 border border-gray-100 dark:border-white/5 relative group">
            <div className="absolute inset-0 bg-[#1f6d78]/5 dark:bg-[#2dd4bf]/5 rounded-[2rem] scale-0 group-hover:scale-100 transition-transform duration-500"></div>
            <i className="fi fi-rr-comment-info text-4xl text-[#1f6d78] dark:text-[#2dd4bf] relative z-10 transition-transform duration-500 group-hover:rotate-6"></i>
@@ -163,7 +163,7 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
   if (!activeConversation && !loading) return null;
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-[#0f172a]">
+    <div className="h-full flex flex-col bg-white dark:bg-black">
       {/* Header */}
       <div className="px-8 py-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between bg-white/80 dark:bg-black/80 backdrop-blur-md sticky top-0 z-30">
         <div className="flex items-center gap-4">
@@ -254,7 +254,7 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
       </div>
 
       {/* Input Area */}
-      <div className="px-8 py-8 bg-white dark:bg-[#0f172a] border-t border-gray-100 dark:border-white/5 sticky bottom-0 z-30">
+      <div className="px-8 py-8 bg-white dark:bg-black border-t border-gray-100 dark:border-white/5 sticky bottom-0 z-30">
         <form 
           onSubmit={handleSendMessage} 
           className="w-full max-w-5xl mx-auto flex items-center bg-gray-50/80 dark:bg-gray-900/80 border-2 border-transparent focus-within:border-[#1f6d78]/30 focus-within:bg-white dark:focus-within:bg-gray-800 rounded-[2.5rem] px-3 py-2 transition-all duration-500 shadow-sm"
