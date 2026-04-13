@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import ImageWithFallback from './ImageWithFallback';
 import { CV } from '../types';
@@ -24,7 +24,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
   const [isSaved, setIsSaved] = useState(false);
   const [showWarning, setShowWarning] = useState<{ show: boolean, message: string }>({ show: false, message: '' });
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isOwner = user ? user.id === cv.userId : false;
+
+  useEffect(() => {
+    if (isInline && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
+  }, [cv.id, isInline]);
 
   const Tooltip = ({ text, show }: { text: string, show: boolean }) => (
     <div className={`absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-2 bg-gray-900/95 backdrop-blur-md text-white text-[10px] font-bold rounded-xl transition-all duration-300 pointer-events-none z-[100] whitespace-nowrap shadow-2xl border border-white/10 flex items-center justify-center ${show ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-90'}`}>
@@ -138,7 +145,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
           </div>
 
           {/* Modal Body (Scrollable Middle Section) */}
-          <div className={`flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-black ${isInline ? 'pl-4 pr-8 py-6 sm:pl-6 sm:pr-14 sm:py-8' : 'p-5 sm:p-10'}`}>
+          <div 
+            ref={scrollContainerRef}
+            className={`flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-black ${isInline ? 'pl-4 pr-8 py-6 sm:pl-6 sm:pr-14 sm:py-8' : 'p-5 sm:p-10'}`}
+          >
             <div className={isInline ? "max-w-[800px] space-y-8" : "space-y-8 sm:space-y-12"}>
               {/* Basic Info */}
               <section>
