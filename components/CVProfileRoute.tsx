@@ -170,8 +170,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
     }
 
     return (
-            </div>
-            
+        <>
             {!isInline && (
                 <div className="max-w-4xl mx-auto px-6 pt-12">
                     <Breadcrumbs items={[{ label: cv.name }]} />
@@ -185,7 +184,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
                 onJobFound={handleJobFound}
                 isInline={isInline}
             />
-        </div>
+        </>
     );
 };
 
