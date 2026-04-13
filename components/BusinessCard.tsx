@@ -32,9 +32,9 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
       }`} />
 
       {/* Divider Line - Starts from the text as requested */}
-      <div className="absolute bottom-0 right-4 sm:right-10 left-[88px] sm:left-[92px] border-b border-gray-200 dark:border-white/20" />
+      <div className="absolute bottom-0 right-4 sm:right-10 left-[92px] border-b border-gray-200 dark:border-white/20" />
 
-      <div className="flex items-start gap-5 sm:gap-7">
+      <div className="flex items-start gap-6 sm:gap-7">
         {/* Photo Section - Custom mobile size to align with text */}
         <div className="relative shrink-0 flex items-center">
           <div className="w-[58px] h-[68px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
