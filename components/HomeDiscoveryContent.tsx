@@ -71,13 +71,13 @@ const HomeDiscoveryContent: React.FC<HomeDiscoveryContentProps> = ({
 
   return (
     <>
-      <div className="flex sm:hidden items-start justify-between px-4 mt-4 mb-0 pl-6">
-        <div className="flex flex-col gap-0 w-full pt-2 pb-0.5">
+      <div className="flex sm:hidden items-start justify-between px-4 mt-2 mb-0 pl-6">
+        <div className="flex flex-col gap-0 w-full pt-1 pb-0.5">
           {((viewMode === 'cvs') || 
             (viewMode === 'shops') || 
             (viewMode === 'employers')) && (
             <div className="pb-2 flex items-center gap-2">
-              <div className="text-[22px] font-black tracking-tighter text-black dark:text-white transition-all leading-none">
+              <div className="text-[22px] font-[1000] tracking-tighter text-black dark:text-white transition-all leading-none">
                 {viewMode === 'cvs' ? t('menu.job_seekers') : viewMode === 'shops' ? t('menu.services') : t('menu.employers')}
               </div>
               <div className="flex items-center pt-0.5">
