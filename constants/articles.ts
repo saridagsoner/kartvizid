@@ -316,7 +316,6 @@ const BLOG_ARTICLES_BASE: Article[] = [
       readTime: '27',
       content: `<h2>Global Standartlarda Özgeçmiş</h2><p>Her ülkenin özgeçmiş kültürü farklıdır. Global vizyona uygun bir profil, kapıların daha kolay açılmasını sağlar.</p>`
   }
-  }
 ];
 
 const ARTICLE_TRANSLATIONS: Record<string, Record<string, Partial<Article>>> = {
