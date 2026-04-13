@@ -1,9 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { LEGAL_ROUTE_MAP } from './LegalRoute';
-import { LEGAL_CONTENT, LegalSection } from './LegalModal';
+import { useLegalContent, LegalSection } from './LegalModal';
+import { useLanguage } from '../context/LanguageContext';
 
 const LegalList: React.FC = () => {
+  const { t } = useLanguage();
+  const legalData = useLegalContent();
+
   // Sort sections for a logical display order
   const sectionOrder: LegalSection[] = [
     'about', 'general', 'services', 'membership', 'privacy', 'kvkk', 'cookie', 
@@ -14,13 +18,13 @@ const LegalList: React.FC = () => {
     <div className="bg-white dark:bg-black">
       <div className="hidden sm:block mt-8 mb-4 lg:pl-1.5 px-6">
         <h1 className="text-[24px] font-black tracking-tighter text-black dark:text-white leading-none">
-            Kurumsal
+            {t('legal.kurumsal')}
         </h1>
       </div>
 
       <div className="flex flex-col">
         {sectionOrder.map((section) => {
-          const content = LEGAL_CONTENT[section];
+          const content = legalData[section];
           const path = LEGAL_ROUTE_MAP[section];
           
           if (!content || !path) return null;
@@ -71,7 +75,7 @@ const LegalList: React.FC = () => {
                         {content.title}
                       </h3>
                       <p className="text-[10px] sm:text-[11px] text-gray-400 font-black uppercase tracking-wider mt-0.5">
-                        {section === 'about' ? 'Platform' : section === 'faq' ? 'Yardım' : 'Yasal'}
+                        {section === 'about' ? t('legal.platform') : section === 'faq' ? t('legal.yardim') : t('legal.yasal')}
                       </p>
                     </div>
 

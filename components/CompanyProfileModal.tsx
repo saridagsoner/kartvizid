@@ -83,10 +83,8 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                                 <div className="flex flex-row gap-4 sm:gap-6 items-start">
                                     <div className="shrink-0">
                                         <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-3 mb-1.5 block">LOGO</span>
-                                        <div className="border border-dashed border-gray-300 dark:border-white/20 rounded-2xl sm:rounded-[3rem] p-1 mt-2 w-fit">
-                                            <div className={`${isInline ? 'w-20 h-24 sm:w-24 sm:h-28 sm:rounded-[2rem]' : 'w-20 h-24 sm:w-32 sm:h-40 sm:rounded-[2.5rem]'} overflow-hidden bg-white dark:bg-gray-900 flex items-center justify-center relative border border-gray-100 dark:border-white/5 shadow-sm`}>
-                                                <ImageWithFallback src={company.logoUrl} alt={company.name || ''} className="w-full h-full object-cover" initialsClassName="text-4xl sm:text-6xl font-black" />
-                                            </div>
+                                        <div className={`${isInline ? 'w-20 h-24 sm:w-24 sm:h-28 sm:rounded-[2rem]' : 'w-20 h-24 sm:w-32 sm:h-40 sm:rounded-[2.5rem]'} overflow-hidden bg-white dark:bg-gray-900 flex items-center justify-center relative border border-gray-100 dark:border-white/5 shadow-sm mt-2`}>
+                                            <ImageWithFallback src={company.logoUrl} alt={company.name || ''} className="w-full h-full object-cover" initialsClassName="text-4xl sm:text-6xl font-black" />
                                         </div>
                                     </div>
                                     <div className="flex-1 pt-6 sm:pt-9 min-w-0">

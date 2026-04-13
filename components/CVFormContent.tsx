@@ -388,9 +388,9 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
         <section>
           <div className="flex flex-row gap-4 sm:gap-8 mb-5 sm:mb-8 items-stretch">
             <div className="shrink-0 space-y-1.5 flex flex-col w-24 sm:w-28">
-              <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-[11px]">FOTOĞRAF</label>
+              <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-[11px]">{t('form.photo')}</label>
               <input type="file" ref={fileInputRef} onChange={onFileSelect} className="hidden" accept="image/*" />
-              <div onClick={() => fileInputRef.current?.click()} className="flex-1 rounded-xl sm:rounded-[2.5rem] border-2 border-dashed border-black/10 dark:border-white/20 bg-white dark:bg-black flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden shadow-sm relative min-h-[120px]">
+              <div onClick={() => fileInputRef.current?.click()} className="flex-1 rounded-xl sm:rounded-[2.5rem] border border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.03] flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden shadow-sm relative min-h-[120px]">
                 {formData.photoUrl ? (
                   <>
                     <img src={formData.photoUrl} alt="CV" className="w-full h-full object-cover" />
@@ -412,25 +412,25 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
                 </div>
               </div>
               <div className="space-y-1.5 flex flex-col">
-                <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">MESLEK</label>
+                <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.profession_label')}</label>
                 <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
-                  <input type="text" value={formData.profession} onChange={e => setFormData({ ...formData, profession: capitalizeWords(validateInput(e.target.value, 60)) })} maxLength={60} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-4 sm:px-6 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder="Meslek" />
+                  <input type="text" value={formData.profession} onChange={e => setFormData({ ...formData, profession: capitalizeWords(validateInput(e.target.value, 60)) })} maxLength={60} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-4 sm:px-6 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder={t('form.profession_placeholder')} />
                 </div>
               </div>
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">TECRÜBE</label>
+                <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.exp_label')}</label>
                 <div className="flex gap-2">
                   <div className="flex-1">
                     <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
-                      <input type="number" min="0" value={formData.experienceYears === 0 ? '' : formData.experienceYears} onChange={e => setFormData({ ...formData, experienceYears: e.target.value === '' ? 0 : parseInt(e.target.value) })} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-5 sm:px-7 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder="Yıl" />
+                      <input type="number" min="0" value={formData.experienceYears === 0 ? '' : formData.experienceYears} onChange={e => setFormData({ ...formData, experienceYears: e.target.value === '' ? 0 : parseInt(e.target.value) })} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-5 sm:px-7 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder={t('form.year')} />
                     </div>
                   </div>
                   <div className="flex-1">
                     <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
-                      <input type="number" min="0" max="11" value={formData.experienceMonths === 0 ? '' : formData.experienceMonths} onChange={e => setFormData({ ...formData, experienceMonths: e.target.value === '' ? 0 : Math.min(11, parseInt(e.target.value)) })} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-5 sm:px-7 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder="Ay" />
+                      <input type="number" min="0" max="11" value={formData.experienceMonths === 0 ? '' : formData.experienceMonths} onChange={e => setFormData({ ...formData, experienceMonths: e.target.value === '' ? 0 : Math.min(11, parseInt(e.target.value)) })} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-5 sm:px-7 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder={t('form.month')} />
                     </div>
                   </div>
                 </div>
@@ -450,23 +450,23 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
 
         <section>
           <div className="space-y-1.5">
-            <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.about_clean') || 'Hakkında'}</label>
+            <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.about_label')}</label>
             <div className="w-full bg-white dark:bg-black rounded-[1.5rem] sm:rounded-[2.5rem] border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all h-24 sm:h-32">
-              <textarea value={formData.about} onChange={e => setFormData({ ...formData, about: e.target.value })} className="w-full h-full bg-transparent outline-none resize-none px-6 py-3.5 sm:px-10 sm:py-5 text-[16px] font-semibold leading-relaxed text-black dark:text-white placeholder:text-gray-400/50 tracking-wide" placeholder="Kendinizi kısaca tanıtın"></textarea>
+              <textarea value={formData.about} onChange={e => setFormData({ ...formData, about: e.target.value })} className="w-full h-full bg-transparent outline-none resize-none px-6 py-3.5 sm:px-10 sm:py-5 text-[16px] font-semibold leading-relaxed text-black dark:text-white placeholder:text-gray-400/50 tracking-wide" placeholder={t('form.about_placeholder')}></textarea>
             </div>
           </div>
         </section>
 
         <div className="h-px bg-gray-100 dark:bg-white/5 my-6 sm:my-8" />
 
-        <ExpandableSection title="Profilini Güçlendir & Detay Ekle" subtitle="İş tercihlerin, deneyimlerin, eğitimin ve daha fazlası için (Opsiyonel)" isOpen={openSections.more} onToggle={() => toggleSection('more')} className="mb-6 border-none">
+        <ExpandableSection title={t('form.strengthen_title')} subtitle={t('form.strengthen_subtitle')} isOpen={openSections.more} onToggle={() => toggleSection('more')} className="mb-6 border-none">
           <div className="space-y-6">
             <ExpandableSection title={t('form.work_pref_clean')} subtitle={t('form.work_pref_subtitle')} isOpen={openSections.jobPrep} onToggle={() => toggleSection('jobPrep')}>
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">Tercih Edilen Ülkeler</label>
-                    <SearchableSelect value="" onChange={(val) => val && !formData.preferredCountries?.includes(val) && (formData.preferredCountries?.length || 0) < 3 && setFormData({ ...formData, preferredCountries: [...(formData.preferredCountries || []), val] })} options={COUNTRIES.sort()} placeholder="Ülke Seçiniz (Maks 3)" />
+                    <label className="text-[10.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.pref_countries')}</label>
+                    <SearchableSelect value="" onChange={(val) => val && !formData.preferredCountries?.includes(val) && (formData.preferredCountries?.length || 0) < 3 && setFormData({ ...formData, preferredCountries: [...(formData.preferredCountries || []), val] })} options={COUNTRIES.sort()} placeholder={t('form.pref_countries_placeholder')} />
                     <div className="flex flex-wrap gap-2 px-1">
                       {formData.preferredCountries?.map((country, idx) => (
                         <span key={idx} className="bg-[#1f6d78]/10 text-[#1f6d78] dark:bg-[#1f6d78]/20 dark:text-white text-[10px] font-black px-3 py-1.5 rounded-full flex items-center gap-2 uppercase tracking-widest border border-[#1f6d78]/20 shadow-sm">{country}<button type="button" onClick={() => setFormData({ ...formData, preferredCountries: formData.preferredCountries?.filter((_, i) => i !== idx) })} className="hover:text-red-500 transition-colors text-xs">×</button></span>
@@ -474,8 +474,8 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">Tercih Edilen Şehirler</label>
-                    <SearchableSelect value="" onChange={(val) => val && !formData.preferredCities?.includes(val) && (formData.preferredCities?.length || 0) < 3 && setFormData({ ...formData, preferredCities: [...(formData.preferredCities || []), val] })} options={Object.keys(TURKEY_LOCATIONS).sort()} placeholder="Şehir Seçiniz (Maks 3)" />
+                    <label className="text-[10.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.pref_cities')}</label>
+                    <SearchableSelect value="" onChange={(val) => val && !formData.preferredCities?.includes(val) && (formData.preferredCities?.length || 0) < 3 && setFormData({ ...formData, preferredCities: [...(formData.preferredCities || []), val] })} options={Object.keys(TURKEY_LOCATIONS).sort()} placeholder={t('form.pref_cities_placeholder')} />
                     <div className="flex flex-wrap gap-2 px-1">
                       {formData.preferredCities?.map((city, idx) => (
                         <span key={idx} className="bg-[#1f6d78]/10 text-[#1f6d78] dark:bg-[#1f6d78]/20 dark:text-white text-[10px] font-black px-3 py-1.5 rounded-full flex items-center gap-2 uppercase tracking-widest border border-[#1f6d78]/20 shadow-sm">{city}<button type="button" onClick={() => setFormData({ ...formData, preferredCities: formData.preferredCities?.filter((_, i) => i !== idx) })} className="hover:text-red-500 transition-colors text-xs">×</button></span>
@@ -486,17 +486,53 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-1.5">
                     <label className="text-[9.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.work_model')}</label>
-                    <SearchableSelect value={formData.workType || ''} onChange={(val) => setFormData({ ...formData, workType: val })} options={WORK_TYPES} placeholder={t('form.work_model')} searchable={false} />
+                    <SearchableSelect 
+                      value={formData.workType || ''} 
+                      onChange={(val) => setFormData({ ...formData, workType: val })} 
+                      options={WORK_TYPES.map(opt => ({ label: resolveValue('workType', opt), value: opt }))} 
+                      placeholder={t('form.work_model')} 
+                      searchable={false} 
+                    />
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[9.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.employment_type')}</label>
-                    <SearchableSelect value={formData.employmentType || ''} onChange={(val) => setFormData({ ...formData, employmentType: val })} options={EMPLOYMENT_TYPES} placeholder={t('form.employment_type')} searchable={false} />
+                    <SearchableSelect 
+                      value={formData.employmentType || ''} 
+                      onChange={(val) => setFormData({ ...formData, employmentType: val })} 
+                      options={EMPLOYMENT_TYPES.map(opt => ({ label: resolveValue('employmentType', opt), value: opt }))} 
+                      placeholder={t('form.employment_type')} 
+                      searchable={false} 
+                    />
                   </div>
                 </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-1.5">
+                    <label className="text-[9.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.marital')}</label>
+                    <SearchableSelect 
+                      value={formData.maritalStatus || ''} 
+                      onChange={(val) => setFormData({ ...formData, maritalStatus: val })} 
+                      options={MARITAL_STATUSES.map(opt => ({ label: resolveValue('maritalStatus', opt), value: opt }))} 
+                      placeholder={t('form.marital')} 
+                      searchable={false} 
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[9.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.disability')}</label>
+                    <SearchableSelect 
+                      value={formData.disabilityStatus || ''} 
+                      onChange={(val) => setFormData({ ...formData, disabilityStatus: val })} 
+                      options={DISABILITY_STATUSES.map(opt => ({ label: resolveValue('disabilityStatus', opt), value: opt }))} 
+                      placeholder={t('form.disability')} 
+                      searchable={false} 
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-1.5">
-                  <label className="text-[10.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">Tercih Edilen Pozisyonlar</label>
+                  <label className="text-[10.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.pref_roles')}</label>
                   <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
-                    <input type="text" value={roleInput} onChange={e => setRoleInput(e.target.value)} onKeyDown={handleRoleAdd} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-5 sm:px-6 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder="Enter ile ekleyin... (Örn: Satış Sorumlusu)" />
+                    <input type="text" value={roleInput} onChange={e => setRoleInput(e.target.value)} onKeyDown={handleRoleAdd} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-5 sm:px-6 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder={t('form.pref_roles_placeholder')} />
                   </div>
                   <div className="flex flex-wrap gap-2 px-1">
                     {formData.preferredRoles?.map((role, idx) => (
@@ -504,19 +540,43 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
                     ))}
                   </div>
                 </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-1.5">
+                    <label className="text-[9.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.start_date')}</label>
+                    <SearchableSelect 
+                      value={formData.noticePeriod || ''} 
+                      onChange={(val) => setFormData({ ...formData, noticePeriod: val })} 
+                      options={NOTICE_PERIODS.map(opt => ({ label: resolveValue('noticePeriod', opt) || opt, value: opt }))} 
+                      placeholder={t('form.start_date')} 
+                      searchable={false} 
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-[9.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.travel')}</label>
+                    <SearchableSelect 
+                      value={formData.travelStatus || ''} 
+                      onChange={(val) => setFormData({ ...formData, travelStatus: val })} 
+                      options={TRAVEL_STATUSES.map(opt => ({ label: resolveValue('travelStatus', opt), value: opt }))} 
+                      placeholder={t('form.travel')} 
+                      searchable={false} 
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-[9.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.salary_exp')}</label>
                   <div className="flex items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center relative">
                         <input type="text" value={formatSalary(formData.salaryMin)} onChange={e => setFormData({ ...formData, salaryMin: parseSalary(e.target.value) })} onFocus={() => setIsMinFocused(true)} onBlur={() => setIsMinFocused(false)} className={`w-full h-full bg-transparent outline-none text-[14px] sm:text-[15px] px-6 text-black dark:text-white font-semibold tracking-tight`} placeholder="0" />
-                        <span className={`absolute right-5 text-[10px] font-black text-black/20 dark:text-white/20 uppercase tracking-widest pointer-events-none transition-opacity ${(isMinFocused || formData.salaryMin !== 0) ? 'opacity-0' : 'opacity-100'}`}>En Az</span>
+                        <span className={`absolute right-5 text-[10px] font-black text-black/20 dark:text-white/20 uppercase tracking-widest pointer-events-none transition-opacity ${(isMinFocused || formData.salaryMin !== 0) ? 'opacity-0' : 'opacity-100'}`}>{t('form.salary_min')}</span>
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center relative">
                         <input type="text" value={formatSalary(formData.salaryMax)} onChange={e => setFormData({ ...formData, salaryMax: parseSalary(e.target.value) })} onFocus={() => setIsMaxFocused(true)} onBlur={() => setIsMaxFocused(false)} className={`w-full h-full bg-transparent outline-none text-[14px] sm:text-[15px] px-6 text-black dark:text-white font-semibold tracking-tight`} placeholder="0" />
-                        <span className={`absolute right-5 text-[10px] font-black text-black/20 dark:text-white/20 uppercase tracking-widest pointer-events-none transition-opacity ${(isMaxFocused || formData.salaryMax !== 0) ? 'opacity-0' : 'opacity-100'}`}>En Çok</span>
+                        <span className={`absolute right-5 text-[10px] font-black text-black/20 dark:text-white/20 uppercase tracking-widest pointer-events-none transition-opacity ${(isMaxFocused || formData.salaryMax !== 0) ? 'opacity-0' : 'opacity-100'}`}>{t('form.salary_max')}</span>
                       </div>
                     </div>
                     <div className="relative">
@@ -541,20 +601,20 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
                     <button onClick={() => removeWork(work.id)} className="absolute top-2 right-4 text-red-500 hover:text-red-700 font-bold text-xl">×</button>
                     <h4 className="font-semibold text-black dark:text-white">{work.role}</h4>
                     <p className="text-xs font-semibold text-gray-500">{work.company}</p>
-                    <p className="text-[10px] text-gray-400 mt-1">{work.startDate} - {work.isCurrent ? 'Devam Ediyor' : work.endDate}</p>
+                    <p className="text-[10px] text-gray-400 mt-1">{work.startDate} - {work.isCurrent ? t('form.is_current') : work.endDate}</p>
                   </div>
                 ))}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">KURUM ADI</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder="Kurum Adı" value={workInput.company} onChange={e => setWorkInput({ ...workInput, company: e.target.value })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>
-                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">POZİSYON</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder="Pozisyon" value={workInput.role} onChange={e => setWorkInput({ ...workInput, role: e.target.value })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>
-                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">BAŞLAMA</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder="GG.AA.YYYY" value={workInput.startDate} onChange={e => setWorkInput({ ...workInput, startDate: handleDateMask(e.target.value) })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>
-                  {!workInput.isCurrent && <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">BİTİŞ</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder="GG.AA.YYYY" value={workInput.endDate} onChange={e => setWorkInput({ ...workInput, endDate: handleDateMask(e.target.value) })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>}
+                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">{t('form.company_name_label')}</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder={t('form.company_name_placeholder')} value={workInput.company} onChange={e => setWorkInput({ ...workInput, company: e.target.value })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>
+                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">{t('form.position_label')}</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder={t('form.position_placeholder')} value={workInput.role} onChange={e => setWorkInput({ ...workInput, role: e.target.value })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>
+                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">{t('form.start_date')}</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder={t('form.date_placeholder')} value={workInput.startDate} onChange={e => setWorkInput({ ...workInput, startDate: handleDateMask(e.target.value) })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>
+                  {!workInput.isCurrent && <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">{t('form.end_date')}</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder={t('form.date_placeholder')} value={workInput.endDate} onChange={e => setWorkInput({ ...workInput, endDate: handleDateMask(e.target.value) })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>}
                   <div className="flex items-center gap-3 pl-2 sm:col-span-2">
                     <input type="checkbox" id="work-curr" checked={workInput.isCurrent} onChange={e => setWorkInput({ ...workInput, isCurrent: e.target.checked })} className="w-4 h-4 accent-[#1f6d78]" />
-                    <label htmlFor="work-curr" className="text-[10px] font-bold text-gray-400 tracking-wider cursor-pointer uppercase">Devam Ediyorum</label>
+                    <label htmlFor="work-curr" className="text-[10px] font-bold text-gray-400 tracking-wider cursor-pointer uppercase">{t('form.is_current_action')}</label>
                   </div>
                 </div>
-                <button type="button" onClick={addWork} className="w-full bg-[#1f6d78] text-white font-black py-3 rounded-xl hover:bg-[#155e68] text-[10px] uppercase tracking-widest shadow-lg">+ DENEYİM EKLE</button>
+                <button type="button" onClick={addWork} className="w-full bg-[#1f6d78] text-white font-black py-3 rounded-xl hover:bg-[#155e68] text-[10px] uppercase tracking-widest shadow-lg">{t('form.add_experience')}</button>
               </div>
             </ExpandableSection>
 
@@ -562,17 +622,17 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
               <div className="space-y-6">
                 {formData.educationDetails?.map(edu => (
                   <div key={edu.id} className="bg-gray-50 dark:bg-white/5 p-4 rounded-2xl relative group flex justify-between items-center">
-                    <div><h4 className="font-semibold text-black dark:text-white text-sm">{edu.university}</h4><p className="text-xs text-black/60 font-semibold">{edu.department} ({edu.level})</p></div>
+                    <div><h4 className="font-semibold text-black dark:text-white text-sm">{edu.university}</h4><p className="text-xs text-black/60 font-semibold">{edu.department} ({resolveValue('educationLevel', edu.level)})</p></div>
                     <button type="button" onClick={() => removeEducation(edu.id)} className="text-red-500 font-bold hover:bg-red-50 p-2">×</button>
                   </div>
                 ))}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">ÜNİVERSİTE</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder="Üniversite" value={eduInput.university} onChange={e => setEduInput({ ...eduInput, university: e.target.value })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>
-                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">BÖLÜM</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder="Bölüm" value={eduInput.department} onChange={e => setEduInput({ ...eduInput, department: e.target.value })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>
-                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">SEVİYE</label><SearchableSelect value={eduInput.level} onChange={val => setEduInput({ ...eduInput, level: val })} options={EDUCATION_LEVELS} placeholder="Seviye" searchable={false} /></div>
-                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">DURUM</label><SearchableSelect value={eduInput.status} onChange={val => setEduInput({ ...eduInput, status: val, isCurrent: val === 'Öğrenci' })} options={GRADUATION_STATUSES} placeholder="Durum" searchable={false} /></div>
+                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">{t('form.university_label')}</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder={t('form.university_placeholder')} value={eduInput.university} onChange={e => setEduInput({ ...eduInput, university: e.target.value })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>
+                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">{t('form.department_label')}</label><div className="w-full h-[40px] bg-white dark:bg-black rounded-full border border-black/10 flex items-center"><input type="text" placeholder={t('form.department_placeholder')} value={eduInput.department} onChange={e => setEduInput({ ...eduInput, department: e.target.value })} className="w-full h-full bg-transparent outline-none px-6 text-sm font-semibold" /></div></div>
+                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">{t('form.level_label')}</label><SearchableSelect value={eduInput.level} onChange={val => setEduInput({ ...eduInput, level: val })} options={EDUCATION_LEVELS.map(opt => ({ label: resolveValue('educationLevel', opt), value: opt }))} placeholder={t('form.level_label')} searchable={false} /></div>
+                  <div className="space-y-1.5"><label className="text-[9.5px] font-bold ml-4">{t('form.status_label')}</label><SearchableSelect value={eduInput.status} onChange={val => setEduInput({ ...eduInput, status: val, isCurrent: val === 'Öğrenci' })} options={GRADUATION_STATUSES.map(opt => ({ label: resolveValue('graduationStatus', opt), value: opt }))} placeholder={t('form.status_label')} searchable={false} /></div>
                 </div>
-                <button type="button" onClick={addEducation} className="w-full bg-[#1f6d78] text-white font-black py-3 rounded-xl hover:bg-[#155e68] text-[10px] uppercase tracking-widest shadow-lg">+ EĞİTİM EKLE</button>
+                <button type="button" onClick={addEducation} className="w-full bg-[#1f6d78] text-white font-black py-3 rounded-xl hover:bg-[#155e68] text-[10px] uppercase tracking-widest shadow-lg">{t('form.add_education')}</button>
               </div>
             </ExpandableSection>
           </div>
@@ -580,7 +640,7 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
 
         <div className="pt-8 pb-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest">CV TAMAMLANMA ORANI</span>
+            <span className="text-[10px] font-black text-black dark:text-gray-300 uppercase tracking-widest">{t('form.completion_rate')}</span>
             <span className={`text-xs font-black ${completion === 100 ? 'text-[#1f6d78]' : 'text-black dark:text-white'}`}>%{completion}</span>
           </div>
           <div className="h-2 bg-gray-100 dark:bg-zinc-900 rounded-full overflow-hidden">
@@ -592,10 +652,10 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
           <div className="flex items-start gap-4">
             <input type="checkbox" id="kvkk-check" checked={isConsentGiven} onChange={(e) => { handleCheckboxChange(e); setShowConsentError(false); }} className={`w-5 h-5 rounded accent-[#1f6d78] mt-0.5 cursor-pointer ${showConsentError ? 'border-red-500' : ''}`} />
             <label htmlFor="kvkk-check" className={`text-[11px] font-bold leading-relaxed cursor-pointer select-none ${showConsentError ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>
-              <span onClick={(e) => { e.preventDefault(); setShowKVKKModal(true); }} className="text-[#1f6d78] hover:text-[#155e68] transition-colors">{t('form.kvkk_text')}</span> okudum ve onaylıyorum.
+              <span onClick={(e) => { e.preventDefault(); setShowKVKKModal(true); }} className="text-[#1f6d78] hover:text-[#155e68] transition-colors">{t('form.kvkk_text')}</span> {t('form.read_approve')}
             </label>
           </div>
-          {showConsentError && <p className="text-red-500 text-[10px] font-bold mt-2 ml-9">* Devam etmek için onay vermelisiniz.</p>}
+          {showConsentError && <p className="text-red-500 text-[10px] font-bold mt-2 ml-9">{t('form.consent_error')}</p>}
         </div>
       </div>
 
@@ -618,16 +678,16 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
           }}
           className={`flex-[2] h-12 sm:h-14 flex items-center justify-center gap-3 transition-all active:scale-[0.98] rounded-2xl sm:rounded-full font-black text-[12px] sm:text-[13px] uppercase tracking-widest shadow-xl ${!isConsentGiven ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50 shadow-none' : 'bg-[#1f6d78] text-white hover:bg-[#155e68] shadow-[#1f6d78]/20'}`}
         >
-          {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><i className="fi fi-rs-paper-plane text-[18px]"></i><span>YAYINLA</span></>}
+          {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><i className="fi fi-rs-paper-plane text-[18px]"></i><span>{t('form.publish')}</span></>}
         </button>
 
         {onDelete && (
           <button
             type="button"
-            onClick={async () => { if (window.confirm("CV'nizi tamamen silmek istediğinize emin misiniz?")) await onDelete(); }}
+            onClick={async () => { if (window.confirm(t('form.delete_confirm'))) await onDelete(); }}
             className="flex-1 h-12 sm:h-14 flex items-center justify-center gap-2 border-2 border-red-500/10 hover:border-red-500 bg-red-50/30 text-red-500 rounded-2xl sm:rounded-full font-black text-[11px] uppercase tracking-widest transition-all active:scale-[0.98]"
           >
-            <i className="fi fi-rr-trash text-[16px]"></i><span>SİL</span>
+            <i className="fi fi-rr-trash text-[16px]"></i><span>{t('form.delete')}</span>
           </button>
         )}
       </div>
@@ -649,10 +709,10 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
         <div className="absolute inset-0 z-[150] flex items-center justify-center bg-white/90 backdrop-blur-sm p-6 animate-in fade-in duration-300">
           <div className="bg-white border-2 border-red-50 rounded-[2.5rem] p-10 w-full max-w-sm shadow-2xl text-center">
             <div className="w-16 h-16 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl shadow-lg"><i className="fi fi-rr-exclamation"></i></div>
-            <h3 className="text-xl font-black text-black mb-2 tracking-tight">EKSİK BİLGİ</h3>
-            <p className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-wider">Lütfen aşağıdaki alanları kontrol edin:</p>
+            <h3 className="text-xl font-black text-black mb-2 tracking-tight">{t('form.missing_info')}</h3>
+            <p className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-wider">{t('form.check_fields')}</p>
             <div className="bg-gray-50 rounded-2xl p-4 mb-8 border border-black/5 text-left"><ul className="space-y-2">{showWarning.missing.map((item, idx) => (<li key={idx} className="flex items-center gap-3 text-sm font-bold text-gray-700"><span className="w-1.5 h-1.5 rounded-full bg-red-400"></span>{item}</li>))}</ul></div>
-            <button onClick={() => setShowWarning({ show: false, missing: [] })} className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active:scale-95">TAMAM</button>
+            <button onClick={() => setShowWarning({ show: false, missing: [] })} className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active:scale-95">{t('common.done')}</button>
           </div>
         </div>
       )}

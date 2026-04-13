@@ -1,6 +1,6 @@
 import { CV } from '../types';
 
-export const generatePrintableCV = (cv: CV): string => {
+export const generatePrintableCV = (cv: CV, t: (key: string) => string, resolveValue: (category: string, value: string | undefined) => string): string => {
     return `
     <!DOCTYPE html>
     <html lang="tr">
@@ -53,7 +53,7 @@ export const generatePrintableCV = (cv: CV): string => {
         <div class="fixed top-5 right-5 flex gap-4 no-print z-50">
             <button onclick="window.print()" class="bg-[#1f6d78] text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#155e68] transition-transform hover:scale-105 active:scale-95 flex items-center gap-2">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                Yazdır / PDF İndir
+                ${t('profile.print_pdf')}
             </button>
         </div>
 
@@ -90,21 +90,21 @@ export const generatePrintableCV = (cv: CV): string => {
                     <div class="space-y-4">
                         ${cv.email || cv.phone || cv.city ? `
                             <div>
-                                <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">İletişim</h3>
+                                <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">${t('profile.contact')}</h3>
                                 <div class="space-y-2.5 text-xs text-gray-600 font-medium">
                                     ${cv.email ? `
                                     <div class="flex flex-col">
-                                        <span class="text-[10px] text-gray-400 uppercase font-bold">E-posta</span>
+                                        <span class="text-[10px] text-gray-400 uppercase font-bold">${t('form.email')}</span>
                                         <span class="break-all text-gray-800">${cv.email}</span>
                                     </div>` : ''}
                                     ${cv.phone ? `
                                     <div class="flex flex-col">
-                                        <span class="text-[10px] text-gray-400 uppercase font-bold">Telefon</span>
+                                        <span class="text-[10px] text-gray-400 uppercase font-bold">${t('form.phone')}</span>
                                         <span class="text-gray-800">${cv.phone}</span>
                                     </div>` : ''}
                                     ${cv.city ? `
                                     <div class="flex flex-col">
-                                        <span class="text-[10px] text-gray-400 uppercase font-bold">Konum</span>
+                                        <span class="text-[10px] text-gray-400 uppercase font-bold">${t('form.location')}</span>
                                         <span class="text-gray-800">${cv.city}${cv.district ? ' / ' + cv.district : ''}</span>
                                     </div>` : ''}
                                 </div>
@@ -115,7 +115,7 @@ export const generatePrintableCV = (cv: CV): string => {
                     <!-- Skills -->
                     ${cv.skills && cv.skills.length > 0 ? `
                     <div>
-                        <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">Yetenekler</h3>
+                        <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">${t('form.skills')}</h3>
                         <div class="flex flex-wrap gap-1.5">
                             ${cv.skills.map(s => `
                                 <span class="bg-white border border-gray-200 text-gray-700 text-[10px] px-2 py-1 rounded-md font-semibold shadow-sm">${s}</span>
@@ -127,19 +127,19 @@ export const generatePrintableCV = (cv: CV): string => {
                     <!-- Languages -->
                     ${(cv.languageDetails && cv.languageDetails.length > 0) || (cv.language && cv.languageLevel) ? `
                     <div>
-                        <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">Diller</h3>
+                        <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">${t('form.languages')}</h3>
                         <div class="space-y-2">
                             ${cv.languageDetails && cv.languageDetails.length > 0 ?
                 cv.languageDetails.map(l => `
                                 <div class="flex justify-between items-center text-xs">
                                     <span class="font-bold text-gray-600">${l.language}</span>
-                                    <span class="text-[10px] text-gray-600 font-medium px-1.5 py-0.5 rounded">${l.level}</span>
+                                    <span class="text-[10px] text-gray-600 font-medium px-1.5 py-0.5 rounded">${resolveValue('languageLevel', l.level)}</span>
                                 </div>
                                 `).join('')
                 : `
                                 <div class="flex justify-between items-center text-xs">
                                     <span class="font-bold text-gray-600">${cv.language}</span>
-                                    <span class="text-[10px] text-gray-600 font-medium px-1.5 py-0.5 rounded">${cv.languageLevel}</span>
+                                    <span class="text-[10px] text-gray-600 font-medium px-1.5 py-0.5 rounded">${resolveValue('languageLevel', cv.languageLevel)}</span>
                                 </div>
                             `}
                         </div>
@@ -148,19 +148,19 @@ export const generatePrintableCV = (cv: CV): string => {
 
                     <!-- Personal Info Details (Military, Driver License etc) -->
                      <div>
-                        <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">Kişisel</h3>
+                        <h3 class="text-xs font-black text-[#1f6d78] uppercase tracking-widest mb-3 border-b border-[#1f6d78]/20 pb-1">${t('profile.personal')}</h3>
                         <div class="space-y-1.5 text-xs">
                             ${cv.experienceYears ? `
-                             <div class="flex justify-between"><span class="text-gray-400">Tecrübe</span> <span class="font-bold text-gray-800">${cv.experienceYears} Yıl</span></div>
+                             <div class="flex justify-between"><span class="text-gray-400">${t('form.experience')}</span> <span class="font-bold text-gray-800">${cv.experienceYears} ${t('common.year')}</span></div>
                             ` : ''}
                             ${cv.militaryStatus && cv.militaryStatus !== 'Belirtilmedi' ? `
-                             <div class="flex justify-between"><span class="text-gray-400">Askerlik</span> <span class="font-bold text-gray-800">${cv.militaryStatus}</span></div>
+                             <div class="flex justify-between"><span class="text-gray-400">${t('form.military')}</span> <span class="font-bold text-gray-800">${resolveValue('militaryStatus', cv.militaryStatus)}</span></div>
                             ` : ''}
                             ${cv.driverLicense && cv.driverLicense.length > 0 ? `
-                             <div class="flex justify-between"><span class="text-gray-400">Ehliyet</span> <span class="font-bold text-gray-800">${cv.driverLicense.join(', ')}</span></div>
+                             <div class="flex justify-between"><span class="text-gray-400">${t('form.driving_license')}</span> <span class="font-bold text-gray-800">${cv.driverLicense.join(', ')}</span></div>
                             ` : ''}
                              ${cv.disabilityStatus && cv.disabilityStatus !== 'Yok' && cv.disabilityStatus !== 'Belirtilmedi' ? `
-                             <div class="flex justify-between"><span class="text-gray-400">Engel</span> <span class="font-bold text-gray-800">${cv.disabilityStatus}</span></div>
+                             <div class="flex justify-between"><span class="text-gray-400">${t('form.disability')}</span> <span class="font-bold text-gray-800">${resolveValue('disabilityStatus', cv.disabilityStatus)}</span></div>
                             ` : ''}
                         </div>
                     </div>
@@ -173,7 +173,7 @@ export const generatePrintableCV = (cv: CV): string => {
                     <!-- About -->
                     ${cv.about ? `
                     <div class="mb-2">
-                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-3 border-b-2 border-gray-100 pb-1.5">Hakkında</h3>
+                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-3 border-b-2 border-gray-100 pb-1.5">${t('profile.about')}</h3>
                         <p class="text-xs sm:text-sm text-gray-700 leading-relaxed text-justify">
                             ${cv.about}
                         </p>
@@ -183,7 +183,7 @@ export const generatePrintableCV = (cv: CV): string => {
                     <!-- Work Experience -->
                     ${cv.workExperience && cv.workExperience.length > 0 ? `
                     <div>
-                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-5 border-b-2 border-gray-100 pb-1.5">İş Deneyimi</h3>
+                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-5 border-b-2 border-gray-100 pb-1.5">${t('profile.work_exp')}</h3>
                         <div class="space-y-6">
                             ${cv.workExperience.map(job => `
                             <div class="relative pl-4 border-l-2 border-gray-100">
@@ -191,7 +191,7 @@ export const generatePrintableCV = (cv: CV): string => {
                                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1">
                                     <h4 class="font-bold text-gray-900 text-sm uppercased">${job.role}</h4>
                                     <span class="text-[11px] font-bold text-[#1f6d78] whitespace-nowrap ml-auto sm:ml-4">
-                                        ${job.startDate} - ${job.isCurrent ? 'Devam Ediyor' : job.endDate}
+                                        ${job.startDate} - ${job.isCurrent ? t('common.ongoing') : job.endDate}
                                     </span>
                                 </div>
                                 <div class="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">${job.company}</div>
@@ -205,7 +205,7 @@ export const generatePrintableCV = (cv: CV): string => {
                     <!-- Internships (If any) -->
                     ${cv.internshipDetails && cv.internshipDetails.length > 0 ? `
                     <div>
-                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-5 border-b-2 border-gray-100 pb-1.5">Staj Deneyimi</h3>
+                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-5 border-b-2 border-gray-100 pb-1.5">${t('form.internships')}</h3>
                         <div class="space-y-6">
                             ${cv.internshipDetails.map(intern => `
                             <div class="relative pl-4 border-l-2 border-gray-100">
@@ -213,7 +213,7 @@ export const generatePrintableCV = (cv: CV): string => {
                                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-1">
                                     <h4 class="font-bold text-gray-900 text-sm">${intern.role}</h4>
                                     <span class="text-[11px] font-medium text-gray-500 whitespace-nowrap">
-                                        ${intern.startDate} - ${intern.isCurrent ? 'Devam Ediyor' : intern.endDate}
+                                        ${intern.startDate} - ${intern.isCurrent ? t('common.ongoing') : intern.endDate}
                                     </span>
                                 </div>
                                 <div class="text-xs font-bold text-gray-500 mb-2 uppercase">${intern.company}</div>
@@ -226,14 +226,14 @@ export const generatePrintableCV = (cv: CV): string => {
 
                     <!-- Education -->
                     <div>
-                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-5 border-b-2 border-gray-100 pb-1.5">Eğitim</h3>
+                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-5 border-b-2 border-gray-100 pb-1.5">${t('form.education_info_clean')}</h3>
                         <div class="space-y-5">
                             ${cv.educationDetails && cv.educationDetails.length > 0 ?
             cv.educationDetails.map(edu => `
                                 <div>
                                     <div class="flex justify-between items-baseline mb-0.5">
                                         <h4 class="font-bold text-gray-900 text-sm">${edu.university}</h4>
-                                        <span class="text-[11px] text-gray-400 font-medium whitespace-nowrap">${edu.startDate || ''} - ${edu.endDate || 'Mezun'}</span>
+                                        <span class="text-[11px] text-gray-400 font-medium whitespace-nowrap">${edu.startDate || ''} - ${edu.isCurrent ? t('common.ongoing') : edu.endDate || t('grad.graduated')}</span>
                                     </div>
                                     <div class="flex items-center gap-2 text-xs text-gray-600">
                                         <span class="font-medium text-[#1f6d78]">${edu.department || ''}</span>
@@ -245,7 +245,7 @@ export const generatePrintableCV = (cv: CV): string => {
                                 <div>
                                     <h4 class="font-bold text-gray-900 text-sm">${cv.education}</h4>
                                     <div class="text-xs text-gray-600 italic mt-1">
-                                        ${cv.educationLevel || 'Lisans'} | ${cv.graduationStatus || 'Mezun'}
+                                        ${resolveValue('educationLevel', cv.educationLevel)} | ${resolveValue('graduationStatus', cv.graduationStatus)}
                                     </div>
                                 </div>
                             `}
@@ -255,11 +255,11 @@ export const generatePrintableCV = (cv: CV): string => {
                     <!-- Work Preferences (Compact) -->
                      ${cv.preferredRoles && cv.preferredRoles.length > 0 ? `
                      <div class="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
-                         <h3 class="text-xs font-black text-black uppercase tracking-widest mb-3">İş Tercihleri</h3>
+                         <h3 class="text-xs font-black text-black uppercase tracking-widest mb-3">${t('profile.work_pref')}</h3>
                          <div class="flex flex-wrap gap-4 text-xs">
-                             <div><span class="text-gray-400 uppercase font-bold text-[9px] block">Şehir</span> <span class="font-semibold text-gray-800">${cv.preferredCity || 'Belirtilmedi'}</span></div>
-                             <div><span class="text-gray-400 uppercase font-bold text-[9px] block">Pozisyonlar</span> <span class="font-semibold text-gray-800">${cv.preferredRoles.join(', ')}</span></div>
-                             <div><span class="text-gray-400 uppercase font-bold text-[9px] block">Çalışma Şekli</span> <span class="font-semibold text-gray-800">${cv.workType || '-'}</span></div>
+                             <div><span class="text-gray-400 uppercase font-bold text-[9px] block">${t('form.city')}</span> <span class="font-semibold text-gray-800">${cv.preferredCity || t('card.no_city')}</span></div>
+                             <div><span class="text-gray-400 uppercase font-bold text-[9px] block">${t('profile.desired_roles')}</span> <span class="font-semibold text-gray-800">${cv.preferredRoles.join(', ')}</span></div>
+                             <div><span class="text-gray-400 uppercase font-bold text-[9px] block">${t('form.work_model')}</span> <span class="font-semibold text-gray-800">${resolveValue('workType', cv.workType)}</span></div>
                          </div>
                      </div>
                      ` : ''}
@@ -267,7 +267,7 @@ export const generatePrintableCV = (cv: CV): string => {
                      <!-- References -->
                     ${cv.references && cv.references.length > 0 ? `
                     <div>
-                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-4 border-b-2 border-gray-100 pb-1.5">Referanslar</h3>
+                        <h3 class="text-sm font-black text-black uppercase tracking-widest mb-4 border-b-2 border-gray-100 pb-1.5">${t('profile.references')}</h3>
                         <div class="grid grid-cols-2 gap-4">
                            ${cv.references.map(ref => `
                                <div class="px-1 py-2">
@@ -291,7 +291,7 @@ export const generatePrintableCV = (cv: CV): string => {
                     <span>Kartvizi</span>
                     <span class="inline-block transform rotate-[12deg] origin-center text-[#1f6d78] font-black">d</span>
                 </div>
-                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider relative top-[1px]">.com ile oluşturuldu</span>
+                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider relative top-[1px]">${t('profile.pdf_footer')}</span>
             </div>
 
         </div>

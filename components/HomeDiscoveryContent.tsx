@@ -78,7 +78,7 @@ const HomeDiscoveryContent: React.FC<HomeDiscoveryContentProps> = ({
             (viewMode === 'employers')) && (
             <div className="pb-2 flex items-center gap-2">
               <div className="text-[22px] font-black tracking-tighter text-black dark:text-white transition-all leading-none">
-                {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
+                {viewMode === 'cvs' ? t('menu.job_seekers') : viewMode === 'shops' ? t('menu.services') : t('menu.employers')}
               </div>
               <div className="flex items-center pt-0.5">
                 <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
@@ -106,7 +106,7 @@ const HomeDiscoveryContent: React.FC<HomeDiscoveryContentProps> = ({
       <div className="hidden sm:block mt-8 mb-3 lg:pl-1.5 px-1">
         <div className="flex items-center justify-start gap-4">
           <h1 className="text-[24px] font-black tracking-tighter text-black dark:text-white leading-none">
-            {viewMode === 'cvs' ? 'İş Arayanlar' : viewMode === 'shops' ? 'Hizmetler' : 'İş Verenler'}
+            {viewMode === 'cvs' ? t('home.discovery_seekers') : viewMode === 'shops' ? t('home.discovery_services') : t('home.discovery_employers')}
           </h1>
           <SortDropdown value={sortBy} onChange={setSortBy} minimal={true} />
         </div>
@@ -151,7 +151,7 @@ const HomeDiscoveryContent: React.FC<HomeDiscoveryContentProps> = ({
                 onClick={() => handleCompanyClick(company)}
                 isActive={location.pathname === `/company/${company.slug}` || location.pathname === `/company/${company.id}`}
               />
-            )) : <div className="p-16 text-center font-bold">Şirket bulunamadı.</div>}
+            )) : <div className="p-16 text-center font-bold text-gray-500 dark:text-gray-400">{t('feed.no_results')}</div>}
           </div>
         ) : (
           <div className="flex flex-col">
@@ -162,13 +162,13 @@ const HomeDiscoveryContent: React.FC<HomeDiscoveryContentProps> = ({
                 onClick={() => { setActiveShop(shop); setIsShopProfileOpen(true); }} 
                 isActive={activeShop?.id === shop.id && isShopProfileOpen}
               />
-            )) : <div className="p-16 text-center font-black italic opacity-50">Henüz Kayıtlı Hizmet Yok</div>}
+            )) : <div className="p-16 text-center font-black italic opacity-50 text-gray-500 dark:text-gray-400">{t('sidebar.no_data')}</div>}
           </div>
         )}
       </div>
 
       {filteredCVs.length > ITEMS_PER_PAGE && (
-        <div className="mt-8 flex flex-col items-center gap-4 pb-32 sm:pb-8 animate-in fade-in duration-700">
+        <div className="mt-8 flex flex-col items-center gap-4 pb-44 sm:pb-8 animate-in fade-in duration-700">
           <div className="flex items-center gap-2 sm:gap-4">
             {/* Previous Button */}
             <button 

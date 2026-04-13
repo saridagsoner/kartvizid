@@ -53,11 +53,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
     const handleUpdatePassword = async () => {
         if (newPassword !== confirmPassword) {
-            setShowWarning({ show: true, message: 'Şifreler eşleşmiyor!' });
+            setShowWarning({ show: true, message: t('settings.pass_mismatch') });
             return;
         }
         if (newPassword.length < 6) {
-            setShowWarning({ show: true, message: 'Şifre en az 6 karakter olmalıdır.' });
+            setShowWarning({ show: true, message: t('settings.pass_min_length') });
             return;
         }
 
@@ -65,11 +65,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
             setLoading(true);
             const { error } = await supabase.auth.updateUser({ password: newPassword });
             if (error) throw error;
-            setShowWarning({ show: true, message: 'Şifreniz başarıyla güncellendi!' });
+            setShowWarning({ show: true, message: t('settings.pass_success') });
             setNewPassword('');
             setConfirmPassword('');
         } catch (error: any) {
-            setShowWarning({ show: true, message: 'Hata: ' + error.message });
+            setShowWarning({ show: true, message: t('settings.error') + error.message });
         } finally {
             setLoading(false);
         }
@@ -77,7 +77,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
     const handleUpdateEmail = async () => {
         if (!newEmail.includes('@')) {
-            setShowWarning({ show: true, message: 'Geçerli bir e-posta adresi giriniz.' });
+            setShowWarning({ show: true, message: t('settings.email_invalid') });
             return;
         }
 
@@ -85,10 +85,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
             setLoading(true);
             const { error } = await supabase.auth.updateUser({ email: newEmail });
             if (error) throw error;
-            setShowWarning({ show: true, message: 'E-posta güncelleme onayı için yeni adresinize bir mail gönderdik. Lütfen kontrol edin.' });
+            setShowWarning({ show: true, message: t('settings.email_pending_msg') });
             setNewEmail('');
         } catch (error: any) {
-            setShowWarning({ show: true, message: 'Hata: ' + error.message });
+            setShowWarning({ show: true, message: t('settings.error') + error.message });
         } finally {
             setLoading(false);
         }
@@ -143,7 +143,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
         } catch (error: any) {
             console.error('Error deleting account:', error);
-            setShowWarning({ show: true, message: 'Hesap silinirken bir hata oluştu: ' + error.message });
+            setShowWarning({ show: true, message: t('settings.delete_error') + ': ' + error.message });
             setShowDeleteConfirm(false); // Close modal on error to allow retry
         } finally {
             setLoading(false);
@@ -176,7 +176,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-black text-black dark:text-white mb-2 leading-tight tracking-tight relative z-10">
-                                Bilgi Mesajı
+                                {t('settings.info_msg')}
                             </h3>
                             <p className="text-sm font-bold text-gray-500 dark:text-gray-400 mb-8 leading-relaxed relative z-10">
                                 {showWarning.message}
@@ -185,7 +185,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 onClick={() => setShowWarning({ show: false, message: '' })}
                                 className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active: relative z-10"
                             >
-                                Tamam
+                                {t('settings.ok')}
                             </button>
                         </div>
                     </div>
@@ -235,32 +235,32 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 👋
                             </div>
                             <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">
-                                {t('settings.delete_success_title') || 'Hesabınız Silindi'}
+                                {t('settings.delete_success_title')}
                             </h3>
                             <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
-                                {t('settings.delete_success_desc') || 'Kartvizid ailesinin bir parçası olduğunuz için teşekkür ederiz. Sizi tekrar aramızda görmekten mutluluk duyarız.'}
+                                {t('settings.delete_success_desc')}
                             </p>
                             <button
                                 onClick={handleFinalExit}
                                 className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-[#155e68] transition-all shadow-xl shadow-[#1f6d78]/20 active:"
                             >
-                                {t('common.done') || 'Hoşça Kal'}
+                                {t('common.done')}
                             </button>
                         </div>
                     </div>
                 )}
 
                 {/* Header */}
-                <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10 shrink-0">
+                <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-white dark:bg-black sticky top-0 z-10 shrink-0">
                     <div>
                         <h2 className="text-xl sm:text-2xl font-black text-black dark:text-white tracking-tighter">{t('settings.header_title')}</h2>
                         <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mt-1">
-                            {user ? t('settings.header_subtitle') : 'Tema & Dil'}
+                            {user ? t('settings.header_subtitle') : t('settings.theme_and_language')}
                         </p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-xl text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all active:"
+                        className="w-10 h-10 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center text-xl text-black dark:text-white hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all active:scale-90"
                     >
                         ×
                     </button>
@@ -268,11 +268,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
                 <div className="flex flex-col sm:flex-row flex-1 overflow-hidden">
                     {/* Sidebar Tabs */}
-                    <div className="w-full sm:w-48 bg-gray-50 dark:bg-gray-850 p-4 sm:p-6 flex flex-row sm:flex-col gap-2 border-b sm:border-b-0 sm:border-r border-gray-100 dark:border-gray-800 shrink-0 overflow-x-auto hide-scrollbar snap-x snap-mandatory">
+                    <div className="w-full sm:w-48 bg-gray-50 dark:bg-black p-4 sm:p-6 flex flex-row sm:flex-col gap-2 border-b sm:border-b-0 sm:border-r border-gray-100 dark:border-white/10 shrink-0 overflow-x-auto hide-scrollbar snap-x snap-mandatory">
                         {user && (
                             <button
                                 onClick={() => setActiveTab('account')}
-                                className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'account' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800'
+                                className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'account' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/5'
                                     }`}
                             >
                                 {t('settings.account')}
@@ -280,7 +280,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                         )}
                         <button
                             onClick={() => setActiveTab('general')}
-                            className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'general' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800'
+                            className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'general' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/5'
                                 }`}
                         >
                             {t('settings.general')}
@@ -289,14 +289,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                             <>
                                 <button
                                     onClick={() => setActiveTab('security')}
-                                    className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'security' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800'
+                                    className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'security' ? 'bg-[#1f6d78]' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/5'
                                         }`}
                                 >
                                     {t('settings.security')}
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('notifications')}
-                                    className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'notifications' ? 'bg-[#1f6d78] text-white shadow-md' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800'
+                                    className={`whitespace-nowrap px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-bold transition-all snap-start ${activeTab === 'notifications' ? 'bg-[#1f6d78]' : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/5'
                                         }`}
                                 >
                                     {t('settings.notifications')}
@@ -307,27 +307,27 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                         {!user && (
                             <div className="mt-auto pt-6 px-2 opacity-50 hidden sm:block">
                                 <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-relaxed">
-                                    Diğer ayarlar için giriş yapın.
+                                    {t('settings.login_for_more')}
                                 </p>
                             </div>
                         )}
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 p-6 sm:p-8 overflow-y-auto custom-scrollbar dark:bg-gray-900">
+                    <div className="flex-1 p-6 sm:p-8 overflow-y-auto custom-scrollbar dark:bg-black">
 
                         {activeTab === 'general' && (
                             <div className="space-y-8">
                                 <div>
-                                    <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2 mb-4">
+                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/10 pb-2 mb-4">
                                         {t('account.appearance')}
                                     </h3>
                                     <button
                                         onClick={toggleTheme}
-                                        className="w-full text-left p-4 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 flex items-center justify-between transition-colors"
+                                        className="w-full text-left p-4 rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-white/5 flex items-center justify-between transition-colors shadow-sm"
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-full bg-gray-100 text-black flex items-center justify-center text-sm">
+                                            <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/10 text-black dark:text-white flex items-center justify-center text-sm">
                                                 {theme === 'dark' ? (
                                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                                         <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
@@ -347,38 +347,39 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                                 )}
                                             </div>
                                             <div>
-                                                <p className="font-bold text-black text-sm">{theme === 'dark' ? t('account.dark') : t('account.light')}</p>
+                                                <p className="font-bold text-black dark:text-white text-sm">{theme === 'dark' ? t('account.dark') : t('account.light')}</p>
                                                 <p className="text-xs text-gray-400 font-medium mt-0.5">
-                                                    {theme === 'dark' ? 'Koyu mod aktif' : 'Aydınlık mod aktif'}
+                                                    {theme === 'dark' ? t('settings.dark_mode_active') : t('settings.light_mode_active')}
                                                 </p>
                                             </div>
                                         </div>
-
+ 
                                         <div className={`w-12 h-7 rounded-full p-1 transition-all  ${theme === 'dark' ? 'bg-[#1f6d78]' : 'bg-gray-300'}`}>
-                                            <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform  ${theme === 'dark' ? '' : ''}`}></div>
+                                            <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform  ${theme === 'dark' ? 'translate-x-5' : 'translate-x-0'}`}></div>
                                         </div>
                                     </button>
                                 </div>
 
+
                                 <div>
-                                    <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2 mb-4">
+                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/10 pb-2 mb-4">
                                         {t('settings.language')}
                                     </h3>
-                                    <p className="text-xs text-gray-500 mb-4">{t('settings.language_desc')}</p>
-                                    <div className="grid grid-cols-1 gap-3">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">{t('settings.language_desc')}</p>
+                                    <div className="grid grid-cols-1 gap-3 pb-32 sm:pb-0">
                                         {[
-                                            { code: 'tr', label: 'Türkçe', flag: '🇹🇷' },
-                                            { code: 'en', label: 'English', flag: '🇬🇧' },
-                                            { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
-                                            { code: 'fr', label: 'Français', flag: '🇫🇷' },
-                                            { code: 'es', label: 'Español', flag: '🇪🇸' },
+                                            { code: 'tr', label: t('lang.turkish'), flag: '🇹🇷' },
+                                            { code: 'en', label: t('lang.english'), flag: '🇬🇧' },
+                                            { code: 'de', label: t('lang.german'), flag: '🇩🇪' },
+                                            { code: 'fr', label: t('lang.french'), flag: '🇫🇷' },
+                                            { code: 'es', label: t('lang.spanish'), flag: '🇪🇸' },
                                         ].map((lang) => (
                                             <button
                                                 key={lang.code}
                                                 onClick={() => setLanguage(lang.code as any)}
-                                                className={`flex items-center justify-between p-4 rounded-xl border transition-all active: ${language === lang.code
+                                                className={`flex items-center justify-between p-4 rounded-xl border transition-all active:scale-95 ${language === lang.code
                                                     ? 'bg-[#1f6d78] text-white border-[#1f6d78] shadow-md'
-                                                    : 'bg-white border-gray-100 text-gray-700 hover:bg-gray-50 hover:border-gray-200'
+                                                    : 'bg-white dark:bg-black border-gray-100 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 hover:border-gray-200 dark:hover:border-white/20'
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-3">
@@ -400,37 +401,37 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                         {activeTab === 'account' && (
                             <div className="space-y-8">
                                 <div>
-                                    <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2 mb-4">
+                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/10 pb-2 mb-4">
                                         {t('settings.account_summary')}
                                     </h3>
-                                    <div className="bg-gray-50 p-4 rounded-xl space-y-2">
-                                        <p className="text-sm"><strong>{t('settings.email_label')}:</strong> {user?.email}</p>
-                                        <p className="text-sm"><strong>{t('settings.member_since')}:</strong> {new Date(user?.created_at || '').toLocaleDateString('tr-TR')}</p>
-                                        <p className="text-xs text-gray-400 mt-2">{t('settings.user_id')}: {user?.id}</p>
+                                    <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-xl space-y-2 border border-transparent dark:border-white/5 shadow-inner">
+                                        <p className="text-sm dark:text-gray-300"><strong>{t('settings.email_label')}:</strong> {user?.email}</p>
+                                        <p className="text-sm dark:text-gray-300"><strong>{t('settings.member_since')}:</strong> {new Date(user?.created_at || '').toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US')}</p>
+                                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">{t('settings.user_id')}: {user?.id}</p>
                                     </div>
                                 </div>
 
                                 {/* Account Deletion */}
-                                <div className="pt-8 border-t border-gray-100">
-                                    <div className="bg-red-50 rounded-2xl p-5 border border-red-100">
+                                <div className="pt-8 border-t border-gray-100 dark:border-white/10">
+                                    <div className="bg-red-50 dark:bg-red-950/10 rounded-2xl p-5 border border-red-100 dark:border-red-900/20">
                                         <div className="mb-4">
-                                            <p className="text-sm font-bold text-red-900">{t('settings.delete_account')}</p>
-                                            <p className="text-xs text-red-700 mt-1">
+                                            <p className="text-sm font-bold text-red-900 dark:text-red-400">{t('settings.delete_account')}</p>
+                                            <p className="text-xs text-red-700 dark:text-red-500 mt-1">
                                                 {isEmployer
                                                     ? t('settings.delete_desc_emp')
                                                     : t('settings.delete_desc_seek')
                                                 }
                                             </p>
                                         </div>
-                                        <p className="text-[10px] text-red-600/70 italic mb-5">
+                                        <p className="text-[10px] text-red-600/70 dark:text-red-400/50 italic mb-5">
                                             {t('settings.delete_warning')}
                                         </p>
                                         <button
                                             onClick={handleDeleteClick}
                                             disabled={loading}
-                                            className="w-full bg-white border border-red-200 text-red-600 px-5 py-3 rounded-xl text-sm font-bold hover:bg-red-600 hover:text-white transition-all shadow-sm active: disabled:opacity-50"
+                                            className="w-full bg-white dark:bg-black border border-red-200 dark:border-red-900/30 text-red-600 dark:text-red-500 px-5 py-3 rounded-xl text-sm font-bold hover:bg-red-600 dark:hover:bg-red-600 hover:text-white transition-all shadow-sm active:scale-95 disabled:opacity-50"
                                         >
-                                            {loading ? 'Siliniyor...' : t('settings.delete_btn')}
+                                            {loading ? t('settings.deleting') : t('settings.delete_btn')}
                                         </button>
                                     </div>
                                 </div>
@@ -440,25 +441,25 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                         {activeTab === 'security' && (
                             <div className="space-y-8">
                                 <div className="space-y-4">
-                                    <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2">
+                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/10 pb-2">
                                         {t('settings.change_email')}
                                     </h3>
 
                                     {/* Current Email Display */}
-                                    <div className="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-100">
-                                        <p className="text-xs text-gray-500 font-bold uppercase tracking-wider mb-1">Mevcut E-posta</p>
-                                        <p className="text-sm font-bold text-gray-800">{user?.email}</p>
+                                    <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-4 mb-4 border border-gray-100 dark:border-white/10">
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">{t('settings.current_email')}</p>
+                                        <p className="text-sm font-bold text-gray-800 dark:text-white">{user?.email}</p>
 
 
                                         {user?.new_email && (
-                                            <div className="mt-3 bg-yellow-50 border border-yellow-100 p-3 rounded-lg flex items-start gap-3">
-                                                <div className="text-yellow-600 text-lg">⚠️</div>
+                                            <div className="mt-3 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-100 dark:border-yellow-900/20 p-3 rounded-lg flex items-start gap-3">
+                                                <div className="text-yellow-600 dark:text-yellow-500 text-lg">⚠️</div>
                                                 <div>
-                                                    <p className="text-xs font-bold text-yellow-800 mb-1">Onay Bekleyen Değişiklik</p>
-                                                    <p className="text-xs text-yellow-700 leading-relaxed">
-                                                        Yeni e-posta adresiniz: <span className="font-bold">{user.new_email}</span>
+                                                    <p className="text-xs font-bold text-yellow-800 dark:text-yellow-200 mb-1">{t('settings.pending_change')}</p>
+                                                    <p className="text-xs text-yellow-700 dark:text-yellow-400 leading-relaxed">
+                                                        {t('settings.new_email_is')} <span className="font-bold">{user.new_email}</span>
                                                         <br />
-                                                        Lütfen hem eski ({user.email}) hem de yeni adresinize gönderilen onay linklerine tıklayın.
+                                                        {t('settings.email_confirm_hint')}
                                                     </p>
                                                 </div>
                                             </div>
@@ -472,7 +473,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                                 value={newEmail}
                                                 onChange={(e) => setNewEmail(e.target.value)}
                                                 placeholder={t('settings.new_email')}
-                                                className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-[#1f6d78]/20 focus:border-[#1f6d78] border border-transparent transition-all"
+                                                className="flex-1 bg-gray-50 dark:bg-black/5 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent dark:border-white/10 text-black dark:text-white focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
                                             />
                                             <button
                                                 onClick={handleUpdateEmail}
@@ -482,14 +483,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                                 {loading ? '...' : t('settings.update')}
                                             </button>
                                         </div>
-                                        <p className="text-[10px] text-gray-400 italic px-1">
-                                            * Güvenliğiniz için değişiklik işlemi her iki e-posta adresine de onay linki gönderir.
+                                        <p className="text-[10px] text-gray-400 dark:text-gray-500 italic px-1">
+                                            {t('settings.security_hint')}
                                         </p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-4">
-                                    <h3 className="text-sm font-black text-black uppercase tracking-wider border-b border-gray-100 pb-2">
+                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/10 pb-2">
                                         {t('settings.change_password')}
                                     </h3>
                                     <div className="space-y-3">
@@ -498,22 +499,22 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
                                             placeholder={t('settings.new_password')}
-                                            className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-black/5 transaction-all"
+                                            className="w-full bg-gray-50 dark:bg-black/5 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent dark:border-white/10 text-black dark:text-white focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
                                         />
                                         <input
                                             type="password"
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             placeholder={t('settings.new_password_confirm')}
-                                            className="w-full bg-gray-50 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-black/5 transaction-all"
+                                            className="w-full bg-gray-50 dark:bg-black/5 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent dark:border-white/10 text-black dark:text-white focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
                                         />
                                         <div className="flex justify-end pt-2">
                                             <button
                                                 onClick={handleUpdatePassword}
                                                 disabled={loading || !newPassword || !confirmPassword}
-                                                className="bg-[#1f6d78] text-white px-8 py-3 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-[#155e68] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+                                                className="bg-[#1f6d78] text-white px-8 py-3 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-[#155e68] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg active:scale-95"
                                             >
-                                                {loading ? 'Güncelleniyor...' : t('settings.update_password')}
+                                                {loading ? t('settings.updating') : t('settings.update_password')}
                                             </button>
                                         </div>
                                     </div>
@@ -523,23 +524,23 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
                         {activeTab === 'notifications' && (
                             <div className="space-y-8">
-                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => toggleNotification('email')}>
+                                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/5 rounded-2xl hover:bg-gray-100 dark:hover:bg-white/10 transition-colors border border-transparent dark:border-white/5 cursor-pointer" onClick={() => toggleNotification('email')}>
                                     <div>
-                                        <h4 className="font-bold text-sm text-black">{t('settings.notif_email_title')}</h4>
-                                        <p className="text-xs text-gray-500 mt-1">{t('settings.notif_email_desc')}</p>
+                                        <h4 className="font-bold text-sm text-black dark:text-white">{t('settings.notif_email_title')}</h4>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('settings.notif_email_desc')}</p>
                                     </div>
-                                    <div className={`w-12 h-7 rounded-full p-1 transition-all  ${emailNotif ? 'bg-[#1f6d78]' : 'bg-gray-300'}`}>
-                                        <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform  ${emailNotif ? '' : ''}`}></div>
+                                    <div className={`w-12 h-7 rounded-full p-1 transition-all  ${emailNotif ? 'bg-[#1f6d78]' : 'bg-gray-300 dark:bg-gray-700'}`}>
+                                        <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform  ${emailNotif ? 'translate-x-5' : 'translate-x-0'}`}></div>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => toggleNotification('marketing')}>
+                                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/5 rounded-2xl hover:bg-gray-100 dark:hover:bg-white/10 transition-colors border border-transparent dark:border-white/5 cursor-pointer" onClick={() => toggleNotification('marketing')}>
                                     <div>
-                                        <h4 className="font-bold text-sm text-black">{t('settings.notif_marketing_title')}</h4>
-                                        <p className="text-xs text-gray-500 mt-1">{t('settings.notif_marketing_desc')}</p>
+                                        <h4 className="font-bold text-sm text-black dark:text-white">{t('settings.notif_marketing_title')}</h4>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('settings.notif_marketing_desc')}</p>
                                     </div>
-                                    <div className={`w-12 h-7 rounded-full p-1 transition-all  ${marketingNotif ? 'bg-[#1f6d78]' : 'bg-gray-300'}`}>
-                                        <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform  ${marketingNotif ? '' : ''}`}></div>
+                                    <div className={`w-12 h-7 rounded-full p-1 transition-all  ${marketingNotif ? 'bg-[#1f6d78]' : 'bg-gray-300 dark:bg-gray-700'}`}>
+                                        <div className={`w-5 h-5 bg-white rounded-full shadow-sm transform transition-transform  ${marketingNotif ? 'translate-x-5' : 'translate-x-0'}`}></div>
                                     </div>
                                 </div>
                             </div>

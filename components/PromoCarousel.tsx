@@ -139,10 +139,10 @@ const PromoCarousel: React.FC<PromoCarouselProps> = ({ onOpenTips, onOpenInfo, o
                     {/* Content */}
                     <div className="relative z-10 max-w-[240px]">
                         <h3 className="font-extrabold text-xl mb-3 tracking-tight flex items-center justify-center gap-2 text-gray-900 dark:text-white">
-                            Kartvizid Nedir?
+                            {t('promo.info_title')}
                         </h3>
                         <p className="text-sm font-medium text-gray-500 leading-relaxed group-hover:text-[#1f6d78] transition-colors">
-                            Platformu nasıl kullanacağınızı ve avantajlarını keşfedin.
+                            {t('promo.info_desc')}
                         </p>
                     </div>
                 </div>

@@ -2,6 +2,7 @@
 import React, { useState, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
 import getCroppedImg from '../lib/cropImage';
+import { useLanguage } from '../context/LanguageContext';
 
 interface ImageCropperProps {
     imageSrc: string;
@@ -11,6 +12,7 @@ interface ImageCropperProps {
 }
 
 const ImageCropper: React.FC<ImageCropperProps> = ({ imageSrc, onCropComplete, onClose, aspect = 1 }) => {
+    const { t } = useLanguage();
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
@@ -37,9 +39,9 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ imageSrc, onCropComplete, o
             }
         } catch (e) {
             console.error(e);
-            setShowWarning({ show: true, message: 'Fotoğraf kırpılırken bir hata oluştu.' });
+            setShowWarning({ show: true, message: t('cropper.error') });
         }
-    }, [imageSrc, croppedAreaPixels, onCropComplete]);
+    }, [imageSrc, croppedAreaPixels, onCropComplete, t]);
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
@@ -58,7 +60,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ imageSrc, onCropComplete, o
                                 </svg>
                             </div>
                             <h3 className="text-xl font-black text-black mb-2 leading-tight tracking-tight relative z-10">
-                                Hata Oluştu
+                                {t('cropper.error_title')}
                             </h3>
                             <p className="text-sm font-bold text-gray-500 mb-8 leading-relaxed relative z-10">
                                 {showWarning.message}
@@ -67,14 +69,14 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ imageSrc, onCropComplete, o
                                 onClick={() => setShowWarning({ show: false, message: '' })}
                                 className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all shadow-lg active:scale-95 relative z-10"
                             >
-                                Tamam
+                                {t('settings.ok')}
                             </button>
                         </div>
                     </div>
                 )}
 
                 <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-white z-10">
-                    <h3 className="font-bold text-lg text-gray-900">Fotoğrafı Ayarla</h3>
+                    <h3 className="font-bold text-lg text-gray-900">{t('cropper.title')}</h3>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-900">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -100,7 +102,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ imageSrc, onCropComplete, o
 
                 <div className="p-6 bg-white border-t border-gray-100 flex flex-col gap-4 z-10">
                     <div className="flex items-center gap-4">
-                        <span className="text-xs font-bold text-gray-500">Yakınlaştır</span>
+                        <span className="text-xs font-bold text-gray-500">{t('cropper.zoom')}</span>
                         <input
                             type="range"
                             value={zoom}
@@ -118,13 +120,13 @@ const ImageCropper: React.FC<ImageCropperProps> = ({ imageSrc, onCropComplete, o
                             onClick={onClose}
                             className="flex-1 py-3 rounded-xl font-bold text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
                         >
-                            Vazgeç
+                            {t('cropper.cancel')}
                         </button>
                         <button
                             onClick={showCroppedImage}
                             className="flex-1 py-3 rounded-xl font-bold text-sm text-white bg-[#1f6d78] hover:bg-[#155e68] transition-colors shadow-lg shadow-[#1f6d78]/20"
                         >
-                            Tamamla
+                            {t('cropper.done')}
                         </button>
                     </div>
                 </div>

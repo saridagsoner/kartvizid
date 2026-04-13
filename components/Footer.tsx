@@ -4,11 +4,11 @@ import { useToast } from '../context/ToastContext';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const { showToast } = useToast();
 
     const handleAppClick = () => {
-        showToast("Mobil uygulamamız çok yakında! Şimdilik web sitemizden devam edebilirsiniz.", "info");
+        showToast(t('footer.mobile_toast'), "info");
     };
 
     return (
@@ -24,7 +24,7 @@ const Footer = () => {
                                 <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                             </div>
                             <span className="text-[10px] sm:text-[11px] font-bold text-gray-400 tracking-tight mt-0.5 leading-none whitespace-nowrap pl-1">
-                                dijital cv & doğru eşleşme
+                                {t('footer.tagline')}
                             </span>
                         </div>
                         <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed max-w-sm">
@@ -51,7 +51,7 @@ const Footer = () => {
                             <li><Link to="/sikca-sorulan-sorular" className="hover:text-black transition-colors">{t('footer.faq')}</Link></li>
                             <li><Link to="/yardim-merkezi" className="hover:text-black transition-colors">{t('footer.help')}</Link></li>
                             <li><Link to="/hizmetlerimiz" className="hover:text-black transition-colors">{t('footer.services')}</Link></li>
-                            <li><Link to="/iletisim" className="hover:text-black dark:hover:text-white transition-colors">İletişim</Link></li>
+                            <li><Link to="/iletisim" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.iletisim')}</Link></li>
                         </ul>
                     </div>
 
@@ -59,7 +59,7 @@ const Footer = () => {
                     <div>
                         <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">{t('footer.data_policy')}</h3>
                         <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-500">
-                            <li><Link to="/aydinlatma-metni" className="hover:text-black dark:hover:text-white transition-colors">Aydınlatma Metni</Link></li>
+                            <li><Link to="/aydinlatma-metni" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.privacy_policy')}</Link></li>
                             <li><Link to="/cerez-politikasi" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.cookie_policy')}</Link></li>
                             <li><Link to="/kvkk-aydinlatma" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.kvkk')}</Link></li>
                             <li><Link to="/uyelik-sozlesmesi" className="hover:text-black dark:hover:text-white transition-colors">{t('footer.membership_agreement')}</Link></li>
@@ -72,16 +72,16 @@ const Footer = () => {
                         <h3 className="text-sm sm:text-lg font-bold mb-3 sm:mb-6 text-black dark:text-white">{t('footer.mobile_app')}</h3>
                         <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm mb-4 sm:mb-6">{t('footer.mobile_desc')}</p>
                         <div className="flex flex-row sm:flex-col gap-3">
-                            <AppButton
+                             <AppButton
                                 onClick={handleAppClick}
                                 store="App Store"
-                                subtitle="'dan İndirin"
+                                subtitle={t('footer.app_store_subtitle')}
                                 icon={<path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.17.66-.42v-1.61c-2.78.48-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-1.55.9-2.07-.09-.25-.39-.98.09-2.04 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.48 1.06.19 1.79.09 2.04.52.52.9.96.9 2.07 0 3.81-2.35 4.66-4.56 4.91.36.31.69.94.69 1.92v2.85c0 .25.16.51.67.42C19.13 20.16 22 16.42 22 12A10 10 0 0 0 12 2z" />}
                             />
                             <AppButton
                                 onClick={handleAppClick}
                                 store="Google Play"
-                                subtitle="'den Edinin"
+                                subtitle={t('footer.play_store_subtitle')}
                                 icon={<path d="M5 3.135L19.5 12 5 20.865V3.135z M20.5 12.5L6.5 21.5 8 13z M6.5 2.5L20.5 11.5 8 11z" />} // Simplified Play icon shape
                             />
                         </div>

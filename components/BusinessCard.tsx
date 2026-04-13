@@ -56,13 +56,13 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
             </h3>
 
             <p className="text-[13px] sm:text-[14px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight line-clamp-1 min-h-[1.2em]">
-              {cv.profession || t('card.no_profession')}
+              {cv.profession ? cv.profession.split(',').map(p => resolveValue('profession', p.trim())).join(', ') : t('card.no_profession')}
             </p>
 
             <div className="flex flex-row items-center flex-wrap gap-x-2.5 sm:gap-x-6 gap-y-1 mt-0.5">
               <div className="flex items-center gap-1 sm:gap-1.5 text-[11.5px] sm:text-[12px] text-gray-500 dark:text-gray-400 font-bold whitespace-nowrap">
                 <i className="fi fi-rr-marker text-[10.5px] sm:text-[11px] translate-y-[0.5px]"></i>
-                <span>{cv.city || t('card.no_city')}</span>
+                <span>{cv.city ? resolveValue('city', cv.city) : t('card.no_city')}</span>
               </div>
 
               <div className="flex items-center gap-1 sm:gap-1.5 text-[11.5px] sm:text-[12px] text-gray-500 dark:text-gray-400 font-bold whitespace-nowrap">

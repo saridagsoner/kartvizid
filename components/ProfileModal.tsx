@@ -17,7 +17,7 @@ interface ProfileModalProps {
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, onJobFound, isInline = false }) => {
-  const { t } = useLanguage();
+  const { t, resolveValue } = useLanguage();
   const { user } = useAuth();
   const { showToast } = useToast();
   const [showRoleWarning, setShowRoleWarning] = useState(false);
@@ -56,7 +56,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
   const handleDownload = () => {
     const printWindow = window.open('', '_blank');
     if (printWindow) {
-      printWindow.document.write(generatePrintableCV(cv));
+      printWindow.document.write(generatePrintableCV(cv, t, resolveValue));
       printWindow.document.close();
     }
   };
@@ -66,7 +66,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
       if (navigator.share) {
         await navigator.share({
           title: `${cv.name} | Kartvizid`,
-          text: `${cv.name} adlı kişinin detaylı CV'sini inceleyin.`,
+          text: t('profile.share_text').replace('{name}', cv.name),
           url: window.location.href,
         });
       } else {
@@ -78,22 +78,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
     }
   };
 
-  const resolveValue = (value: string | undefined): string => {
-    if (!value) return '-';
-    const mapping: Record<string, string> = {
-      'Ofis': 'work.office', 'Uzaktan': 'work.remote', 'Hibrit': 'work.hybrid',
-      'Tam Zamanlı': 'emp.full_time', 'Yarı Zamanlı': 'emp.part_time', 'Proje Bazlı': 'emp.project',
-      'Yapıldı': 'military.done', 'Muaf': 'military.exempt', 'Tecilli': 'military.postponed', 'Yükümlü Değil': 'military.not_obligated',
-      'Bekar': 'marital.single', 'Evli': 'marital.married',
-      'Mezun': 'grad.graduated', 'Öğrenci': 'grad.student',
-      'Yok': 'common.none', 'Sorun Yok': 'common.no_problem', 'Hemen': 'common.immediately',
-      'Seyahat Engeli Yok': 'travel.no_barrier', 'Seyahat Edebilir': 'travel.yes', 'Seyahat Edemez': 'travel.no',
-      'İngilizce': 'lang.english', 'Almanca': 'lang.german', 'Fransızca': 'lang.french', 'İspanyolca': 'lang.spanish', 'Türkçe': 'lang.turkish', 'Rusça': 'lang.russian', 'Arapça': 'lang.arabic',
-      'Başlangıç': 'level.beginner', 'Orta': 'level.intermediate', 'İleri': 'level.advanced', 'Anadil': 'level.native'
-    };
-    if (mapping[value]) return t(mapping[value]);
-    return value;
-  };
 
   const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string }) => (
     <div className={`mb-3 mt-4 sm:mt-6 first:mt-0 ${isInline ? 'sm:mt-5 sm:mb-2' : 'sm:mb-6 sm:mt-10'}`}>
@@ -112,7 +96,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
           </span>
         )}
         <span className={`${isInline ? 'text-xs sm:text-sm' : 'text-xs sm:text-base'} font-bold text-gray-700 dark:text-gray-300`}>
-          {typeof value === 'string' ? resolveValue(value) : (value || '-')}
+          {typeof value === 'string' ? resolveValue('generic', value) : (value || '-')}
         </span>
       </div>
     </div>
@@ -124,7 +108,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
         {!isInline && (
           <SEO
             title={`${cv.name} - ${cv.profession}`}
-            description={cv.about ? cv.about.substring(0, 150) + '...' : `${cv.name} adlı kullanıcının özgeçmişini inceleyin.`}
+            description={cv.about ? cv.about.substring(0, 150) + '...' : t('profile.member_cv_desc').replace('{name}', cv.name)}
             image={cv.photoUrl}
           />
         )}
@@ -162,11 +146,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                 <div className="flex flex-col gap-6 pt-4 pl-4">
                   <div className="flex flex-row gap-4 sm:gap-6 items-start">
                     <div className="shrink-0">
-                      <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-3 mb-1.5 block">FOTOĞRAF</span>
-                      <div className="border border-dashed border-gray-300 dark:border-white/20 rounded-[24px] sm:rounded-[3rem] p-0.5 mt-2 w-fit">
-                        <div className={`${isInline ? 'w-20 h-28 sm:w-24 sm:h-34 sm:rounded-[2rem]' : 'w-20 h-28 sm:w-32 sm:h-44 rounded-[21px] sm:rounded-[2.5rem]'} overflow-hidden bg-gray-50 dark:bg-gray-900 flex items-center justify-center relative`}>
-                          <ImageWithFallback src={cv.photoUrl} alt={cv.name || ''} className="w-full h-full object-cover" initialsClassName="text-4xl sm:text-6xl font-black" />
-                        </div>
+                      <span className="text-[9px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-3 mb-1.5 block">{t('form.photo')}</span>
+                      <div className={`${isInline ? 'w-20 h-28 sm:w-24 sm:h-34 sm:rounded-[2rem]' : 'w-20 h-28 sm:w-32 sm:h-44 rounded-[21px] sm:rounded-[2.5rem]'} overflow-hidden bg-gray-50 dark:bg-gray-900 flex items-center justify-center relative mt-2`}>
+                        <ImageWithFallback src={cv.photoUrl} alt={cv.name || ''} className="w-full h-full object-cover" initialsClassName="text-4xl sm:text-6xl font-black" />
                       </div>
                     </div>
                     <div className="flex-1 grid grid-cols-2 gap-x-3 gap-y-4 min-w-0">
@@ -195,13 +177,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                   <InfoTag label={t('form.work_model')} value={cv.workType} />
                   <InfoTag label={t('form.employment_type')} value={cv.employmentType} />
                   <div className="col-span-2">
-                    <InfoTag label="Çalışmak İstenilen Ülkeler" value={cv.preferredCountries?.length ? cv.preferredCountries.join(' • ') : '-'} />
+                    <InfoTag label={t('profile.desired_countries')} value={cv.preferredCountries?.length ? cv.preferredCountries.join(' • ') : '-'} />
                   </div>
                   <div className="col-span-2">
-                    <InfoTag label="Çalışmak İstenilen Şehirler" value={cv.preferredCities?.length ? cv.preferredCities.join(' • ') : (cv.preferredCity || '-')} />
+                    <InfoTag label={t('profile.desired_cities')} value={cv.preferredCities?.length ? cv.preferredCities.join(' • ') : (cv.preferredCity || '-')} />
                   </div>
                   <div className="col-span-2">
-                    <InfoTag label="ÇALIŞMAK İSTENİLEN POZİSYONLAR" value={cv.preferredRoles?.length ? cv.preferredRoles.join(', ') : '-'} />
+                    <InfoTag label={t('profile.desired_roles')} value={cv.preferredRoles?.length ? cv.preferredRoles.join(', ') : '-'} />
                   </div>
                 </div>
               </section>
@@ -255,8 +237,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                           <div className="absolute -left-[37px] top-1.5 w-2.5 h-2.5 rounded-full bg-white dark:bg-black border-2 border-[#1f6d78] dark:border-[#2dd4bf] z-10" />
                           <div className="grid grid-cols-2 gap-x-3 gap-y-4">
                             <InfoTag label={t('form.university')} value={edu.university} />
-                            <InfoTag label={t('form.department')} value={`${edu.department} (${resolveValue(edu.level)})`} />
-                            <InfoTag label={t('form.status')} value={edu.status || resolveValue(edu.level)} />
+                            <InfoTag label={t('form.department')} value={`${edu.department} (${resolveValue('educationLevel', edu.level)})`} />
+                            <InfoTag label={t('form.status')} value={edu.status || resolveValue('graduationStatus', edu.status)} />
                           </div>
                         </div>
                       ))}
@@ -270,7 +252,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                 <SectionTitle title={t('form.languages')} />
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4 pt-2 pl-4">
                   {cv.languageDetails && cv.languageDetails.length > 0 ? cv.languageDetails.map(lang => (
-                    <div key={lang.id}><InfoTag label={resolveValue(lang.language)} value={resolveValue(lang.level)} /></div>
+                    <div key={lang.id}><InfoTag label={resolveValue('language', lang.language)} value={resolveValue('languageLevel', lang.level)} /></div>
                   )) : <span className="text-xs font-bold text-gray-400 dark:text-gray-500 italic px-1">{t('errors.no_lang')}</span>}
                 </div>
               </section>
@@ -347,7 +329,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
                   }}
                   className={`${isInline ? 'h-11 sm:h-12' : 'h-12 sm:h-14'} flex-[2.5] bg-[#1f6d78] text-white rounded-2xl sm:rounded-full font-bold text-[14px] sm:text-base shadow-lg shadow-[#1f6d78]/20 active:scale-95 hover:bg-[#155e68] transition-all`}
                 >
-                  {t('profile.send_message') || 'İş Görüşmesi Başlat'}
+                  {t('profile.send_message')}
                 </button>
 
                 <div className="relative">

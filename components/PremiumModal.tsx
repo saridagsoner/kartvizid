@@ -43,7 +43,7 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
                             <h2 className="text-xl font-black text-gray-900 tracking-tight">
                                 Premium<span className="text-[#1f6d78]">.</span>
                             </h2>
-                            <p className="text-xs text-[#1f6d78] font-bold uppercase tracking-wider">Çok Yakında</p>
+                            <p className="text-xs text-[#1f6d78] font-bold uppercase tracking-wider">{t('premium.coming_soon')}</p>
                         </div>
                     </div>
                     <button
@@ -62,14 +62,9 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
 
                     {/* Hero Section */}
                     <div className="text-center mb-12">
-                        <h3 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight leading-tight">
-                            Kariyerinizde <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1f6d78] to-[#2dd4bf]">
-                                Sınırları Kaldırın.
-                            </span>
-                        </h3>
+                        <h3 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight leading-tight" dangerouslySetInnerHTML={{ __html: t('premium.hero_title') }}></h3>
                         <p className="text-gray-500 text-lg font-medium max-w-2xl mx-auto leading-relaxed">
-                            Premium ayrıcalıkları ile profilinizi öne çıkarın, daha fazla işveren tarafından görüntülenin ve kariyer basamaklarını hızla tırmanın.
+                            {t('premium.hero_desc')}
                         </p>
                     </div>
 
@@ -83,9 +78,9 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
                             </div>
-                            <h4 className="text-xl font-black text-gray-900 mb-3">Vitrin Özelliği</h4>
+                            <h4 className="text-xl font-black text-gray-900 mb-3">{t('premium.feature1_title')}</h4>
                             <p className="text-gray-500 text-sm leading-relaxed">
-                                Profilinizi arama sonuçlarında en üst sıralara taşıyın. İşverenlerin karşısına ilk siz çıkın.
+                                {t('premium.feature1_desc')}
                             </p>
                         </div>
 
@@ -97,9 +92,9 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
                                     <circle cx="12" cy="12" r="3"></circle>
                                 </svg>
                             </div>
-                            <h4 className="text-xl font-black text-gray-900 mb-3">Detaylı İstatistikler</h4>
+                            <h4 className="text-xl font-black text-gray-900 mb-3">{t('premium.feature2_title')}</h4>
                             <p className="text-gray-500 text-sm leading-relaxed">
-                                Profilinizi kimlerin gezdiğini, hangi şirketlerin ilgilendiğini anlık olarak takip edin.
+                                {t('premium.feature2_desc')}
                             </p>
                         </div>
 
@@ -110,9 +105,9 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
                                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
                                 </svg>
                             </div>
-                            <h4 className="text-xl font-black text-gray-900 mb-3">Pro Rozeti</h4>
+                            <h4 className="text-xl font-black text-gray-900 mb-3">{t('premium.feature3_title')}</h4>
                             <p className="text-gray-500 text-sm leading-relaxed">
-                                İsminizin yanına eklenen onaylı "Pro" rozeti ile profesyonelliğinizi ve güvenilirliğinizi kanıtlayın.
+                                {t('premium.feature3_desc')}
                             </p>
                         </div>
 
@@ -126,9 +121,9 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
                                     <circle cx="11" cy="11" r="2"></circle>
                                 </svg>
                             </div>
-                            <h4 className="text-xl font-black text-gray-900 mb-3">Kişiselleştirilebilir Tasarım</h4>
+                            <h4 className="text-xl font-black text-gray-900 mb-3">{t('premium.feature4_title')}</h4>
                             <p className="text-gray-500 text-sm leading-relaxed">
-                                Standart kalıplara sığmayın. Profilinizin renklerini, yazı tiplerini ve temasını tarzınıza göre özelleştirin.
+                                {t('premium.feature4_desc')}
                             </p>
                         </div>
                     </div>
@@ -136,7 +131,7 @@ const PremiumModal: React.FC<PremiumModalProps> = ({ onClose }) => {
                     {/* Footer Note */}
                     <div className="text-center bg-[#1f6d78]/5 rounded-2xl p-6 border border-[#1f6d78]/10">
                         <p className="text-[#1f6d78] font-bold text-sm">
-                            Sizlerin geri bildirimiyle çok yakında
+                            {t('premium.footer_note')}
                         </p>
                     </div>
 

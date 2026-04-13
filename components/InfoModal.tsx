@@ -1,55 +1,60 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-const WORKFLOW_STEPS = [
-    {
-        icon: (
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-        ),
-        title: "1. Profilini Oluştur",
-        desc: "Standart CV'lerden sıkıldın mı? Seni en iyi yansıtan, modern ve dijital 'Kartvizid'ini hazırla."
-    },
-    {
-        icon: (
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-        ),
-        title: "2. Keşfedil",
-        desc: "İlan kovalamayı bırak. İşverenler kriterlerine uygun adayları arar ve seni bulur."
-    },
-    {
-        icon: (
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-        ),
-        title: "3. Gizliliğini Koru",
-        desc: "Telefonun ve e-postan herkese açık değil. İlgini çeken işverenler senden 'İletişim İzni' ister."
-    },
-    {
-        icon: (
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-        ),
-        title: "4. Karar Senin",
-        desc: "İsteği onayla veya reddet. Onaylarsan işveren sana ulaşır. Hak ettiğin değeri gör."
-    }
-];
+// WORKFLOW_STEPS moved inside for localization
+
+import { useLanguage } from '../context/LanguageContext';
 
 interface InfoModalProps {
     onClose: () => void;
 }
 
 const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
+    const { t } = useLanguage();
     const containerRef = useRef<HTMLDivElement>(null);
+
+    const WORKFLOW_STEPS = [
+        {
+            icon: (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            ),
+            title: t('info.step1_title_full'),
+            desc: t('info.step1_desc_full')
+        },
+        {
+            icon: (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            ),
+            title: t('info.step2_title_full'),
+            desc: t('info.step2_desc_full')
+        },
+        {
+            icon: (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            ),
+            title: t('info.step3_title_full'),
+            desc: t('info.step3_desc_full')
+        },
+        {
+            icon: (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            ),
+            title: t('info.step4_title_full'),
+            desc: t('info.step4_desc_full')
+        }
+    ];
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -76,10 +81,10 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
                 <div className="p-8 pb-6 flex justify-between items-center z-10 sticky top-0 bg-white/90 backdrop-blur-xl border-b border-gray-100">
                     <div>
                         <h2 className="text-3xl font-black text-gray-900 tracking-tight">
-                            Kartvizid<span className="text-[#1f6d78]">.com</span>
+                            {t('info.title_full')}
                         </h2>
                         <p className="text-sm text-gray-500 font-medium mt-1">
-                            Profesyonel dünyadaki dijital kimliğiniz.
+                            {t('info.subtitle_full')}
                         </p>
                     </div>
                     <button
@@ -99,17 +104,11 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
                     {/* Main Value Proposition */}
                     <div className="text-center mb-12 px-4">
                         <span className="inline-block py-1 px-3 rounded-full bg-[#1f6d78]/10 text-[#1f6d78] text-xs font-bold mb-4 tracking-wide uppercase">
-                            Ezber Bozan Model
+                            {t('info.ezber_bozan_full')}
                         </span>
-                        <h3 className="text-4xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
-                            İş Aramayın, <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1f6d78] to-[#2dd4bf]">
-                                Bırakın İş Sizi Bulsun.
-                            </span>
-                        </h3>
+                        <h3 className="text-4xl font-black text-gray-900 mb-4 tracking-tight leading-tight" dangerouslySetInnerHTML={{ __html: t('info.hero_title_full') }}></h3>
                         <p className="text-gray-500 text-lg max-w-2xl mx-auto leading-relaxed">
-                            Diğer sitelerde binlerce ilana başvurup cevap beklemekten yoruldunuz mu?
-                            Kartvizid'de işverenler ilan açamaz, sadece adayları arar.
+                            {t('info.hero_desc_full')}
                         </p>
                     </div>
 
@@ -117,40 +116,40 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                         <div className="bg-gray-50 rounded-3xl p-8 border border-gray-100 relative overflow-hidden group">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gray-200/50 rounded-full blur-3xl -/2 /2"></div>
-                            <h4 className="text-lg font-black text-gray-400 mb-2">Eski Yöntem</h4>
-                            <p className="text-gray-500 text-sm font-medium mb-6">Klasik Kariyer Siteleri</p>
+                            <h4 className="text-lg font-black text-gray-400 mb-2">{t('info.old_way_full')}</h4>
+                            <p className="text-gray-500 text-sm font-medium mb-6">{t('info.classic_sites_full')}</p>
                             <ul className="space-y-3">
                                 <li className="flex items-start gap-3 text-gray-500 text-sm">
                                     <span className="shrink-0 text-red-400">✕</span>
-                                    <span>İşveren ilan açar, kraldır.</span>
+                                    <span>{t('info.old_list1_full')}</span>
                                 </li>
                                 <li className="flex items-start gap-3 text-gray-500 text-sm">
                                     <span className="shrink-0 text-red-400">✕</span>
-                                    <span>Binlerce kişi aynı ilana saldırır.</span>
+                                    <span>{t('info.old_list2_full')}</span>
                                 </li>
                                 <li className="flex items-start gap-3 text-gray-500 text-sm">
                                     <span className="shrink-0 text-red-400">✕</span>
-                                    <span>Cevap bile alamazsınız.</span>
+                                    <span>{t('info.old_list3_full')}</span>
                                 </li>
                             </ul>
                         </div>
 
                         <div className="bg-[#1f6d78] rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-[#1f6d78]/20 group">
                             <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -/2 /2"></div>
-                            <h4 className="text-lg font-black text-white mb-2">Kartvizid Yöntemi</h4>
-                            <p className="text-white/70 text-sm font-medium mb-6">Değer Gören Adaylar</p>
+                            <h4 className="text-lg font-black text-white mb-2">{t('info.new_way_full')}</h4>
+                            <p className="text-white/70 text-sm font-medium mb-6">{t('info.valued_candidates_full')}</p>
                             <ul className="space-y-3">
                                 <li className="flex items-start gap-3 text-white/90 text-sm font-medium">
                                     <span className="shrink-0 text-[#2dd4bf]">✓</span>
-                                    <span>İşveren sizi arar ve bulur.</span>
+                                    <span>{t('info.new_list1_full')}</span>
                                 </li>
                                 <li className="flex items-start gap-3 text-white/90 text-sm font-medium">
                                     <span className="shrink-0 text-[#2dd4bf]">✓</span>
-                                    <span>İletişim bilgileriniz gizlidir.</span>
+                                    <span>{t('info.new_list2_full')}</span>
                                 </li>
                                 <li className="flex items-start gap-3 text-white/90 text-sm font-medium">
                                     <span className="shrink-0 text-[#2dd4bf]">✓</span>
-                                    <span>Patron sizsiniz, isteği onaylarsanız görüşürsünüz.</span>
+                                    <span>{t('info.new_list3_full')}</span>
                                 </li>
                             </ul>
                         </div>
@@ -158,7 +157,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
 
                     {/* How It Works Steps */}
                     <div className="mb-8">
-                        <h4 className="text-center font-bold text-gray-900 mb-8">Nasıl Çalışır?</h4>
+                        <h4 className="text-center font-bold text-gray-900 mb-8">{t('info.how_it_works_full')}</h4>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                             {WORKFLOW_STEPS.map((step, idx) => (
                                 <div key={idx} className="flex flex-col items-center text-center p-4">
@@ -180,7 +179,7 @@ const InfoModal: React.FC<InfoModalProps> = ({ onClose }) => {
                             onClick={onClose}
                             className="bg-black text-white px-10 py-4 rounded-full text-sm font-bold hover:bg-gray-900 transition-all active: shadow-lg"
                         >
-                            Hemen Profilini Oluştur
+                            {t('info.cta_full')}
                         </button>
                     </div>
 

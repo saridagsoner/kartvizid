@@ -69,7 +69,7 @@ const Navbar: React.FC<NavbarProps & {
               <button
                 onClick={onOpenMenu}
                 className="sm:hidden p-2 -ml-2 text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors active:scale-95 flex items-center justify-center translate-y-[2px]"
-                title="Menü"
+                title={t('nav.menu')}
               >
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="3" y1="6" x2="21" y2="6" />
@@ -86,9 +86,8 @@ const Navbar: React.FC<NavbarProps & {
                 <div className="flex items-center text-[#2b2b2b] dark:text-white text-[27px] md:text-[36px] font-black tracking-tight rounded-font leading-none">
                   <span>Kartvizi</span>
                   <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
-                </div>
-                <span className="hidden sm:block text-[12px] font-medium text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
-                  dijital cv & doğru eşleşme
+                </div>                <span className="hidden sm:block text-[12px] font-medium text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
+                  {t('nav.tagline')}
                 </span>
               </Link>
               
@@ -125,7 +124,7 @@ const Navbar: React.FC<NavbarProps & {
                     ? 'bg-[#1f6d78] text-white shadow-lg shadow-[#1f6d78]/20' 
                     : 'bg-white dark:bg-black text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-900 border-none'
                   }`}
-                  title="Filtrele"
+                  title={t('filters.advanced')}
                 >
                   <i className="fi fi-rr-settings-sliders text-base"></i>
                 </button>
@@ -178,7 +177,6 @@ const Navbar: React.FC<NavbarProps & {
                           navigate('/bildirimler');
                         } else {
                           setIsNotifOpen(!isNotifOpen);
-                          setIsProfileOpen(false);
                         }
                       }}
                       className="w-10 h-10 text-black dark:text-white rounded-full flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative group"
@@ -254,13 +252,13 @@ const Navbar: React.FC<NavbarProps & {
                     onClick={() => onOpenAuth('signin')}
                     className="px-4 md:px-6 py-1.5 md:py-2 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf]/40 rounded-full font-bold text-[13px] md:text-[15px] transition-all hover:bg-[#1f6d78]/5 dark:hover:bg-[#2dd4bf]/5 active:scale-95 whitespace-nowrap"
                   >
-                    Giriş Yap
+                    {t('auth.login')}
                   </button>
                   <button
                     onClick={() => onOpenAuth('signup')}
                     className="px-4 md:px-6 py-1.5 md:py-2 text-[#1f6d78] dark:text-[#2dd4bf] border border-[#1f6d78] dark:border-[#2dd4bf]/40 rounded-full font-bold text-[13px] md:text-[15px] transition-all hover:bg-[#1f6d78]/5 dark:hover:bg-[#2dd4bf]/5 active:scale-95 whitespace-nowrap"
                   >
-                    Kayıt Ol
+                    {t('auth.signup')}
                   </button>
                 </div>
               )}

@@ -20,10 +20,38 @@ const CustomDropdown: React.FC<{
   items: any[];
   onSelect: (val: string) => void;
   onMore: () => void;
-}> = ({ label, value, items, onSelect, onMore }) => {
+  category?: string;
+}> = ({ label, value, items, onSelect, onMore, category }) => {
   const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Helper to map values to translated keys (matching AdvancedFilterModal logic)
+  const getLocalizedLabel = (cat: string, val: string): string => {
+    const maps: Record<string, Record<string, string>> = {
+      workType: {
+        'Uzaktan': 'work.remote', 'Hibrit': 'work.hybrid', 'İş Yeri': 'work.office',
+        'Remote': 'work.remote', 'Hybrid': 'work.hybrid', 'Office': 'work.office'
+      },
+      experience: {
+        'Stajyer / Yeni Mezun': 'exp.intern_new',
+        'Junior (1-3 Yıl)': 'exp.junior',
+        'Orta Seviye (3-5 Yıl)': 'exp.mid',
+        'Kıdemli (5-10 Yıl)': 'exp.senior',
+        'Uzman (10+ Yıl)': 'exp.expert',
+        'Intern / New Graduate': 'exp.intern_new',
+        'Junior (1-3 Years)': 'exp.junior',
+        'Mid Level (3-5 Years)': 'exp.mid',
+        'Senior (5-10 Years)': 'exp.senior',
+        'Expert (10+ Years)': 'exp.expert'
+      }
+    };
+
+    if (cat && maps[cat] && maps[cat][val]) {
+      return t(maps[cat][val]);
+    }
+    return val;
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -42,7 +70,7 @@ const CustomDropdown: React.FC<{
         className={`bg-transparent border-none ${isOpen || value ? 'text-[#1f6d78]' : 'text-gray-700 dark:text-gray-300'} rounded-lg px-2 py-2 text-[15px] font-semibold outline-none cursor-pointer hover:text-black dark:hover:text-white transition-all flex items-center justify-start gap-1 group relative`}
       >
         <span className="relative pb-0.5">
-          {value || label}
+          {value ? getLocalizedLabel(category || '', value) : label}
           <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#1f6d78] transition-all duration-300 group-hover:w-full"></span>
         </span>
         <svg
@@ -56,7 +84,6 @@ const CustomDropdown: React.FC<{
       {isOpen && (
         <div className="absolute top-full left-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.2)] dark:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] border border-gray-100/50 dark:border-gray-700/50 py-1.5 z-[100] animate-in slide-in-from-top-2 duration-200 overflow-hidden w-[210px]">
           <div className="max-h-[280px] overflow-y-auto custom-scrollbar">
-            {/* Add Reset Option if value is selected */}
             {value && (
               <button
                 onClick={() => {
@@ -78,7 +105,7 @@ const CustomDropdown: React.FC<{
                 className={`w-full text-left px-4 py-2.5 text-[13px] font-medium transition-all ${value === item.label ? 'text-black dark:text-white bg-gray-50 dark:bg-gray-700' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-black dark:hover:text-white'
                   }`}
               >
-                {item.label}
+                {getLocalizedLabel(category || '', item.label)}
               </button>
             ))}
           </div>
@@ -149,6 +176,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
           items={EXPERIENCE_LEVELS}
           onSelect={(val) => handleSelect('experience', val)}
           onMore={() => setActiveModal('experience')}
+          category="experience"
         />
       </div>
 
@@ -195,7 +223,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
       {/* Full Selection Modals */}
       {activeModal === 'professions' && (
         <SelectionModal
-          title="Tüm Meslekler"
+          title={t('filters.all_professions')}
           items={availableProfessions}
           onSelect={(val) => handleSelect('profession', val)}
           onClose={() => setActiveModal(null)}
@@ -203,7 +231,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
       )}
       {activeModal === 'cities' && (
         <SelectionModal
-          title="Tüm Şehirler"
+          title={t('filters.all_cities')}
           items={availableCities}
           onSelect={(val) => handleSelect('city', val)}
           onClose={() => setActiveModal(null)}
@@ -211,7 +239,7 @@ const Filters: React.FC<FiltersProps> = ({ currentFilters, onChange, availablePr
       )}
       {activeModal === 'experience' && (
         <SelectionModal
-          title="Tüm Deneyim Seviyeleri"
+          title={t('filters.all_experience')}
           items={EXPERIENCE_LEVELS}
           onSelect={(val) => handleSelect('experience', val)}
           onClose={() => setActiveModal(null)}

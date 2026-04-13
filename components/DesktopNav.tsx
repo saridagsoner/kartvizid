@@ -111,7 +111,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
         <div className="flex flex-col h-full pt-8 pb-8 lg:pl-4 xl:pl-8 pr-0 no-scrollbar overflow-y-auto">
             {/* Main Navigation */}
             <NavItem 
-                label="İş Arayanlar" 
+                label={t('menu.job_seekers')} 
                 icon="fi-rr-users" 
                 active={isModeActive('cvs')}
                 onClick={() => {
@@ -119,7 +119,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 }}
             />
             <NavItem 
-                label="İş Verenler" 
+                label={t('menu.employers')} 
                 icon="fi-rr-briefcase" 
                 active={isModeActive('employers')}
                 onClick={() => {
@@ -127,7 +127,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 }}
             />
             <NavItem 
-                label="Hizmetler" 
+                label={t('menu.services')} 
                 icon="fi-rr-shop" 
                 active={isModeActive('shops')}
                 onClick={() => {
@@ -139,13 +139,13 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
 
 
             <NavItem 
-                label="Kariyer Rehberi" 
+                label={t('menu.career_guide')} 
                 icon="fi-rr-book-alt" 
                 active={location.pathname.startsWith('/rehber')}
                 onClick={() => navigate('/rehber')}
             />
             <NavItem 
-                label="Kartvizid" 
+                label={t('menu.kartvizid')} 
                 icon="fi-rr-document-signed" 
                 active={isKartvizidOpen || location.pathname.startsWith('/kartvizid/')}
                 onClick={() => setIsKartvizidOpen(!isKartvizidOpen)}
@@ -184,7 +184,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             )}
 
             <NavItem 
-                label="İş Görüşmeleri" 
+                label={t('menu.messages')} 
                 icon="fi-rr-comment" 
                 active={location.pathname.startsWith('/mesajlar')}
                 onClick={() => navigate('/mesajlar')}
@@ -192,7 +192,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             />
 
             <NavItem 
-                label="Bildirimler" 
+                label={t('menu.notifications')} 
                 icon="fi-rr-bell" 
                 active={location.pathname === '/bildirimler'}
                 onClick={() => navigate('/bildirimler')}
@@ -201,7 +201,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
 
             {isEmployer && onOpenSavedCVs && (
                 <NavItem 
-                    label="Kaydettiklerim" 
+                    label={t('menu.saved')} 
                     icon="fi-rr-bookmark" 
                     active={false}
                     onClick={onOpenSavedCVs}
@@ -209,7 +209,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             )}
 
             <NavItem 
-                label="Premium" 
+                label={t('menu.premium')} 
                 icon="fi-rr-membership-vip" 
                 active={location.pathname === '/premium'}
                 onClick={() => navigate('/premium')}
@@ -218,14 +218,14 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
             <div className="my-2 border-t border-gray-200/70 dark:border-white/10"></div>
 
             <NavItem 
-                label="Ayarlar" 
+                label={t('menu.settings')} 
                 icon="fi-rr-settings" 
                 active={isActive('/ayarlar')}
                 onClick={() => navigate('/ayarlar')}
             />
 
             <NavItem 
-                label="Kurumsal" 
+                label={t('menu.corporate')} 
                 icon="fi-rr-info" 
                 active={[
                     '/iletisim', '/sikca-sorulan-sorular', '/yardim-merkezi', 
@@ -245,7 +245,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                         className="w-full bg-[#1f6d78] text-white py-3.5 rounded-2xl font-black text-sm hover:opacity-90 transition-all shadow-lg shadow-[#1f6d78]/10 flex items-center justify-center gap-3"
                     >
                         <i className="fi fi-rr-sign-in-alt"></i>
-                        Giriş Yap
+                        {t('auth.login')}
                     </button>
                 ) : (
                     <button 
@@ -253,7 +253,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                         className="w-full bg-white dark:bg-transparent text-black dark:text-white py-3 rounded-2xl font-black text-sm border border-black dark:border-white/20 hover:bg-gray-50 dark:hover:bg-white/5 transition-all flex items-center justify-center gap-3"
                     >
                         <i className="fi fi-rr-sign-out-alt"></i>
-                        Çıkış Yap
+                        {t('profile.logout')}
                     </button>
                 )}
             </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { CV, ContactRequest } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 import ProfileModal from './ProfileModal';
 
@@ -21,6 +22,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const location = useLocation();
+    const { t } = useLanguage();
     const [cv, setCv] = useState<CV | null>(location.state?.cvData || null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -112,11 +114,11 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
                         };
                         setCv(mapped);
                     } else {
-                        setError('CV bulunamadı.');
+                        setError(t('error.cv_not_found'));
                     }
                 } catch (e) {
                     console.error('Error fetching CV for route:', e);
-                    setError(`CV yüklenirken bir hata oluştu [${queryField}]: ${(e as any)?.message || e}`);
+                    setError(t('error.cv_fetch_failed'));
                 } finally {
                     setLoading(false);
                 }
@@ -156,10 +158,10 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
             <div className={isInline ? "w-full h-full flex items-center justify-center p-6 sm:p-12" : "fixed inset-0 z-[250] flex items-center justify-center p-4 bg-white dark:bg-gray-900 sm:bg-black/30 sm:dark:bg-black/60"}>
                 <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border border-gray-100 dark:border-white/10">
                     <div className="text-4xl mb-4">😢</div>
-                    <h2 className="text-xl font-black text-gray-900 dark:text-white mb-2">Hata</h2>
-                    <p className="text-gray-500 mb-6 font-medium text-sm">{error || 'Bu CV yayından kaldırılmış veya bulunamadı.'}</p>
+                    <h2 className="text-xl font-black text-gray-900 dark:text-white mb-2">{t('common.error')}</h2>
+                    <p className="text-gray-500 mb-6 font-medium text-sm">{error || t('error.cv_not_found_desc')}</p>
                     <button onClick={handleClose} className="w-full bg-[#1f6d78] text-white py-3 rounded-xl font-bold hover:opacity-90 transition-opacity">
-                        Ana Sayfaya Dön
+                        {t('common.back_to_home')}
                     </button>
                 </div>
             </div>
@@ -170,12 +172,12 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
         <div className="relative h-full">
             {/* SEO Booster: Hidden from users but visible to crawlers in raw HTML */}
             <div className="sr-only opacity-0 h-0 pointer-events-none overflow-hidden" aria-hidden="true">
-                <h1>{cv.name} - {cv.profession} Dijital CV</h1>
-                <p>{cv.city} bölgesinde {cv.profession} olarak faaliyet gösteren {cv.name} isimli profesyonelin güncel iş deneyimleri, yetenekleri ve kariyer hedefleri.</p>
-                <p>Kartvizid.com üzerinden {cv.name} ile doğrudan iletişim kurabilir, tersine işe alım modelimiz ile kariyer yolculuğunuza yön verebilirsiniz. {cv.about?.substring(0, 150)}...</p>
+                <h1>{cv.name} - {cv.profession} {t('cv.digital_cv')}</h1>
+                <p>{cv.city} {t('cv.seo_p1').replace('{name}', cv.name).replace('{profession}', cv.profession)}</p>
+                <p>{t('cv.seo_p2').replace('{name}', cv.name)}. {cv.about?.substring(0, 150)}...</p>
                 <nav>
-                    <a href="/rehber">Kariyer Rehberimizi İnceleyin</a> | 
-                    <a href="/hakkimizda">Kartvizid Hakkında Bilgi Alın</a>
+                    <a href="/rehber">{t('discovery.career_guide')}</a> | 
+                    <a href="/hakkimizda">{t('discovery.about_us')}</a>
                 </nav>
             </div>
 

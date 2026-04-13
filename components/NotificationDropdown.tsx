@@ -34,7 +34,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
   // Helper to resolve display name and avatar
   const getSenderDetails = (item: NotificationItem | ContactRequest) => {
     const extractProfile = (user: any) => {
-      if (!user) return { name: 'Bir kullanıcı', avatar: null, role: null };
+      if (!user) return { name: t('notif.no_sender'), avatar: null, role: null };
 
       // 1. Check for Company (Priority)
       if (user.companies && user.companies.length > 0) {
@@ -56,7 +56,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
 
       // 3. Fallback
       return {
-        name: user.full_name || 'İletişim İsteği',
+        name: user.full_name || t('notif.sender_contact_req'),
         avatar: user.avatar_url,
         role: user.role
       };
@@ -104,14 +104,14 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
               <h4 className="text-gray-900 dark:text-white font-black text-[15px] mb-2">{t('notif.empty')}</h4>
               {user?.user_metadata?.role === 'employer' ? (
                 <p className="text-gray-500 dark:text-gray-400 text-[13px] leading-relaxed max-w-[280px] mx-auto font-medium">
-                  Kaydettiğiniz adaylara iletişim isteği gönderdiğinizde, süreç buradan takip edilir. Yeni adayları keşfedin!
+                  {t('notif.emp_empty_desc')}
                 </p>
               ) : (
                 <div className="text-gray-500 dark:text-gray-400 text-[12.5px] leading-relaxed max-w-[280px] mx-auto font-medium flex flex-col gap-2">
                   <p>
-                    <span className="font-bold text-[#1f6d78] dark:text-[#2dd4bf]">Kartvizid'de işverenler ilan açmaz, doğrudan sizinle iletişime geçer.</span>
+                    <span className="font-bold text-[#1f6d78] dark:text-[#2dd4bf]">{t('notif.seek_empty_desc1')}</span>
                   </p>
-                  <p>Özgeçmişinizi güncel tutun ve ilk iş görüşmesi davetinizi bekleyin.</p>
+                  <p>{t('notif.seek_empty_desc2')}</p>
                 </div>
               )}
             </div>
@@ -171,9 +171,9 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onClose, no
                         {isContactRequest(item)
                           ? t('notif.sent_request')
                           : (
-                            item.title === 'İletişim İsteği Onaylandı' ? t('notif.req_approved') :
-                              item.title === 'İstek Sonuçlandı' ? t('notif.req_rejected') :
-                                item.message.replace(details.name, '').trim()
+                            item.title === 'İletişim İsteği Onaylandı' || item.title === 'Contact Request Approved' || item.title === t('notif.req_approved') ? t('notif.req_approved') :
+                              item.title === 'İstek Sonuçlandı' || item.title === 'Request Resulted' || item.title === t('notif.req_rejected') ? t('notif.req_rejected') :
+                                item.message.replace(details.name || '', '').trim()
                           )
                         }
                       </p>

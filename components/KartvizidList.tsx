@@ -45,11 +45,11 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
             case 'cities': return t('sidebar.featured_cities');
             case 'most-viewed': return t('sidebar.most_viewed');
             case 'stats': return t('sidebar.platform_stats');
-            case 'premium': return 'Kartvizid Premium';
-            case 'settings': return 'Hesap Ayarları';
-            case 'cv-tips': return 'CV Oluşturma Rehberi';
-            case 'employer-tips': return 'İşveren Rehberi';
-            case 'notifications': return 'Bildirimler';
+            case 'premium': return t('sidebar.premium');
+            case 'settings': return t('sidebar.settings');
+            case 'cv-tips': return t('sidebar.cv_tips');
+            case 'employer-tips': return t('sidebar.employer_tips');
+            case 'notifications': return t('sidebar.notifications_tab');
             default: return '';
         }
     };
@@ -104,7 +104,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                                         <div className="flex items-center gap-2">
                                             <p className="text-[12px] text-gray-500 dark:text-gray-400 truncate font-semibold uppercase tracking-wider">{cv.profession}</p>
                                             {(cv.isPlaced || cv.workingStatus === 'active') && (
-                                                <span className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">İŞ BULDU</span>
+                                                <span className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-[9px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">{t('list.job_placed')}</span>
                                             )}
                                         </div>
                                     </div>
@@ -120,11 +120,11 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                                 <div className="w-20 h-20 rounded-[2.5rem] bg-gray-50 dark:bg-gray-900/50 flex items-center justify-center text-gray-300 dark:text-gray-800 mb-6">
                                     <i className="fi fi-rr-search-user text-4xl"></i>
                                 </div>
-                                <h3 className="text-lg font-black text-gray-900 dark:text-white mb-2">Henüz Kimse Yok</h3>
+                                <h3 className="text-lg font-black text-gray-900 dark:text-white mb-2">{t('list.empty_title')}</h3>
                                 <p className="text-sm text-gray-500 dark:text-gray-400 font-bold max-w-[240px]">
                                     {type === 'job-finders' 
-                                        ? "Henüz 'İş Buldum' diyerek başarısını paylaşan bir kullanıcımız bulunmuyor."
-                                        : "Bu kategoride gösterilecek bir sonuç bulunamadı."}
+                                        ? t('list.job_finders_empty')
+                                        : t('list.generic_empty')}
                                 </p>
                             </div>
                         )}
@@ -148,7 +148,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <span className="text-[13px] font-black text-gray-400 dark:text-gray-600 tracking-tight">
-                                        {item.count} {type === 'professions' ? 'Kişi' : 'Adet'}
+                                        {item.count} {type === 'professions' ? t('list.count_people') : t('list.count_total')}
                                     </span>
                                 </div>
                             </div>
@@ -171,20 +171,20 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                 );
             case 'premium':
                 const seekerFeatures = [
-                    { icon: 'fi-rr-star', title: 'Vitrin Özelliği', desc: 'Aramalarda en üstte görünün, ilk siz fark edilin.' },
-                    { icon: 'fi-rr-badge-check', title: 'Pro Rozeti', desc: 'İsminizin yanındaki rozetle profesyonelliğinizi kanıtlayın.' },
-                    { icon: 'fi-rr-palette', title: 'Özel Tasarım', desc: 'Profilinizin renklerini tarzınıza göre özelleştirin.' }
+                    { icon: 'fi-rr-star', title: t('premium.item_vitrin'), desc: t('premium.item_vitrin_desc') },
+                    { icon: 'fi-rr-badge-check', title: t('premium.item_badge'), desc: t('premium.item_badge_desc') },
+                    { icon: 'fi-rr-palette', title: t('premium.item_design'), desc: t('premium.item_design_desc') }
                 ];
                 const employerFeatures = [
-                    { icon: 'fi-rr-filter', title: 'Gelişmiş Filtreleme', desc: 'Adayları yetenek, deneyim ve konuma göre kolayca bulun.' },
-                    { icon: 'fi-rr-messages', title: 'Sınırsız İletişim', desc: 'Adaylarla limitlere takılmadan doğrudan bağlantı kurun.' },
-                    { icon: 'fi-rr-chart-line-up', title: 'Veri Analitiği', desc: 'Pazar trendlerini ve yetenek yoğunluğunu analiz edin.' }
+                    { icon: 'fi-rr-filter', title: t('premium.item_filter'), desc: t('premium.item_filter_desc') },
+                    { icon: 'fi-rr-messages', title: t('premium.item_unlimited'), desc: t('premium.item_unlimited_desc') },
+                    { icon: 'fi-rr-chart-line-up', title: t('premium.item_analytics'), desc: t('premium.item_analytics_desc') }
                 ];
                 return (
                     <div className="flex flex-col pb-20">
                         {/* Seekers Section */}
                         <div className="px-8 py-3 bg-gray-50/50 dark:bg-white/[0.02] border-y border-gray-100 dark:border-white/5">
-                            <span className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.3em]">Adaylar İçin Avantajlar</span>
+                            <span className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.3em]">{t('list.seeker_advantages')}</span>
                         </div>
                         <div className="divide-y divide-gray-100 dark:divide-white/5">
                             {seekerFeatures.map((f, i) => (
@@ -202,7 +202,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
 
                         {/* Employers Section */}
                         <div className="px-8 py-3 mt-8 bg-blue-50/30 dark:bg-blue-900/10 border-y border-blue-100/50 dark:border-blue-900/20">
-                            <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em]">İşverenler İçin Avantajlar</span>
+                            <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em]">{t('premium.employer_advantages')}</span>
                         </div>
                         <div className="divide-y divide-gray-100 dark:divide-white/5">
                             {employerFeatures.map((f, i) => (
@@ -221,10 +221,10 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                 );
             case 'settings':
                 const settingsTabs = [
-                    { id: 'account', label: 'Hesap Özeti', icon: 'fi-rr-user', path: '/ayarlar/hesap', protected: true },
-                    { id: 'general', label: 'Genel Ayarlar', icon: 'fi-rr-opacity', path: '/ayarlar/genel', protected: false },
-                    { id: 'security', label: 'Güvenlik', icon: 'fi-rr-lock', path: '/ayarlar/guvenlik', protected: true },
-                    { id: 'notifications', label: 'Bildirimler', icon: 'fi-rr-bell', path: '/ayarlar/bildirimler', protected: true }
+                    { id: 'account', label: t('settings.account_summary_tab'), icon: 'fi-rr-user', path: '/ayarlar/hesap', protected: true },
+                    { id: 'general', label: t('settings.general_tab'), icon: 'fi-rr-opacity', path: '/ayarlar/genel', protected: false },
+                    { id: 'security', label: t('settings.security_tab'), icon: 'fi-rr-lock', path: '/ayarlar/guvenlik', protected: true },
+                    { id: 'notifications', label: t('settings.notifications_tab'), icon: 'fi-rr-bell', path: '/ayarlar/bildirimler', protected: true }
                 ].filter(tab => !tab.protected || user);
                 return (
                     <div className="flex flex-col py-4">
@@ -255,7 +255,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                                             isActive ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'
                                         }`}>{tab.label}</span>
                                         <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest leading-tight">
-                                            {tab.id === 'account' ? 'Profil & Kontrol' : tab.id === 'general' ? 'Tema & Dil' : tab.id === 'security' ? 'Şifre & Giriş' : 'E-posta & Bildirim'}
+                                            {tab.id === 'account' ? t('settings.account_desc') : tab.id === 'general' ? t('settings.general_desc_tab') : tab.id === 'security' ? t('settings.security_desc_tab') : t('settings.notifications_desc_tab')}
                                         </span>
                                     </div>
                                     <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
@@ -268,7 +268,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                         {!user && (
                             <div className="px-8 py-6 mt-2 border-t border-gray-50 dark:border-white/5 opacity-60">
                                 <p className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest leading-relaxed">
-                                    Hesap, güvenlik ve bildirim ayarları için giriş yapmalısınız.
+                                    {t('settings.login_required')}
                                 </p>
                             </div>
                         )}
@@ -276,20 +276,20 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                 );
             case 'employer-tips':
                 const employerTips = [
-                    { id: 1, title: 'Güçlü Bir Marka Hikayesi', desc: 'Şirket kültürünüzü ve vizyonunuzu anlatan etkileyici bir açıklama yazın. Adaylar sadece işi değil, kültürü de seçer.', icon: 'fi-rr-bullhorn', color: 'bg-blue-50 text-blue-600' },
-                    { id: 2, title: 'Profesyonel Logo ve Görseller', desc: 'Yüksek kaliteli bir logo güven verir. Şirketinizin dijital vitrinini en iyi şekilde yansıttığınızdan emin olun.', icon: 'fi-rr-building', color: 'bg-green-50 text-green-600' },
-                    { id: 3, title: 'Sosyal Medya Etkileşimi', desc: 'Instagram ve web sitenizi ekleyerek adayların ofis hayatınızı ve projelerinizi daha yakından tanımasını sağlayın.', icon: 'fi-rr-share', color: 'bg-purple-50 text-purple-600' },
-                    { id: 4, title: 'Lokasyon ve Şeffaflık', desc: 'Açık adres ve çalışan sayısı gibi bilgileri netleştirerek kurumsal kimliğinizi pekiştirin.', icon: 'fi-rr-marker', color: 'bg-orange-50 text-orange-600' },
-                    { id: 5, title: 'Aday Deneyimini Önemseyin', desc: 'Profiliniz ne kadar detaylıysa, doğru yeteneklerin size ulaşma hızı o kadar artar.', icon: 'fi-rr-users-alt', color: 'bg-teal-50 text-[#1f6d78]' }
+                    { id: 1, title: t('tips.emp_item1_title'), desc: t('tips.emp_item1_desc'), icon: 'fi-rr-bullhorn', color: 'bg-blue-50 text-blue-600' },
+                    { id: 2, title: t('tips.emp_item2_title'), desc: t('tips.emp_item2_desc'), icon: 'fi-rr-building', color: 'bg-green-50 text-green-600' },
+                    { id: 3, title: t('tips.emp_item3_title'), desc: t('tips.emp_item3_desc'), icon: 'fi-rr-share', color: 'bg-purple-50 text-purple-600' },
+                    { id: 4, title: t('tips.emp_item4_title'), desc: t('tips.emp_item4_desc'), icon: 'fi-rr-marker', color: 'bg-orange-50 text-orange-600' },
+                    { id: 5, title: t('tips.emp_item5_title'), desc: t('tips.emp_item5_desc'), icon: 'fi-rr-users-alt', color: 'bg-teal-50 text-[#1f6d78]' }
                 ];
                 return (
                     <div className="flex flex-col gap-1 py-6 px-4 no-scrollbar">
                         <div className="mb-6 px-4">
                             <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-2 leading-relaxed">
-                                İşveren Rehberi
+                                {t('sidebar.employer_tips')}
                             </p>
                             <h3 className="text-sm font-black text-gray-900 dark:text-white leading-tight">
-                                Doğru Yeteneği <br/>Markanıza Çekin.
+                                {t('tips.employer_title')}
                             </h3>
                         </div>
                         {employerTips.map((tip) => (
@@ -309,30 +309,30 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                         <div className="mt-8 p-6 rounded-3xl bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 border border-[#1f6d78]/10 mx-2">
                              <div className="flex items-center gap-3 mb-2">
                                 <span className="w-2 h-2 rounded-full bg-[#1f6d78] animate-pulse"></span>
-                                <span className="text-[10px] font-black text-[#1f6d78] uppercase tracking-widest">Marka Notu</span>
+                                <span className="text-[10px] font-black text-[#1f6d78] uppercase tracking-widest">{t('list.brand_note')}</span>
                              </div>
                              <p className="text-[11px] font-bold text-gray-600 dark:text-gray-400 leading-relaxed italic">
-                                "Nitelikli adayların %80'i başvurudan önce şirketin dijital varlığını derinlemesine inceler."
+                                {t('list.brand_quote')}
                              </p>
                         </div>
                     </div>
                 );
             case 'cv-tips':
                 const tips = [
-                    { id: 1, title: 'Güçlü Bir "Hakkında" Yazısı', desc: 'Kendinizi bir paragrafta özetleyin. Hedeflerinizden ve uzmanlık alanlarından bahsedin.', icon: 'fi-rr-comment-user', color: 'bg-blue-50 text-blue-600' },
-                    { id: 2, title: 'Deneyimlerde Başarı Odaklılık', desc: 'Sadece görevlerinizi değil, elde ettiğiniz somut başarıları ve projeleri de ekleyin.', icon: 'fi-rr-briefcase', color: 'bg-green-50 text-green-600' },
-                    { id: 3, title: 'Profesyonel Fotoğrafın Gücü', desc: 'Net, güncel ve profesyonel bir fotoğraf profilinizin güvenilirliğini %70 oranında artırır.', icon: 'fi-rr-camera', color: 'bg-orange-50 text-orange-600' },
-                    { id: 4, title: 'Tercih Edilen Pozisyonları Belirleyin', desc: 'İşverenlerin sizi doğru aramalarda bulabilmesi için tercih ettiğiniz rolleri mutlaka ekleyin.', icon: 'fi-rr-target', color: 'bg-purple-50 text-purple-600' },
-                    { id: 5, title: 'Eğitim Bilgilerini Güncel Tutun', desc: 'En son mezuniyetinizden başlayarak eğitim yolculuğunuzu detaylandırın.', icon: 'fi-rr-document-signed', color: 'bg-teal-50 text-[#1f6d78]' }
+                    { id: 1, title: t('tips.cv_item1_title'), desc: t('tips.cv_item1_desc'), icon: 'fi-rr-comment-user', color: 'bg-blue-50 text-blue-600' },
+                    { id: 2, title: t('tips.cv_item2_title'), desc: t('tips.cv_item2_desc'), icon: 'fi-rr-briefcase', color: 'bg-green-50 text-green-600' },
+                    { id: 3, title: t('tips.cv_item3_title'), desc: t('tips.cv_item3_desc'), icon: 'fi-rr-camera', color: 'bg-orange-50 text-orange-600' },
+                    { id: 4, title: t('tips.cv_item4_title'), desc: t('tips.cv_item4_desc'), icon: 'fi-rr-target', color: 'bg-purple-50 text-purple-600' },
+                    { id: 5, title: t('tips.cv_item5_title'), desc: t('tips.cv_item5_desc'), icon: 'fi-rr-document-signed', color: 'bg-teal-50 text-[#1f6d78]' }
                 ];
                 return (
                     <div className="flex flex-col gap-1 py-6 px-4 no-scrollbar">
                         <div className="mb-6 px-4">
                             <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-2 leading-relaxed">
-                                Profesyonel İpuçları
+                                {t('sidebar.cv_tips')}
                             </p>
                             <h3 className="text-sm font-black text-gray-900 dark:text-white leading-tight">
-                                Dijital Kimliğinizi <br/>Birlikte Parlatalım.
+                                {t('tips.cv_title')}
                             </h3>
                         </div>
                         {tips.map((tip) => (
@@ -352,10 +352,10 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                         <div className="mt-8 p-6 rounded-3xl bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 border border-[#1f6d78]/10 mx-2">
                              <div className="flex items-center gap-3 mb-2">
                                 <span className="w-2 h-2 rounded-full bg-[#1f6d78] animate-pulse"></span>
-                                <span className="text-[10px] font-black text-[#1f6d78] uppercase tracking-widest">İpucu</span>
+                                <span className="text-[10px] font-black text-[#1f6d78] uppercase tracking-widest">{t('list.tip_title')}</span>
                              </div>
                              <p className="text-[11px] font-bold text-gray-600 dark:text-gray-400 leading-relaxed italic">
-                                "Profilinizi %100 tamamladığınızda işverenlerin dikkatini çekme şansınız 5 kat daha fazla olur."
+                                {t('list.tip_quote')}
                              </p>
                         </div>
                     </div>
@@ -367,9 +367,9 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                             <div className="w-20 h-20 rounded-[2.5rem] bg-gray-50 dark:bg-gray-900/50 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] mb-8 shadow-sm">
                                 <i className="fi fi-rr-bell text-4xl"></i>
                             </div>
-                            <h3 className="text-xl font-black text-gray-900 dark:text-white mb-3 uppercase tracking-tight">Bildirimlerinizi Kaçırmayın</h3>
+                            <h3 className="text-xl font-black text-gray-900 dark:text-white mb-3 uppercase tracking-tight">{t('list.auth_required_notif_title')}</h3>
                             <p className="text-[15px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed max-w-[320px]">
-                                İşverenlerden gelen iletişim isteklerini ve hesabınızla ilgili önemli güncellemeleri görmek için giriş yapmalısınız.
+                                {t('notif.login_required_desc')}
                             </p>
                         </div>
                     );

@@ -89,10 +89,10 @@ const CVCompletionPrompt: React.FC<CVCompletionPromptProps> = ({ completionScore
         <div className="p-6 pt-2 pb-10">
           <div className="text-center">
             <h4 className="text-lg font-black text-black dark:text-white uppercase tracking-tight mb-2">
-              Profilini Güçlendir!
+              {t('cv_completion.title')}
             </h4>
             <p className="text-[14px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed mb-6 px-4">
-              Profilini <span className="text-[#1f6d78] font-black">%{completionScore}</span> oranında tamamladın. Daha fazla iş fırsatı için bilgilerini güncelleyebilirsin.
+              {t('cv_completion.desc').replace('%{completionScore}', completionScore.toString())}
             </p>
             
             <button
@@ -102,7 +102,7 @@ const CVCompletionPrompt: React.FC<CVCompletionPromptProps> = ({ completionScore
               }}
               className="w-full bg-[#1f6d78] hover:bg-[#154d55] text-white py-4 rounded-3xl text-[13px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-[#1f6d78]/20"
             >
-              ŞİMDİ GÜNCELLE
+              {t('cv_completion.update_btn')}
             </button>
           </div>
         </div>

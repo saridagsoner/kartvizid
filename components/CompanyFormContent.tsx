@@ -208,7 +208,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                             <input type="file" ref={fileInputRef} onChange={handleFileSelect} className="hidden" accept="image/*" />
                             <div
                                 onClick={() => fileInputRef.current?.click()}
-                                className="w-28 h-28 sm:w-32 sm:h-32 rounded-[2rem] sm:rounded-[2.5rem] border-2 border-dashed border-gray-200 dark:border-white/20 bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden relative shadow-sm"
+                                className="w-28 h-28 sm:w-32 sm:h-32 rounded-[2rem] sm:rounded-[2.5rem] border border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.03] flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden relative shadow-sm"
                             >
                                 {formData.logoUrl ? (
                                     <>
@@ -276,7 +276,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                                     value={formData.foundedYear || ''}
                                     onChange={e => setFormData({ ...formData, foundedYear: parseInt(e.target.value) || undefined })}
                                     className="w-full h-full bg-transparent outline-none font-bold text-sm sm:text-base px-6 text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
-                                    placeholder="Örn: 1995"
+                                    placeholder={t('company.founded_placeholder')}
                                 />
                             </div>
                         </div>
@@ -298,7 +298,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
 
                 <ExpandableSection 
                     title={t('form.city')} 
-                    subtitle="Kurumsal lokasyon bilgileriniz"
+                    subtitle={t('company.location_subtitle')}
                     isOpen={openSections.location}
                     onToggle={() => toggleSection('location')}
                 >
@@ -363,19 +363,19 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                                     value={formData.website}
                                     onChange={e => setFormData({ ...formData, website: e.target.value })}
                                     className="w-full h-full bg-transparent outline-none font-bold text-sm sm:text-base px-6 text-gray-800 dark:text-gray-100 whitespace-nowrap"
-                                    placeholder="https://www.sirketiniz.com"
+                                    placeholder={t('company.website_placeholder')}
                                 />
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[9px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">Instagram</label>
+                            <label className="text-[9px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('company.instagram_label')}</label>
                             <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
                                 <input
                                     type="url"
                                     value={formData.instagramUrl}
                                     onChange={e => setFormData({ ...formData, instagramUrl: e.target.value })}
                                     className="w-full h-full bg-transparent outline-none font-bold text-sm sm:text-base px-6 text-gray-800 dark:text-gray-100 whitespace-nowrap"
-                                    placeholder="instagram.com/sirketiniz"
+                                    placeholder={t('company.instagram_placeholder')}
                                 />
                             </div>
                         </div>
@@ -431,7 +431,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                         </div>
                         {showConsentError && (
                             <p className="text-red-500 text-[10px] sm:text-xs font-bold ml-9">
-                                * Lütfen devam etmek için bu alanı işaretleyin.
+                                {t('company.consent_error')}
                             </p>
                         )}
                     </div>
@@ -444,7 +444,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                     type="button"
                     onClick={async () => {
                         if (onDelete) {
-                          if (window.confirm("İş veren profilinizi tamamen silmek istediğinize emin misiniz? Bu işlem geri alınamaz.")) {
+                          if (window.confirm(t('company.delete_confirm'))) {
                             await onDelete();
                           }
                         } else if (onClose) {
@@ -453,12 +453,12 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                     }}
                     className={`flex-1 border-2 border-red-500 text-red-500 py-3.5 sm:py-4 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest hover:bg-red-50 dark:hover:bg-red-950/30 transition-all active:scale-[0.98] text-center`}
                 >
-                    {onDelete ? 'PROFİLİ SİL' : t('form.cancel')}
+                    {onDelete ? t('company.delete_btn') : t('form.cancel')}
                 </button>
                 <button
                     onClick={() => {
                         if (!formData.name?.trim()) {
-                            setShowWarning({ show: true, message: t('errors.company_name_required') || 'Şirket adı zorunludur.' });
+                            setShowWarning({ show: true, message: t('errors.company_name_required') });
                             return;
                         }
                         if (!isConsentGiven) {

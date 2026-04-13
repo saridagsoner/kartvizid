@@ -152,7 +152,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
                             onChange={(e) => setQuery(e.target.value)}
                             onFocus={() => setIsFocused(true)}
                             onBlur={() => setIsFocused(false)}
-                            placeholder="Meslek, Şehir, İsim Ara"
+                            placeholder={t('nav.search_placeholder')}
                             className="w-full bg-white dark:bg-gray-800 border-[1px] border-black dark:border-white rounded-2xl pl-11 pr-20 h-[46px] font-semibold tracking-tight outline-none appearance-none focus:border-black dark:focus:border-white transition-all placeholder:text-gray-400 text-[14px] text-gray-900 dark:text-white"
                         />
                         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
@@ -233,7 +233,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
                 {results.length > 0 ? (
                     <div className="space-y-3">
                         <div className="flex items-center justify-between mb-4 px-1">
-                            <h3 className="text-[13px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Sonuçlar ({results.length})</h3>
+                            <h3 className="text-[13px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('search.results')} ({results.length})</h3>
                         </div>
                         {results.map((cv) => (
                             <BusinessCard
@@ -248,9 +248,9 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
                         <div className="w-20 h-20 bg-gray-50 dark:bg-gray-800/50 rounded-3xl flex items-center justify-center mb-8">
                              <i className="fi fi-rr-search text-3xl text-[#1f6d78] dark:text-[#2dd4bf]"></i>
                         </div>
-                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">Yetenek veya Hizmet Keşfet</h3>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">{t('search.discovery_title')}</h3>
                         <p className="text-[16px] font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-[320px]">
-                            Kriterlerinize en uygun adaylara anında ulaşın ya da aradığınız profesyonel hizmeti hemen bulmaya başlayın.
+                            {t('search.discovery_desc')}
                         </p>
                     </div>
                 ) : (
@@ -258,8 +258,8 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
                         <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
                             <i className="fi fi-rr-search-help text-2xl text-red-400"></i>
                         </div>
-                        <p className="text-gray-700 dark:text-gray-300 font-bold mb-1">Eşleşme Bulunamadı</p>
-                        <p className="text-gray-500 text-sm">Farklı bir anahtar kelime veya<br />şehir denemeyi unutma.</p>
+                        <p className="text-gray-700 dark:text-gray-300 font-bold mb-1">{t('search.no_results_title')}</p>
+                        <p className="text-gray-500 text-sm">{t('search.no_results_desc')}</p>
                     </div>
                 )}
             </div>
@@ -267,7 +267,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
             {/* Selection Modals */}
             {activeModal === 'professions' && (
                 <SelectionModal
-                    title="Tüm Meslekler"
+                    title={t('filters.all_professions')}
                     items={availableProfessions}
                     onSelect={(val) => handleFilterSelect('profession', val)}
                     onClose={() => setActiveModal(null)}
@@ -275,7 +275,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
             )}
             {activeModal === 'cities' && (
                 <SelectionModal
-                    title="Tüm Şehirler"
+                    title={t('filters.all_cities')}
                     items={availableCities}
                     onSelect={(val) => handleFilterSelect('city', val)}
                     onClose={() => setActiveModal(null)}
@@ -283,7 +283,7 @@ const SearchOverlay: React.FC<SearchOverlayProps> = ({
             )}
             {activeModal === 'experience' && (
                 <SelectionModal
-                    title="Tüm Deneyim Seviyeleri"
+                    title={t('filters.all_experience')}
                     items={EXPERIENCE_LEVELS}
                     onSelect={(val) => handleFilterSelect('experience', val)}
                     onClose={() => setActiveModal(null)}

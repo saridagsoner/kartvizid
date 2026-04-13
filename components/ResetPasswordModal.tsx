@@ -21,13 +21,13 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
         setError(null);
 
         if (password !== confirmPassword) {
-            setError('Şifreler eşleşmiyor.');
+            setError(t('reset.password_match_error'));
             setLoading(false);
             return;
         }
 
         if (password.length < 6) {
-            setError('Şifre en az 6 karakter olmalıdır.');
+            setError(t('reset.password_length_error'));
             setLoading(false);
             return;
         }
@@ -40,7 +40,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
             if (updateError) throw updateError;
             setSuccess(true);
         } catch (err: any) {
-            setError(err.message || 'Şifre güncellenirken bir hata oluştu.');
+            setError(err.message || t('reset.generic_error'));
         } finally {
             setLoading(false);
         }
@@ -54,10 +54,10 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
                     <>
                         <div className="text-center mb-6">
                             <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">
-                                Yeni Şifre Belirle
+                                {t('reset.title')}
                             </h2>
                             <p className="text-gray-500 dark:text-gray-400 font-medium">
-                                Lütfen hesabınız için yeni bir şifre girin.
+                                {t('reset.desc')}
                             </p>
                         </div>
 
@@ -69,7 +69,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
                             )}
 
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">Yeni Şifre</label>
+                                <label className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">{t('auth.password_label')}</label>
                                 <div className="relative">
                                     <input
                                         type={showPassword ? "text" : "password"}
@@ -82,7 +82,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-3 top-1/2 -/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
                                     >
                                         {showPassword ? (
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -102,7 +102,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
                             </div>
 
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">Yeni Şifre (Tekrar)</label>
+                                <label className="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider ml-1">{t('settings.new_password_confirm')}</label>
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     value={confirmPassword}
@@ -118,7 +118,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
                                 disabled={loading}
                                 className="mt-4 w-full bg-[#1f6d78] text-white font-bold py-4 rounded-xl hover:bg-[#155e68] active:[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {loading ? 'Güncelleniyor...' : 'Şifreyi Güncelle'}
+                                {loading ? t('settings.updating') : t('settings.update_password')}
                             </button>
                         </form>
                     </>
@@ -128,16 +128,16 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ onClose }) => {
                             🔒
                         </div>
                         <h3 className="text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] mb-4 leading-tight tracking-tight">
-                            Şifre Güncellendi!
+                            {t('reset.success_title')}
                         </h3>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8 leading-relaxed max-w-xs mx-auto">
-                            Şifreniz başarıyla değiştirildi. Şimdi yeni şifrenizle uygulamayı kullanabilirsiniz.
+                            {t('reset.success_desc')}
                         </p>
                         <button
                             onClick={onClose}
                             className="w-full bg-[#1f6d78] text-white py-4 rounded-xl font-black text-sm uppercase tracking-wider hover:bg-[#155e68] transition-all shadow-xl shadow-[#1f6d78]/20 active:"
                         >
-                            Tamam
+                            {t('settings.ok')}
                         </button>
                     </div>
                 )}

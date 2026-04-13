@@ -3,17 +3,25 @@ import React, { useState, useRef, useEffect } from 'react';
 interface SearchableSelectProps {
     value: string;
     onChange: (value: string) => void;
-    options: string[];
+    options: string[] | { label: string, value: string }[];
     placeholder?: string;
     disabled?: boolean;
     icon?: string;
     searchable?: boolean;
 }
 
-const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, options, placeholder = 'Şehir', disabled = false, icon, searchable = true }) => {
+const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, options, placeholder = 'common.city', disabled = false, icon, searchable = true }) => {
+    const { t } = useLanguage();
+    const normalizedOptions = options.map(opt => typeof opt === 'string' ? { label: opt, value: opt } : opt);
+    const selectedOption = normalizedOptions.find(opt => opt.value === value);
     const [isOpen, setIsOpen] = useState(false);
     const [search, setSearch] = useState('');
     const dropdownRef = useRef<HTMLDivElement>(null);
+
+    const getPlaceholderText = () => {
+        const translated = t(placeholder);
+        return translated !== placeholder ? translated : placeholder;
+    };
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -26,8 +34,8 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const filteredOptions = options.filter(opt =>
-        opt.toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr'))
+    const filteredOptions = normalizedOptions.filter(opt =>
+        opt.label.toLocaleLowerCase('tr').includes(search.toLocaleLowerCase('tr'))
     );
 
     return (
@@ -38,7 +46,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
                     } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
                 <span className={value ? 'text-black dark:text-white' : 'text-gray-400 font-medium'}>
-                    {value || placeholder}
+                    {selectedOption ? selectedOption.label : placeholder}
                 </span>
                 <div className="flex items-center translate-y-[1.5px]">
                     <i className={`fi fi-rr-angle-small-down text-gray-400 text-lg transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}></i>
@@ -61,7 +69,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
                                             e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                         }, 300);
                                     }}
-                                    placeholder="Ara..."
+                                    placeholder={options.length > 50 ? t('common.search_list') : t('common.search_list')}
                                     className="w-full h-full bg-gray-50/50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-2xl pl-10 pr-4 text-[15px] font-bold outline-none focus:border-[#1f6d78]/30 transition-all dark:text-white"
                                     onClick={(e) => e.stopPropagation()}
                                 />
@@ -74,19 +82,19 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
                         {filteredOptions.length > 0 ? (
                             filteredOptions.map((option) => (
                                 <div
-                                    key={option}
+                                    key={option.value}
                                     onClick={() => {
-                                        onChange(option);
+                                        onChange(option.value);
                                         setIsOpen(false);
                                         setSearch('');
                                     }}
-                                    className={`relative px-5 py-3.5 rounded-[18px] text-[14px] font-bold cursor-pointer transition-all flex items-center justify-between group overflow-hidden ${value === option 
+                                    className={`relative px-5 py-3.5 rounded-[18px] text-[14px] font-bold cursor-pointer transition-all flex items-center justify-between group overflow-hidden ${value === option.value 
                                         ? 'bg-[#1f6d78]/8 text-[#1f6d78]' 
                                         : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5'
                                         }`}
                                 >
-                                    <span className="relative z-10">{option}</span>
-                                    {value === option && (
+                                    <span className="relative z-10">{option.label}</span>
+                                    {value === option.value && (
                                         <i className="fi fi-rr-check text-[15px] sm:text-[17px] font-black"></i>
                                     )}
                                 </div>

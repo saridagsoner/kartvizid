@@ -49,18 +49,18 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
 
     const handleUpdatePassword = async () => {
         if (newPassword !== confirmPassword) {
-            setShowWarning({ show: true, message: 'Şifreler eşleşmiyor!' });
+            setShowWarning({ show: true, message: t('settings.pass_mismatch') });
             return;
         }
         try {
             setLoading(true);
             const { error } = await supabase.auth.updateUser({ password: newPassword });
             if (error) throw error;
-            setShowWarning({ show: true, message: 'Şifreniz başarıyla güncellendi!' });
+            setShowWarning({ show: true, message: t('settings.password_update_success') });
             setNewPassword('');
             setConfirmPassword('');
         } catch (error: any) {
-            setShowWarning({ show: true, message: 'Hata: ' + error.message });
+            setShowWarning({ show: true, message: t('settings.error') + error.message });
         } finally {
             setLoading(false);
         }
@@ -71,10 +71,10 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
             setLoading(true);
             const { error } = await supabase.auth.updateUser({ email: newEmail });
             if (error) throw error;
-            setShowWarning({ show: true, message: 'E-posta güncelleme onayı için yeni adresinize bir mail gönderdik.' });
+            setShowWarning({ show: true, message: t('settings.email_update_pending') });
             setNewEmail('');
         } catch (error: any) {
-            setShowWarning({ show: true, message: 'Hata: ' + error.message });
+            setShowWarning({ show: true, message: t('settings.error') + error.message });
         } finally {
             setLoading(false);
         }
@@ -107,11 +107,11 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
         <div className="flex-1 p-8 sm:p-12 overflow-y-auto custom-scrollbar bg-white dark:bg-black">
             {/* Warning Overlay */}
             {showWarning.show && (
-                <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/5 backdrop-blur-sm p-6">
-                    <div className="bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-[2.5rem] p-8 w-full max-w-sm shadow-2xl text-center">
-                        <h3 className="text-xl font-black mb-4 tracking-tighter">Mesaj</h3>
-                        <p className="text-sm font-medium text-gray-500 mb-8">{showWarning.message}</p>
-                        <button onClick={() => setShowWarning({ show: false, message: '' })} className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest">Tamam</button>
+                <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-6">
+                    <div className="bg-white dark:bg-black border-2 border-gray-100 dark:border-white/10 rounded-[2.5rem] p-8 w-full max-w-sm shadow-2xl text-center">
+                        <h3 className="text-xl font-black mb-4 tracking-tighter text-black dark:text-white">{t('settings.info_msg')}</h3>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8">{showWarning.message}</p>
+                        <button onClick={() => setShowWarning({ show: false, message: '' })} className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20">{t('settings.ok')}</button>
                     </div>
                 </div>
             )}
@@ -119,17 +119,17 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
             {activeTab === 'general' && (
                 <div className="space-y-12">
                     <section>
-                        <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
+                        <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/10 pb-4">
                             {t('account.appearance')}
                         </h3>
-                        <div className="flex items-center justify-between p-6 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-white/5">
+                        <div className="flex items-center justify-between p-6 rounded-2xl bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/10">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-xl bg-white dark:bg-gray-900 flex items-center justify-center shadow-sm">
+                                <div className="w-12 h-12 rounded-xl bg-white dark:bg-black flex items-center justify-center shadow-sm border border-transparent dark:border-white/5">
                                     <i className={`fi ${theme === 'dark' ? 'fi-rr-moon' : 'fi-rr-sun'} text-xl text-[#1f6d78] dark:text-[#2dd4bf]`}></i>
                                 </div>
                                 <div>
                                     <p className="font-bold text-gray-900 dark:text-white">{theme === 'dark' ? t('account.dark') : t('account.light')}</p>
-                                    <p className="text-xs text-gray-500 font-medium">Platform temasını değiştirin</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium font-bold">{t('account.appearance_desc')}</p>
                                 </div>
                             </div>
                             <button onClick={toggleTheme} className={`w-14 h-8 rounded-full p-1.5 transition-all ${theme === 'dark' ? 'bg-[#1f6d78]' : 'bg-gray-300'}`}>
@@ -139,23 +139,23 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
                     </section>
 
                     <section>
-                        <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
+                        <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/10 pb-4">
                             {t('settings.language')}
                         </h3>
                         <div className="grid grid-cols-1 gap-3">
                             {[
-                                { code: 'tr', label: 'Türkçe', flag: '🇹🇷' },
-                                { code: 'en', label: 'English', flag: '🇬🇧' },
-                                { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
-                                { code: 'fr', label: 'Français', flag: '🇫🇷' },
-                                { code: 'es', label: 'Español', flag: '🇪🇸' },
+                                { code: 'tr', label: t('lang.turkish'), flag: '🇹🇷' },
+                                { code: 'en', label: t('lang.english'), flag: '🇬🇧' },
+                                { code: 'de', label: t('lang.german'), flag: '🇩🇪' },
+                                { code: 'fr', label: t('lang.french'), flag: '🇫🇷' },
+                                { code: 'es', label: t('lang.spanish'), flag: '🇪🇸' },
                             ].map((lang) => (
                                 <button
                                     key={lang.code}
                                     onClick={() => setLanguage(lang.code as any)}
                                     className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${language === lang.code
                                         ? 'bg-[#1f6d78] text-white border-[#1f6d78] shadow-lg shadow-[#1f6d78]/10'
-                                        : 'bg-white dark:bg-gray-800/50 border-gray-100 dark:border-white/5 text-gray-900 dark:text-gray-300 hover:border-[#1f6d78]/20'
+                                        : 'bg-white dark:bg-white/[0.03] border-gray-100 dark:border-white/10 text-gray-900 dark:text-gray-300 hover:border-[#1f6d78]/20'
                                         }`}
                                 >
                                     <div className="flex items-center gap-4">
@@ -174,33 +174,33 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
                 <div className="max-w-xl mx-auto space-y-10">
                     <section>
                         <h3 className="text-[11px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.25em] mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
-                            HESAP ÖZETİ
+                            {t('account.summary')}
                         </h3>
                         <div className="p-8 rounded-[2rem] bg-gray-50/50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 space-y-6">
                             <div className="flex flex-col gap-1">
-                                <span className="font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider text-[10px]">E-POSTA</span>
+                                <span className="font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider text-[10px]">{t('account.email')}</span>
                                 <span className="font-bold text-[15px] text-gray-900 dark:text-gray-100">{user?.email}</span>
                             </div>
                             <div className="flex flex-col gap-1">
-                                <span className="font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider text-[10px]">ÜYELİK TARİHİ</span>
+                                <span className="font-black text-gray-400 dark:text-gray-500 uppercase tracking-wider text-[10px]">{t('account.member_since')}</span>
                                 <span className="font-bold text-[15px] text-gray-900 dark:text-gray-100">
-                                    {user?.created_at ? new Date(user.created_at).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
+                                    {user?.created_at ? new Date(user.created_at).toLocaleDateString(language === 'tr' ? 'tr-TR' : 'en-US', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-'}
                                 </span>
                             </div>
                             <div className="pt-2">
-                                <span className="font-medium text-[11px] text-gray-400/70">Kullanıcı ID: {user?.id}</span>
+                                <span className="font-medium text-[11px] text-gray-400/70">{t('account.user_id')}{user?.id}</span>
                             </div>
                         </div>
                     </section>
 
                     <section className="pt-4">
                         <div className="p-8 rounded-[2.5rem] bg-red-50/50 dark:bg-red-500/5 border border-red-100 dark:border-red-500/10 text-center">
-                            <h4 className="text-red-900 dark:text-red-400 font-black tracking-tight mb-2">Hesabımı Sil</h4>
+                            <h4 className="text-red-900 dark:text-red-400 font-black tracking-tight mb-2">{t('account.delete_account')}</h4>
                             <p className="text-[13px] font-medium text-red-700/70 dark:text-red-400/60 mb-8 max-w-sm mx-auto leading-relaxed">
-                                CV'niz, başvurularınız ve profiliniz kalıcı olarak silinir. Bu işlem geri alınamaz.
+                                {t('account.delete_desc')}
                             </p>
                             <button className="w-full max-w-xs py-4 bg-white dark:bg-gray-900 text-red-600 font-extrabold border border-red-200 dark:border-red-900/50 rounded-2xl hover:bg-red-600 hover:text-white transition-all shadow-sm active:scale-95">
-                                Hesabı Sil
+                                {t('account.delete_btn')}
                             </button>
                         </div>
                     </section>
@@ -211,41 +211,41 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
                 <div className="space-y-12">
                     <section>
                          <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
-                            E-posta Değiştir
+                            {t('settings.change_email')}
                         </h3>
                         <div className="flex gap-3">
                             <input
                                 type="email"
                                 value={newEmail}
                                 onChange={(e) => setNewEmail(e.target.value)}
-                                placeholder="Yeni e-posta adresi"
+                                placeholder={t('settings.change_email')}
                                 className="flex-1 bg-gray-50 dark:bg-gray-800/80 rounded-xl px-5 py-3.5 text-sm font-bold border border-gray-100 dark:border-white/5 outline-none focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
                             />
-                            <button onClick={handleUpdateEmail} className="px-6 bg-[#1f6d78] text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-[#1f6d78]/20 hover:scale-105 active:scale-95 transition-all">Güncelle</button>
+                            <button onClick={handleUpdateEmail} className="px-6 bg-[#1f6d78] text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-[#1f6d78]/20 hover:scale-105 active:scale-95 transition-all">{t('settings.update')}</button>
                         </div>
                     </section>
 
                     <section>
-                         <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
-                            Şifre Değiştir
+                         <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/10 pb-4">
+                            {t('settings.change_password')}
                         </h3>
                         <div className="space-y-4">
                             <input
                                 type="password"
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
-                                placeholder="Yeni şifre"
-                                className="w-full bg-gray-50 dark:bg-gray-800/80 rounded-xl px-5 py-3.5 text-sm font-bold border border-gray-100 dark:border-white/5 outline-none focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
+                                placeholder={t('settings.new_password')}
+                                className="w-full bg-gray-50 dark:bg-white/[0.03] rounded-xl px-5 py-3.5 text-sm font-bold border border-gray-100 dark:border-white/10 text-black dark:text-white outline-none focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
                             />
                             <input
                                 type="password"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder="Yeni şifre (Tekrar)"
-                                className="w-full bg-gray-50 dark:bg-gray-800/80 rounded-xl px-5 py-3.5 text-sm font-bold border border-gray-100 dark:border-white/5 outline-none focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
+                                placeholder={t('settings.confirm_password')}
+                                className="w-full bg-gray-50 dark:bg-white/[0.03] rounded-xl px-5 py-3.5 text-sm font-bold border border-gray-100 dark:border-white/10 text-black dark:text-white outline-none focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
                             />
                             <div className="flex justify-end pt-2">
-                                <button onClick={handleUpdatePassword} className="px-8 py-3.5 bg-[#1f6d78] text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-[#1f6d78]/20 hover:scale-105 active:scale-95 transition-all">Şifreyi Güncelle</button>
+                                <button onClick={handleUpdatePassword} className="px-8 py-3.5 bg-[#1f6d78] text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-[#1f6d78]/20 hover:scale-105 active:scale-95 transition-all">{t('settings.update')}</button>
                             </div>
                         </div>
                     </section>
@@ -255,7 +255,7 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
             {activeTab === 'notifications' && (
                 <div className="space-y-6">
                     <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/5 pb-4">
-                        Bildirim Tercihleri
+                        {t('settings.notif_prefs')}
                     </h3>
                     {[
                         { id: 'email', title: t('settings.notif_email_title'), desc: t('settings.notif_email_desc'), active: emailNotif },

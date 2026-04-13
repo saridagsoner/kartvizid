@@ -152,7 +152,7 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
       onRefreshConversations();
     } catch (err) {
       console.error('Error sending message:', err);
-      showToast('Mesaj gönderilemedi.', 'error');
+      showToast(t('messages.send_error'), 'error');
     }
   };
 
@@ -174,7 +174,7 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
             <button 
               onClick={onClose} 
               className="w-10 h-10 rounded-full text-black flex items-center justify-center transition-all active:scale-95 hover:bg-gray-50"
-              title={t('profile.close') || 'Kapat'}
+              title={t('profile.close')}
             >
               <i className="fi fi-rr-cross text-xs font-bold"></i>
             </button>
@@ -187,10 +187,10 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                    <i className="fi fi-rr-comment-dots text-3xl text-gray-300"></i>
                  </div>
                  <h3 className="text-lg font-bold text-black mb-2">
-                   {t('messages.empty_title') || 'Henüz Bir Görüşme Başlamadı'}
+                   {t('messages.empty_title')}
                  </h3>
                  <p className="text-sm text-gray-400 leading-relaxed max-w-[240px]">
-                   {t('messages.empty_desc') || 'İşverenler size mesaj gönderdiğinde burada görünecektir.'}
+                   {t('messages.empty_desc')}
                  </p>
               </div>
             ) : (
@@ -216,9 +216,9 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                       ) : null}
                     </div>
                     <div className="flex-1 text-left min-w-0">
-                      <h4 className="font-bold text-black text-[15px] sm:text-[16.5px] tracking-tight truncate leading-tight mb-1">{conv.other_participant?.full_name || 'Kullanıcı'}</h4>
+                      <h4 className="font-bold text-black text-[15px] sm:text-[16.5px] tracking-tight truncate leading-tight mb-1">{conv.other_participant?.full_name || t('messages.user_fallback')}</h4>
                       <p className="text-gray-400 text-[13px] font-medium truncate opacity-90">
-                        {conv.last_message || (t('messages.click_to_start') || 'Sohbeti başlatın...')}
+                        {conv.last_message || t('messages.click_to_start')}
                       </p>
                     </div>
                   </button>
@@ -260,7 +260,7 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                 <button 
                   onClick={onClose} 
                   className="hidden sm:flex ml-auto w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-black transition-all items-center justify-center active:scale-95"
-                  title={t('profile.close') || 'Kapat'}
+                  title={t('profile.close')}
                 >
                    <i className="fi fi-rr-cross text-xs"></i>
                 </button>
@@ -282,11 +282,11 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                     <div className="flex flex-col items-center justify-center text-center p-8">
                       <div className="inline-block px-4 py-1.5 rounded-full bg-[#1f6d78]/5 border border-[#1f6d78]/10 mb-6">
                         <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[#1f6d78]/70">
-                          GÜVENLİ KARİYER SOHBETİ
+                          {t('messages.secure_chat_tag')}
                         </p>
                       </div>
-                      <p className="text-sm font-bold text-gray-400 max-w-[200px] leading-relaxed">
-                        İlk mesajınızı göndererek sohbeti hemen başlatın.
+                      <p className="text-sm font-bold text-gray-400 max-w-[201px] leading-relaxed">
+                        {t('messages.start_convo_desc')}
                       </p>
                     </div>
                   ) : (
@@ -334,14 +334,14 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(e)}
-                    placeholder={t('messages.type_placeholder') || "Mesajınızı buraya yazın..."}
+                    placeholder={t('messages.type_placeholder')}
                     className="flex-1 bg-transparent border-none focus:ring-0 outline-none py-3 px-4 sm:px-6 text-sm sm:text-base font-medium text-gray-800 placeholder:text-gray-400"
                   />
                   <button
                     type="submit"
                     disabled={!newMessage.trim()}
                     className="w-12 h-12 flex items-center justify-center transition-all duration-300 active:scale-90 disabled:cursor-not-allowed group shrink-0"
-                    title={t('messages.send') || "Gönder"}
+                    title={t('messages.send')}
                   >
                     <svg 
                       viewBox="0 0 24 24" 
@@ -366,9 +366,9 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
               <div className="w-24 h-24 rounded-full bg-white shadow-sm border border-gray-50 flex items-center justify-center mb-6">
                  <i className="fi fi-rr-comment-quote text-4xl text-gray-200"></i>
               </div>
-              <h3 className="text-2xl font-bold text-black mb-2 tracking-tight">Kariyer Sohbetleri</h3>
+              <h3 className="text-2xl font-bold text-black mb-2 tracking-tight">{t('messages.center_title')}</h3>
               <p className="text-sm text-gray-400 max-w-xs leading-relaxed">
-                İş arayanlar ve iş verenlerin profesyonel bir ortamda buluştuğu güvenli mesajlaşma merkezi.
+                {t('messages.center_desc')}
               </p>
             </div>
           )}

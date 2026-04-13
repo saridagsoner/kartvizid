@@ -162,8 +162,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                         <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-2 leading-tight tracking-tight px-10">
                             {mode === 'reset' ? t('auth.forgot_password') : (
                                 mode === 'signin' ? t('auth.signin_title') : (
-                                    selectedRole === 'job_seeker' ? 'İş Arayan Hesabı Oluştur' : 
-                                    selectedRole === 'employer' ? 'İş Veren Hesabı Oluştur' : 
+                                    selectedRole === 'job_seeker' ? t('auth.signup_seeker_title') : 
+                                    selectedRole === 'employer' ? t('auth.signup_employer_title') : 
                                     t('auth.signup_title')
                                 )
                             )}
@@ -239,7 +239,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                             className="text-[13px] font-black text-gray-400 dark:text-gray-500 hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] transition-colors flex items-center justify-center gap-2 group py-2"
                                         >
                                             <span className="w-8 h-px bg-gray-100 dark:bg-white/5 group-hover:bg-[#1f6d78]/20 transition-colors"></span>
-                                            {mode === 'signin' ? 'Veya e-posta ile giriş yap' : 'Veya e-posta ile kayıt ol'}
+                                            {mode === 'signin' ? t('auth.or_with_email_signin') : t('auth.or_with_email_signup')}
                                             <span className="w-8 h-px bg-gray-100 dark:bg-white/5 group-hover:bg-[#1f6d78]/20 transition-colors"></span>
                                         </button>
                                     )}
@@ -262,7 +262,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                             onChange={(e) => setEmail(e.target.value)}
                                             required
                                             className="w-full bg-gray-50 dark:bg-black/50 border border-gray-200 dark:border-white/5 focus:bg-white dark:focus:bg-black focus:border-[#1f6d78]/30 dark:focus:border-[#2dd4bf]/30 rounded-2xl px-5 py-4 text-[15px] text-gray-900 dark:text-white font-semibold focus:outline-none focus:ring-4 focus:ring-[#1f6d78]/10 transition-all placeholder:text-gray-400 shadow-inner"
-                                            placeholder="ornek@email.com"
+                                            placeholder={t('auth.email_placeholder')}
                                         />
                                     </div>
 

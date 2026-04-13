@@ -75,7 +75,7 @@ const SavedCVsModal: React.FC<SavedCVsModalProps> = ({ onClose, onOpenCV, userId
 
                 {/* Header */}
                 <div className="px-6 py-5 border-b border-gray-50 flex justify-between items-center bg-white sticky top-0 z-10 shrink-0">
-                    <h2 className="text-xl font-black text-black tracking-tight">Kaydettiklerim</h2>
+                    <h2 className="text-xl font-black text-black tracking-tight">{t('saved.title')}</h2>
                     <button
                         onClick={onClose}
                         className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
@@ -87,13 +87,13 @@ const SavedCVsModal: React.FC<SavedCVsModalProps> = ({ onClose, onOpenCV, userId
                 {/* List */}
                 <div className="flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar bg-white">
                     {loading ? (
-                        <div className="p-10 text-center text-gray-400 text-sm">Yükleniyor...</div>
+                        <div className="p-10 text-center text-gray-400 text-sm">{t('saved.loading')}</div>
                     ) : savedCVs.length === 0 ? (
                         <div className="p-10 text-center flex flex-col items-center">
                             <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4 text-gray-300">
                                 <i className="fi fi-rr-bookmark text-2xl"></i>
                             </div>
-                            <p className="text-gray-500 font-medium">Henüz kaydedilmiş aday yok.</p>
+                            <p className="text-gray-500 font-medium">{t('saved.empty')}</p>
                         </div>
                     ) : (
                         <div className="flex flex-col">
@@ -115,16 +115,16 @@ const SavedCVsModal: React.FC<SavedCVsModalProps> = ({ onClose, onOpenCV, userId
                                     {/* Info */}
                                     <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
                                         <div className="min-w-0 flex-1">
-                                            <h3 className="font-black text-[15px] text-gray-900 truncate">{item.cv?.name || 'İsimsiz Aday'}</h3>
-                                            <p className="text-[11px] text-gray-500 font-bold truncate tracking-wide uppercase mt-0.5">{item.cv?.profession || 'İş Arayan'}</p>
+                                            <h3 className="font-black text-[15px] text-gray-900 truncate">{item.cv?.name || t('saved.no_name')}</h3>
+                                            <p className="text-[11px] text-gray-500 font-bold truncate tracking-wide uppercase mt-0.5">{item.cv?.profession || t('saved.no_profession')}</p>
                                         </div>
 
                                         <div className="flex items-center gap-2 shrink-0 mt-1 sm:mt-0">
                                             <span className="text-[10px] text-gray-400 font-bold flex items-center gap-1">
-                                                <i className="fi fi-rr-marker text-[#1f6d78]"></i> {item.cv?.city || 'Belirtilmemiş'}
+                                                <i className="fi fi-rr-marker text-[#1f6d78]"></i> {item.cv?.city || t('saved.no_city')}
                                             </span>
                                             <span className="text-[10px] text-[#1f6d78] font-bold bg-[#1f6d78]/5 px-2 py-0.5 rounded-md">
-                                                {item.cv?.experience_years} Yıl {item.cv?.experience_months ? item.cv?.experience_months + ' Ay' : ''}
+                                                {item.cv?.experience_years} {t('saved.year')} {item.cv?.experience_months ? item.cv?.experience_months + ' ' + t('saved.month') : ''}
                                             </span>
                                         </div>
                                     </div>
@@ -133,7 +133,7 @@ const SavedCVsModal: React.FC<SavedCVsModalProps> = ({ onClose, onOpenCV, userId
                                     <button
                                         onClick={(e) => handleRemove(e, item.id)}
                                         className="w-8 h-8 flex items-center justify-center rounded-full bg-red-50 hover:bg-red-100 text-red-500 transition-colors ml-1 shrink-0"
-                                        title="Kaldır"
+                                        title={t('saved.remove')}
                                     >
                                         <i className="fi fi-rr-trash text-xs"></i>
                                     </button>

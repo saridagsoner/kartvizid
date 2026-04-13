@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import { PopularItem } from '../types';
+import { useLanguage } from '../context/LanguageContext';
 
 interface SelectionModalProps {
   title: string;
@@ -10,6 +10,7 @@ interface SelectionModalProps {
 }
 
 const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect, onClose }) => {
+  const { t } = useLanguage();
   const [search, setSearch] = useState('');
 
   const filtered = (items || []).filter(item =>
@@ -37,7 +38,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
             </svg>
             <input
               type="text"
-              placeholder="Listede ara..."
+              placeholder={t('common.search_list')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-gray-50 dark:bg-gray-800 rounded-full py-2.5 pl-10 pr-6 outline-none text-[13px] font-bold border border-transparent focus:border-[#1f6d78]/10 focus:bg-white dark:focus:bg-gray-700 transition-all dark:text-white"
@@ -50,13 +51,13 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
             <div className="grid grid-cols-1 gap-1">
               {filtered.map((item, idx) => (
                 <button
-                  key={idx}
-                  onClick={() => onSelect(item.label)}
-                  className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-2xl transition-all text-left group"
+                   key={idx}
+                   onClick={() => onSelect(item.label)}
+                   className="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-2xl transition-all text-left group"
                 >
-                  <span className="text-sm font-bold text-gray-700 group-hover:text-black transition-colors">{item.label}</span>
+                  <span className="text-sm font-bold text-gray-700 dark:text-gray-300 group-hover:text-[#1f6d78] transition-colors">{item.label}</span>
                   {item.count > 0 && (
-                    <span className="text-[10px] bg-gray-100 px-2 py-1 rounded-full font-black text-gray-400 group-hover:bg-[#1f6d78] group-hover:text-white transition-all uppercase tracking-tighter">
+                    <span className="text-[10px] bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full font-black text-gray-400 group-hover:bg-[#1f6d78] group-hover:text-white transition-all uppercase tracking-tighter">
                       {item.count}
                     </span>
                   )}
@@ -65,7 +66,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ title, items, onSelect,
             </div>
           ) : (
             <div className="py-12 text-center text-gray-400">
-              <p className="text-sm font-bold italic">Aradığınız kriterde sonuç bulunamadı.</p>
+              <p className="text-sm font-bold italic">{t('common.no_results_criteria')}</p>
             </div>
           )}
         </div>

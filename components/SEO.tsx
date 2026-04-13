@@ -1,5 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useLanguage } from '../context/LanguageContext';
 
 interface SEOProps {
     title?: string;
@@ -16,10 +17,11 @@ const SEO: React.FC<SEOProps> = ({
     url = 'https://kartvizid.com',
     type = 'website'
 }) => {
-    const siteTitle = 'Kartvizid | Dijital CV ve İletişim Platformu';
+    const { t } = useLanguage();
+    const siteTitle = t('seo.default_title');
     const fullTitle = title ? `${title} | Kartvizid` : siteTitle;
 
-    const siteDescription = 'Kartvizid, iş arayanlar ve işverenleri doğrudan buluşturan yeni nesil dijital özgeçmiş platformudur.';
+    const siteDescription = t('seo.default_description');
     const fullDescription = description || siteDescription;
 
     return (

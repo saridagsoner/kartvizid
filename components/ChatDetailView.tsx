@@ -152,9 +152,9 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
            <div className="absolute inset-0 bg-[#1f6d78]/5 dark:bg-[#2dd4bf]/5 rounded-[2rem] scale-0 group-hover:scale-100 transition-transform duration-500"></div>
            <i className="fi fi-rr-comment-info text-4xl text-[#1f6d78] dark:text-[#2dd4bf] relative z-10 transition-transform duration-500 group-hover:rotate-6"></i>
         </div>
-        <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter uppercase">İş Görüşmeleriniz</h3>
+        <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter uppercase">{t('chat.empty_title')}</h3>
         <p className="text-[13px] font-medium text-gray-500 dark:text-gray-400 max-w-[340px] leading-[1.8] uppercase tracking-[0.05em]">
-          Bir işveren profilinizi inceleyip sizinle iletişime geçmek istediğinde veya bir görüşme başlattığınızda süreci bu profesyonel panel üzerinden yönetebilirsiniz.
+          {t('chat.empty_desc')}
         </p>
       </div>
     );
@@ -183,7 +183,7 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
               <p className="text-[11px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-widest leading-none">
                 {activeConversation?.other_participant?.profession || 
-                  (activeConversation?.other_participant?.role === 'employer' ? 'İşveren' : 'İş Arayan')}
+                  (activeConversation?.other_participant?.role === 'employer' ? t('chat.employer') : t('chat.seeker'))}
               </p>
             </div>
           </div>
@@ -212,11 +212,11 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
             <div className="flex flex-col items-center justify-center text-center py-12">
               <div className="inline-block px-5 py-2 rounded-full bg-[#1f6d78]/5 border border-[#1f6d78]/10 mb-8">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#1f6d78]/80">
-                  GÜVENLİ SOHBET BAŞLATILDI
+                  {t('chat.secure_chat_started')}
                 </p>
               </div>
               <p className="text-base font-bold text-gray-400 max-w-[280px] leading-relaxed">
-                İş dünyasının kapıları bu mesajla aralanabilir. <br />İlk mesajınızı şimdi gönderin.
+                {t('chat.first_message_prompt')}
               </p>
             </div>
           ) : (
@@ -266,7 +266,7 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Mesajınızı şimdi yazın..."
+            placeholder={t('chat.input_placeholder')}
             className="flex-1 bg-transparent border-none focus:ring-0 outline-none py-4 px-6 text-base font-bold text-gray-800 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600"
           />
           <button

@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
-import { BLOG_ARTICLES } from '../constants/articles';
+import { getLocalizedArticles } from '../constants/articles';
 import { useLanguage } from '../context/LanguageContext';
 import SEO from './SEO';
 
@@ -22,6 +22,19 @@ const CATEGORY_STYLES: Record<string, { icon: string; color: string }> = {
   'Kişisel Gelişim': { icon: 'fi-rr-book-open-reader', color: '#f97316' },
   'Gelecek ve Gençler': { icon: 'fi-rr-graduation-cap', color: '#14b8a6' },
   'Global Kariyer': { icon: 'fi-rr-world', color: '#0ea5e9' },
+  // Localized keys for styles (added by ID/Key if needed)
+  'Job Search Expertise': { icon: 'fi-rr-search-alt', color: '#3b82f6' },
+  'Interview Techniques': { icon: 'fi-rr-comment-user', color: '#8b5cf6' },
+  'Networking & Personal Branding': { icon: 'fi-rr-users', color: '#ec4899' },
+  'Technology & Future': { icon: 'fi-rr-rocket-lunch', color: '#f59e0b' },
+  'Career Transformation': { icon: 'fi-rr-refresh', color: '#ef4444' },
+  'Salary & Finance': { icon: 'fi-rr-bank', color: '#10b981' },
+  'Lifestyle': { icon: 'fi-rr-leaf', color: '#84cc16' },
+  'Management': { icon: 'fi-rr-user-gear', color: '#6366f1' },
+  'Workplace Psychology': { icon: 'fi-rr-brain', color: '#06b6d4' },
+  'Personal Development': { icon: 'fi-rr-book-open-reader', color: '#f97316' },
+  'Future & Youth': { icon: 'fi-rr-graduation-cap', color: '#14b8a6' },
+  'Global Career': { icon: 'fi-rr-world', color: '#0ea5e9' },
   'def': { icon: 'fi-rr-star', color: '#1f6d78' }
 };
 
@@ -29,30 +42,32 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
   const { slug } = useParams<{ slug?: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
 
-  const getStyle = (category: string) => CATEGORY_STYLES[category] || CATEGORY_STYLES['def'];
+  const articles = getLocalizedArticles(language);
 
-  // Robustly determine active slug from params or URL path
+  const getStyle = (category: string) => {
+    return CATEGORY_STYLES[category] || CATEGORY_STYLES['def'];
+  };
+
   const currentPath = location.pathname;
   const activeSlug = slug || (currentPath.startsWith('/rehber/') ? currentPath.split('/rehber/')[1] : null);
   
   const isListView = viewType === 'list' || (!activeSlug && !viewType);
   const isDetailView = viewType === 'detail' || (activeSlug && activeSlug !== 'rehber' && !viewType);
 
-  // Detail View Rendering - Only if we are specifically in detail mode or naturally found a slug
   if (isDetailView && activeSlug && viewType !== 'list') {
-    const article = BLOG_ARTICLES.find(a => a.slug === activeSlug);
+    const article = articles.find(a => a.slug === activeSlug);
     if (!article) {
       return (
         <div className="flex flex-col items-center justify-center p-12 h-full text-center">
             <div className="text-4xl mb-4">😢</div>
-            <h2 className="text-xl font-black mb-4">Makale bulunamadı</h2>
+            <h2 className="text-xl font-black mb-4">{t('feed.no_results')}</h2>
             <button 
                 onClick={() => navigate('/rehber')}
                 className="bg-[#1f6d78] text-white px-6 py-2 rounded-full font-bold"
             >
-                Rehber'e Dön
+                {t('blog.back')}
             </button>
         </div>
       );
@@ -64,7 +79,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
       <div className={isInline ? "h-full flex flex-col overflow-hidden bg-white dark:bg-black" : "fixed inset-0 z-[200] bg-white dark:bg-gray-900 overflow-y-auto custom-scrollbar"}>
         {!isInline && (
             <SEO 
-                title={`${article.title} | Kartvizid Rehber`}
+                title={`${article.title} | Kartvizid ${t('blog.title')}`}
                 description={article.excerpt}
             />
         )}
@@ -80,11 +95,11 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
-                    <span className="hidden md:inline font-bold text-sm">{isInline ? '' : 'Geri'}</span>
+                    <span className="hidden md:inline font-bold text-sm tracking-tight">{t('blog.back')}</span>
                 </button>
                 <div className="flex-1 min-w-0">
                     <h2 className="text-[15px] font-black text-black dark:text-white truncate tracking-tight uppercase leading-none">{article.title}</h2>
-                    {isInline && <span className="text-[9px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em] mt-0.5 block">Kariyer Rehberi</span>}
+                    {isInline && <span className="text-[9px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em] mt-0.5 block">{t('blog.title')}</span>}
                 </div>
             </div>
             {!isInline && (
@@ -104,7 +119,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                 <span className="bg-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
                   {article.category}
                 </span>
-                <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{article.publishedAt} • {article.readTime} okuma</span>
+                <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">{article.publishedAt} • {article.readTime} {t('blog.read_time')}</span>
               </div>
               <h1 className="text-xl md:text-3xl font-black text-gray-900 dark:text-white leading-tight mb-4 tracking-tight">
                 {article.title}
@@ -129,8 +144,8 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                     K
                   </div>
                   <div>
-                    <h4 className="font-black text-sm text-gray-900 dark:text-white">Kartvizid Editör Ekibi</h4>
-                    <p className="text-[11px] text-gray-400 font-medium">Kariyer rehberiniz olarak her adımda yanınızdayız.</p>
+                    <h4 className="font-black text-sm text-gray-900 dark:text-white">Kartvizid</h4>
+                    <p className="text-[11px] text-gray-400 font-medium">{t('footer.brand_desc')}</p>
                   </div>
                 </div>
             </footer>
@@ -148,7 +163,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                     }}
                     className="flex-1 bg-[#1f6d78] text-white py-3.5 rounded-2xl font-black text-sm shadow-lg shadow-[#1f6d78]/20 active:scale-95 transition-all text-center"
                 >
-                    Makaleyi Paylaş
+                    {t('blog.share')}
                 </button>
                 <div className="w-px h-8 bg-gray-100 dark:bg-gray-800 mx-2"></div>
                 <button onClick={() => navigate('/rehber')} className="text-gray-400 hover:text-black dark:text-gray-500 dark:hover:text-white transition-all">
@@ -165,7 +180,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
       {!isInline && (
         <>
             <SEO 
-                title="Kariyer Rehberi | Kartvizid" 
+                title={`${t('blog.title')} | Kartvizid`} 
                 description="Profesyonel hayatta bir adım öne geçmek için ihtiyacınız olan tüm rehber makaleler ve mülakat teknikleri."
             />
             {/* Header for standalone list */}
@@ -180,7 +195,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                 </svg>
                 </button>
                 <div className="text-center">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#1f6d78] dark:text-[#2dd4bf]">Kariyer Rehberi</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#1f6d78] dark:text-[#2dd4bf]">{t('blog.title')}</span>
                 </div>
                 <div className="w-10"></div>
             </div>
@@ -190,7 +205,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
       <div className={`mx-auto ${isInline ? 'p-0 w-full' : 'max-w-6xl px-4 py-12 md:py-20'}`}>
         {!isInline && (
             <div className="text-center mb-16">
-                <h1 className="text-[24px] font-black mb-6 tracking-tighter uppercase">Kariyer Rehberi</h1>
+                <h1 className="text-[24px] font-black mb-6 tracking-tighter uppercase">{t('blog.title')}</h1>
                 <p className="text-xl text-gray-500 max-w-2xl mx-auto font-bold italic border-l-4 border-gray-100 pl-4">
                     İş arama sürecinden kişisel marka yönetimine kadar her aşamada yanınızdayız.
                 </p>
@@ -202,7 +217,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                 <div className="flex flex-col gap-0 w-full pt-2 pb-0.5">
                     <div className="pb-2 flex items-center gap-2">
                         <h1 className="text-[22px] font-black tracking-tighter text-black dark:text-white leading-none">
-                            Kariyer Rehberi
+                            {t('blog.title')}
                         </h1>
                     </div>
                 </div>
@@ -212,13 +227,13 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
         {isInline && (
             <div className="hidden sm:block mt-8 mb-4 lg:pl-1.5 px-6">
                 <h1 className="text-[24px] font-black tracking-tighter text-black dark:text-white leading-none">
-                    Kariyer Rehberi
+                    {t('blog.title')}
                 </h1>
             </div>
         )}
 
         <div className={isInline ? "flex flex-col first:pt-0" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-32"}>
-          {BLOG_ARTICLES.map(article => {
+          {articles.map(article => {
             const style = getStyle(article.category);
             return (
               <Link 
@@ -257,7 +272,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                       </div>
                       <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
                           <div className="flex items-center gap-2 mb-0.5">
-                              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#1f6d78] dark:text-[#2dd4bf]">{article.category}</span>
+                               <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#1f6d78] dark:text-[#2dd4bf]">{article.category}</span>
                           </div>
                           <h3 className="text-[15px] sm:text-[16px] font-semibold text-gray-900 dark:text-white truncate tracking-tight leading-tight">{article.title}</h3>
                       </div>
@@ -278,7 +293,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                               {article.category}
                           </span>
                           <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{article.readTime} okuma</span>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{article.readTime} {t('blog.read_time')}</span>
                           </div>
                           <h3 className="text-2xl font-black mb-4 group-hover:text-[#1f6d78] transition-colors line-clamp-2 leading-tight">
                           {article.title}
@@ -287,7 +302,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
                           {article.excerpt}
                           </p>
                           <div className="mt-auto flex items-center gap-2 text-[#1f6d78] font-black text-sm group-hover:translate-x-2 transition-transform">
-                          Devamını Oku
+                          {t('filters.show_more')}
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                               <line x1="5" y1="12" x2="19" y2="12"></line>
                               <polyline points="12 5 19 12 12 19"></polyline>

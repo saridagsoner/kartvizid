@@ -55,23 +55,23 @@ const ResetPasswordModal = React.lazy(() => import('./components/ResetPasswordMo
 const CVPromoModal = React.lazy(() => import('./components/CVPromoModal'));
 const AuthModal = React.lazy(() => import('./components/AuthModal'));
 
-const getFriendlyErrorMessage = (error: any): string => {
+const getFriendlyErrorMessage = (error: any, t: any): string => {
   const message = error.message || error.toString();
 
   if (message.includes('Could not find the table') || message.includes('relation "public.companies" does not exist')) {
-    return 'Sistem hatası: Veritabanı tablosu bulunamadı. Lütfen "companies" tablosunun oluşturulduğundan emin olun (Migration gerekli).';
+    return t('error.db_not_found');
   }
   if (message.includes('duplicate key')) {
-    return 'Bu kayıt zaten mevcut.';
+    return t('error.duplicate_key');
   }
   if (message.includes('network') || message.includes('fetch')) {
-    return 'Ağ bağlantısı hatası. Lütfen internet bağlantınızı kontrol edin.';
+    return t('error.network');
   }
   if (message.includes('JWT') || message.includes('auth')) {
-    return 'Oturum süreniz dolmuş olabilir. Lütfen tekrar giriş yapın.';
+    return t('error.auth_expired');
   }
 
-  return 'Bir hata oluştu: ' + message;
+  return t('error.unknown') + ': ' + message;
 };
 
 // Seeded random rank for daily shuffling
@@ -211,9 +211,9 @@ const App: React.FC = () => {
       await authSignOut();
       setIsMobileMenuOpen(false);
       setIsAuthModalOpen(false);
-      showToast('Başarıyla çıkış yapıldı', 'success');
+      showToast(t('toast.signed_out'), 'success');
     } catch (error) {
-      showToast(getFriendlyErrorMessage(error), 'error');
+      showToast(getFriendlyErrorMessage(error, t), 'error');
     }
   };
 
@@ -251,7 +251,7 @@ const App: React.FC = () => {
       if (data) navigate(`/cv/${data.slug || data.id}`, { state: { cvData: data, background: background || location } });
     } catch (e) {
       console.error('Error fetching CV:', e);
-      showToast('CV detayları alınamadı.', 'error');
+      showToast(t('toast.cv_not_found'), 'error');
     } finally {
       setLoading(false);
     }
@@ -260,18 +260,27 @@ const App: React.FC = () => {
 
   useEffect(() => {
     // Fetch initial data based on viewMode
-    if (viewMode === 'cvs') {
-      fetchCVs();
-    } else if (viewMode === 'employers') {
-      fetchAllCompanies();
-    } else if (viewMode === 'shops') {
-      fetchShops();
-    }
+    const fetchAllData = async () => {
+      const promises = [
+        fetchPopularCompanies(),
+        fetchPopularCVs(),
+        fetchJobFinders()
+      ];
+
+      if (viewMode === 'cvs') {
+        promises.push(fetchCVs());
+      } else if (viewMode === 'employers') {
+        promises.push(fetchAllCompanies());
+      } else if (viewMode === 'shops') {
+        promises.push(fetchShops());
+      }
+
+      await Promise.all(promises);
+    };
+
+    fetchAllData();
     setCurrentPage(1);
     setIsMobileMenuOpen(false);
-    fetchPopularCompanies(); // This is common for all views, or could be moved to a separate useEffect if it's truly independent
-    fetchPopularCVs(); // Also common
-    fetchJobFinders(); // Also common
 
     if (user) {
       // Handle OAuth pending role
@@ -284,7 +293,7 @@ const App: React.FC = () => {
             });
             if (error) throw error;
             localStorage.removeItem('pendingRole');
-            showToast('Hesabınız başarıyla oluşturuldu', 'success');
+            showToast(t('toast.account_created'), 'success');
           } catch (err) {
             console.error('Error updating OAuth role:', err);
           }
@@ -617,10 +626,10 @@ const App: React.FC = () => {
 
       if (error) throw error;
       setGeneralNotifications([]);
-      showToast('Bildirimler temizlendi.', 'success');
+      showToast(t('toast.notif_cleared'), 'success');
     } catch (error: any) {
       console.error('Error clearing notifications:', error);
-      showToast('Bildirimler silinemedi: ' + error.message, 'error');
+      showToast(t('toast.notif_clear_error') + ': ' + error.message, 'error');
     }
   };
 
@@ -632,11 +641,11 @@ const App: React.FC = () => {
         .eq('id', requestId);
 
       if (error) throw error;
-      showToast(action === 'approved' ? 'İstek onaylandı.' : 'İstek reddedildi.', 'success');
+      showToast(action === 'approved' ? t('toast.req_approved') : t('toast.req_rejected'), 'success');
       fetchGeneralNotifications();
     } catch (error: any) {
       console.error('Error handling notification action:', error);
-      showToast('İşlem başarısız: ' + error.message, 'error');
+      showToast(t('toast.action_failed') + ': ' + error.message, 'error');
     }
   };
 
@@ -1058,7 +1067,14 @@ const App: React.FC = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('cvs')
-        .select('*');
+        .select(`
+          id, user_id, name, profession, city, district, 
+          experience_years, experience_months, photo_url, views, 
+          is_placed, working_status, created_at,
+          work_type, employment_type, education_level, graduation_status,
+          military_status, travel_status, driver_license, language, language_level,
+          salary_min, salary_max, salary_currency
+        `);
 
       if (error) {
         console.error('Error fetching CVs:', error);
@@ -1070,7 +1086,6 @@ const App: React.FC = () => {
         // Let's map it.
         const mappedData: CV[] = (data || []).map((item: any) => ({
           id: item.id,
-          slug: item.slug,
           userId: item.user_id,
           name: item.name || '',
           profession: item.profession || '',
@@ -1106,15 +1121,6 @@ const App: React.FC = () => {
           isPhonePublic: item.is_phone_public,
           isPlaced: item.is_placed,
           workingStatus: item.working_status || 'open',
-          references: item.references,
-          workExperience: item.work_experience || [],
-          internshipDetails: item.internship_details || [],
-          educationDetails: item.education_details || [],
-          languageDetails: item.language_details || [],
-          certificates: item.certificates || [],
-          preferredCities: item.preferred_cities || (item.preferred_city ? [item.preferred_city] : []),
-          preferredCountries: item.preferred_countries || [],
-          preferredRoles: item.preferred_roles || [],
           salaryCurrency: item.salary_currency,
           created_at: item.created_at
         }));
@@ -1139,7 +1145,7 @@ const App: React.FC = () => {
         const hasSeenToast = sessionStorage.getItem('cv_completion_toast_seen');
         if (!hasSeenToast) {
           setTimeout(() => {
-            showToast('İş verenlerin sizi daha iyi tanıyabilmesi için lütfen Profilinizden CV\'nizi tamamen doldurun.', 'info');
+            showToast(t('toast.complete_profile'), 'info');
           }, 2000);
           sessionStorage.setItem('cv_completion_toast_seen', 'true');
         }
@@ -1220,13 +1226,13 @@ const App: React.FC = () => {
           .update(dbData)
           .eq('user_id', user.id);
         error = updateError;
-        if (!error) showToast('İş veren profili güncellendi!', 'success');
+        if (!error) showToast(t('toast.company_updated'), 'success');
       } else {
         const { error: insertError } = await supabase
           .from('companies')
           .insert([dbData]);
         error = insertError;
-        if (!error) showToast('İş veren profili oluşturuldu!', 'success');
+        if (!error) showToast(t('toast.company_created'), 'success');
       }
 
       if (error) throw error;
@@ -1248,7 +1254,7 @@ const App: React.FC = () => {
         .eq('user_id', user.id);
 
       if (error) throw error;
-      showToast('İş veren profili başarıyla silindi!', 'success');
+      showToast(t('toast.company_deleted'), 'success');
       navigate('/', { replace: true, state: {} });
       fetchCompany();
     } catch (error: any) {
@@ -1504,14 +1510,14 @@ const App: React.FC = () => {
           .update(dbData)
           .eq('user_id', user.id);
         error = updateError;
-        if (!error) showToast('CV başarıyla güncellendi!', 'success');
+        if (!error) showToast(t('toast.cv_updated'), 'success');
       } else {
         // Insert new
         const { error: insertError } = await supabase
           .from('cvs')
           .insert([dbData]);
         error = insertError;
-        if (!error) showToast('CV başarıyla oluşturuldu!', 'success');
+        if (!error) showToast(t('toast.cv_created'), 'success');
       }
 
       if (error) throw error;
@@ -1533,7 +1539,7 @@ const App: React.FC = () => {
         .eq('user_id', user.id);
 
       if (error) throw error;
-      showToast('CV başarıyla silindi!', 'success');
+      showToast(t('toast.cv_deleted'), 'success');
       navigate('/', { replace: true, state: {} });
       fetchCVs();
     } catch (error: any) {
@@ -1783,13 +1789,14 @@ const App: React.FC = () => {
 
     // 4. Total Views
     const totalViews = cvList.reduce((acc, cv) => acc + (cv.views || 0), 0);
+    const locale = t('locale') || 'tr-TR';
 
     return [
-      { label: t('stats.total_cv'), value: totalCVs.toLocaleString('tr-TR') },
-      { label: t('stats.active_seekers'), value: activeJobSeekers.toLocaleString('tr-TR') },
+      { label: t('stats.total_cv'), value: totalCVs.toLocaleString(locale) },
+      { label: t('stats.active_seekers'), value: activeJobSeekers.toLocaleString(locale) },
       { label: t('stats.new_this_week'), value: `+ ${newThisWeek} ` },
       { label: t('stats.total_views'), value: totalViews >= 1000 ? `${(totalViews / 1000).toFixed(1)} k` : totalViews.toString() },
-      { label: t('stats.matches'), value: approvedRequestCount.toLocaleString('tr-TR') }
+      { label: t('stats.matches'), value: approvedRequestCount.toLocaleString(locale) }
     ];
   }, [cvList, approvedRequestCount, t]);
 
@@ -1874,10 +1881,19 @@ const App: React.FC = () => {
     };
   }, [location.pathname, navigate]);
 
+  const ScrollToTop = () => {
+    const { pathname } = useLocation();
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [pathname]);
+    return null;
+  };
+
   // All local render functions for HomeDiscoveryContent have been moved to components/HomeDiscoveryContent.tsx
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-black dark:text-gray-100 transition-colors duration-300">
+      <ScrollToTop />
       <SEO />
       <Navbar
         onSearch={setSearchQuery}
@@ -2089,11 +2105,11 @@ const App: React.FC = () => {
                         <div className="w-24 h-24 bg-green-50 dark:bg-green-900/10 rounded-[2.5rem] flex items-center justify-center mb-8">
                             <i className="fi fi-rr-medal text-4xl text-green-600 dark:text-green-400"></i>
                         </div>
-                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">Kartvizid Başarıları</h3>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">{t('discovery.achievements_title')}</h3>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
-                            Bu alanda, Kartvizid platformu aracılığıyla hayalindeki işe kavuşan ve kariyer yolculuğunda yeni bir sayfa açan kullanıcılarımızı görüyorsunuz.
+                            {t('discovery.achievements_desc')}
                             <br /><br />
-                            Siz de dijital kartvizitinizi güncel tutarak işverenlerin dikkatini çekebilir ve bu başarı listesinde yerinizi alabilirsiniz.
+                            {t('discovery.achievements_sub')}
                         </p>
                     </div>
                   } />
@@ -2105,11 +2121,11 @@ const App: React.FC = () => {
                         <div className="w-24 h-24 bg-orange-50 dark:bg-orange-900/10 rounded-[2.5rem] flex items-center justify-center mb-8">
                             <i className="fi fi-rr-fire text-4xl text-orange-500 dark:text-orange-400"></i>
                         </div>
-                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">En Popüler Kartvizitler</h3>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">{t('discovery.most_viewed_title')}</h3>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
-                            Platformun en çok ilgi gören ve en çok tıklanan profilleri burada listelenmektedir. 
+                            {t('discovery.most_viewed_desc')}
                             <br /><br />
-                            Profilinizi optimize ederek ve sosyal medyanızda paylaşarak siz de görünürlüğünüzü artırabilirsiniz.
+                            {t('discovery.most_viewed_sub')}
                         </p>
                     </div>
                   } />
@@ -2120,11 +2136,11 @@ const App: React.FC = () => {
                         <div className="w-24 h-24 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 rounded-[2.5rem] flex items-center justify-center mb-8">
                             <i className="fi fi-rr-chart-user text-4xl text-[#1f6d78] dark:text-[#2dd4bf]"></i>
                         </div>
-                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">Meslek Trendleri</h3>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">{t('discovery.trends_title')}</h3>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
-                            Bu listede yer alan meslekler, Kartvizid platformu üzerindeki CV görüntülenme sayıları ve işverenlerin arama trendlerine göre anlık olarak güncellenmektedir. 
+                            {t('discovery.trends_desc')}
                             <br /><br />
-                            Hangi alanlarda yoğunluk olduğunu analiz ederek kariyer yolculuğunuzu daha bilinçli şekillendirebilirsiniz.
+                            {t('discovery.trends_sub')}
                         </p>
                     </div>
                   } />
@@ -2134,9 +2150,9 @@ const App: React.FC = () => {
                         <div className="w-24 h-24 bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 rounded-[2.5rem] flex items-center justify-center mb-8">
                             <i className="fi fi-rr-world text-4xl text-[#1f6d78] dark:text-[#2dd4bf]"></i>
                         </div>
-                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">Şehir İstatistikleri</h3>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">{t('discovery.city_stats_title')}</h3>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
-                            Platformdaki dijital kartvizitlerin coğrafi dağılımını buradan takip edebilirsiniz. Yeni yeteneklerin hangi şehirlerde yoğunlaştığını ve bölgesel iş gücü potansiyelini analiz edebilmeniz için hazırlanmıştır.
+                            {t('discovery.city_stats_desc')}
                         </p>
                     </div>
                   } />
@@ -2146,11 +2162,9 @@ const App: React.FC = () => {
                         <div className="w-24 h-24 bg-blue-50 dark:bg-blue-900/10 rounded-[2.5rem] flex items-center justify-center mb-8">
                             <i className="fi fi-rr-stats text-4xl text-blue-600 dark:text-blue-400"></i>
                         </div>
-                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">Platform Verileri</h3>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">{t('discovery.stats_title')}</h3>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
-                            Kartvizid platformunun büyüme ve etkileşim verilerini buradan şeffaf bir şekilde takip edebilirsiniz.
-                            <br /><br />
-                            Kayıtlı kullanıcı sayısından haftalık yeni katılım oranlarına kadar tüm veriler, platformun gerçek zamanlı performansını yansıtmaktadır.
+                            {t('discovery.stats_desc')}
                         </p>
                     </div>
                   } />
@@ -2161,15 +2175,13 @@ const App: React.FC = () => {
                             <div className="absolute inset-0 bg-gradient-to-tr from-[#1f6d78]/20 to-transparent scale-0 group-hover:scale-150 transition-transform duration-700"></div>
                             <i className="fi fi-rr-membership-vip text-4xl text-[#1f6d78] dark:text-[#2dd4bf] relative z-10 transition-transform duration-500 group-hover:scale-110"></i>
                         </div>
-                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">Geleceğin Kariyer Deneyimi</h3>
+                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 tracking-tighter">{t('discovery.premium_title')}</h3>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed max-w-sm">
-                            Kartvizid Premium, hem adaylar hem de işverenler için sınırları ortadan kaldıran bir ekosistem olarak tasarlanıyor. 
-                            <br /><br />
-                            Adayların daha görünür olduğu, işverenlerin ise doğru yeteneğe anında ulaştığı bu yeni deneyimle yakında tanışacaksınız. Kariyer yolculuğunuzu bir üst seviyeye taşımak için heyecan verici özellikler hazırlıyoruz.
+                            {t('discovery.premium_desc')}
                         </p>
                         <div className="mt-8 flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-white/5">
                            <span className="w-1.5 h-1.5 rounded-full bg-[#1f6d78] dark:bg-[#2dd4bf] animate-pulse"></span>
-                           <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">Çok Yakında</span>
+                           <span className="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em]">{t('discovery.premium_coming_soon')}</span>
                         </div>
                     </div>
                   } />
@@ -2183,12 +2195,12 @@ const App: React.FC = () => {
                           } text-3xl`}></i>
                        </div>
                        <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">
-                        {location.pathname.startsWith('/rehber') ? 'Makale Seçin' : 'Detayları Gör'}
+                        {location.pathname.startsWith('/rehber') ? t('discovery.select_article') : t('discovery.view_details')}
                        </h3>
                        <p className="text-sm font-medium">
                         {location.pathname.startsWith('/rehber') 
-                          ? 'Okumak istediğiniz makaleyi soldaki listeden seçebilirsiniz.' 
-                          : 'Soldaki listeden bir seçim yaparak detaylarını burada inceleyebilirsiniz.'
+                          ? t('discovery.select_article_desc') 
+                          : t('discovery.view_details_desc')
                         }
                        </p>
                     </div>

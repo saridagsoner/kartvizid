@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { CV } from '../types';
-import { LEGAL_CONTENT, LegalSection } from './LegalModal';
+import { useLegalContent, LegalSection } from './LegalModal';
 
 interface MobileMenuDrawerProps {
     isOpen: boolean;
@@ -65,6 +65,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
     const navigate = useNavigate();
     const { t, language, setLanguage } = useLanguage();
     const { theme, toggleTheme } = useTheme();
+    const legalData = useLegalContent();
     const [activeCategory, setActiveCategory] = useState<'about' | 'professions' | 'cities' | 'jobFinders' | 'stats' | 'companies' | 'shops' | 'mostViewed' | 'siteUsage' | 'securityPrivacy' | 'dataPolicy' | 'mobileApp' | 'kartvizid' | 'premium' | LegalSection | null>(null);
 
     // Reset state when drawer closes
@@ -126,113 +127,6 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
         let title = "";
 
         switch (activeCategory) {
-            case 'about':
-                title = "Kartvizid Nedir?";
-                content = (
-                    <div className="flex flex-col p-5 pb-8">
-                        <div className="text-center mb-8">
-                            <span className="inline-block py-1 px-3 rounded-full bg-[#1f6d78]/10 text-[#1f6d78] text-[10px] font-bold mb-3 tracking-wide uppercase">
-                                Ezber Bozan Model
-                            </span>
-                            <h3 className="text-2xl font-black text-gray-900 mb-3 tracking-tight leading-tight">
-                                İş Aramayın, <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1f6d78] to-[#2dd4bf]">
-                                    Bırakın İş Sizi Bulsun.
-                                </span>
-                            </h3>
-                            <p className="text-gray-500 text-sm leading-relaxed">
-                                Diğer sitelerde binlerce ilana başvurup cevap beklemekten yoruldunuz mu?
-                                Kartvizid'de işverenler ilan açamaz, sadece adayları arar.
-                            </p>
-                        </div>
-
-                        <div className="flex flex-col gap-4 mb-8">
-                            <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 relative overflow-hidden">
-                                <h4 className="text-base font-black text-gray-400 mb-1">Eski Yöntem</h4>
-                                <p className="text-gray-500 text-xs font-medium mb-4">Klasik Kariyer Siteleri</p>
-                                <ul className="space-y-2.5">
-                                    <li className="flex items-start gap-2.5 text-gray-500 text-xs font-medium">
-                                        <span className="shrink-0 text-red-400">✕</span>
-                                        <span>İşveren ilan açar, kraldır.</span>
-                                    </li>
-                                    <li className="flex items-start gap-2.5 text-gray-500 text-xs font-medium">
-                                        <span className="shrink-0 text-red-400">✕</span>
-                                        <span>Binlerce kişi aynı ilana saldırır.</span>
-                                    </li>
-                                    <li className="flex items-start gap-2.5 text-gray-500 text-xs font-medium">
-                                        <span className="shrink-0 text-red-400">✕</span>
-                                        <span>Cevap bile alamazsınız.</span>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div className="bg-[#1f6d78] rounded-2xl p-5 text-white shadow-lg shadow-[#1f6d78]/20 group">
-                                <h4 className="text-base font-black text-white mb-1">Kartvizid Yöntemi</h4>
-                                <p className="text-white/70 text-xs font-medium mb-4">Değer Gören Adaylar</p>
-                                <ul className="space-y-2.5">
-                                    <li className="flex items-start gap-2.5 text-white/90 text-xs font-medium">
-                                        <span className="shrink-0 text-[#2dd4bf]">✓</span>
-                                        <span>İşveren sizi arar ve bulur.</span>
-                                    </li>
-                                    <li className="flex items-start gap-2.5 text-white/90 text-xs font-medium">
-                                        <span className="shrink-0 text-[#2dd4bf]">✓</span>
-                                        <span>İletişim bilgileriniz gizlidir.</span>
-                                    </li>
-                                    <li className="flex items-start gap-2.5 text-white/90 text-xs font-medium">
-                                        <span className="shrink-0 text-[#2dd4bf]">✓</span>
-                                        <span>Patron sizsiniz, onayla/reddet.</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        {/* Workflow Compact */}
-                        <h4 className="font-bold text-gray-900 mb-4 text-[15px]">Nasıl Çalışır?</h4>
-                        <div className="space-y-4">
-                            <div className="flex gap-4 items-start">
-                                <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 text-[#1f6d78]">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                </div>
-                                <div>
-                                    <h5 className="font-bold text-gray-900 text-[13px] mb-0.5">1. Profilini Oluştur</h5>
-                                    <p className="text-xs text-gray-500 leading-relaxed">Seni en iyi yansıtan dijital CV'ni hazırla.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 text-[#1f6d78]">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                </div>
-                                <div>
-                                    <h5 className="font-bold text-gray-900 text-[13px] mb-0.5">2. Keşfedil</h5>
-                                    <p className="text-xs text-gray-500 leading-relaxed">İşverenler kriterlerine uygunlukla seni bulur.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 text-[#1f6d78]">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                                </div>
-                                <div>
-                                    <h5 className="font-bold text-gray-900 text-[13px] mb-0.5">3. Gizliliğini Koru</h5>
-                                    <p className="text-xs text-gray-500 leading-relaxed">İletişim izni verene kadar numaran/mailin gizlidir.</p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 text-[#1f6d78]">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                                </div>
-                                <div>
-                                    <h5 className="font-bold text-gray-900 text-[13px] mb-0.5">4. Karar Senin</h5>
-                                    <p className="text-xs text-gray-500 leading-relaxed">İsteği onayla veya reddet.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="mt-8">
-                            <img src="/info-mockup.png" alt="Kartvizid Mobile App Mockup" className="w-full h-auto rounded-3xl" onError={(e) => { e.currentTarget.style.display = 'none' }} />
-                        </div>
-                    </div>
-                );
-                break;
             case 'professions':
                 title = t('sidebar.popular_professions');
                 content = (
@@ -240,7 +134,8 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                         {popularProfessions.map((item, idx) => (
                             <div
                                 key={idx}
-                                className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5"
+                                className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                onClick={() => { onFilterApply('profession', item.label); onClose(); }}
                             >
                                 <span className="font-semibold text-[16px] text-gray-700 dark:text-gray-300">{item.label}</span>
                                 <span className="text-[12px] font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-2.5 py-1 rounded-full">{item.count}</span>
@@ -256,7 +151,8 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                         {popularCities.map((item, idx) => (
                             <div
                                 key={idx}
-                                className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5"
+                                className="w-full text-left py-3.5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center px-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                                onClick={() => { onFilterApply('city', item.label); onClose(); }}
                             >
                                 <span className="font-semibold text-[16px] text-gray-700 dark:text-gray-300">{item.label}</span>
                                 <span className="text-[12px] font-bold text-gray-500 bg-gray-100 dark:bg-gray-800 px-2.5 py-1 rounded-full">{item.count}</span>
@@ -284,7 +180,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                         <div className="flex items-center gap-2">
                                             <p className="text-[12px] text-gray-500 dark:text-gray-400 truncate font-semibold uppercase tracking-wider">{cv.profession}</p>
                                             {(cv.isPlaced || cv.workingStatus === 'active') && (
-                                                <span className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">İŞ BULDU</span>
+                                                <span className="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter">{t('common.job_found')}</span>
                                             )}
                                         </div>
                                     </div>
@@ -315,16 +211,15 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 title = t('sidebar.employers');
                 content = (
                     <div className="flex flex-col pb-10">
-                        {/* Premium Header - Professional/Corporate feel */}
                         <div className="bg-white dark:bg-gray-900 px-6 py-12 text-center border-b border-gray-50 dark:border-gray-800">
                             <div className="w-20 h-20 bg-[#1f6d78]/5 dark:bg-[#2dd4bf]/5 rounded-[30px] flex items-center justify-center mx-auto mb-6 border border-[#1f6d78]/10 group">
                                 <i className="fi fi-rr-briefcase text-4xl text-[#1f6d78] dark:text-[#2dd4bf] group-hover:scale-110 transition-transform"></i>
                             </div>
                             <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-4 tracking-tight leading-tight">
-                                Güçlü Kadrolar, <br /> Büyük Hedefler
+                                {t('companies.title')}
                             </h3>
                             <p className="text-[13px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed max-w-xs mx-auto">
-                                Sektörün öncü firmalarıyla tanışın, kariyerinizde yeni bir kapı aralayın. Doğru yetenek, doğru şirketle burada buluşuyor.
+                                {t('companies.desc')}
                             </p>
                         </div>
 
@@ -332,7 +227,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                             {popularCompanies.length > 0 ? (
                                 <div className="flex flex-col">
                                     <div className="px-6 mb-2">
-                                        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Öne Çıkan Şirketler</h4>
+                                        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('companies.featured')}</h4>
                                     </div>
                                     {popularCompanies.slice(0, 5).map((company) => (
                                         <div
@@ -361,12 +256,12 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                     onClick={() => { onEmployersViewAll(); onClose(); }}
                                     className="w-full py-4 bg-[#1f6d78] text-white rounded-[20px] font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-[#1f6d78]/20 transition-all hover:bg-[#155e68] active:scale-[0.98]"
                                 >
-                                    Tüm İş Verenleri Gör
+                                    {t('companies.view_all')}
                                 </button>
                                 
                                 <div className="relative flex items-center justify-center py-2">
                                     <div className="absolute w-full border-t border-gray-100 dark:border-gray-800"></div>
-                                    <span className="relative px-3 bg-white dark:bg-gray-900 text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">veya</span>
+                                    <span className="relative px-3 bg-white dark:bg-gray-900 text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">{t('auth.or')}</span>
                                 </div>
 
                                 <button
@@ -374,7 +269,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                     className="w-full py-4 bg-white dark:bg-gray-800 text-[#1f6d78] dark:text-[#2dd4bf] border-2 border-[#1f6d78]/20 dark:border-[#2dd4bf]/20 rounded-[24px] font-black text-xs uppercase tracking-[0.15em] transition-all hover:bg-[#1f6d78]/5 active:scale-[0.98] flex items-center justify-center gap-3 shadow-sm"
                                 >
                                     <i className="fi fi-rr-briefcase-arrow-right text-lg"></i>
-                                    İş Veren Kaydı Oluştur
+                                    {t('companies.register')}
                                 </button>
                             </div>
                         </div>
@@ -382,19 +277,18 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 );
                 break;
             case 'shops':
-                title = "Hizmetler";
+                title = t('menu.services');
                 content = (
                     <div className="flex flex-col pb-10">
-                        {/* New Refined Header - White background, centered large title */}
                         <div className="bg-white dark:bg-gray-900 px-6 py-12 text-center border-b border-gray-50 dark:border-gray-800">
                             <div className="w-20 h-20 bg-[#1f6d78]/5 dark:bg-[#2dd4bf]/5 rounded-[30px] flex items-center justify-center mx-auto mb-6 border border-[#1f6d78]/10 group">
                                 <i className="fi fi-rr-shop text-4xl text-[#1f6d78] dark:text-[#2dd4bf] group-hover:scale-110 transition-transform"></i>
                             </div>
                             <h3 className="text-3xl font-black text-gray-900 dark:text-white mb-4 tracking-tight leading-tight">
-                                Profesyonel <br /> Hizmet Keşfi
+                                {t('services.title')}
                             </h3>
                             <p className="text-[13px] text-gray-500 dark:text-gray-400 font-medium leading-relaxed max-w-xs mx-auto">
-                                Ustalığını konuşturan uzmanlarla doğrudan iletişime geçin. Aracı yok, komisyon yok, sadece doğru eşleşme.
+                                {t('services.desc')}
                             </p>
                         </div>
                         
@@ -402,7 +296,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                             {shops.length > 0 ? (
                                 <div className="flex flex-col">
                                     <div className="px-6 mb-2">
-                                        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Öne Çıkanlar</h4>
+                                        <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t('services.featured')}</h4>
                                     </div>
                                     {shops.slice(0, 5).map((shop) => (
                                         <div
@@ -415,7 +309,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                             </div>
                                             <div className="min-w-0">
                                                 <p className="font-bold text-sm text-gray-900 dark:text-white truncate rounded-font">{shop.name}</p>
-                                                <p className="text-[11px] text-gray-500 truncate rounded-font">{shop.category || 'Hizmet Sağlayıcı'}</p>
+                                                <p className="text-[11px] text-gray-500 truncate rounded-font">{shop.category || t('nav.service_provider')}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -427,19 +321,19 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                     onClick={() => { onShopsViewAll(); onClose(); }}
                                     className="w-full py-4 bg-[#1f6d78] text-white rounded-[20px] font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-[#1f6d78]/20 transition-all hover:bg-[#155e68] active:scale-[0.98]"
                                 >
-                                    Tüm Hizmetleri Keşfet
+                                    {t('services.view_all')}
                                 </button>
                                 
                                 <div className="relative flex items-center justify-center py-2">
                                     <div className="absolute w-full border-t border-gray-100 dark:border-gray-800"></div>
-                                    <span className="relative px-3 bg-white dark:bg-gray-900 text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">veya</span>
+                                    <span className="relative px-3 bg-white dark:bg-gray-900 text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">{t('auth.or')}</span>
                                 </div>
 
                                 <button
                                     onClick={() => { onClose(); onOpenAuth('signup', 'shop'); }}
                                     className="w-full py-4 bg-white dark:bg-gray-800 border-2 border-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] rounded-[20px] font-black text-xs uppercase tracking-[0.2em] transition-all hover:border-[#1f6d78]/30"
                                 >
-                                    Hizmet Vermeye Başla
+                                    {t('services.start')}
                                 </button>
                             </div>
                         </div>
@@ -447,16 +341,16 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 );
                 break;
             case 'siteUsage':
-                title = "Site Kullanımı";
+                title = t('footer.usage');
                 content = (
                     <div className="flex flex-col">
                         {[
-                            { label: 'Genel Koşullar', key: 'general' },
-                            { label: 'Güvenlik İpuçları', key: 'security' },
-                            { label: 'Sıkça Sorulan Sorular', key: 'faq' },
-                            { label: 'Yardım Merkezi', key: 'help' },
-                            { label: 'Hizmetlerimiz', key: 'services' },
-                            { label: 'İletişim', key: 'iletisim' }
+                            { label: t('footer.general_terms'), key: 'general' },
+                            { label: t('footer.security'), key: 'security' },
+                            { label: t('footer.faq'), key: 'faq' },
+                            { label: t('footer.help'), key: 'help' },
+                            { label: t('footer.services'), key: 'services' },
+                            { label: t('footer.iletisim'), key: 'iletisim' }
                         ].map((item, idx) => (
                             <button
                                 key={idx}
@@ -471,15 +365,15 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 );
                 break;
             case 'dataPolicy':
-                title = "Veri Politikamız";
+                title = t('footer.data_policy');
                 content = (
                     <div className="flex flex-col">
                         {[
-                            { label: 'Aydınlatma Metni', key: 'privacy' },
-                            { label: 'Çerez Politikası', key: 'cookie' },
-                            { label: 'KVKK Aydınlatma', key: 'kvkk' },
-                            { label: 'Üyelik Sözleşmesi', key: 'membership' },
-                            { label: 'Veri Sahibi Başvuru Formu', key: 'data_form' }
+                            { label: t('footer.privacy_policy'), key: 'privacy' },
+                            { label: t('footer.cookie_policy'), key: 'cookie' },
+                            { label: t('footer.kvkk'), key: 'kvkk' },
+                            { label: t('footer.membership_agreement'), key: 'membership' },
+                            { label: t('footer.data_owner_form'), key: 'data_form' }
                         ].map((item, idx) => (
                             <button
                                 key={idx}
@@ -494,14 +388,14 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 );
                 break;
             case 'mobileApp':
-                title = "Mobil Uygulama";
+                title = t('footer.mobile_app');
                 content = (
                     <div className="flex flex-col p-6 items-center text-center space-y-5">
-                        <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center text-[#1f6d78] border border-gray-100">
+                        <div className="w-16 h-16 bg-gray-50 flex items-center justify-center text-[#1f6d78] border border-gray-100">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg>
                         </div>
-                        <h3 className="text-[17px] font-bold text-gray-900 rounded-font leading-snug">İş fırsatlarını cebinizden takip edin</h3>
-                        <p className="text-gray-500 text-[13px]">Yakında App Store ve Google Play'de!</p>
+                        <h3 className="text-[17px] font-bold text-gray-900 rounded-font leading-snug">{t('footer.mobile_desc')}</h3>
+                        <p className="text-gray-500 text-[13px]">{t('common.coming_soon')}</p>
                     </div>
                 );
                 break;
@@ -543,7 +437,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 );
                 break;
             case 'premium':
-                title = "Premium";
+                title = t('menu.premium');
                 content = (
                     <div className="flex flex-col p-6 pb-20 space-y-8">
                         <div className="flex flex-col items-center text-center space-y-4">
@@ -551,9 +445,9 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                 <i className="fi fi-rr-membership-vip text-4xl"></i>
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight leading-tight uppercase">Geleceğin Kariyer Vizyonu</h3>
+                                <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight leading-tight uppercase font-outfit">{t('premium.page_title')}</h3>
                                 <p className="text-gray-500 dark:text-gray-400 text-[13.5px] leading-relaxed max-w-[300px] mx-auto">
-                                    Kartvizid Premium, hem adaylar hem de işverenler için sınırları ortadan kaldıran bir ekosistem olarak tasarlanıyor.
+                                    {t('premium.page_desc')}
                                 </p>
                             </div>
                         </div>
@@ -561,20 +455,20 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                         <div className="space-y-6">
                             <div>
                                 <div className="px-4 mb-4">
-                                    <span className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.3em]">Adaylar İçin</span>
+                                    <span className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.3em] font-outfit">{t('premium.for_candidates')}</span>
                                 </div>
                                 <div className="grid gap-4">
                                     {[
-                                        { icon: 'fi-rr-star', title: 'Vitrin Özelliği', desc: 'Aramalarda en üstte görünün.' },
-                                        { icon: 'fi-rr-badge-check', title: 'Pro Rozeti', desc: 'Profesyonelliğinizi kanıtlayın.' },
-                                        { icon: 'fi-rr-palette', title: 'Özel Tasarım', desc: 'Profilinizi tarzınıza göre özelleştirin.' }
+                                        { icon: 'fi-rr-star', title: t('premium.item_vitrin'), desc: t('premium.item_vitrin_desc') },
+                                        { icon: 'fi-rr-badge-check', title: t('premium.item_badge'), desc: t('premium.item_badge_desc') },
+                                        { icon: 'fi-rr-palette', title: t('premium.item_design'), desc: t('premium.item_design_desc') }
                                     ].map((item, idx) => (
                                         <div key={idx} className="flex items-start space-x-4 p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-2xl border border-gray-100/50 dark:border-gray-700/50">
                                             <div className="flex-shrink-0 w-10 h-10 bg-white dark:bg-gray-900 rounded-xl flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] shadow-sm">
                                                 <i className={`fi ${item.icon} text-lg`}></i>
                                             </div>
                                             <div className="space-y-0.5">
-                                                <h4 className="text-[14px] font-black text-gray-900 dark:text-gray-100">{item.title}</h4>
+                                                <h4 className="text-[14px] font-black text-gray-900 dark:text-gray-100 font-outfit">{item.title}</h4>
                                                 <p className="text-[12px] text-gray-500 dark:text-gray-400 font-medium leading-tight">{item.desc}</p>
                                             </div>
                                         </div>
@@ -584,20 +478,20 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
 
                             <div>
                                 <div className="px-4 mb-4">
-                                    <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em]">İşverenler İçin</span>
+                                    <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.3em] font-outfit">{t('premium.for_employers')}</span>
                                 </div>
                                 <div className="grid gap-4">
                                     {[
-                                        { icon: 'fi-rr-filter', title: 'Gelişmiş Filtreleme', desc: 'Adayları saniyeler içinde bulun.' },
-                                        { icon: 'fi-rr-messages', title: 'Sınırsız İletişim', desc: 'Adaylarla doğrudan bağlantı kurun.' },
-                                        { icon: 'fi-rr-chart-line-up', title: 'Veri Analitiği', desc: 'Sektörel yetenek trendlerini izleyin.' }
+                                        { icon: 'fi-rr-filter', title: t('premium.item_filter'), desc: t('premium.item_filter_desc') },
+                                        { icon: 'fi-rr-messages', title: t('premium.item_unlimited'), desc: t('premium.item_unlimited_desc') },
+                                        { icon: 'fi-rr-chart-line-up', title: t('premium.item_analytics'), desc: t('premium.item_analytics_desc') }
                                     ].map((item, idx) => (
                                         <div key={idx} className="flex items-start space-x-4 p-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl border border-blue-100/50 dark:border-blue-500/10">
                                             <div className="flex-shrink-0 w-10 h-10 bg-white dark:bg-gray-900 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-sm">
                                                 <i className={`fi ${item.icon} text-lg`}></i>
                                             </div>
                                             <div className="space-y-0.5">
-                                                <h4 className="text-[14px] font-black text-gray-900 dark:text-gray-100">{item.title}</h4>
+                                                <h4 className="text-[14px] font-black text-gray-900 dark:text-gray-100 font-outfit">{item.title}</h4>
                                                 <p className="text-[12px] text-gray-500 dark:text-gray-400 font-medium leading-tight">{item.desc}</p>
                                             </div>
                                         </div>
@@ -610,17 +504,17 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#1f6d78]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                            <div className="flex items-center justify-center gap-2 mb-2">
                                <span className="w-1.5 h-1.5 rounded-full bg-[#1f6d78] dark:bg-[#2dd4bf] animate-pulse"></span>
-                               <span className="text-[10px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-[0.2em]">Platform Gelişimi</span>
+                               <span className="text-[10px] font-black text-[#1f6d78] dark:bg-[#2dd4bf] uppercase tracking-[0.2em] font-outfit">{t('premium.evolution')}</span>
                            </div>
-                           <p className="text-gray-600 dark:text-gray-300 text-[13px] font-bold relative z-10">
-                               Kariyerinizi bir üst seviyeye taşımak için devrim niteliğinde yeniliklerle çok yakında buradayız.
+                           <p className="text-gray-600 dark:text-gray-300 text-[13px] font-bold relative z-10 leading-relaxed">
+                               {t('premium.evolution_desc')}
                            </p>
                         </div>
                     </div>
                 );
                 break;
             case 'securityPrivacy':
-                title = "Güvenlik ve Gizlilik";
+                title = t('footer.security');
                 content = (
                     <div className="flex flex-col p-6 pb-20 space-y-8">
                         <div className="flex flex-col items-center text-center space-y-4">
@@ -628,26 +522,26 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                 <i className="fi fi-rr-shield-check text-4xl"></i>
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">Verileriniz Bizimle Güvende</h3>
+                                <h3 className="text-xl font-black text-gray-900 dark:text-white tracking-tight leading-tight font-outfit">{t('security.page_title')}</h3>
                                 <p className="text-gray-500 dark:text-gray-400 text-[13.5px] leading-relaxed max-w-[280px] mx-auto">
-                                    Dijital dünyada güvenin ne kadar değerli olduğunu biliyoruz. Kartvizid olarak, kişisel bilgilerinizin korunmasını en büyük sorumluluğumuz olarak görüyoruz.
+                                    {t('security.page_desc')}
                                 </p>
                             </div>
                         </div>
 
                         <div className="grid gap-4">
                             {[
-                                { icon: 'fi-rr-lock', title: 'Tam Veri Şifreleme', desc: 'Tüm bilgileriniz banka düzeyinde güvenlik protokolleri ile şifrelenir ve izinsiz erişimlere kapatılır.' },
-                                { icon: 'fi-rr-user-lock', title: 'Gizlilik Taahhüdü', desc: 'Verileriniz reklam amaçlı asla satılmaz ve izniniz olmadan üçüncü taraflarla paylaşılmaz.' },
-                                { icon: 'fi-rr-settings-sliders', title: 'Sizin Kontrolünüzde', desc: 'Hangi bilgilerinizi kimlerin göreceğine tamamen siz karar verirsiniz. Kontrol her zaman sizdedir.' },
-                                { icon: 'fi-rr-cloud-check', title: 'Güvenli Altyapı', desc: 'Sunucularımız 7/24 siber saldırılara karşı taranır ve modern güvenlik duvarları ile korunur.' }
+                                { icon: 'fi-rr-lock', title: t('security.item_encrypt'), desc: t('security.item_encrypt_desc') },
+                                { icon: 'fi-rr-user-lock', title: t('security.item_privacy'), desc: t('security.item_privacy_desc') },
+                                { icon: 'fi-rr-settings-sliders', title: t('security.item_control'), desc: t('security.item_control_desc') },
+                                { icon: 'fi-rr-cloud-check', title: t('security.item_infra'), desc: t('security.item_infra_desc') }
                             ].map((item, idx) => (
                                 <div key={idx} className="flex items-start space-x-4 p-4 transition-all duration-200">
                                     <div className="flex-shrink-0 w-10 h-10 bg-gray-50 dark:bg-gray-800/50 rounded-xl flex items-center justify-center text-gray-600 dark:text-gray-400">
                                         <i className={`fi ${item.icon} text-lg`}></i>
                                     </div>
                                     <div className="space-y-1">
-                                        <h4 className="text-[14.5px] font-bold text-gray-900 dark:text-gray-100 leading-none">{item.title}</h4>
+                                        <h4 className="text-[14.5px] font-bold text-gray-900 dark:text-gray-100 leading-none font-outfit">{item.title}</h4>
                                         <p className="text-[12.5px] text-gray-500 dark:text-gray-400 leading-relaxed font-medium">{item.desc}</p>
                                     </div>
                                 </div>
@@ -656,7 +550,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
 
                         <div className="bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10 p-5 rounded-[24px] border border-[#1f6d78]/10 text-center">
                             <p className="text-[#1f6d78] dark:text-[#2dd4bf] text-[13px] font-bold">
-                                Şeffaf, dürüst ve güvenli bir kariyer yolculuğu için buradayız.
+                                {t('security.footer')}
                             </p>
                         </div>
                     </div>
@@ -688,13 +582,13 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 );
                 break;
             default:
-                // Check if it's a legal section
-                if (activeCategory && activeCategory in LEGAL_CONTENT) {
-                    const sectionData = LEGAL_CONTENT[activeCategory as LegalSection];
+                // Check if it's a legal section or about
+                if (activeCategory === 'about' || (activeCategory && activeCategory in legalData)) {
+                    const sectionData = activeCategory === 'about' ? { title: t('about.title'), content: t('about.desc') } : legalData[activeCategory as LegalSection];
                     title = sectionData.title;
                     content = (
                         <div className="p-5">
-                            <div className="prose prose-sm prose-slate max-w-none prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-li:text-gray-600 dark:prose-li:text-gray-300">
+                            <div className="prose prose-sm prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-li:text-gray-600 dark:prose-li:text-gray-300">
                                 {sectionData.content}
                             </div>
                         </div>
@@ -748,7 +642,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                             <span className="inline-block transform rotate-[12deg] origin-center text-[#1f6d78] font-black w-[13px] ml-0.5 -mt-0.5">d</span>
                         </div>
                         <span className="text-[10px] text-[#9ca3af] dark:text-gray-500 font-bold lowercase tracking-normal pl-[2px] pr-1">
-                            dijital cv & doğru eşleşme
+                            {t('nav.tagline')}
                         </span>
                     </div>
                 </div>
@@ -757,17 +651,17 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                 <div className="flex-1 overflow-y-auto px-5 pt-0 pb-4 custom-scrollbar">
                     <div className="flex flex-col space-y-1">
                         <MenuItem
-                            label="İş Arayanlar"
+                            label={t('menu.job_seekers')}
                             onClick={() => { onGoHome(); onClose(); }}
                             icon={<i className="fi fi-rr-users"></i>}
                         />
                         <MenuItem
-                            label="İş Verenler"
+                            label={t('menu.employers')}
                             onClick={() => { onEmployersViewAll(); onClose(); }}
                             icon={<i className="fi fi-rr-briefcase"></i>}
                         />
                         <MenuItem
-                            label="Hizmetler"
+                            label={t('menu.services')}
                             onClick={() => { onShopsViewAll(); onClose(); }}
                             icon={<i className="fi fi-rr-shop"></i>}
                         />
@@ -775,26 +669,26 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                         <div className="my-2 border-t border-gray-100 dark:border-white/5"></div>
 
                         <MenuItem
-                            label="Kariyer Rehberi"
+                            label={t('menu.career_guide')}
                             onClick={() => { navigate('/rehber'); onClose(); }}
                             icon={<i className="fi fi-rr-book-alt"></i>}
                         />
                         <MenuItem
-                            label="Kartvizid"
+                            label={t('menu.kartvizid')}
                             onClick={() => setActiveCategory('kartvizid')}
                             icon={<i className="fi fi-rr-document-signed"></i>}
                             showChevron
                         />
 
                         <MenuItem
-                            label="İş Görüşmeleri"
+                            label={t('menu.messages')}
                             onClick={() => { navigate('/mesajlar'); onClose(); }}
                             icon={<i className="fi fi-rr-comment"></i>}
                             badge={unreadMessageCount > 0 ? unreadMessageCount.toString() : undefined}
                         />
 
                         <MenuItem
-                            label="Bildirimler"
+                            label={t('menu.notifications')}
                             onClick={() => { navigate('/bildirimler'); onClose(); }}
                             icon={<i className="fi fi-rr-bell"></i>}
                             badge={notificationCount > 0 ? notificationCount.toString() : undefined}
@@ -802,14 +696,14 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
 
                         {isEmployer && (
                             <MenuItem
-                                label="Kaydettiklerim"
+                                label={t('menu.saved')}
                                 onClick={() => { onOpenSavedCVs(); onClose(); }}
                                 icon={<i className="fi fi-rr-bookmark"></i>}
                             />
                         )}
 
                         <MenuItem
-                            label="Premium"
+                            label={t('menu.premium')}
                             onClick={() => setActiveCategory('premium')}
                             icon={<i className="fi fi-rr-membership-vip"></i>}
                         />
@@ -817,13 +711,13 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                         <div className="my-2 border-t border-gray-100 dark:border-white/5"></div>
 
                         <MenuItem
-                            label="Ayarlar"
+                            label={t('menu.settings')}
                             onClick={() => { onOpenSettings(); onClose(); }}
                             icon={<i className="fi fi-rr-settings"></i>}
                         />
 
                         <MenuItem
-                            label="Kurumsal"
+                            label={t('menu.corporate')}
                             onClick={() => { window.location.href = '/iletisim'; onClose(); }}
                             icon={<i className="fi fi-rr-info"></i>}
                         />
@@ -835,7 +729,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                     className="w-full bg-[#1f6d78] text-white py-4 rounded-2xl font-black text-sm active:scale-[0.98] transition-all shadow-xl shadow-[#1f6d78]/10 flex items-center justify-center gap-3"
                                 >
                                     <i className="fi fi-rr-sign-in-alt text-lg"></i>
-                                    Giriş Yap
+                                    {t('auth.login')}
                                 </button>
                             ) : (
                                 <button
@@ -843,7 +737,7 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
                                     className="w-full bg-white dark:bg-transparent text-black dark:text-white py-4 rounded-2xl font-black text-sm border-2 border-black dark:border-white/20 active:bg-gray-50 dark:active:bg-white/5 transition-all flex items-center justify-center gap-3"
                                 >
                                     <i className="fi fi-rr-sign-out-alt text-lg"></i>
-                                    Çıkış Yap
+                                    {t('profile.logout')}
                                 </button>
                             )}
                         </div>

@@ -49,8 +49,8 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
 
       {/* Slogan */}
       <h2 className={`text-xl font-black leading-tight tracking-tight text-center px-1 mb-1 transition-all duration-700 ${animationPhase === 'pulsing' ? 'animate-custom-pulse' : ''}`}>
-        <span className="text-gray-900 dark:text-white block">İş Aramayın,</span>
-        <span className="text-[#1f6d78] dark:text-[#2dd4bf] block mt-1 pb-1">Bırakın İş Sizi Bulsun.</span>
+        <span className="text-gray-900 dark:text-white block">{t('sidebar.slogan_part1')}</span>
+        <span className="text-[#1f6d78] dark:text-[#2dd4bf] block mt-1 pb-1">{t('sidebar.slogan_part2')}</span>
       </h2>
 
       {/* Dynamic Promo Carousel */}
@@ -138,7 +138,9 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] font-bold text-gray-900 dark:text-white truncate group-hover:text-[#1f6d78] dark:group-hover:text-[#2dd4bf] transition-colors">{cv.name}</p>
-                  <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 truncate mt-0.5">{cv.profession}</p>
+                  <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 truncate mt-0.5">
+                    {cv.profession ? t(cv.profession.split(',')[0].trim()) : ''}
+                  </p>
                 </div>
 
                 {/* Arrow Icon */}

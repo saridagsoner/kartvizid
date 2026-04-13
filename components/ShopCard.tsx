@@ -54,7 +54,7 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick, isActive }) => {
               {shop.name}
             </h3>
             <span className="text-[10px] sm:text-xs font-bold text-[#1f6d78] dark:text-[#2dd4bf] bg-[#1f6d78]/5 dark:bg-[#1f6d78]/20 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full whitespace-nowrap">
-               Hizmet
+               {t('shop.badge')}
             </span>
           </div>
           
@@ -72,7 +72,7 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop, onClick, isActive }) => {
             {shop.phone && (
               <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs font-black text-[#1f6d78] dark:text-[#2dd4bf]">
                 <i className="fi fi-rr-phone-call"></i>
-                <span>Tıkla & Ara</span>
+                <span>{t('shop.call')}</span>
               </div>
             )}
           </div>

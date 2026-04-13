@@ -49,7 +49,9 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
                   </div>
                   <div className="min-w-0">
                     <p className="font-bold text-[11px] truncate leading-tight text-white group-hover:text-black dark:group-hover:text-white transition-colors">{cv.name}</p>
-                    <p className="text-gray-200 text-[9px] truncate group-hover:text-gray-500 dark:group-hover:text-gray-300 transition-colors">{cv.profession}</p>
+                    <p className="text-gray-200 text-[9px] truncate group-hover:text-gray-500 dark:group-hover:text-gray-300 transition-colors">
+                      {cv.profession ? t(cv.profession.split(',')[0].trim()) : ''}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -68,7 +70,7 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
           <div>
             {(popularProfessions || []).slice(0, 5).map((prof, i) => (
               <div key={i} className="flex items-center justify-between text-[13px] group cursor-pointer animate-fade-in border-b border-gray-200 dark:border-gray-700 last:border-0 pb-2 mb-2 last:pb-0 last:mb-0">
-                <span className="text-gray-600 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white font-medium transition-colors">{prof.label}</span>
+                <span className="text-gray-600 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white font-medium transition-colors">{t(prof.label)}</span>
                 <span className="text-gray-400 dark:text-gray-500 font-normal">{prof.count}</span>
               </div>
             ))}
@@ -88,7 +90,7 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
                 key={i}
                 className="text-gray-600 dark:text-gray-300 text-[12px] font-medium cursor-pointer hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] transition-colors animate-fade-in"
               >
-                {city.label}
+                {t(city.label)}
               </span>
             ))}
           </div>

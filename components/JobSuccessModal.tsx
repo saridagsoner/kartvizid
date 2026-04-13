@@ -60,8 +60,8 @@ const JobSuccessModal: React.FC<JobSuccessModalProps> = ({ onClose }) => {
                     </div>
 
                     <div className="text-[#1f6d78] dark:text-[#2dd4bf] font-serif italic text-lg sm:text-xl leading-relaxed max-w-[380px] opacity-90 space-y-2">
-                        <p>"Yeni işinizde başarılar dileriz!</p>
-                        <p>Kartvizid ailesi olarak kariyer yolculuğunuzda yanınızda olmaktan mutluluk duyduk."</p>
+                        <p>"{t('job_success.msg1')}</p>
+                        <p>{t('job_success.msg2')}"</p>
                     </div>
 
                 </div>
