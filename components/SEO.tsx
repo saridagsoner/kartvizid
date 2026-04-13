@@ -42,6 +42,31 @@ const SEO: React.FC<SEOProps> = ({
             <meta name="twitter:title" content={fullTitle} />
             <meta name="twitter:description" content={fullDescription} />
             {image && <meta name="twitter:image" content={image} />}
+
+            {/* Structured Data (JSON-LD) for AdSense & SEO Authority */}
+            <script type="application/ld+json">
+                {JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "SoftwareApplication",
+                    "name": "Kartvizid",
+                    "operatingSystem": "Web",
+                    "applicationCategory": "BusinessApplication",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "TRY"
+                    },
+                    "description": fullDescription,
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "Kartvizid",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": "https://kartvizid.com/logo.png"
+                        }
+                    }
+                })}
+            </script>
         </Helmet>
     );
 };

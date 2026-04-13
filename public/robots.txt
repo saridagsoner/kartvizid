@@ -1,5 +1,18 @@
 User-agent: *
 Allow: /
+Allow: /cv/
+Allow: /company/
+Allow: /rehber/
+Allow: /hakkimizda
+Allow: /iletisim
+Allow: /hizmetlerimiz
+Disallow: /cv-olustur
+Disallow: /cv-guncelle
+Disallow: /sirket-olustur
+Disallow: /sirket-guncelle
+Disallow: /bildirimler
+Disallow: /mesajlar
+Disallow: /ayarlar
 Disallow: /admin/
 Disallow: /api/
 

@@ -5,6 +5,7 @@ import { CV, ContactRequest } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 
 import ProfileModal from './ProfileModal';
+import Breadcrumbs from './Breadcrumbs';
 
 interface CVProfileRouteProps {
     onOpenChat: (userId: string) => void;
@@ -169,17 +170,13 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
     }
 
     return (
-        <div className="relative h-full">
-            {/* SEO Booster: Hidden from users but visible to crawlers in raw HTML */}
-            <div className="sr-only opacity-0 h-0 pointer-events-none overflow-hidden" aria-hidden="true">
-                <h1>{cv.name} - {cv.profession} {t('cv.digital_cv')}</h1>
-                <p>{cv.city} {t('cv.seo_p1').replace('{name}', cv.name).replace('{profession}', cv.profession)}</p>
-                <p>{t('cv.seo_p2').replace('{name}', cv.name)}. {cv.about?.substring(0, 150)}...</p>
-                <nav>
-                    <a href="/rehber">{t('discovery.career_guide')}</a> | 
-                    <a href="/hakkimizda">{t('discovery.about_us')}</a>
-                </nav>
             </div>
+            
+            {!isInline && (
+                <div className="max-w-4xl mx-auto px-6 pt-12">
+                    <Breadcrumbs items={[{ label: cv.name }]} />
+                </div>
+            )}
 
             <ProfileModal
                 cv={cv}

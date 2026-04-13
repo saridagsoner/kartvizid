@@ -5,6 +5,7 @@ import { Company } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 
 import CompanyProfileModal from './CompanyProfileModal';
+import Breadcrumbs from './Breadcrumbs';
 
 interface CompanyProfileRouteProps {
     onClose?: () => void;
@@ -114,11 +115,18 @@ const CompanyProfileRoute: React.FC<CompanyProfileRouteProps> = ({
     }
 
     return (
-        <CompanyProfileModal
-            company={company}
-            onClose={handleClose}
-            isInline={isInline}
-        />
+        <div className="relative h-full">
+            {!isInline && (
+                <div className="max-w-4xl mx-auto px-6 pt-12">
+                    <Breadcrumbs items={[{ label: company.name }]} />
+                </div>
+            )}
+            <CompanyProfileModal
+                company={company}
+                onClose={handleClose}
+                isInline={isInline}
+            />
+        </div>
     );
 };
 

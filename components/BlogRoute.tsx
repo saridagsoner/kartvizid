@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { getLocalizedArticles } from '../constants/articles';
 import { useLanguage } from '../context/LanguageContext';
 import SEO from './SEO';
+import Breadcrumbs from './Breadcrumbs';
 
 interface BlogRouteProps {
   isInline?: boolean; // If true, it renders inside the 3-column shell (no fixed inset)
@@ -114,6 +115,14 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
 
         <div className={`flex-1 overflow-y-auto ${isInline ? 'no-scrollbar pt-6 pb-12' : 'custom-scrollbar'}`}>
           <div className={`max-w-4xl mx-auto px-6 py-4 md:py-8 ${isInline ? '' : ''}`}>
+            {!isInline && (
+              <Breadcrumbs 
+                items={[
+                  { label: t('blog.title'), path: '/rehber' },
+                  { label: article.title }
+                ]} 
+              />
+            )}
             <header className="mb-10">
               <div className="flex items-center gap-4 mb-4">
                 <span className="bg-[#1f6d78]/10 text-[#1f6d78] dark:text-[#2dd4bf] px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
@@ -205,6 +214,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
       <div className={`mx-auto ${isInline ? 'p-0 w-full' : 'max-w-6xl px-4 py-12 md:py-20'}`}>
         {!isInline && (
             <div className="text-center mb-16">
+                <Breadcrumbs items={[{ label: t('blog.title') }]} />
                 <h1 className="text-[24px] font-black mb-6 tracking-tighter uppercase">{t('blog.title')}</h1>
                 <p className="text-xl text-gray-500 max-w-2xl mx-auto font-bold italic border-l-4 border-gray-100 pl-4">
                     İş arama sürecinden kişisel marka yönetimine kadar her aşamada yanınızdayız.

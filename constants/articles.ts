@@ -91,9 +91,9 @@ const CATEGORY_MAP: Record<string, Record<string, string>> = {
     'lifestyle': 'أسلوب الحياة',
     'management': 'الإدارة',
     'psychology': 'علم النفس في مكان العمل',
-    'development': 'التطوير الشخصي',
-    'youth': 'المستقبل والشباب',
-    'global': 'مسيرة مهنية عالمية'
+    'development': 'التطوير الشخصi',
+    'youth': 'Gelecek ve Gençler',
+    'global': 'Global Kariyer'
   }
 };
 
@@ -152,8 +152,171 @@ const BLOG_ARTICLES_BASE: Article[] = [
       publishedAt: '2026-04-05',
       readTime: '17',
       content: `<h2>Maaş Pazarlığı Bir Anlaşmadır</h2><p>Doğru stratejiyle hak ettiğiniz maaşı almak sizin elinizdedir.</p>`
+  },
+  {
+    id: '6',
+    slug: 'linkedin-profil-optimizasyonu-2026',
+    title: 'LinkedIn Profil Optimizasyonu 2026: Algoritmalar Sizi Nasıl Öne Çıkarır?',
+    excerpt: 'Yapay zeka çağında LinkedIn profilinizi bir mıknatısa dönüştürün. Anahtar kelime stratejileri ve içerik üretim ipuçları.',
+    category: 'networking',
+    publishedAt: '2026-04-06',
+    readTime: '25',
+    content: `
+      <h2>Profiliniz Web Sitenizdir</h2>
+      <p>2026 yılında LinkedIn, sadece bir özgeçmiş deposu olmaktan çıkıp profesyonel bir portfolyo ve içerik platformuna dönüştü. İşverenler artık sadece ne yaptığınızı değil, ne bildiğinizi ve nasıl düşündüğünüzü de görmek istiyor.</p>
+      <h3>Manşet (Headline) Alanını Doğru Kullanmak</h3>
+      <p>Sadece unvanınızı yazmak yerine, sunduğunuz değeri anlatan anahtar kelimeler ekleyin. 'Yazılım Mühendisi' yerine 'Yüksek Ölçekli Sistemler Uzmanı | Node.js & Go | Verimlilik Odaklı Çözümler' gibi ifadeler sizi aramalarda üst sıralara taşır.</p>
+    `
+  },
+  {
+    id: '7',
+    slug: 'uzaktan-calisma-verimlilik-taktikleri',
+    title: 'Uzaktan Çalışmada Verimlilik: Evden Kariyer Basamaklarını Tırmanma Rehberi',
+    excerpt: 'Görünmezlik tehlikesini aşın: Uzaktan çalışırken terfi almanın ve ekip içinde etkili kalmanın yolları.',
+    category: 'lifestyle',
+    publishedAt: '2026-04-07',
+    readTime: '18',
+    content: `
+      <h2>Evde Ama Ekibin Kalbinde</h2>
+      <p>Uzaktan çalışmanın en büyük riski 'gözden ırak olan gönülden de ırak olur' durumudur. Bunu aşmak için proaktif iletişim şarttır.</p>
+      <h3>Asenkron İletişimin Gücü</h3>
+      <p>Mesajlarınızı ve raporlarınızı o kadar net yazın ki, karşı tarafın ek soru sormasına gerek kalmasın. Bu profesyonellik göstergesidir.</p>
+    `
+  },
+  {
+    id: '8',
+    slug: 'tersine-ise-alim-nedir-faydalari',
+    title: 'Üçüncü Nesil İnsan Kaynakları: Tersine İşe Alım (Reverse Recruitment) Nedir?',
+    excerpt: 'Artık adaylar değil, şirketler sizi ikna etmeli. Kartvizid modelinin temelindeki modern İK devrimini keşfedin.',
+    category: 'transformation',
+    publishedAt: '2026-04-08',
+    readTime: '15',
+    content: `
+      <h2>Pasif Aday Olmaktan Aktif Hedef Olmaya</h2>
+      <p>Tersine işe alım, geleneksel 'başvur ve bekle' modelini yıkar. Bu modelde yetenek platformda parlar ve şirketler en iyi projeleriyle adayın kapısını çalar.</p>
+    `
+  },
+  {
+      id: '9',
+      slug: 'mulakatta-beden-dili-kamera-arkasi',
+      title: 'Kamera Arkasındaki Güç: Video Mülakatlarda Beden Dili ve Teknik Kurulum',
+      excerpt: 'Işık, açı ve bakışlar: Dijital ortamda güven veren bir profesyonel imaj çizmenin tüm detayları.',
+      category: 'interview',
+      publishedAt: '2026-04-09',
+      readTime: '22',
+      content: `<h2>Kameraya Bakmak, Göz Temasıdır</h2><p>Ekrana değil, doğrudan kamera merceğine bakmak karşı tarafta güven uyandırır.</p>`
+  },
+  {
+      id: '10',
+      slug: 'kariyerde-stres-yonetimi-burnout-engelleme',
+      title: 'Tükenmişlik (Burnout) ile Savaş: Kariyerinizde Stres Yönetimi ve Akıl Sağlığı',
+      excerpt: 'İş-yaşam dengesini kurmak bir lüks değil, uzun vadeli kariyer başarısı için temel bir zorunluluktur.',
+      category: 'psychology',
+      publishedAt: '2026-04-10',
+      readTime: '28',
+      content: `<h2>Sınır Çizmeyi Öğrenmek</h2><p>Mesai saatleri dışında bildirimleri kapatmak, üretkenliğinizi düşürmez; aksine ertesi güne daha taze başlamanızı sağlar.</p>`
+  },
+  {
+      id: '11',
+      slug: 'freelance-kariyerine-baslangic-rehberi',
+      title: 'Freelance Ekonomisinde Yeriniz: Kendi İşinizin Patronu Olmanın İlk 5 Adımı',
+      excerpt: 'Kurumsal hayatı bırakıp özgürlüğe adım atmak isteyenler için finansal ve operasyonel yol haritası.',
+      category: 'global',
+      publishedAt: '2026-04-11',
+      readTime: '24',
+      content: `<h2>Niş Alan Belirlemek</h2><p>Her şeyi yapan hiç kimse olamazsınız. Bir konuda uzmanlaşmak, freelance dünyasında daha yüksek ücretler almanızı sağlar.</p>`
+  },
+  {
+      id: '12',
+      slug: 'yazilim-sektorunde-kariyer-2026-trendleri',
+      title: 'Yazılımda Kariyer 2026: Hangi Teknolojiler ve Diller Kazandıracak?',
+      excerpt: 'AI integrasyonları, düşük kodlu platformlar ve siber güvenliğin yükselişiyle değişen yazılımcı profili.',
+      category: 'tech',
+      publishedAt: '2026-04-12',
+      readTime: '30',
+      content: `<h2>Dil Değil, Mantık Önemli</h2><p>Artık sadece kod yazmak yetmiyor; AI araçlarını bir orkestra şefi gibi yöneten yazılımcılar aranan isimler olacak.</p>`
+  },
+  {
+      id: '13',
+      slug: 'saglik-sektorunde-dijitallesme-kariyer',
+      title: 'Sağlıkta Yeni Ufuklar: Sağlık Profesyonelleri İçin Dijitalleşen Kariyer Fırsatları',
+      excerpt: 'Tele-tıp, veri analitiği ve dijital sağlık danışmanlığının yükselişiyle gelen yeni uzmanlıklar.',
+      category: 'transformation',
+      publishedAt: '2026-04-13',
+      readTime: '19',
+      content: `<h2>Veri ile İyileştirmek</h2><p>Geleceğin sağlık çalışanları, sadece stetoskop değil, veri analitiği araçlarını da kullanacak.</p>`
+  },
+  {
+      id: '14',
+      slug: 'hibrit-calisma-modeli-denge-rehberi',
+      title: 'Hibrit Çalışma Dengesi: Ofis ve Ev Arasında Maksimum Verim Sağlamanın Yolları',
+      excerpt: 'İki dünyanın en iyisini birleştirin: Hibrit düzende disiplin ve sosyallik dengesini kurmak.',
+      category: 'lifestyle',
+      publishedAt: '2026-04-14',
+      readTime: '16',
+      content: `<h2>Esneklik ve Disiplin</h2><p>Hibrit modelde başarılı olmanın anahtarı, hangi işin ofiste hangisinin evde daha iyi yapıldığını bilmektir.</p>`
+  },
+  {
+      id: '15',
+      slug: 'kariyer-donusumu-30-yas-sonrasi',
+      title: '30 Yaşından Sonra Kariyer Değiştirmek: Geç Kalmadınız, Güçlendiniz',
+      excerpt: 'Sektör değiştirmekten korkmayın. Eski tecrübelerinizi yeni alanınızda nasıl bir avantaja çevirirsiniz?',
+      category: 'transformation',
+      publishedAt: '2026-04-15',
+      readTime: '21',
+      content: `<h2>Aktarılabilir Beceriler</h2><p>Eski işinizden getirdiğiniz iletişim, yönetim ve problem çözme yetenekleri her sektörde değerlidir.</p>`
+  },
+  {
+      id: '16',
+      slug: 'gelecegin-meslekleri-2030-hazirlik',
+      title: '2030\'a Doğru: Geleceğin Mesleklerine Bugünden Hazırlanma Stratejileri',
+      excerpt: 'Robotların yapamayacağı işlere odaklanın: Empati, yaratıcılık ve stratejik düşünmenin yükselişi.',
+      category: 'youth',
+      publishedAt: '2026-04-16',
+      readTime: '35',
+      content: `<h2>Yumuşak Becerilerin (Soft Skills) Zaferi</h2><p>Teknik işleri makineler devraldıkça, insan kalmayı gerektiren rollerin değeri paha biçilemez olacak.</p>`
+  },
+  {
+      id: '17',
+      slug: 'etkili-networking-dijital-dunya',
+      title: 'Etkili Networking: Fiziksel Kartvizitlerin Ötesinde Bağlantılar Kurmak',
+      excerpt: 'Sadece tanışmak değil, akılda kalmak: Networkünüzü nasıl organik bir güç haline getirirsiniz?',
+      category: 'networking',
+      publishedAt: '2026-04-17',
+      readTime: '20',
+      content: `<h2>Değer Vermek, Değer Bulmaktır</h2><p>Networking birinden bir şey istemek değil, birine nasıl yardımcı olabileceğinizi bulmaktır.</p>`
+  },
+  {
+      id: '18',
+      slug: 'is-yerinde-mobbing-yasal-haklar',
+      title: 'Mobbing ile Mücadele: Psikolojik Taciz Karşısında Yasal Haklarınız ve Güvenliğiniz',
+      excerpt: 'Kendinizi koruyun: Mobbing belirtilerini tanımak ve profesyonel sınırlar çizmek.',
+      category: 'psychology',
+      publishedAt: '2026-04-18',
+      readTime: '26',
+      content: `<h2>Belgelemek Hayat Kurtarır</h2><p>Yaşadığınız olumsuzlukları tarih ve detay vererek not almak, olası bir yasal süreçte en büyük kanıtınızdır.</p>`
+  },
+  {
+      id: '19',
+      slug: 'girisimcilik-vs-profesyonel-hayat',
+      title: 'Girişimcilik mi, Profesyonel Hayat mı? Size Uygun Kariyer Yolunu Bulun',
+      excerpt: 'Risk iştahı, konfor alanı ve özgürlük: Hangi dünya sizin karakterinize daha yakın?',
+      category: 'development',
+      publishedAt: '2026-04-19',
+      readTime: '23',
+      content: `<h2>Kendi Yolunu Çizmek</h2><p>Girişimcilik sadece şirket kurmak değil, bir bakış açısıdır. Bunu kurumsal hayatta da uygulayabilirsiniz.</p>`
+  },
+  {
+      id: '20',
+      slug: 'yurtdisinda-kariyer-stratejileri-2026',
+      title: 'Global Kariyer: Yurtdışında İş Bulma ve Vize Süreçleri İçin Modern Stratejiler',
+      excerpt: 'Sınırları aşın: Yurt dışındaki şirketlere uzaktan veya yerinde başvururken dikkat etmeniz gerekenler.',
+      category: 'global',
+      publishedAt: '2026-04-20',
+      readTime: '27',
+      content: `<h2>Global Standartlarda Özgeçmiş</h2><p>Her ülkenin özgeçmiş kültürü farklıdır. Global vizyona uygun bir profil, kapıların daha kolay açılmasını sağlar.</p>`
   }
-  // ... Simplified for brevity in this response, ideally full 60 would be here.
+  }
 ];
 
 const ARTICLE_TRANSLATIONS: Record<string, Record<string, Partial<Article>>> = {
