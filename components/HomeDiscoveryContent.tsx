@@ -71,7 +71,7 @@ const HomeDiscoveryContent: React.FC<HomeDiscoveryContentProps> = ({
 
   return (
     <>
-      <div className="flex sm:hidden items-start justify-between px-4 mt-2 mb-1 pl-6">
+      <div className="flex sm:hidden items-start justify-between px-4 mt-2 mb-1 pl-4">
         <div className="flex flex-col gap-0 w-full pt-1 pb-0.5">
           {((viewMode === 'cvs') || 
             (viewMode === 'shops') || 
