@@ -37,7 +37,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
       <div className="flex items-start gap-5 sm:gap-7">
         {/* Photo Section - Adjusted mobile height to match text exactly */}
         <div className="relative shrink-0 flex items-center">
-          <div className="w-[50px] h-[54px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
+          <div className="w-[50px] h-[60px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
             <ImageWithFallback 
               src={cv.photoUrl} 
               alt={cv.name || ''} 
@@ -48,7 +48,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
         </div>
 
         {/* Main Content Layout - Edge-aligned height matching the photo */}
-        <div className="flex-1 min-w-0 flex flex-col justify-between py-0 min-h-[54px] sm:min-h-[72px]">
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0 min-h-[60px] sm:min-h-[72px]">
           {/* Info Content - Balanced typography */}
           <h3 className="text-[16px] sm:text-[18px] font-black text-black dark:text-white tracking-tight leading-none line-clamp-1">
             {cv.name}
