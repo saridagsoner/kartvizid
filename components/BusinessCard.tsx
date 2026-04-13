@@ -15,7 +15,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
   return (
     <div
       onClick={onClick}
-      className={`pl-4 pr-4 py-3.5 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
+      className={`pl-4 pr-4 py-2.5 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
         isActive 
           ? 'bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' 
           : 'bg-transparent hover:bg-gray-50/50 dark:hover:bg-white/[0.02]'
@@ -32,12 +32,12 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
       }`} />
 
       {/* Divider Line - Starts from the text as requested */}
-      <div className="absolute bottom-0 right-4 sm:right-10 left-[82px] sm:left-[92px] border-b border-gray-200 dark:border-white/20" />
+      <div className="absolute bottom-0 right-4 sm:right-10 left-[75px] sm:left-[92px] border-b border-gray-200 dark:border-white/20" />
 
-      <div className="flex items-start gap-4 sm:gap-7">
-        {/* Photo Section - Custom mobile size */}
+      <div className="flex items-start gap-3 sm:gap-7">
+        {/* Photo Section - Custom mobile size to align with text */}
         <div className="relative shrink-0 flex items-center">
-          <div className="w-[58px] h-[70px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
+          <div className="w-[52px] h-[64px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
             <ImageWithFallback 
               src={cv.photoUrl} 
               alt={cv.name || ''} 
@@ -48,7 +48,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
         </div>
 
         {/* Main Content Layout */}
-        <div className="flex-1 min-w-0 flex flex-col justify-between py-0 min-h-[70px] sm:min-h-[72px]">
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0 min-h-[64px] sm:min-h-[72px]">
           {/* Info Content - Balanced typography */}
           <div className="flex flex-col gap-0.5 sm:gap-1">
             <h3 className="text-[16px] sm:text-[18px] font-black text-black dark:text-white tracking-tight leading-tight line-clamp-1">
