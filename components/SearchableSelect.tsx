@@ -42,7 +42,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
         <div className="relative w-full" ref={dropdownRef}>
             <div
                 onClick={() => !disabled && setIsOpen(!isOpen)}
-                className={`w-full h-[38px] sm:h-[48px] bg-white dark:bg-black border border-black/10 dark:border-white/10 rounded-full pl-5 pr-4 sm:pl-6 sm:pr-5 text-[14px] font-semibold flex items-center justify-between cursor-pointer transition-all ${isOpen ? 'ring-2 ring-[#1f6d78]/10 border-[#1f6d78]/20 bg-white dark:bg-black' : 'hover:bg-gray-50 dark:hover:bg-gray-900'
+                className={`w-full h-[38px] sm:h-[48px] bg-white dark:bg-black border border-black/10 dark:border-white/20 rounded-full pl-5 pr-4 sm:pl-6 sm:pr-5 text-[14px] font-semibold flex items-center justify-between cursor-pointer transition-all ${isOpen ? 'ring-2 ring-[#1f6d78]/10 border-[#1f6d78]/20 bg-white dark:bg-black' : 'hover:bg-gray-50 dark:hover:bg-gray-900'
                     } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
                 <span className={value ? 'text-black dark:text-white' : 'text-gray-400 font-medium'}>
@@ -70,7 +70,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({ value, onChange, op
                                         }, 300);
                                     }}
                                     placeholder={options.length > 50 ? t('common.search_list') : t('common.search_list')}
-                                    className="w-full h-full bg-gray-50/50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-2xl pl-10 pr-4 text-[15px] font-bold outline-none focus:border-[#1f6d78]/30 transition-all dark:text-white"
+                                    className="w-full h-full bg-gray-50/50 dark:bg-white/5 border border-black/5 dark:border-white/20 rounded-2xl pl-10 pr-4 text-[15px] font-bold outline-none focus:border-[#1f6d78]/30 transition-all dark:text-white"
                                     onClick={(e) => e.stopPropagation()}
                                 />
                                 <i className="fi fi-rr-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>

@@ -32,6 +32,10 @@ interface MobileMenuDrawerProps {
     onGoHome: () => void;
     unreadMessageCount?: number;
     notificationCount?: number;
+    isAuthModalOpen?: boolean;
+    onCloseAuth?: () => void;
+    authMode?: 'signin' | 'signup' | 'reset';
+    authRole?: 'job_seeker' | 'employer' | 'shop';
 }
 
 const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
@@ -60,7 +64,11 @@ const MobileMenuDrawer: React.FC<MobileMenuDrawerProps> = ({
     onOpenAuth,
     onGoHome,
     unreadMessageCount = 0,
-    notificationCount = 0
+    notificationCount = 0,
+    isAuthModalOpen,
+    onCloseAuth,
+    authMode,
+    authRole
 }) => {
     const navigate = useNavigate();
     const { t, language, setLanguage } = useLanguage();

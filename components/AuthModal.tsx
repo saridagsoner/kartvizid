@@ -131,8 +131,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[140] flex flex-col justify-end sm:justify-center items-center sm:p-4 bg-white dark:bg-black sm:bg-black/50 sm:backdrop-blur-sm">
-            <div className="bg-white dark:bg-black w-full h-full max-h-[100dvh] sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-none sm:shadow-2xl relative flex flex-col rounded-none sm:rounded-3xl overflow-hidden sm:border sm:border-gray-100 dark:border-white/10">
+        <div className="fixed inset-0 z-[140] flex flex-col justify-end sm:justify-center items-center sm:p-4 bg-black/40 dark:bg-black/70 backdrop-blur-[2px] sm:backdrop-blur-sm transition-all duration-300">
+            <div className="bg-white dark:bg-black w-full h-full max-h-[100dvh] sm:h-auto sm:max-h-[90vh] sm:max-w-md shadow-none sm:shadow-2xl relative flex flex-col rounded-none sm:rounded-3xl overflow-hidden sm:border sm:border-gray-100 dark:border-white/20">
                 
                 {/* Back Button */}
                 {selectedRole && mode === 'signup' && (
@@ -147,12 +147,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 sm:top-5 sm:right-5 p-2.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-500 dark:text-gray-400 z-50 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50"
+                    className="absolute top-4 right-4 sm:top-5 sm:right-5 w-10 h-10 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all text-gray-500 dark:text-gray-400 z-[60] bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200/50 dark:border-gray-700/50 flex items-center justify-center active:scale-90"
                 >
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
+                    <i className="fi fi-rr-cross-small text-xl font-bold"></i>
                 </button>
 
                 <div className={`flex-1 flex flex-col overflow-y-auto custom-scrollbar p-6 sm:p-10 w-full pb-10 relative z-10 ${
@@ -184,7 +181,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                 <button
                                     key={role.id}
                                     onClick={() => setSelectedRole(role.id as any)}
-                                    className="w-full flex items-center gap-4 p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-white/10 rounded-3xl transition-all group hover:shadow-xl hover:border-[#1f6d78]/30 dark:hover:border-[#2dd4bf]/30 hover:-translate-y-1 active:scale-[0.98]"
+                                    className="w-full flex items-center gap-4 p-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-white/20 rounded-3xl transition-all group hover:shadow-xl hover:border-[#1f6d78]/30 dark:hover:border-[#2dd4bf]/30 hover:-translate-y-1 active:scale-[0.98]"
                                 >
                                     <div className={`w-14 h-14 shrink-0 flex items-center justify-center text-2xl rounded-2xl ${role.color} group-hover:scale-110 transition-transform`}>
                                         <i className={`fi ${role.icon}`}></i>
@@ -218,7 +215,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                                         type="button"
                                         onClick={() => handleSocialLogin('google')}
                                         disabled={loading}
-                                        className="w-full flex items-center justify-center bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-white/10 h-[60px] rounded-3xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all font-black text-base text-gray-800 dark:text-gray-200 active:scale-[0.98] shadow-sm hover:shadow-md hover:border-[#1f6d78]/30 group"
+                                        className="w-full flex items-center justify-center bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-white/20 h-[60px] rounded-3xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all font-black text-base text-gray-800 dark:text-gray-200 active:scale-[0.98] shadow-sm hover:shadow-md hover:border-[#1f6d78]/30 group"
                                     >
                                         <div className="flex items-center justify-center gap-3.5 w-full">
                                             <div className="w-6 h-6 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">

@@ -46,11 +46,11 @@ const CompanyProfileModal: React.FC<CompanyProfileModalProps> = ({ company, onCl
                 />
             )}
             
-            <div className={isInline ? "w-full h-full relative flex flex-col overflow-hidden bg-white dark:bg-black" : "w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-black border-none sm:border border-gray-100 dark:border-white/10"}>
+            <div className={isInline ? "w-full h-full relative flex flex-col overflow-hidden bg-white dark:bg-black" : "w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-black border-none sm:border border-gray-100 dark:border-white/20"}>
                 
                 {/* Header (Aligned with ProfileModal) */}
                 <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-black shrink-0">
-                    <div className={`pt-0.5 pb-2 px-4 sm:pt-1 sm:pb-2.5 border-b border-gray-100 dark:border-white/10 flex items-center bg-white dark:bg-black gap-2 sm:gap-4 ${isInline ? 'sm:px-6' : 'sm:px-10'}`}>
+                    <div className={`pt-0.5 pb-2 px-4 sm:pt-1 sm:pb-2.5 border-b border-gray-100 dark:border-white/20 flex items-center bg-white dark:bg-black gap-2 sm:gap-4 ${isInline ? 'sm:px-6' : 'sm:px-10'}`}>
                         <div className="w-8 sm:w-9 shrink-0">
                             {/* Balancing spacer */}
                         </div>

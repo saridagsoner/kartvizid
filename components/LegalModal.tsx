@@ -352,8 +352,8 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
         >
             {/* Sidebar Navigation - Only shown in full modal mode */}
             {!isInline && (
-                <div className="w-64 bg-gray-50 dark:bg-gray-900/50 border-r border-gray-100 dark:border-white/10 flex flex-col hidden md:flex">
-                    <div className="p-6 border-b border-gray-100 dark:border-white/10">
+                <div className="w-64 bg-gray-50 dark:bg-gray-900/50 border-r border-gray-100 dark:border-white/20 flex flex-col hidden md:flex">
+                    <div className="p-6 border-b border-gray-100 dark:border-white/20">
                         <h3 className="font-black text-xl text-gray-900 dark:text-white">{t('legal.merkez')}</h3>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 space-y-1">
@@ -379,10 +379,10 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
             {/* Content Area */}
             <div className="flex-1 flex flex-col min-w-0 bg-white dark:bg-black overflow-hidden">
                 {/* Header */}
-                <div className={`sticky top-0 z-10 bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-gray-100 dark:border-white/10 flex items-center shrink-0 ${isInline ? 'px-6 py-4 justify-between' : 'p-6 justify-between'}`}>
+                <div className={`sticky top-0 z-10 bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-gray-100 dark:border-white/20 flex items-center shrink-0 ${isInline ? 'px-6 py-4 justify-between' : 'p-6 justify-between'}`}>
                     <div className="flex items-center gap-4 min-w-0 flex-1">
                         {isInline && (
-                            <div className="w-9 h-9 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] shrink-0 border border-gray-100 dark:border-white/10">
+                            <div className="w-9 h-9 bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] shrink-0 border border-gray-100 dark:border-white/20">
                                 <i className="fi fi-rr-document-signed"></i>
                             </div>
                         )}
@@ -396,7 +396,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
                     
                     <button
                         onClick={onClose}
-                        className={`${isInline ? 'w-9 h-9' : 'w-10 h-10'} rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all shadow-sm shrink-0 border border-gray-100 dark:border-white/10 active:scale-95`}
+                        className={`${isInline ? 'w-9 h-9' : 'w-10 h-10'} rounded-xl bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all shadow-sm shrink-0 border border-gray-100 dark:border-white/20 active:scale-95`}
                     >
                         {isInline ? (
                             <i className="fi fi-rr-apps"></i>
@@ -418,7 +418,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
 
                 {/* Mobile Navigation - Hidden in inline mode */}
                 {!isInline && (
-                    <div className="md:hidden p-4 border-t border-gray-100 dark:border-white/10 overflow-x-auto whitespace-nowrap bg-gray-50 dark:bg-gray-900 space-x-2 no-scrollbar">
+                    <div className="md:hidden p-4 border-t border-gray-100 dark:border-white/20 overflow-x-auto whitespace-nowrap bg-gray-50 dark:bg-gray-900 space-x-2 no-scrollbar">
                         {Object.entries(legalData).map(([key, data]) => (
                             <button
                                 key={key}
@@ -428,7 +428,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ initialSection = 'general', onC
                                 }}
                                 className={`px-4 py-2 rounded-full text-xs font-bold transition-all inline-block ${activeSection === key
                                     ? 'bg-[#1f6d78] text-white'
-                                    : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-white/10 text-gray-500'
+                                    : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-white/20 text-gray-500'
                                     }`}
                             >
                                 {data.title}

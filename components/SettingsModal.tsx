@@ -251,7 +251,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                 )}
 
                 {/* Header */}
-                <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-white dark:bg-black sticky top-0 z-10 shrink-0">
+                <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-white/20 flex justify-between items-center bg-white dark:bg-black sticky top-0 z-10 shrink-0">
                     <div>
                         <h2 className="text-xl sm:text-2xl font-black text-black dark:text-white tracking-tighter">{t('settings.header_title')}</h2>
                         <p className="text-[10px] sm:text-[11px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mt-1">
@@ -268,7 +268,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
                 <div className="flex flex-col sm:flex-row flex-1 overflow-hidden">
                     {/* Sidebar Tabs */}
-                    <div className="w-full sm:w-48 bg-gray-50 dark:bg-black p-4 sm:p-6 flex flex-row sm:flex-col gap-2 border-b sm:border-b-0 sm:border-r border-gray-100 dark:border-white/10 shrink-0 overflow-x-auto hide-scrollbar snap-x snap-mandatory">
+                    <div className="w-full sm:w-48 bg-gray-50 dark:bg-black p-4 sm:p-6 flex flex-row sm:flex-col gap-2 border-b sm:border-b-0 sm:border-r border-gray-100 dark:border-white/20 shrink-0 overflow-x-auto hide-scrollbar snap-x snap-mandatory">
                         {user && (
                             <button
                                 onClick={() => setActiveTab('account')}
@@ -319,12 +319,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                         {activeTab === 'general' && (
                             <div className="space-y-8">
                                 <div>
-                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/10 pb-2 mb-4">
+                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/20 pb-2 mb-4">
                                         {t('account.appearance')}
                                     </h3>
                                     <button
                                         onClick={toggleTheme}
-                                        className="w-full text-left p-4 rounded-xl border border-gray-100 dark:border-white/10 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-white/5 flex items-center justify-between transition-colors shadow-sm"
+                                        className="w-full text-left p-4 rounded-xl border border-gray-100 dark:border-white/20 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-white/5 flex items-center justify-between transition-colors shadow-sm"
                                     >
                                         <div className="flex items-center gap-4">
                                             <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/10 text-black dark:text-white flex items-center justify-center text-sm">
@@ -362,7 +362,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
 
                                 <div>
-                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/10 pb-2 mb-4">
+                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/20 pb-2 mb-4">
                                         {t('settings.language')}
                                     </h3>
                                     <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">{t('settings.language_desc')}</p>
@@ -379,7 +379,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                                 onClick={() => setLanguage(lang.code as any)}
                                                 className={`flex items-center justify-between p-4 rounded-xl border transition-all active:scale-95 ${language === lang.code
                                                     ? 'bg-[#1f6d78] text-white border-[#1f6d78] shadow-md'
-                                                    : 'bg-white dark:bg-black border-gray-100 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 hover:border-gray-200 dark:hover:border-white/20'
+                                                    : 'bg-white dark:bg-black border-gray-100 dark:border-white/20 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 hover:border-gray-200 dark:hover:border-white/20'
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-3">
@@ -401,7 +401,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                         {activeTab === 'account' && (
                             <div className="space-y-8">
                                 <div>
-                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/10 pb-2 mb-4">
+                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/20 pb-2 mb-4">
                                         {t('settings.account_summary')}
                                     </h3>
                                     <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-xl space-y-2 border border-transparent dark:border-white/5 shadow-inner">
@@ -412,7 +412,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 </div>
 
                                 {/* Account Deletion */}
-                                <div className="pt-8 border-t border-gray-100 dark:border-white/10">
+                                <div className="pt-8 border-t border-gray-100 dark:border-white/20">
                                     <div className="bg-red-50 dark:bg-red-950/10 rounded-2xl p-5 border border-red-100 dark:border-red-900/20">
                                         <div className="mb-4">
                                             <p className="text-sm font-bold text-red-900 dark:text-red-400">{t('settings.delete_account')}</p>
@@ -441,12 +441,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                         {activeTab === 'security' && (
                             <div className="space-y-8">
                                 <div className="space-y-4">
-                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/10 pb-2">
+                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/20 pb-2">
                                         {t('settings.change_email')}
                                     </h3>
 
                                     {/* Current Email Display */}
-                                    <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-4 mb-4 border border-gray-100 dark:border-white/10">
+                                    <div className="bg-gray-50 dark:bg-white/5 rounded-xl p-4 mb-4 border border-gray-100 dark:border-white/20">
                                         <p className="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">{t('settings.current_email')}</p>
                                         <p className="text-sm font-bold text-gray-800 dark:text-white">{user?.email}</p>
 
@@ -473,7 +473,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                                 value={newEmail}
                                                 onChange={(e) => setNewEmail(e.target.value)}
                                                 placeholder={t('settings.new_email')}
-                                                className="flex-1 bg-gray-50 dark:bg-black/5 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent dark:border-white/10 text-black dark:text-white focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
+                                                className="flex-1 bg-gray-50 dark:bg-black/5 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent dark:border-white/20 text-black dark:text-white focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
                                             />
                                             <button
                                                 onClick={handleUpdateEmail}
@@ -490,7 +490,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/10 pb-2">
+                                    <h3 className="text-sm font-black text-black dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-white/20 pb-2">
                                         {t('settings.change_password')}
                                     </h3>
                                     <div className="space-y-3">
@@ -499,14 +499,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
                                             placeholder={t('settings.new_password')}
-                                            className="w-full bg-gray-50 dark:bg-black/5 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent dark:border-white/10 text-black dark:text-white focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
+                                            className="w-full bg-gray-50 dark:bg-black/5 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent dark:border-white/20 text-black dark:text-white focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
                                         />
                                         <input
                                             type="password"
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
                                             placeholder={t('settings.new_password_confirm')}
-                                            className="w-full bg-gray-50 dark:bg-black/5 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent dark:border-white/10 text-black dark:text-white focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
+                                            className="w-full bg-gray-50 dark:bg-black/5 rounded-xl px-4 py-3 text-sm font-bold outline-none border border-transparent dark:border-white/20 text-black dark:text-white focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
                                         />
                                         <div className="flex justify-end pt-2">
                                             <button

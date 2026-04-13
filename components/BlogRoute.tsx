@@ -85,7 +85,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
         )}
         
         {/* Detail Header */}
-        <div className={`sticky top-0 z-50 flex justify-between items-center bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-gray-100 dark:border-white/10 shrink-0 ${isInline ? 'px-6 py-4' : 'px-4 py-4 md:px-8'}`}>
+        <div className={`sticky top-0 z-50 flex justify-between items-center bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-gray-100 dark:border-white/20 shrink-0 ${isInline ? 'px-6 py-4' : 'px-4 py-4 md:px-8'}`}>
             <div className="flex items-center gap-4 min-w-0">
                 <button 
                     onClick={() => navigate('/rehber')}
@@ -154,7 +154,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
 
         {/* Action Footer */}
         {isInline && (
-            <div className="sticky bottom-0 z-10 bg-white/95 dark:bg-black/95 backdrop-blur-md border-t border-gray-100 dark:border-white/10 px-6 py-4 flex items-center gap-4 shrink-0">
+            <div className="sticky bottom-0 z-10 bg-white/95 dark:bg-black/95 backdrop-blur-md border-t border-gray-100 dark:border-white/20 px-6 py-4 flex items-center gap-4 shrink-0">
                 <button 
                     onClick={() => {
                         if (navigator.share) {
@@ -261,7 +261,7 @@ const BlogRoute: React.FC<BlogRouteProps> = ({ isInline = false, viewType }) => 
 
                 {/* Divider Line */}
                 {isInline && (
-                  <div className="absolute bottom-0 right-4 sm:right-10 left-[58px] sm:left-[62px] border-b border-gray-200 dark:border-white/10" />
+                  <div className="absolute bottom-0 right-4 sm:right-10 left-[58px] sm:left-[62px] border-b border-gray-200 dark:border-white/20" />
                 )}
 
                 {isInline ? (

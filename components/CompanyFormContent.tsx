@@ -19,7 +19,7 @@ const SelectionPill: React.FC<SelectionPillProps> = ({ label, active, onClick })
     onClick={onClick}
     className={`px-3 py-2 sm:px-5 sm:py-2.5 rounded-full text-[10px] sm:text-[11px] font-bold border transition-all ${active
       ? 'bg-[#1f6d78] border-[#1f6d78] text-white shadow-md'
-      : 'bg-white dark:bg-black border-black/10 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:border-[#1f6d78] dark:hover:border-[#1f6d78]'
+      : 'bg-white dark:bg-black border-black/10 dark:border-white/20 text-gray-500 dark:text-gray-400 hover:border-[#1f6d78] dark:hover:border-[#1f6d78]'
       }`}
   >
     {label}
@@ -179,7 +179,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
     return (
         <div className={`flex flex-col h-full bg-white dark:bg-black ${isInline ? '' : 'sm:h-[90vh]'}`}>
             {/* Header */}
-            <div className={`px-6 py-4 sm:px-8 sm:py-6 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-white dark:bg-black sticky top-0 z-10 shrink-0 ${isInline ? 'sm:px-12' : ''}`}>
+            <div className={`px-6 py-4 sm:px-8 sm:py-6 border-b border-gray-100 dark:border-white/20 flex justify-between items-center bg-white dark:bg-black sticky top-0 z-10 shrink-0 ${isInline ? 'sm:px-12' : ''}`}>
                 <div>
                     <h2 className="text-xl sm:text-2xl font-black text-black dark:text-white tracking-tighter">{t('company.create_title')}</h2>
                     <p className="text-[11px] text-gray-400 font-medium mt-1">{t('company.create_subtitle')}</p>
@@ -208,7 +208,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                             <input type="file" ref={fileInputRef} onChange={handleFileSelect} className="hidden" accept="image/*" />
                             <div
                                 onClick={() => fileInputRef.current?.click()}
-                                className="w-28 h-28 sm:w-32 sm:h-32 rounded-[2rem] sm:rounded-[2.5rem] border border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.03] flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden relative shadow-sm"
+                                className="w-28 h-28 sm:w-32 sm:h-32 rounded-[2rem] sm:rounded-[2.5rem] border border-gray-200 dark:border-white/20 bg-gray-50/50 dark:bg-white/[0.03] flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden relative shadow-sm"
                             >
                                 {formData.logoUrl ? (
                                     <>
@@ -242,7 +242,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                         <div className="flex-1 space-y-6">
                             <div className="space-y-2">
                                 <label className="text-[9px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('company.name')} *</label>
-                                <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
+                                <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
                                     <input
                                         type="text"
                                         value={formData.name}
@@ -254,7 +254,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[9px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('company.industry')}</label>
-                                <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
+                                <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
                                     <input
                                         type="text"
                                         value={formData.industry}
@@ -270,7 +270,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <label className="text-[9px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('company.founded_year')}</label>
-                            <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
+                            <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
                                 <input
                                     type="number"
                                     value={formData.foundedYear || ''}
@@ -324,7 +324,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                         </div>
                         <div className="space-y-2">
                             <label className="text-[9px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('company.address')}</label>
-                            <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
+                            <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
                                 <input
                                     type="text"
                                     value={formData.address}
@@ -336,7 +336,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                         </div>
                         <div className="space-y-2">
                             <label className="text-[9px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('company.country')}</label>
-                            <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
+                            <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
                                 <input
                                     type="text"
                                     value={formData.country}
@@ -357,7 +357,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
                         <div className="space-y-2">
                             <label className="text-[9px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('company.website')}</label>
-                            <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
+                            <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
                                 <input
                                     type="url"
                                     value={formData.website}
@@ -369,7 +369,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                         </div>
                         <div className="space-y-2">
                             <label className="text-[9px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('company.instagram_label')}</label>
-                            <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
+                            <div className="w-full h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden flex items-center">
                                 <input
                                     type="url"
                                     value={formData.instagramUrl}
@@ -390,7 +390,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                 >
                     <div className="space-y-2 mb-4">
                         <label className="text-[9px] font-black text-black dark:text-gray-300 uppercase tracking-widest ml-4">{t('form.about_me')}</label>
-                        <div className="w-full bg-white dark:bg-black rounded-[2rem] border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden p-6 sm:p-8">
+                        <div className="w-full bg-white dark:bg-black rounded-[2rem] border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 focus-within:bg-white dark:focus-within:bg-black transition-all overflow-hidden p-6 sm:p-8">
                             <textarea
                                 value={formData.description}
                                 onChange={e => setFormData({ ...formData, description: e.target.value })}
@@ -439,7 +439,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
             </div>
 
             {/* Footer Actions */}
-            <div className={`p-4 sm:px-12 sm:py-6 border-t border-black/10 dark:border-white/10 bg-white dark:bg-black flex flex-row items-stretch gap-4 sticky bottom-0 z-10 shrink-0 shadow-lg ${isInline ? 'pb-8 sm:pb-12' : 'pb-safe-bottom'}`}>
+            <div className={`p-4 sm:px-12 sm:py-6 border-t border-black/10 dark:border-white/20 bg-white dark:bg-black flex flex-row items-stretch gap-4 sticky bottom-0 z-10 shrink-0 shadow-lg ${isInline ? 'pb-8 sm:pb-12' : 'pb-safe-bottom'}`}>
                 <button
                     type="button"
                     onClick={async () => {
@@ -477,7 +477,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
             {isKVKKModalOpen && (
                 <div className="fixed inset-0 z-[500] flex items-center justify-center bg-black/60 backdrop-blur-xl animate-in fade-in duration-300">
                     <div className="bg-white dark:bg-black w-full h-full sm:max-w-2xl sm:h-[80vh] sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden m-0 sm:m-4">
-                        <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-white/10 flex justify-between items-center bg-white dark:bg-black">
+                        <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-white/20 flex justify-between items-center bg-white dark:bg-black">
                             <h3 className="text-sm sm:text-base font-black uppercase tracking-widest text-[#1f6d78] dark:text-[#2dd4bf]">
                                 {t('company.kvkk_modal_title')}
                             </h3>
@@ -495,7 +495,7 @@ const CompanyFormContent: React.FC<CompanyFormContentProps> = ({ onClose, onSubm
                                 </p>
                             </div>
                         </div>
-                        <div className="p-6 sm:p-8 border-t border-gray-100 dark:border-white/10 bg-gray-50 dark:bg-gray-900/30">
+                        <div className="p-6 sm:p-8 border-t border-gray-100 dark:border-white/20 bg-gray-50 dark:bg-gray-900/30">
                             <button 
                                 onClick={() => {
                                     setIsConsentGiven(true);

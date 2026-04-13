@@ -1549,7 +1549,7 @@ const App: React.FC = () => {
   };
 
   const filteredCVs = useMemo(() => {
-    let result = cvList.filter((cv) => {
+    let result = (cvList || []).filter((cv) => {
       // Global Search
       const searchLower = searchQuery.toLocaleLowerCase('tr');
       const matchesSearch =
@@ -1614,7 +1614,7 @@ const App: React.FC = () => {
   }, [cvList, searchQuery, activeFilters, sortBy]);
 
   const filteredShops = useMemo(() => {
-    let result = shopList.filter(s =>
+    let result = (shopList || []).filter(s =>
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (s.profession && s.profession.toLowerCase().includes(searchQuery.toLowerCase()))
     );
@@ -1632,7 +1632,7 @@ const App: React.FC = () => {
   }, [shopList, searchQuery, sortBy]);
 
   const filteredEmployers = useMemo(() => {
-    let result = companyList.filter(c =>
+    let result = (companyList || []).filter(c =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (c.industry && c.industry.toLowerCase().includes(searchQuery.toLowerCase()))
     );
@@ -1680,16 +1680,17 @@ const App: React.FC = () => {
   }, [isSimulatedLoading]);
 
   const availableProfessions = useMemo(() => {
-    const allProfessions = cvList.reduce((acc, cv) => {
+    const unique = new Set<string>();
+    (cvList || []).forEach(cv => {
       const profs = cv.profession?.split(',').map(p => p.trim()).filter(Boolean) || [];
-      return acc.concat(profs);
-    }, [] as string[]);
-    const unique = new Set(allProfessions);
+      profs.forEach(p => unique.add(p));
+    });
+
     return Array.from(unique).sort().map(p => ({ label: p }));
   }, [cvList]);
 
   const availableCities = useMemo(() => {
-    const unique = new Set(cvList.map(cv => cv.city).filter(Boolean));
+    const unique = new Set((cvList || []).map(cv => cv.city).filter(Boolean));
     return Array.from(unique).sort().map(c => ({ label: c }));
   }, [cvList]);
 
@@ -1727,7 +1728,7 @@ const App: React.FC = () => {
 
   const cityStats = useMemo(() => {
     const counts: Record<string, number> = {};
-    cvList.forEach(cv => {
+    (cvList || []).forEach(cv => {
       if (cv.city) {
         counts[cv.city] = (counts[cv.city] || 0) + 1;
       }
@@ -1742,7 +1743,7 @@ const App: React.FC = () => {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-    const recentCVs = cvList.filter(cv => {
+    const recentCVs = (cvList || []).filter(cv => {
       if (!cv.created_at) return false;
       return new Date(cv.created_at) > oneWeekAgo;
     });
@@ -1777,18 +1778,18 @@ const App: React.FC = () => {
 
   const platformStats = useMemo(() => {
     // 1. Total CVs
-    const totalCVs = cvList.length;
+    const totalCVs = (cvList || []).length;
 
     // 2. Active Job Seekers (workingStatus === 'open')
-    const activeJobSeekers = cvList.filter(cv => cv.workingStatus === 'open').length;
+    const activeJobSeekers = (cvList || []).filter(cv => cv.workingStatus === 'open').length;
 
     // 3. New This Week
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    const newThisWeek = cvList.filter(cv => cv.created_at && new Date(cv.created_at) > oneWeekAgo).length;
+    const newThisWeek = (cvList || []).filter(cv => cv.created_at && new Date(cv.created_at) > oneWeekAgo).length;
 
     // 4. Total Views
-    const totalViews = cvList.reduce((acc, cv) => acc + (cv.views || 0), 0);
+    const totalViews = (cvList || []).reduce((acc, cv) => acc + (cv.views || 0), 0);
     const locale = t('locale') || 'tr-TR';
 
     return [
@@ -1901,8 +1902,8 @@ const App: React.FC = () => {
         onOpenSettings={() => navigate('/ayarlar')}
         hasCV={!!currentUserCV}
         userPhotoUrl={currentUserCV?.photoUrl || activeCompany?.logoUrl}
-        notificationCount={generalNotifications.filter(n => !n.is_read).length}
-        notifications={[...generalNotifications].sort((a,b) => {
+        notificationCount={(generalNotifications || []).filter(n => !n.is_read).length}
+        notifications={[...(generalNotifications || [])].sort((a,b) => {
           const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
           const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
           return dateB - dateA;
@@ -1910,6 +1911,10 @@ const App: React.FC = () => {
         onMarkNotificationRead={markNotificationRead}
         onOpenProfile={handleOpenProfile}
         onOpenAuth={handleAuthOpen}
+        isAuthModalOpen={isAuthModalOpen}
+        onCloseAuth={() => setIsAuthModalOpen(false)}
+        authMode={authMode}
+        authRole={authRole as any}
         onOpenSavedCVs={() => setIsSavedCVsOpen(true)}
         onOpenMenu={() => setIsMobileMenuOpen(true)}
         unreadMessageCount={unreadMessageCount}
@@ -1938,13 +1943,17 @@ const App: React.FC = () => {
         <div className="max-w-[1600px] w-full flex items-start pb-12 lg:pl-[58px] lg:pr-6 xl:pl-[84px] xl:pr-12 gap-0">
           
           {/* COLUMN 1: LEFT NAVIGATION (Desktop Only) */}
-          <aside className="hidden lg:block lg:w-[220px] xl:w-[255px] shrink sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-200/70 dark:border-white/10 pr-2 transition-all duration-300 no-scrollbar">
+          <aside className="hidden lg:block lg:w-[220px] xl:w-[255px] shrink sticky top-[64px] h-[calc(100vh-64px)] overflow-y-auto pb-4 border-r border-gray-200/70 dark:border-white/20 pr-2 transition-all duration-300 no-scrollbar">
             <DesktopNav 
               viewMode={viewMode}
               onViewModeChange={setViewMode}
               user={user}
               isEmployer={!!activeCompany || user?.user_metadata?.role === 'employer'}
               onOpenAuth={handleAuthOpen}
+              isAuthModalOpen={isAuthModalOpen}
+              onCloseAuth={() => setIsAuthModalOpen(false)}
+              authMode={authMode}
+              authRole={authRole as any}
               onSignOut={handleSignOut}
               onOpenSavedCVs={() => setIsSavedCVsOpen(true)}
               popularProfessions={professionStats}
@@ -1954,7 +1963,7 @@ const App: React.FC = () => {
               onCVClick={handleCVClick}
               loading={loading}
               unreadMessageCount={unreadMessageCount}
-              notificationCount={generalNotifications.filter(n => !n.is_read).length}
+              notificationCount={(generalNotifications || []).filter(n => !n.is_read).length}
             />
           </aside>
 
@@ -1963,7 +1972,7 @@ const App: React.FC = () => {
             
             {/* COLUMN 2: MIDDLE CONTENT (Feed or Full Page) */}
             <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 overflow-hidden h-[calc(100vh-64px)] ${
-              isDiscoveryView ? 'lg:max-w-[520px] xl:max-w-[525px] border-r border-gray-200/70 dark:border-white/10' : 'w-full'
+              isDiscoveryView ? 'lg:max-w-[520px] xl:max-w-[525px] border-r border-gray-200/70 dark:border-white/20' : 'w-full'
             }`}>
               <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth lg:pl-2">
                 <Routes key={location.pathname.split('/')[1] || 'home'}>
@@ -1992,12 +2001,12 @@ const App: React.FC = () => {
                   {/* Kartvizid Discovery Routes */}
                   <Route path="/kartvizid/is-bulanlar" element={<KartvizidList type="job-finders" jobFinders={jobFinders} popularProfessions={professionStats} popularCities={cityStats} popularCVs={popularCVs} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
                   <Route path="/kartvizid/is-bulanlar/:id" element={<KartvizidList type="job-finders" jobFinders={jobFinders} popularProfessions={professionStats} popularCities={cityStats} popularCVs={popularCVs} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
-                  <Route path="/kartvizid/populer-meslekler" element={<KartvizidList type="professions" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
-                  <Route path="/kartvizid/one-cikan-sehirler" element={<KartvizidList type="cities" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
-                  <Route path="/kartvizid/en-cok-gorununtulenenler" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
-                  <Route path="/kartvizid/en-cok-gorununtulenenler/:id" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
-                  <Route path="/kartvizid/istatistikler" element={<KartvizidList type="stats" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
-                  <Route path="/premium" element={<KartvizidList type="premium" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...cvList].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/populer-meslekler" element={<KartvizidList type="professions" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...(cvList || [])].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/one-cikan-sehirler" element={<KartvizidList type="cities" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...(cvList || [])].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/en-cok-gorununtulenenler" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...(cvList || [])].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/en-cok-gorununtulenenler/:id" element={<KartvizidList type="most-viewed" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...(cvList || [])].sort((a,b) => (b.views || 0) - (a.views || 0)).slice(0, 10)} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/kartvizid/istatistikler" element={<KartvizidList type="stats" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...(cvList || [])].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
+                  <Route path="/premium" element={<KartvizidList type="premium" jobFinders={cvList} popularProfessions={professionStats} popularCities={cityStats} popularCVs={[...(cvList || [])].sort((a,b) => (b.views || 0) - (a.views || 0))} platformStats={platformStats} onFilterApply={handleFilterUpdate} user={user} />} />
 
                   {/* Messaging Discovery Routes */}
                   <Route path="/mesajlar" element={<ConversationsList conversations={conversations} activeConversationId={activeConversationId} onRefreshConversations={fetchConversations} user={user} />} />
@@ -2030,7 +2039,7 @@ const App: React.FC = () => {
                           popularCVs={[]} 
                           platformStats={platformStats} 
                           onFilterApply={handleFilterUpdate} 
-                          notifications={[...generalNotifications].sort((a, b) => {
+                          notifications={[...(generalNotifications || [])].sort((a, b) => {
                             const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
                             const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
                             return dateB - dateA;
@@ -2057,7 +2066,7 @@ const App: React.FC = () => {
             </section>
 
             {/* COLUMN 3: RIGHT DETAIL PANEL (Desktop Only) */}
-             <aside className={`hidden lg:block flex-1 max-w-[585px] min-w-[320px] h-[calc(100vh-64px)] sticky top-[64px] overflow-hidden bg-white dark:bg-black transition-all duration-500 border-r border-gray-200/70 dark:border-white/10 ${
+             <aside className={`hidden lg:block flex-1 max-w-[585px] min-w-[320px] h-[calc(100vh-64px)] sticky top-[64px] overflow-hidden bg-white dark:bg-black transition-all duration-500 border-r border-gray-200/70 dark:border-white/20 ${
               isDiscoveryView || location.pathname.startsWith('/rehber/') || location.pathname === '/cv-olustur' || location.pathname === '/cv-guncelle' || location.pathname === '/sirket-olustur' || location.pathname === '/sirket-guncelle' || location.pathname === '/bildirimler' ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none w-0 flex-none'
             }`}>
               <div className="h-full">
@@ -2231,8 +2240,8 @@ const App: React.FC = () => {
           availableCities={availableCities}
           hasCV={!!currentUserCV}
           userPhotoUrl={user?.user_metadata?.avatar_url || currentUserCV?.photoUrl}
-          notificationCount={generalNotifications.filter(n => !n.is_read).length}
-          notifications={[...generalNotifications].sort((a,b) => {
+          notificationCount={(generalNotifications || []).filter(n => !n.is_read).length}
+          notifications={[...(generalNotifications || [])].sort((a,b) => {
             const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
             const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
             return dateB - dateA;
@@ -2242,6 +2251,10 @@ const App: React.FC = () => {
           onOpenProfile={handleOpenProfile}
           onOpenSavedCVs={() => setIsSavedCVsOpen(true)}
           onOpenAuth={handleAuthOpen}
+          isAuthModalOpen={isAuthModalOpen}
+          onCloseAuth={() => setIsAuthModalOpen(false)}
+          authMode={authMode}
+          authRole={authRole as any}
           signOut={handleSignOut}
         />
       )}
@@ -2253,6 +2266,10 @@ const App: React.FC = () => {
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         onOpenAuth={handleAuthOpen}
+        isAuthModalOpen={isAuthModalOpen}
+        onCloseAuth={() => setIsAuthModalOpen(false)}
+        authMode={authMode}
+        authRole={authRole as any}
         onLogout={handleSignOut}
         onGoHome={() => { navigate('/'); setIsMobileMenuOpen(false); }}
         onEmployersViewAll={() => { navigate('/is-verenler'); setIsMobileMenuOpen(false); }}
@@ -2272,7 +2289,7 @@ const App: React.FC = () => {
         onFilterApply={(type, val) => handleFilterUpdate(type, val)}
         unreadMessageCount={conversations.reduce((acc, c) => acc + (c.unread_count || 0), 0)}
         onOpenSettings={() => { navigate('/ayarlar'); setIsMobileMenuOpen(false); }}
-        notificationCount={generalNotifications.filter(n => !n.is_read).length}
+        notificationCount={(generalNotifications || []).filter(n => !n.is_read).length}
       />
 
       <React.Suspense fallback={null}>

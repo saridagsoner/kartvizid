@@ -12,6 +12,10 @@ interface DesktopNavProps {
     user?: any;
     isEmployer?: boolean;
     onOpenAuth?: (mode: 'signin' | 'signup', role?: string) => void;
+    isAuthModalOpen?: boolean;
+    onCloseAuth?: () => void;
+    authMode?: 'signin' | 'signup' | 'reset';
+    authRole?: 'job_seeker' | 'employer' | 'shop';
     onSignOut?: () => void;
     onOpenSavedCVs?: () => void;
     // Discovery Data
@@ -31,6 +35,10 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
     user,
     isEmployer,
     onOpenAuth,
+    isAuthModalOpen,
+    onCloseAuth,
+    authMode,
+    authRole,
     onSignOut,
     onOpenSavedCVs,
     popularProfessions = [],
@@ -135,7 +143,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 }}
             />
 
-            <div className="my-2 border-t border-gray-200/70 dark:border-white/10"></div>
+            <div className="my-2 border-t border-gray-200/70 dark:border-white/20"></div>
 
 
             <NavItem 
@@ -215,7 +223,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
                 onClick={() => navigate('/premium')}
             />
 
-            <div className="my-2 border-t border-gray-200/70 dark:border-white/10"></div>
+            <div className="my-2 border-t border-gray-200/70 dark:border-white/20"></div>
 
             <NavItem 
                 label={t('menu.settings')} 

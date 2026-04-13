@@ -112,10 +112,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
             image={cv.photoUrl}
           />
         )}
-        <div className={isInline ? "w-full h-full relative flex flex-col overflow-hidden bg-white dark:bg-black" : "w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-black border-none sm:border border-gray-100 dark:border-white/10"}>
+        <div className={isInline ? "w-full h-full relative flex flex-col overflow-hidden bg-white dark:bg-black" : "w-full h-full sm:max-w-[800px] sm:h-[90vh] sm:rounded-[3rem] sm:shadow-2xl relative flex flex-col overflow-hidden bg-white dark:bg-black border-none sm:border border-gray-100 dark:border-white/20"}>
           {/* Header (Always Fixed) */}
           <div className="pt-safe sticky top-0 z-10 bg-white dark:bg-black shrink-0 shadow-sm sm:shadow-none">
-            <div className={`pt-3 pb-5 px-4 sm:pt-1 sm:pb-2.5 border-b border-gray-100 dark:border-white/10 flex items-center bg-white dark:bg-black gap-2 sm:gap-4 ${isInline ? 'sm:px-6' : 'sm:px-10'}`}>
+            <div className={`pt-3 pb-5 px-4 sm:pt-1 sm:pb-2.5 border-b border-gray-100 dark:border-white/20 flex items-center bg-white dark:bg-black gap-2 sm:gap-4 ${isInline ? 'sm:px-6' : 'sm:px-10'}`}>
               <div className="w-8 sm:w-9 shrink-0">
                 {/* Balancing spacer for horizontal centering */}
               </div>
@@ -316,7 +316,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
           </div>
 
           {/* Fixed Quick Actions Footer */}
-          <div className={`border-t border-gray-100 dark:border-white/10 bg-white/95 dark:bg-black/95 backdrop-blur-md flex items-center gap-2 sm:gap-4 shrink-0 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] pb-safe-bottom z-50 sticky bottom-0 ${isInline ? 'py-3 px-4 sm:py-4 sm:px-6' : 'py-4 px-4 sm:py-6 sm:px-10'}`}>
+          <div className={`border-t border-gray-100 dark:border-white/20 bg-white/95 dark:bg-black/95 backdrop-blur-md flex items-center gap-2 sm:gap-4 shrink-0 shadow-[0_-10px_30px_rgba(0,0,0,0.03)] pb-safe-bottom z-50 sticky bottom-0 ${isInline ? 'py-3 px-4 sm:py-4 sm:px-6' : 'py-4 px-4 sm:py-6 sm:px-10'}`}>
             {!isOwner ? (
               <div className="flex w-full items-center gap-2 sm:gap-4">
                 <button

@@ -108,7 +108,7 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
             {/* Warning Overlay */}
             {showWarning.show && (
                 <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-6">
-                    <div className="bg-white dark:bg-black border-2 border-gray-100 dark:border-white/10 rounded-[2.5rem] p-8 w-full max-w-sm shadow-2xl text-center">
+                    <div className="bg-white dark:bg-black border-2 border-gray-100 dark:border-white/20 rounded-[2.5rem] p-8 w-full max-w-sm shadow-2xl text-center">
                         <h3 className="text-xl font-black mb-4 tracking-tighter text-black dark:text-white">{t('settings.info_msg')}</h3>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-8">{showWarning.message}</p>
                         <button onClick={() => setShowWarning({ show: false, message: '' })} className="w-full bg-[#1f6d78] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#155e68] transition-all active:scale-95 shadow-lg shadow-[#1f6d78]/20">{t('settings.ok')}</button>
@@ -119,10 +119,10 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
             {activeTab === 'general' && (
                 <div className="space-y-12">
                     <section>
-                        <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/10 pb-4">
+                        <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/20 pb-4">
                             {t('account.appearance')}
                         </h3>
-                        <div className="flex items-center justify-between p-6 rounded-2xl bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/10">
+                        <div className="flex items-center justify-between p-6 rounded-2xl bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/20">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-xl bg-white dark:bg-black flex items-center justify-center shadow-sm border border-transparent dark:border-white/5">
                                     <i className={`fi ${theme === 'dark' ? 'fi-rr-moon' : 'fi-rr-sun'} text-xl text-[#1f6d78] dark:text-[#2dd4bf]`}></i>
@@ -139,7 +139,7 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
                     </section>
 
                     <section>
-                        <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/10 pb-4">
+                        <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/20 pb-4">
                             {t('settings.language')}
                         </h3>
                         <div className="grid grid-cols-1 gap-3">
@@ -155,7 +155,7 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
                                     onClick={() => setLanguage(lang.code as any)}
                                     className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${language === lang.code
                                         ? 'bg-[#1f6d78] text-white border-[#1f6d78] shadow-lg shadow-[#1f6d78]/10'
-                                        : 'bg-white dark:bg-white/[0.03] border-gray-100 dark:border-white/10 text-gray-900 dark:text-gray-300 hover:border-[#1f6d78]/20'
+                                        : 'bg-white dark:bg-white/[0.03] border-gray-100 dark:border-white/20 text-gray-900 dark:text-gray-300 hover:border-[#1f6d78]/20'
                                         }`}
                                 >
                                     <div className="flex items-center gap-4">
@@ -226,7 +226,7 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
                     </section>
 
                     <section>
-                         <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/10 pb-4">
+                         <h3 className="text-[12px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-6 border-b border-gray-100 dark:border-white/20 pb-4">
                             {t('settings.change_password')}
                         </h3>
                         <div className="space-y-4">
@@ -235,14 +235,14 @@ const SettingsDetailView: React.FC<SettingsDetailViewProps> = ({ activeTab: init
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
                                 placeholder={t('settings.new_password')}
-                                className="w-full bg-gray-50 dark:bg-white/[0.03] rounded-xl px-5 py-3.5 text-sm font-bold border border-gray-100 dark:border-white/10 text-black dark:text-white outline-none focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
+                                className="w-full bg-gray-50 dark:bg-white/[0.03] rounded-xl px-5 py-3.5 text-sm font-bold border border-gray-100 dark:border-white/20 text-black dark:text-white outline-none focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
                             />
                             <input
                                 type="password"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 placeholder={t('settings.confirm_password')}
-                                className="w-full bg-gray-50 dark:bg-white/[0.03] rounded-xl px-5 py-3.5 text-sm font-bold border border-gray-100 dark:border-white/10 text-black dark:text-white outline-none focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
+                                className="w-full bg-gray-50 dark:bg-white/[0.03] rounded-xl px-5 py-3.5 text-sm font-bold border border-gray-100 dark:border-white/20 text-black dark:text-white outline-none focus:ring-2 focus:ring-[#1f6d78]/20 transition-all"
                             />
                             <div className="flex justify-end pt-2">
                                 <button onClick={handleUpdatePassword} className="px-8 py-3.5 bg-[#1f6d78] text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-[#1f6d78]/20 hover:scale-105 active:scale-95 transition-all">{t('settings.update')}</button>

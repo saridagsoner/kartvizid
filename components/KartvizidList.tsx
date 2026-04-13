@@ -96,7 +96,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
                                     {isClickable && location.pathname.includes(cv.id) && (
                                         <div className="absolute left-[-8px] top-0 bottom-0 w-1 bg-[#1f6d78] dark:bg-[#2dd4bf]"></div>
                                     )}
-                                    <div className={`w-[42px] h-[52px] rounded-[14px] bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 border border-gray-100 dark:border-white/10 transition-transform ${isClickable ? 'group-hover:scale-105' : ''}`}>
+                                    <div className={`w-[42px] h-[52px] rounded-[14px] bg-gray-100 dark:bg-gray-800 overflow-hidden shrink-0 border border-gray-100 dark:border-white/20 transition-transform ${isClickable ? 'group-hover:scale-105' : ''}`}>
                                         <img src={cv.photoUrl || "https://picsum.photos/seed/user-placeholder/100/100"} alt={cv.name} className="w-full h-full object-cover" />
                                     </div>
                                     <div className="min-w-0 flex-1">
@@ -396,7 +396,7 @@ const KartvizidList: React.FC<KartvizidListProps> = ({
     return (
         <div className="flex flex-col min-w-0 h-full bg-white dark:bg-black">
             {/* Header */}
-            <div className="sticky top-0 z-10 bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-gray-100 dark:border-white/10 px-8 py-8 shrink-0">
+            <div className="sticky top-0 z-10 bg-white/95 dark:bg-black/95 backdrop-blur-md border-b border-gray-100 dark:border-white/20 px-8 py-8 shrink-0">
                 <div className="flex items-center gap-4">
                     <div>
                         <h1 className="text-2xl font-black text-gray-900 dark:text-white tracking-tighter leading-none mb-1">

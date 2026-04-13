@@ -36,6 +36,10 @@ interface MobileBottomNavProps {
     onFilterApply?: (key: string, value: any) => void;
     availableProfessions?: any[];
     availableCities?: any[];
+    isAuthModalOpen?: boolean;
+    onCloseAuth?: () => void;
+    authMode?: 'signin' | 'signup' | 'reset';
+    authRole?: 'job_seeker' | 'employer' | 'shop';
 }
 
 const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
@@ -71,7 +75,11 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     onOpenNotifications,
     onOpenSavedCVs,
     signOut,
-    onFilterApply
+    onFilterApply,
+    isAuthModalOpen,
+    onCloseAuth,
+    authMode,
+    authRole
 }) => {
     const { user } = useAuth();
     const { t } = useLanguage();
@@ -103,7 +111,7 @@ const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         <>
             {/* Fixed Bottom Bar */}
             <div className="fixed bottom-0 left-0 right-0 z-[250] sm:hidden">
-                <div className="bg-white/95 dark:bg-black/95 backdrop-blur-xl border-t border-gray-100 dark:border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.3)] flex justify-between px-2 pb-safe h-[60px]">
+                <div className="bg-white/95 dark:bg-black/95 backdrop-blur-xl border-t border-gray-100 dark:border-white/20 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_-10px_30px_rgba(0,0,0,0.3)] flex justify-between px-2 pb-safe h-[60px]">
                     {/* Home Button */}
                     <button
                         onClick={() => {

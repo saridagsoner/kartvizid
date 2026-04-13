@@ -19,8 +19,8 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
   return (
     <div className="flex flex-col gap-5 h-fit">
       {/* İş Bulanlar Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-all duration-300">
-        <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-white/20 overflow-hidden shadow-sm transition-all duration-300">
+        <div className="p-5 border-b border-gray-100 dark:border-white/20 bg-gray-50/50 dark:bg-gray-800/50">
           <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-bold text-sm tracking-tight flex items-center gap-2">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
@@ -62,14 +62,14 @@ const SidebarLeft: React.FC<SidebarLeftProps> = ({ popularProfessions, popularCi
         </div>
       </div>
       {/* Popüler Meslekler Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm transition-all duration-300">
-        <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-white/20 overflow-hidden shadow-sm transition-all duration-300">
+        <div className="p-5 border-b border-gray-100 dark:border-white/20 bg-gray-50/50 dark:bg-gray-800/50">
           <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-sm tracking-tight">{t('sidebar.popular_professions')}</h3>
         </div>
         <div className="p-5">
           <div>
             {(popularProfessions || []).slice(0, 5).map((prof, i) => (
-              <div key={i} className="flex items-center justify-between text-[13px] group cursor-pointer animate-fade-in border-b border-gray-200 dark:border-gray-700 last:border-0 pb-2 mb-2 last:pb-0 last:mb-0">
+              <div key={i} className="flex items-center justify-between text-[13px] group cursor-pointer animate-fade-in border-b border-gray-200 dark:border-white/20 last:border-0 pb-2 mb-2 last:pb-0 last:mb-0">
                 <span className="text-gray-600 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white font-medium transition-colors">{t(prof.label)}</span>
                 <span className="text-gray-400 dark:text-gray-500 font-normal">{prof.count}</span>
               </div>

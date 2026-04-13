@@ -54,7 +54,7 @@ const LegalList: React.FC = () => {
                   }`} />
 
                   {/* Divider Line */}
-                  <div className="absolute bottom-0 right-4 sm:right-10 left-[58px] sm:left-[62px] border-b border-gray-200 dark:border-white/10" />
+                  <div className="absolute bottom-0 right-4 sm:right-10 left-[58px] sm:left-[62px] border-b border-gray-200 dark:border-white/20" />
 
                   <div className="flex items-start gap-3 sm:gap-4 w-full">
                     <div className="w-12 h-12 flex items-center justify-center text-[#1f6d78] dark:text-[#2dd4bf] shrink-0 group-hover:scale-110 transition-transform">

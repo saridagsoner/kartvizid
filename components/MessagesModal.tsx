@@ -201,7 +201,7 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                     className={`w-full pl-2 pr-6 py-5 flex items-center gap-4 transition-all duration-200 hover:bg-gray-50/50 group ${activeConversationId === conv.id ? 'bg-gray-50' : 'bg-transparent'}`}
                   >
                     <div className="relative shrink-0">
-                      <div className="w-14 h-16 rounded-lg overflow-hidden bg-gray-50 dark:bg-black border border-gray-100 dark:border-white/10 shadow-sm transition-transform group-hover:scale-[1.02]">
+                      <div className="w-14 h-16 rounded-lg overflow-hidden bg-gray-50 dark:bg-black border border-gray-100 dark:border-white/20 shadow-sm transition-transform group-hover:scale-[1.02]">
                         <ImageWithFallback 
                           src={conv.other_participant?.avatar_url} 
                           alt={conv.other_participant?.full_name || '?'} 

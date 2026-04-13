@@ -61,8 +61,8 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
       />
 
       {/* Popüler İşverenler */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
-        <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-white/20 overflow-hidden shadow-sm">
+        <div className="p-5 border-b border-gray-100 dark:border-white/20 bg-gray-50/50 dark:bg-gray-800/50">
           <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-sm tracking-tight">{t('sidebar.employers')}</h3>
         </div>
         <div className="p-5">
@@ -72,8 +72,8 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
               <JobFinderSkeleton />
               <JobFinderSkeleton />
             </div>
-          ) : popularCompanies.length > 0 ? (
-            popularCompanies.map((company, index) => (
+          ) : (popularCompanies || []).length > 0 ? (
+            (popularCompanies || []).map((company, index) => (
               <div
                 key={company.id}
                 onClick={() => onCompanyClick?.(company)}
@@ -107,8 +107,8 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
       </div>
 
       {/* Popüler Kartvizidler - Moved to bottom */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
-        <div className="p-5 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-white/20 overflow-hidden shadow-sm">
+        <div className="p-5 border-b border-gray-100 dark:border-white/20 bg-gray-50/50 dark:bg-gray-800/50">
           <h3 className="text-[#1f6d78] dark:text-[#2dd4bf] font-black text-sm tracking-tight">{t('sidebar.most_viewed')}</h3>
         </div>
         <div className="p-5">
@@ -118,8 +118,8 @@ const SidebarRight: React.FC<SidebarRightProps> = ({ popularCVs = [], popularCom
               <JobFinderSkeleton />
               <JobFinderSkeleton />
             </div>
-          ) : popularCVs.length > 0 ? (
-            popularCVs.map((cv, index) => (
+          ) : (popularCVs || []).length > 0 ? (
+            (popularCVs || []).map((cv, index) => (
               <div
                 key={cv.id}
                 onClick={() => onCVClick?.(cv)}

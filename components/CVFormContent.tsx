@@ -121,7 +121,7 @@ const handleDateMask = (val: string) => {
 };
 
 const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDelete, initialData, availableCities = [], isInline = false }) => {
-  const { t } = useLanguage();
+  const { t, resolveValue } = useLanguage();
   const [formData, setFormData] = useState<Partial<CV>>({
     name: initialData?.name || '',
     profession: initialData?.profession || '',
@@ -390,7 +390,7 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
             <div className="shrink-0 space-y-1.5 flex flex-col w-24 sm:w-28">
               <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-[11px]">{t('form.photo')}</label>
               <input type="file" ref={fileInputRef} onChange={onFileSelect} className="hidden" accept="image/*" />
-              <div onClick={() => fileInputRef.current?.click()} className="flex-1 rounded-xl sm:rounded-[2.5rem] border border-gray-200 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.03] flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden shadow-sm relative min-h-[120px]">
+              <div onClick={() => fileInputRef.current?.click()} className="flex-1 rounded-xl sm:rounded-[2.5rem] border border-gray-200 dark:border-white/20 bg-gray-50/50 dark:bg-white/[0.03] flex flex-col items-center justify-center cursor-pointer hover:border-[#1f6d78] transition-all group overflow-hidden shadow-sm relative min-h-[120px]">
                 {formData.photoUrl ? (
                   <>
                     <img src={formData.photoUrl} alt="CV" className="w-full h-full object-cover" />
@@ -407,13 +407,13 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
             <div className="flex-1 flex flex-col gap-3 sm:gap-4 min-w-0">
               <div className="space-y-1.5 flex flex-col">
                 <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.fullname')}</label>
-                <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
+                <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
                   <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: capitalizeWords(validateInput(e.target.value, 50)) })} maxLength={50} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-4 sm:px-6 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder={t('form.fullname')} />
                 </div>
               </div>
               <div className="space-y-1.5 flex flex-col">
                 <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.profession_label')}</label>
-                <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
+                <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
                   <input type="text" value={formData.profession} onChange={e => setFormData({ ...formData, profession: capitalizeWords(validateInput(e.target.value, 60)) })} maxLength={60} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-4 sm:px-6 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder={t('form.profession_placeholder')} />
                 </div>
               </div>
@@ -424,12 +424,12 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
                 <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.exp_label')}</label>
                 <div className="flex gap-2">
                   <div className="flex-1">
-                    <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
+                    <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
                       <input type="number" min="0" value={formData.experienceYears === 0 ? '' : formData.experienceYears} onChange={e => setFormData({ ...formData, experienceYears: e.target.value === '' ? 0 : parseInt(e.target.value) })} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-5 sm:px-7 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder={t('form.year')} />
                     </div>
                   </div>
                   <div className="flex-1">
-                    <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
+                    <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
                       <input type="number" min="0" max="11" value={formData.experienceMonths === 0 ? '' : formData.experienceMonths} onChange={e => setFormData({ ...formData, experienceMonths: e.target.value === '' ? 0 : Math.min(11, parseInt(e.target.value)) })} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[16px] px-5 sm:px-7 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder={t('form.month')} />
                     </div>
                   </div>
@@ -451,7 +451,7 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
         <section>
           <div className="space-y-1.5">
             <label className="text-[9.5px] sm:text-[10px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.about_label')}</label>
-            <div className="w-full bg-white dark:bg-black rounded-[1.5rem] sm:rounded-[2.5rem] border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all h-24 sm:h-32">
+            <div className="w-full bg-white dark:bg-black rounded-[1.5rem] sm:rounded-[2.5rem] border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 transition-all h-24 sm:h-32">
               <textarea value={formData.about} onChange={e => setFormData({ ...formData, about: e.target.value })} className="w-full h-full bg-transparent outline-none resize-none px-6 py-3.5 sm:px-10 sm:py-5 text-[16px] font-semibold leading-relaxed text-black dark:text-white placeholder:text-gray-400/50 tracking-wide" placeholder={t('form.about_placeholder')}></textarea>
             </div>
           </div>
@@ -531,7 +531,7 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
 
                 <div className="space-y-1.5">
                   <label className="text-[10.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.pref_roles')}</label>
-                  <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
+                  <div className="w-full h-[38px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 transition-all flex items-center">
                     <input type="text" value={roleInput} onChange={e => setRoleInput(e.target.value)} onKeyDown={handleRoleAdd} className="w-full h-full bg-transparent outline-none font-semibold text-[14px] sm:text-[15px] px-5 sm:px-6 text-black dark:text-white placeholder:text-gray-400/60 tracking-tight" placeholder={t('form.pref_roles_placeholder')} />
                   </div>
                   <div className="flex flex-wrap gap-2 px-1">
@@ -568,19 +568,19 @@ const CVFormContent: React.FC<CVFormContentProps> = ({ onClose, onSubmit, onDele
                   <label className="text-[9.5px] font-bold text-black dark:text-white uppercase tracking-[0.14em] ml-4">{t('form.salary_exp')}</label>
                   <div className="flex items-center gap-3">
                     <div className="flex-1 min-w-0">
-                      <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center relative">
+                      <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 transition-all flex items-center relative">
                         <input type="text" value={formatSalary(formData.salaryMin)} onChange={e => setFormData({ ...formData, salaryMin: parseSalary(e.target.value) })} onFocus={() => setIsMinFocused(true)} onBlur={() => setIsMinFocused(false)} className={`w-full h-full bg-transparent outline-none text-[14px] sm:text-[15px] px-6 text-black dark:text-white font-semibold tracking-tight`} placeholder="0" />
                         <span className={`absolute right-5 text-[10px] font-black text-black/20 dark:text-white/20 uppercase tracking-widest pointer-events-none transition-opacity ${(isMinFocused || formData.salaryMin !== 0) ? 'opacity-0' : 'opacity-100'}`}>{t('form.salary_min')}</span>
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 focus-within:border-[#1f6d78]/20 transition-all flex items-center relative">
+                      <div className="w-full h-[42px] sm:h-[48px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 focus-within:border-[#1f6d78]/20 transition-all flex items-center relative">
                         <input type="text" value={formatSalary(formData.salaryMax)} onChange={e => setFormData({ ...formData, salaryMax: parseSalary(e.target.value) })} onFocus={() => setIsMaxFocused(true)} onBlur={() => setIsMaxFocused(false)} className={`w-full h-full bg-transparent outline-none text-[14px] sm:text-[15px] px-6 text-black dark:text-white font-semibold tracking-tight`} placeholder="0" />
                         <span className={`absolute right-5 text-[10px] font-black text-black/20 dark:text-white/20 uppercase tracking-widest pointer-events-none transition-opacity ${(isMaxFocused || formData.salaryMax !== 0) ? 'opacity-0' : 'opacity-100'}`}>{t('form.salary_max')}</span>
                       </div>
                     </div>
                     <div className="relative">
-                      <button type="button" onClick={() => setIsCurrencyOpen(!isCurrencyOpen)} className={`h-[42px] w-[54px] sm:h-[48px] sm:w-[64px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/10 font-black text-sm flex items-center justify-center gap-1 transition-all ${isCurrencyOpen ? 'border-[#1f6d78] text-[#1f6d78]' : 'text-black dark:text-white hover:bg-gray-50'}`}>{formData.salaryCurrency}</button>
+                      <button type="button" onClick={() => setIsCurrencyOpen(!isCurrencyOpen)} className={`h-[42px] w-[54px] sm:h-[48px] sm:w-[64px] bg-white dark:bg-black rounded-full border border-black/10 dark:border-white/20 font-black text-sm flex items-center justify-center gap-1 transition-all ${isCurrencyOpen ? 'border-[#1f6d78] text-[#1f6d78]' : 'text-black dark:text-white hover:bg-gray-50'}`}>{formData.salaryCurrency}</button>
                       {isCurrencyOpen && (
                         <div className="absolute right-0 top-full mt-2 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-black/5 dark:border-white/5 overflow-hidden flex flex-col z-[500] w-[80px] p-2 gap-1">
                           {['₺', '$', '€', '£'].map(c => (

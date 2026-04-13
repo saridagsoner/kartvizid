@@ -32,12 +32,12 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, onClick, isActive })
       }`} />
 
       {/* Divider Line */}
-      <div className="absolute bottom-0 right-4 sm:right-10 left-[66px] sm:left-[70px] border-b border-gray-200 dark:border-white/10" />
+      <div className="absolute bottom-0 right-4 sm:right-10 left-[66px] sm:left-[70px] border-b border-gray-200 dark:border-white/20" />
 
       <div className="flex items-start gap-5 sm:gap-7">
         {/* Logo Section */}
         <div className="relative shrink-0 flex items-center">
-          <div className="w-[50px] h-[60px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-white dark:bg-black shadow-sm border border-gray-100 dark:border-white/10">
+          <div className="w-[50px] h-[60px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-white dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
             <ImageWithFallback 
               src={company.logoUrl} 
               alt={company.name || ''} 

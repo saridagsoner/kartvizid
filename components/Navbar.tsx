@@ -60,7 +60,7 @@ const Navbar: React.FC<NavbarProps & {
 
     return (
       <>
-        <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-black border-b border-gray-100 dark:border-white/5 z-50 flex items-center justify-center transition-colors duration-300">
+        <nav className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-black border-b border-gray-100 dark:border-white/20 z-50 flex items-center justify-center transition-colors duration-300">
           <div className="max-w-[1600px] w-full px-4 md:px-6 lg:pl-[58px] lg:pr-32 xl:pl-[84px] xl:pr-40 flex items-center justify-between h-full gap-x-4 md:gap-x-8">
 
             {/* Left Section: Logo & Mobile Menu */}

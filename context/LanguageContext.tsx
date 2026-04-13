@@ -1913,7 +1913,6 @@ const translations: Record<Language, Record<string, string>> = {
         'settings.delete_success_title': 'Account Deleted',
         'settings.delete_success_desc': 'Thank you for being part of the Kartvizid family. We would be happy to see you among us again.',
         'settings.bye': 'Goodbye',
-        'settings.theme_lang': 'Theme & Language',
         'settings.dark_mode_active': 'Dark mode active',
         'settings.light_mode_active': 'Light mode active',
         'settings.deleting': 'Deleting...',
@@ -2213,7 +2212,6 @@ const translations: Record<Language, Record<string, string>> = {
         'account.sign_out': 'Sign Out',
         'settings.header_title': 'Account Settings',
         'settings.header_subtitle': 'Manage your profile and security preferences',
-        'settings.theme_and_language': 'THEME & LANGUAGE',
         'settings.account_summary': 'Account Summary',
         'settings.email_label': 'Email',
         'settings.member_since': 'Member Since',
@@ -4108,6 +4106,8 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
         const prefix = keyMap[category];
         if (prefix) {
             const trTranslations = translations['tr'];
+            if (!trTranslations) return value || '';
+            
             // Look for a key that starts with the prefix and has the value in Turkish
             const foundKey = Object.keys(trTranslations).find(k => 
                 k.startsWith(prefix) && trTranslations[k] === value
@@ -4121,6 +4121,8 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
         // Special case for notice period if not found via common prefix
         if (category === 'noticePeriod' && value) {
             const trTranslations = translations['tr'];
+            if (!trTranslations) return value;
+            
             const foundKey = Object.keys(trTranslations).find(k => 
                 trTranslations[k] === value && (k.startsWith('common.') || k.startsWith('start_date.'))
             );
