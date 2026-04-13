@@ -77,7 +77,7 @@ const HomeDiscoveryContent: React.FC<HomeDiscoveryContentProps> = ({
             (viewMode === 'shops') || 
             (viewMode === 'employers')) && (
             <div className="pb-2 flex items-center gap-2">
-              <div className="text-[22px] font-[1000] tracking-tighter text-black dark:text-white transition-all leading-none">
+              <div className="text-[22px] font-[1000] tracking-tighter text-black dark:text-white transition-all leading-none [text-shadow:0_0_0.5px_rgba(0,0,0,0.5)] dark:[text-shadow:0_0_0.5px_rgba(255,255,255,0.5)]">
                 {viewMode === 'cvs' ? t('menu.job_seekers') : viewMode === 'shops' ? t('menu.services') : t('menu.employers')}
               </div>
               <div className="flex items-center pt-0.5">
