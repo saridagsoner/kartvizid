@@ -1971,10 +1971,10 @@ const App: React.FC = () => {
           <main className="flex-1 flex items-start min-w-0 h-full">
             
             {/* COLUMN 2: MIDDLE CONTENT (Feed or Full Page) */}
-            <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 overflow-hidden h-[calc(100vh-64px)] ${
+            <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 ${
               isDiscoveryView ? 'lg:max-w-[520px] xl:max-w-[525px] lg:border-r border-gray-200/70 dark:border-white/20' : 'w-full'
-            }`}>
-              <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth lg:pl-2">
+            } h-auto lg:h-[calc(100vh-64px)] overflow-visible lg:overflow-hidden`}>
+              <div className="flex-1 overflow-y-visible lg:overflow-y-auto no-scrollbar scroll-smooth lg:pl-2">
                 <Routes key={location.pathname.split('/')[1] || 'home'}>
                   {/* Discovery Routes (List View) */}
                   <Route path="/" element={<HomeDiscoveryContent viewMode={viewMode} sortBy={sortBy} setSortBy={setSortBy} isDesktopFilterOpen={isDesktopFilterOpen} activeFilters={activeFilters} handleFilterUpdate={handleFilterUpdate} availableProfessions={availableProfessions} availableCities={availableCities} activeFilterModal={activeFilterModal} setActiveFilterModal={setActiveFilterModal} loading={loading} currentItems={currentItems} currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} handleCVClick={handleCVClick} handleCompanyClick={handleCompanyClick} filteredEmployers={filteredEmployers} filteredShops={filteredShops} filteredCVs={filteredCVs} ITEMS_PER_PAGE={ITEMS_PER_PAGE} showEndMessage={showEndMessage} activeShop={activeShop} setActiveShop={setActiveShop} isShopProfileOpen={isShopProfileOpen} setIsShopProfileOpen={setIsShopProfileOpen} t={t} />} />

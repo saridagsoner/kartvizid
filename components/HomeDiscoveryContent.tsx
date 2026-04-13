@@ -168,7 +168,7 @@ const HomeDiscoveryContent: React.FC<HomeDiscoveryContentProps> = ({
       </div>
 
       {filteredCVs.length > ITEMS_PER_PAGE && (
-        <div className="mt-8 flex flex-col items-center gap-4 pb-44 sm:pb-8 animate-in fade-in duration-700">
+        <div className="mt-8 flex flex-col items-center gap-4 pb-32 sm:pb-8 animate-in fade-in duration-700">
           <div className="flex items-center gap-2 sm:gap-4">
             {/* Previous Button */}
             <button 

@@ -43,8 +43,8 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
-        overscroll-behavior-y: none;
-        /* Prevents bounce effect on Mac which can feel jittery */
+        /* overscroll-behavior-y: none; */
+        /* Removed to prevent scroll locking on mobile. Standard browser behavior preferred for dynamic bars. */
     }
 }
 
