@@ -1972,7 +1972,7 @@ const App: React.FC = () => {
             
             {/* COLUMN 2: MIDDLE CONTENT (Feed or Full Page) */}
             <section className={`flex-1 min-w-0 flex flex-col transition-all duration-500 overflow-hidden h-[calc(100vh-64px)] ${
-              isDiscoveryView ? 'lg:max-w-[520px] xl:max-w-[525px] border-r border-gray-200/70 dark:border-white/20' : 'w-full'
+              isDiscoveryView ? 'lg:max-w-[520px] xl:max-w-[525px] lg:border-r border-gray-200/70 dark:border-white/20' : 'w-full'
             }`}>
               <div className="flex-1 overflow-y-auto no-scrollbar scroll-smooth lg:pl-2">
                 <Routes key={location.pathname.split('/')[1] || 'home'}>
