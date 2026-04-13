@@ -15,7 +15,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
   return (
     <div
       onClick={onClick}
-      className={`pl-4 pr-4 py-2 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
+      className={`pl-4 pr-4 py-2.5 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
         isActive 
           ? 'bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' 
           : 'bg-transparent hover:bg-gray-50/50 dark:hover:bg-white/[0.02]'
@@ -31,13 +31,13 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
         isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
       }`} />
 
-      {/* Divider Line - Adjusted mobile left padding to match new 54px photo width */}
-      <div className="absolute bottom-0 right-4 sm:right-10 left-[88px] sm:left-[92px] border-b border-gray-200 dark:border-white/20" />
+      {/* Divider Line - Adjusted mobile left padding to match new 58px photo width */}
+      <div className="absolute bottom-0 right-4 sm:right-10 left-[92px] border-b border-gray-200 dark:border-white/20" />
 
       <div className="flex items-start gap-5 sm:gap-7">
-        {/* Photo Section - Slightly wider mobile width (54px), reduced height (60px) */}
+        {/* Photo Section - Slightly wider and taller mobile dimensions (58px x 64px) */}
         <div className="relative shrink-0 flex items-center">
-          <div className="w-[54px] h-[60px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
+          <div className="w-[58px] h-[64px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
             <ImageWithFallback 
               src={cv.photoUrl} 
               alt={cv.name || ''} 
@@ -47,8 +47,8 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
           </div>
         </div>
 
-        {/* Main Content Layout - Centered with tight gaps to bring text closer, matching new 60px height */}
-        <div className="flex-1 min-w-0 flex flex-col justify-center gap-1 sm:justify-between py-0 min-h-[60px] sm:min-h-[72px]">
+        {/* Main Content Layout - Centered with balanced gaps for mobile */}
+        <div className="flex-1 min-w-0 flex flex-col justify-center gap-1.5 sm:justify-between py-0 min-h-[64px] sm:min-h-[72px]">
           {/* Info Content - Balanced typography */}
           <h3 className="text-[16px] sm:text-[18px] font-black text-black dark:text-white tracking-tight leading-none line-clamp-1">
             {cv.name}
@@ -58,7 +58,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
             {cv.profession ? cv.profession.split(',').map(p => resolveValue('profession', p.trim())).join(', ') : t('card.no_profession')}
           </p>
 
-          <div className="flex flex-row items-center flex-wrap gap-x-2.5 sm:gap-x-6 gap-y-0.5 sm:gap-y-1 leading-none">
+          <div className="flex flex-row items-center flex-wrap gap-x-2.5 sm:gap-x-6 gap-y-1 leading-none">
             <div className="flex items-center gap-1 sm:gap-1.5 text-[11.5px] sm:text-[12px] text-gray-500 dark:text-gray-400 font-bold whitespace-nowrap">
               <i className="fi fi-rr-marker text-[10.5px] sm:text-[11px]"></i>
               <span>{cv.city ? resolveValue('city', cv.city) : t('card.no_city')}</span>
