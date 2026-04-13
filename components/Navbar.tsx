@@ -83,7 +83,7 @@ const Navbar: React.FC<NavbarProps & {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }} className="flex flex-col shrink-0 w-fit cursor-pointer hover:opacity-80 transition-opacity group">
-                <div className="flex items-center text-[#2b2b2b] dark:text-white text-[27px] md:text-[36px] font-black tracking-tight rounded-font leading-none">
+                <div className="flex items-center text-[#2b2b2b] dark:text-white text-[24px] md:text-[32px] font-black tracking-tight rounded-font leading-none">
                   <span>Kartvizi</span>
                   <span className="inline-block ml-1 transform rotate-[12deg] origin-center translate-y-[-1px] text-[#1f6d78] font-black">d</span>
                 </div>                <span className="hidden sm:block text-[12px] font-medium text-gray-400 tracking-[-0.01em] mt-0.5 leading-none whitespace-nowrap">
