@@ -19,19 +19,19 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
                 <span className="hidden sm:inline">{t('nav.home')}</span>
             </Link>
             
-            {items.map((item, index) => (
+            {items && Array.isArray(items) && items.map((item, index) => (
                 <React.Fragment key={index}>
                     <span className="text-gray-300 dark:text-gray-700 select-none mx-0.5">/</span>
-                    {item.path ? (
+                    {item && item.path ? (
                         <Link 
                             to={item.path} 
                             className="hover:text-[#1f6d78] dark:hover:text-[#2dd4bf] transition-colors max-w-[150px] sm:max-w-none truncate"
                         >
-                            {item.label}
+                            {item.label || ''}
                         </Link>
                     ) : (
                         <span className="text-gray-500 dark:text-gray-300 max-w-[100px] sm:max-w-[200px] truncate">
-                            {item.label}
+                            {item?.label || ''}
                         </span>
                     )}
                 </React.Fragment>

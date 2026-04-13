@@ -91,7 +91,7 @@ const CATEGORY_MAP: Record<string, Record<string, string>> = {
     'lifestyle': 'أسلوب الحياة',
     'management': 'الإدارة',
     'psychology': 'علم النفس في مكان العمل',
-    'development': 'التطوير الشخصi',
+    'development': 'التطوير الشخصي',
     'youth': 'Gelecek ve Gençler',
     'global': 'Global Kariyer'
   }
