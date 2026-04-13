@@ -71,7 +71,7 @@ const HomeDiscoveryContent: React.FC<HomeDiscoveryContentProps> = ({
 
   return (
     <>
-      <div className="flex sm:hidden items-start justify-between px-4 mt-2 mb-0 pl-6">
+      <div className="flex sm:hidden items-start justify-between px-4 mt-2 mb-1 pl-6">
         <div className="flex flex-col gap-0 w-full pt-1 pb-0.5">
           {((viewMode === 'cvs') || 
             (viewMode === 'shops') || 
@@ -112,7 +112,7 @@ const HomeDiscoveryContent: React.FC<HomeDiscoveryContentProps> = ({
         </div>
       </div>
 
-      <div className="flex flex-col sm:gap-0 -mt-1 sm:mt-0 lg:pl-0">
+      <div className="flex flex-col sm:gap-0 mt-1 sm:mt-0 lg:pl-0">
         {loading ? (
           <div className="space-y-6">
             <BusinessCardSkeleton />
