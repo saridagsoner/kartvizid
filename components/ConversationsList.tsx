@@ -58,6 +58,9 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
         ) : (
           conversations.map((conv, idx) => {
             const isActive = activeConversationId === conv.id;
+            const participant = conv.other_participant;
+            const profession = participant?.profession || (participant?.role === 'employer' ? 'İşveren' : participant?.role === 'shop' ? 'Hizmet Veren' : 'İş Arayan');
+
             return (
               <div key={conv.id} className="relative group/item">
                 <button
@@ -73,8 +76,8 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
                       isActive ? 'border-[#1f6d78] dark:border-[#2dd4bf]' : 'border-gray-100 dark:border-white/5'
                     }`}>
                       <ImageWithFallback 
-                        src={conv.other_participant?.avatar_url} 
-                        alt={conv.other_participant?.full_name || '?'} 
+                        src={participant?.avatar_url} 
+                        alt={participant?.full_name || '?'} 
                         className="w-full h-full object-cover"
                         initialsClassName="text-2xl font-black"
                       />
@@ -87,13 +90,21 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
                   </div>
                   
                   <div className="flex-1 text-left min-w-0">
-                    <h4 className={`font-black tracking-tight leading-tight mb-1 truncate ${
-                      isActive ? 'text-[17px] text-gray-900 dark:text-white' : 'text-[16px] text-gray-700 dark:text-gray-300'
-                    }`}>
-                      {conv.other_participant?.full_name || 'Kullanıcı'}
-                    </h4>
-                    <p className={`text-[13px] font-medium truncate opacity-70 ${
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <h4 className={`font-black tracking-tight leading-tight truncate ${
+                        isActive ? 'text-[17px] text-gray-900 dark:text-white' : 'text-[16px] text-gray-700 dark:text-gray-300'
+                      }`}>
+                        {participant?.full_name || 'Kullanıcı'}
+                      </h4>
+                      {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#1f6d78] dark:bg-[#2dd4bf] animate-pulse shrink-0" />}
+                    </div>
+                    <p className={`text-[11px] font-black uppercase tracking-wider mb-1 opacity-60 ${
                       isActive ? 'text-[#1f6d78] dark:text-[#2dd4bf]' : 'text-gray-400'
+                    }`}>
+                      {profession}
+                    </p>
+                    <p className={`text-[13px] font-medium truncate opacity-70 ${
+                      isActive ? 'text-gray-600 dark:text-gray-400' : 'text-gray-400'
                     }`}>
                       {conv.last_message || 'Sohbeti başlatın...'}
                     </p>

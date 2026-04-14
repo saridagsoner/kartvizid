@@ -1313,27 +1313,57 @@ const App: React.FC = () => {
         }
 
         // Fetch fallback names from public cvs and companies tables (RLS is public here)
-        const { data: cvsData } = await supabase.from('cvs').select('user_id, name, photoUrl, profession').in('user_id', Array.from(participantIds));
-        const { data: companiesData } = await supabase.from('companies').select('user_id, company_name, logo_url').in('user_id', Array.from(participantIds));
+        const { data: cvsData } = await supabase.from('cvs').select('user_id, name, photo_url, profession').in('user_id', Array.from(participantIds));
+        const { data: companiesData } = await supabase.from('companies').select('user_id, company_name, logo_url, industry').in('user_id', Array.from(participantIds));
+        const { data: shopsData } = await supabase.from('shops').select('user_id, name, logo_url, profession').in('user_id', Array.from(participantIds));
 
         participantIds.forEach(id => {
           if (!profilesMap.has(id)) {
             const cvMatch = cvsData?.find(c => c.user_id === id);
             const compMatch = companiesData?.find(c => c.user_id === id);
+            const shopMatch = shopsData?.find(s => s.user_id === id);
 
             if (compMatch) {
-              profilesMap.set(id, { id, full_name: compMatch.company_name, avatar_url: compMatch.logo_url, role: 'employer' });
+              profilesMap.set(id, { 
+                id, 
+                full_name: compMatch.company_name, 
+                avatar_url: compMatch.logo_url, 
+                role: 'employer',
+                profession: compMatch.industry 
+              });
+            } else if (shopMatch) {
+              profilesMap.set(id, { 
+                id, 
+                full_name: shopMatch.name, 
+                avatar_url: shopMatch.logo_url, 
+                role: 'shop',
+                profession: shopMatch.profession 
+              });
             } else if (cvMatch) {
-              profilesMap.set(id, { id, full_name: cvMatch.name, avatar_url: cvMatch.photoUrl, role: 'job_seeker', profession: cvMatch.profession });
+              profilesMap.set(id, { 
+                id, 
+                full_name: cvMatch.name, 
+                avatar_url: cvMatch.photo_url, 
+                role: 'job_seeker', 
+                profession: cvMatch.profession 
+              });
             }
           } else {
-            // If profile was found via RLS, still attach profession from CV if present
+            // If profile was found via RLS, still attach profession from CV/Shop/Company if present
             const cvMatch = cvsData?.find(c => c.user_id === id);
-            if (cvMatch && cvMatch.profession) {
-              const p = profilesMap.get(id);
-              p.profession = cvMatch.profession;
-              profilesMap.set(id, p);
-            }
+            const compMatch = companiesData?.find(c => c.user_id === id);
+            const shopMatch = shopsData?.find(s => s.user_id === id);
+            
+            const p = profilesMap.get(id);
+            if (cvMatch && cvMatch.profession) p.profession = cvMatch.profession;
+            if (compMatch && compMatch.industry) p.profession = compMatch.industry;
+            if (shopMatch && shopMatch.profession) p.profession = shopMatch.profession;
+            
+            // Also fallback for missing full_name/avatar_url in profile
+            if (!p.full_name) p.full_name = cvMatch?.name || compMatch?.company_name || shopMatch?.name;
+            if (!p.avatar_url) p.avatar_url = cvMatch?.photo_url || compMatch?.logo_url || shopMatch?.logo_url;
+            
+            profilesMap.set(id, p);
           }
         });
       }
@@ -1355,7 +1385,8 @@ const App: React.FC = () => {
             id: otherParticipant.id,
             full_name: otherParticipant.full_name,
             avatar_url: otherParticipant.avatar_url,
-            role: otherParticipant.role
+            role: otherParticipant.role,
+            profession: otherParticipant.profession
           } : { id: conv.participant1_id === user.id ? conv.participant2_id : conv.participant1_id }
         };
       });

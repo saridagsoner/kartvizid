@@ -216,7 +216,12 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                       ) : null}
                     </div>
                     <div className="flex-1 text-left min-w-0">
-                      <h4 className="font-bold text-black text-[15px] sm:text-[16.5px] tracking-tight truncate leading-tight mb-1">{conv.other_participant?.full_name || t('messages.user_fallback')}</h4>
+                      <h4 className="font-bold text-black text-[15px] sm:text-[16.5px] tracking-tight truncate leading-tight mb-0.5">
+                        {conv.other_participant?.full_name || t('messages.user_fallback')}
+                      </h4>
+                      <p className="text-[11px] font-black text-[#1f6d78] uppercase tracking-wider mb-1 opacity-70">
+                        {conv.other_participant?.profession || (conv.other_participant?.role === 'employer' ? t('nav.employer') : conv.other_participant?.role === 'shop' ? 'Hizmet Veren' : t('nav.job_seeker'))}
+                      </p>
                       <p className="text-gray-400 text-[13px] font-medium truncate opacity-90">
                         {conv.last_message || t('messages.click_to_start')}
                       </p>
@@ -250,10 +255,11 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                     />
                   </div>
                   <div>
-                    <h3 className="font-black text-black text-sm sm:text-lg tracking-tight">{activeConversation.other_participant?.full_name}</h3>
+                    <h3 className="font-black text-black text-sm sm:text-lg tracking-tight">{activeConversation.other_participant?.full_name || t('messages.user_fallback')}</h3>
                     <p className="text-[10px] sm:text-xs font-bold text-[#1f6d78] uppercase tracking-wider">
                       {activeConversation.other_participant?.profession || 
-                        (activeConversation.other_participant?.role === 'employer' ? t('nav.employer') : t('nav.job_seeker'))}
+                        (activeConversation.other_participant?.role === 'employer' ? t('nav.employer') : 
+                         activeConversation.other_participant?.role === 'shop' ? 'Hizmet Veren' : t('nav.job_seeker'))}
                     </p>
                   </div>
                 </div>
@@ -308,8 +314,8 @@ const MessagesModal: React.FC<MessagesModalProps> = ({
                             <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                               <div className={`max-w-[85%] sm:max-w-[70%] px-5 py-3 sm:px-6 sm:py-3.5 shadow-sm leading-relaxed transition-all ${
                                 isOwn 
-                                ? 'bg-[#1f6d78] text-white rounded-[1.25rem] rounded-br-[0.2rem]' 
-                                : 'bg-white text-gray-800 border border-gray-100 rounded-[1.25rem] rounded-bl-[0.2rem]'
+                                ? 'bg-gradient-to-br from-[#1f6d78] to-[#154d55] text-white rounded-[1.25rem] rounded-br-[0.2rem]' 
+                                : 'bg-white text-gray-800 border border-gray-100 rounded-[1.25rem] rounded-bl-[0.2rem] hover:shadow-md'
                               }`}>
                                 <p className="text-sm sm:text-[15px] font-medium leading-relaxed">{msg.content}</p>
                               </div>

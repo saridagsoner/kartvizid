@@ -177,13 +177,14 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
           </div>
           <div>
             <h3 className="font-black text-gray-900 dark:text-white text-xl tracking-tight leading-tight">
-              {activeConversation?.other_participant?.full_name}
+              {activeConversation?.other_participant?.full_name || 'Kullanıcı'}
             </h3>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
               <p className="text-[11px] font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-widest leading-none">
                 {activeConversation?.other_participant?.profession || 
-                  (activeConversation?.other_participant?.role === 'employer' ? t('chat.employer') : t('chat.seeker'))}
+                  (activeConversation?.other_participant?.role === 'employer' ? t('chat.employer') : 
+                   activeConversation?.other_participant?.role === 'shop' ? 'Hizmet Veren' : t('chat.seeker'))}
               </p>
             </div>
           </div>
@@ -197,7 +198,7 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar bg-gray-50/20 dark:bg-transparent flex flex-col min-h-0 pt-6">
+      <div className="flex-1 overflow-y-scroll custom-scrollbar bg-gray-50/20 dark:bg-transparent flex flex-col min-h-0 pt-6">
         <div className="flex-1" />
         <div className="p-8 space-y-6">
           {loading ? (
@@ -238,8 +239,8 @@ const ChatDetailView: React.FC<ChatDetailViewProps> = ({
                     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-[85%] md:max-w-[75%] px-7 py-4 shadow-xl leading-relaxed transition-all duration-300 ${
                         isOwn 
-                        ? 'bg-[#1f6d78] text-white rounded-[2.5rem] rounded-br-lg' 
-                        : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-white/5 rounded-[2.5rem] rounded-bl-lg'
+                        ? 'bg-gradient-to-br from-[#1f6d78] to-[#154d55] text-white rounded-[2.5rem] rounded-br-lg' 
+                        : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 border border-gray-100 dark:border-white/5 rounded-[2.5rem] rounded-bl-lg hover:shadow-2xl hover:scale-[1.01]'
                       }`}>
                         <p className="text-[16px] font-medium leading-relaxed">{msg.content}</p>
                       </div>
