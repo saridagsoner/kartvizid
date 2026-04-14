@@ -1119,7 +1119,6 @@ const App: React.FC = () => {
           phone: item.phone || '',
           isEmailPublic: item.is_email_public,
           isPhonePublic: item.is_phone_public,
-          isPlaced: item.is_placed,
           workingStatus: item.working_status || 'open',
           salaryCurrency: item.salary_currency,
           created_at: item.created_at
