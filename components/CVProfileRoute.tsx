@@ -10,6 +10,7 @@ import Breadcrumbs from './Breadcrumbs';
 interface CVProfileRouteProps {
     onOpenChat: (userId: string) => void;
     handleJobFound?: () => void;
+    handleLookingForJob?: () => void;
     onClose?: () => void;
     isInline?: boolean;
 }
@@ -17,6 +18,7 @@ interface CVProfileRouteProps {
 const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
     onOpenChat,
     handleJobFound,
+    handleLookingForJob,
     onClose,
     isInline = false
 }) => {
@@ -182,6 +184,7 @@ const CVProfileRoute: React.FC<CVProfileRouteProps> = ({
                 onClose={handleClose}
                 onOpenChat={() => onOpenChat(cv.userId)}
                 onJobFound={handleJobFound}
+                onLookingForJob={handleLookingForJob}
                 isInline={isInline}
             />
         </>

@@ -63,6 +63,7 @@ const translations: Record<Language, Record<string, string>> = {    tr: {
         'common.coming_soon': 'Çok Yakında',
         'common.job_found': 'İŞ BULDU',
         'common.is_placed': 'İŞ BULDU',
+        'common.looking_for_job': 'İŞ ARIYORUM',
         'common.none': 'Yok',
         'mobile.cancel': 'İptal',
         // Work Types
@@ -675,6 +676,7 @@ const translations: Record<Language, Record<string, string>> = {    tr: {
         'toast.company_updated': 'Şirket başarıyla güncellendi!',
         'toast.company_created': 'Şirket başarıyla oluşturuldu!',
         'toast.company_deleted': 'Şirket başarıyla silindi!',
+        'toast.status_updated': 'Durum başarıyla güncellendi!',
         'error.db_not_found': 'Sistem hatası: Veritabanı tablosu bulunamadı. Migration gerekli.',
         'error.duplicate_key': 'Bu kayıt zaten mevcut.',
         'error.network': 'Ağ bağlantısı hatası. Lütfen internet bağlantınızı kontrol edin.',
@@ -966,6 +968,7 @@ const translations: Record<Language, Record<string, string>> = {    tr: {
         'profile.download_cv': 'CV\'yi İndir',
         'profile.share_cv': 'CV\'yi Paylaş',
         'profile.job_found': '🎉 İŞİMİ BULDUM',
+        'profile.looking_for_job': '🔍 İŞ ARIYORUM',
         'profile.request_sent': 'İstek Gönderildi',
         'profile.cancel_request': 'İsteği İptal Et',
         'profile.contact_request': 'İletişime Geç',
@@ -1142,6 +1145,7 @@ const translations: Record<Language, Record<string, string>> = {    tr: {
         'common.coming_soon': 'Coming Soon',
         'common.job_found': 'JOB FOUND',
         'common.is_placed': 'JOB FOUND',
+        'common.looking_for_job': 'LOOKING FOR JOB',
         'common.none': 'None',
         'mobile.cancel': 'Cancel',
         'messages.title': 'Job Interviews',
@@ -1342,6 +1346,7 @@ const translations: Record<Language, Record<string, string>> = {    tr: {
         'toast.company_updated': 'Company successfully updated!',
         'toast.company_created': 'Company successfully created!',
         'toast.company_deleted': 'Company successfully deleted!',
+        'toast.status_updated': 'Status successfully updated!',
         'error.db_not_found': 'System error: Database table not found. Migration required.',
         'error.duplicate_key': 'This record already exists.',
         'error.network': 'Network connection error. Please check your internet connection.',
@@ -2133,6 +2138,7 @@ const translations: Record<Language, Record<string, string>> = {    tr: {
         'feed.end_desc': 'Überprüfen Sie die Lebensläufe erneut.',
         'menu.job_seekers': 'Jobsuchende',
         'menu.kartvizid': 'Kartvizid',
+        'common.looking_for_job': 'JOBGESUCHT',
         'mobile.cancel': 'Abbrechen',
         // Filters
         'filters.categories': 'Alle Kategorien',
@@ -2426,6 +2432,8 @@ const translations: Record<Language, Record<string, string>> = {    tr: {
         'profile.contact': 'KONTAKT',
         'profile.download_cv': 'CV Herunterladen',
         'profile.share_cv': 'CV Teilen',
+        'profile.job_found': '🎉 JOB GEFUNDEN',
+        'profile.looking_for_job': '🔍 JOB GESUCHT',
         'profile.contact_request': 'Kontaktieren',
 
         // Common & Values

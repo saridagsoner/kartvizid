@@ -33,35 +33,52 @@ const JobSuccessModal: React.FC<JobSuccessModalProps> = ({ onClose }) => {
     }, []);
 
     return (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/50 backdrop-blur-[6px]  fade-in ">
-            {/* Modal Container - Smaller max-w-xl (rectangular card shape) */}
-            <div className="bg-white dark:bg-gray-900 rounded-[1.5rem] w-full max-w-xl relative shadow-2xl  zoom-in-95 overflow-hidden">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/50 backdrop-blur-[6px] transition-all duration-500 animate-in fade-in duration-300">
+            {/* Modal Container */}
+            <div className="bg-white dark:bg-gray-900 rounded-[2.5rem] w-full max-w-xl relative shadow-[0_32px_120px_rgba(0,0,0,0.3)] animate-in zoom-in-95 duration-300 overflow-hidden border border-white/20">
+
+                {/* Inner Decorative Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#1f6d78]/5 via-transparent to-[#1f6d78]/5 pointer-events-none"></div>
 
                 {/* Inner Dashed Border - Brand Color */}
-                <div className="absolute inset-3 border-2 border-dashed border-[#1f6d78]/30 rounded-2xl pointer-events-none"></div>
+                <div className="absolute inset-4 border-2 border-dashed border-[#1f6d78]/20 rounded-[2rem] pointer-events-none"></div>
 
-                <div className="p-8 sm:p-12 flex flex-col items-center relative z-10 text-center">
+                <div className="p-10 sm:p-16 flex flex-col items-center relative z-10 text-center">
 
                     {/* Close Button */}
                     <button
                         onClick={onClose}
-                        className="absolute top-2 right-2 p-4 text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                        className="absolute top-4 right-4 w-10 h-10 rounded-full bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-all active:scale-95"
                     >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        <i className="fi fi-rr-cross text-sm"></i>
                     </button>
 
-                    {/* Content - Handwriting/Elegant Font Style */}
-                    {/* Logo Replacement */}
-                    <div className="mb-6 ">
-                        <div className="flex items-center text-[#2b2b2b] dark:text-white text-[32px] sm:text-[40px] font-bold tracking-tight rounded-font leading-none">
-                            <span>Kartvizi</span>
-                            <span className="inline-block ml-1 transform rotate-[12deg] origin-center [-1px] text-[#1f6d78] font-black">d</span>
-                        </div>
+                    {/* Success Icon/Badge */}
+                    <div className="w-24 h-24 bg-gradient-to-tr from-[#1f6d78] to-[#2dd4bf] rounded-full flex items-center justify-center mb-8 shadow-2xl shadow-[#1f6d78]/20 animate-bounce">
+                        <i className="fi fi-ss-check text-4xl text-white"></i>
                     </div>
 
-                    <div className="text-[#1f6d78] dark:text-[#2dd4bf] font-serif italic text-lg sm:text-xl leading-relaxed max-w-[380px] opacity-90 space-y-2">
-                        <p>"{t('job_success.msg1')}</p>
-                        <p>{t('job_success.msg2')}"</p>
+                    {/* Content */}
+                    <div className="mb-6">
+                        <div className="flex items-center justify-center text-black dark:text-white text-[32px] sm:text-[40px] font-black tracking-tighter leading-none logo-font mb-2">
+                            <span>Kartvizi</span>
+                            <span className="inline-block ml-0.5 transform rotate-[12deg] origin-center text-[#1f6d78] dark:text-[#2dd4bf]">d</span>
+                        </div>
+                        <h2 className="text-xl sm:text-2xl font-black text-[#1f6d78] dark:text-[#2dd4bf] uppercase tracking-widest mb-1">TEBRİKLER!</h2>
+                    </div>
+
+                    <div className="text-gray-600 dark:text-gray-300 font-bold text-lg leading-relaxed max-w-[420px] space-y-4">
+                        <p className="italic">"{t('job_success.msg1')}"</p>
+                        <p className="text-sm opacity-80 font-medium">{t('job_success.msg2')}</p>
+                    </div>
+
+                    <div className="mt-12 w-full">
+                        <button 
+                            onClick={onClose}
+                            className="w-full bg-[#1f6d78] text-white py-5 rounded-[1.5rem] font-black uppercase tracking-widest shadow-xl shadow-[#1f6d78]/20 hover:bg-[#155e68] transform hover:-translate-y-1 transition-all active:translate-y-0"
+                        >
+                            Teşekkürler
+                        </button>
                     </div>
 
                 </div>

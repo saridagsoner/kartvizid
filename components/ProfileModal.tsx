@@ -13,10 +13,11 @@ interface ProfileModalProps {
   onClose: () => void;
   onOpenChat?: () => void;
   onJobFound?: () => void;
+  onLookingForJob?: () => void;
   isInline?: boolean;
 }
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, onJobFound, isInline = false }) => {
+const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, onJobFound, onLookingForJob, isInline = false }) => {
   const { t, resolveValue } = useLanguage();
   const { user } = useAuth();
   const { showToast } = useToast();
@@ -391,12 +392,21 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ cv, onClose, onOpenChat, on
               </div>
             ) : (
               <div className="flex w-full items-center justify-center gap-4">
-                <button
-                  onClick={onJobFound}
-                  className={`${isInline ? 'h-11 sm:h-12' : 'h-12 sm:h-14'} flex-1 max-w-[200px] bg-[#1f6d78] text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-[#155e68] transition-all`}
-                >
-                  {t('profile.job_found')}
-                </button>
+                {cv.workingStatus === 'active' ? (
+                  <button
+                    onClick={onLookingForJob}
+                    className={`${isInline ? 'h-11 sm:h-12' : 'h-12 sm:h-14'} flex-1 max-w-[200px] bg-rose-500 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-rose-600 transition-all`}
+                  >
+                    {t('profile.looking_for_job')}
+                  </button>
+                ) : (
+                  <button
+                    onClick={onJobFound}
+                    className={`${isInline ? 'h-11 sm:h-12' : 'h-12 sm:h-14'} flex-1 max-w-[200px] bg-[#1f6d78] text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-[#155e68] transition-all`}
+                  >
+                    {t('profile.job_found')}
+                  </button>
+                )}
                 <button onClick={handleDownload} className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full text-black dark:text-white flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-90`}><i className="fi fi-rr-download text-xl"></i></button>
                 <button onClick={handleShare} className={`${isInline ? 'w-11 h-11 sm:w-12 sm:h-12' : 'w-12 h-12 sm:w-14 sm:h-14'} rounded-full text-black dark:text-white flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-90`}><i className="fi fi-rr-share-square text-xl"></i></button>
               </div>

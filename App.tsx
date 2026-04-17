@@ -822,15 +822,32 @@ const App: React.FC = () => {
         .eq('id', currentUserCV.id);
 
       if (error) throw error;
-      showToast('İş bulma durumunuz başarıyla güncellendi.', 'success');
+      showToast(t('toast.status_updated'), 'success');
       setIsJobSuccessOpen(true);
       fetchCVs(); // Refresh the list
-      // Instead of forcing the active workingStatus in selectedCV or closing the profile,
-      // navigate home to reset view, or we can just stay and let real-time/refetch update it.
       navigate('/', { replace: true });
     } catch (err) {
       console.error('Error updating status:', err);
-      showToast('Bir hata oluştu.', 'error');
+      showToast(t('error.unknown'), 'error');
+    }
+  };
+
+  const handleLookingForJob = async () => {
+    if (!currentUserCV) return;
+
+    try {
+      const { error } = await supabase
+        .from('cvs')
+        .update({ working_status: 'open' }) // open = looking for job
+        .eq('id', currentUserCV.id);
+
+      if (error) throw error;
+      showToast(t('toast.status_updated'), 'success');
+      fetchCVs(); // Refresh the list
+      navigate('/', { replace: true });
+    } catch (err) {
+      console.error('Error updating status:', err);
+      showToast(t('error.unknown'), 'error');
     }
   };
 
@@ -1073,7 +1090,9 @@ const App: React.FC = () => {
           is_placed, working_status, created_at,
           work_type, employment_type, education_level, graduation_status,
           military_status, travel_status, driver_license, language, language_level,
-          salary_min, salary_max, salary_currency
+          salary_min, salary_max, salary_currency,
+          work_experience, education_details, internship_details, 
+          language_details, certificates
         `);
 
       if (error) {
@@ -1121,7 +1140,12 @@ const App: React.FC = () => {
           isPhonePublic: item.is_phone_public,
           workingStatus: item.working_status || 'open',
           salaryCurrency: item.salary_currency,
-          created_at: item.created_at
+          created_at: item.created_at,
+          workExperience: item.work_experience || [],
+          educationDetails: item.education_details || [],
+          internshipDetails: item.internship_details || [],
+          languageDetails: item.language_details || [],
+          certificates: item.certificates || []
         }));
         setCvList(mappedData);
       }
@@ -2101,7 +2125,7 @@ const App: React.FC = () => {
             }`}>
               <div className="h-full">
                 <Routes>
-                  <Route path="/cv/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} />} />
+                  <Route path="/cv/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} handleLookingForJob={handleLookingForJob} />} />
                   <Route path="/company/:id" element={<CompanyProfileRoute isInline={true} />} />
                   
                   {/* Unified Content Details (Right Column) */}
@@ -2152,8 +2176,8 @@ const App: React.FC = () => {
                         </p>
                     </div>
                   } />
-                  <Route path="/kartvizid/is-bulanlar/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} />} />
-                  <Route path="/kartvizid/en-cok-gorununtulenenler/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} />} />
+                  <Route path="/kartvizid/is-bulanlar/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} handleLookingForJob={handleLookingForJob} />} />
+                  <Route path="/kartvizid/en-cok-gorununtulenenler/:id" element={<CVProfileRoute isInline={true} onOpenChat={handleOpenChat} handleJobFound={handleJobFound} handleLookingForJob={handleLookingForJob} />} />
                   
                   <Route path="/kartvizid/en-cok-gorununtulenenler" element={
                     <div className="h-full flex flex-col items-center justify-center p-12 text-center">
@@ -2338,6 +2362,7 @@ const App: React.FC = () => {
               onClose={() => navigate('/')} 
               onOpenChat={handleOpenChat} 
               onJobFound={handleJobFound} 
+              onLookingForJob={handleLookingForJob}
             />
           ) : null;
         })()}
