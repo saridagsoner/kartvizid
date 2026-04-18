@@ -15,7 +15,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
   return (
     <div
       onClick={onClick}
-      className={`pl-4 pr-4 py-2.5 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
+      className={`pl-4 pr-4 py-4 sm:py-5 cursor-pointer relative transition-all duration-500 group ${
         isActive 
           ? 'bg-[#1f6d78]/5 dark:bg-[#1f6d78]/10' 
           : 'bg-transparent hover:bg-gray-50/50 dark:hover:bg-white/[0.02]'
@@ -35,9 +35,9 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
       <div className="absolute bottom-0 right-4 sm:right-10 left-[72px] sm:left-[92px] border-b border-gray-200 dark:border-white/20" />
 
       <div className="flex items-start gap-5 sm:gap-7">
-        {/* Photo Section - Slightly wider portrait dimensions for mobile (52px x 58px) */}
+        {/* Photo Section - Slightly taller portrait dimensions for mobile (52px x 62px) */}
         <div className="relative shrink-0 flex items-center">
-          <div className="w-[52px] h-[58px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
+          <div className="w-[52px] h-[62px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
             <ImageWithFallback 
               src={cv.photoUrl} 
               alt={cv.name || ''} 
@@ -48,7 +48,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
         </div>
 
         {/* Main Content Layout - Justify between to align with top/bottom of photo on mobile */}
-        <div className="flex-1 min-w-0 flex flex-col justify-between py-0 min-h-[58px] sm:min-h-[72px]">
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0 min-h-[62px] sm:min-h-[72px]">
           {/* Info Content - Balanced typography */}
           <h3 className="text-[15px] sm:text-[18px] font-black text-black dark:text-white tracking-tight leading-none line-clamp-1">
             {cv.name}
