@@ -47,18 +47,18 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
           </div>
         </div>
 
-        {/* Main Content Layout - Justify between to align with top/bottom of photo on mobile */}
-        <div className="flex-1 min-w-0 flex flex-col justify-between py-0 min-h-[62px] sm:min-h-[72px]">
+        {/* Main Content Layout - Centered with tight gaps and slightly shifted up on mobile */}
+        <div className="flex-1 min-w-0 flex flex-col justify-center gap-0.5 sm:justify-between py-0 min-h-[62px] sm:min-h-[72px] -mt-[2px] sm:mt-0">
           {/* Info Content - Balanced typography */}
-          <h3 className="text-[15px] sm:text-[18px] font-black text-black dark:text-white tracking-tight leading-none line-clamp-1">
+          <h3 className="text-[15px] sm:text-[18px] font-black text-black dark:text-white tracking-tight leading-tight line-clamp-1 pb-0.5">
             {cv.name}
           </h3>
 
-          <p className="text-[12px] sm:text-[14px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight leading-none line-clamp-1">
+          <p className="text-[14px] sm:text-[14px] text-[#1f6d78] dark:text-[#2dd4bf] font-bold tracking-tight leading-tight line-clamp-1">
             {cv.profession ? cv.profession.split(',').map(p => resolveValue('profession', p.trim())).join(', ') : t('card.no_profession')}
           </p>
 
-          <div className="flex flex-row items-center flex-wrap gap-x-2.5 sm:gap-x-6 gap-y-1 leading-none">
+          <div className="flex flex-row items-center flex-wrap gap-x-2.5 sm:gap-x-6 gap-y-1 leading-none pt-0.5">
             <div className="flex items-center gap-1 sm:gap-1.5 text-[10.5px] sm:text-[12px] text-gray-500 dark:text-gray-400 font-bold whitespace-nowrap">
               <i className="fi fi-rr-marker text-[10.5px] sm:text-[11px]"></i>
               <span>{cv.city ? resolveValue('city', cv.city) : t('card.no_city')}</span>
