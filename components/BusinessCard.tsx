@@ -31,13 +31,13 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
         isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
       }`} />
 
-      {/* Divider Line - Adjusted mobile left offset to match new 54px photo width + gaps */}
-      <div className="absolute bottom-0 right-4 sm:right-10 left-[74px] sm:left-[92px] border-b border-gray-200 dark:border-white/20" />
+      {/* Divider Line - Adjusted mobile left offset to match new 54px photo width + smaller gap */}
+      <div className="absolute bottom-0 right-4 sm:right-10 left-[70px] sm:left-[92px] border-b border-gray-200 dark:border-white/20" />
 
-      <div className="flex items-start gap-5 sm:gap-7">
-        {/* Photo Section - Slightly wider portrait dimensions for mobile (54px x 62px) */}
+      <div className="flex items-start gap-3.5 sm:gap-7">
+        {/* Photo Section - Slightly wider portrait dimensions for mobile (54px x 56px) */}
         <div className="relative shrink-0 flex items-center">
-          <div className="w-[54px] h-[62px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
+          <div className="w-[54px] h-[56px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
             <ImageWithFallback 
               src={cv.photoUrl} 
               alt={cv.name || ''} 
@@ -48,7 +48,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
         </div>
 
         {/* Main Content Layout - Justify between to align with top/bottom of photo on mobile */}
-        <div className="flex-1 min-w-0 flex flex-col justify-between py-0 min-h-[62px] sm:min-h-[72px]">
+        <div className="flex-1 min-w-0 flex flex-col justify-between py-0 min-h-[56px] sm:min-h-[72px]">
           {/* Info Content - Balanced typography */}
           <h3 className="text-[15px] sm:text-[18px] font-black text-black dark:text-white tracking-tight leading-none line-clamp-1">
             {cv.name}
