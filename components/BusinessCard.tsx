@@ -31,13 +31,13 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ cv, onClick, isActive }) =>
         isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0'
       }`} />
 
-      {/* Divider Line - Adjusted mobile left offset to match new 48px photo width + gaps */}
-      <div className="absolute bottom-0 right-4 sm:right-10 left-[82px] sm:left-[92px] border-b border-gray-200 dark:border-white/20" />
+      {/* Divider Line - Adjusted mobile left offset to match new 52px photo width + gaps */}
+      <div className="absolute bottom-0 right-4 sm:right-10 left-[72px] sm:left-[92px] border-b border-gray-200 dark:border-white/20" />
 
       <div className="flex items-start gap-5 sm:gap-7">
-        {/* Photo Section - Slightly wider portrait dimensions for mobile (48px x 58px) */}
+        {/* Photo Section - Slightly wider portrait dimensions for mobile (52px x 58px) */}
         <div className="relative shrink-0 flex items-center">
-          <div className="w-[48px] h-[58px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
+          <div className="w-[52px] h-[58px] sm:w-[60px] sm:h-[72px] rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 dark:bg-black shadow-sm border border-gray-100 dark:border-white/20">
             <ImageWithFallback 
               src={cv.photoUrl} 
               alt={cv.name || ''} 
